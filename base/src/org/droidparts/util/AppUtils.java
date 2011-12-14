@@ -1,0 +1,56 @@
+/**
+ * Copyright 2011 Alex Yanchenko
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *  
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License. 
+ */
+package org.droidparts.util;
+
+import static android.content.pm.ApplicationInfo.FLAG_DEBUGGABLE;
+import static android.content.pm.PackageManager.COMPONENT_ENABLED_STATE_DISABLED;
+import static android.content.pm.PackageManager.COMPONENT_ENABLED_STATE_ENABLED;
+import static android.content.pm.PackageManager.DONT_KILL_APP;
+import android.content.ComponentName;
+import android.content.Context;
+import android.content.pm.ApplicationInfo;
+import android.content.pm.PackageManager;
+import android.provider.Settings.Secure;
+
+public class AppUtils {
+
+	private final Context ctx;
+
+	public AppUtils(Context ctx) {
+		this.ctx = ctx;
+	}
+
+	public boolean isDebuggable() {
+		ApplicationInfo appInfo = ctx.getApplicationInfo();
+		boolean debug = (appInfo.flags &= FLAG_DEBUGGABLE) != 0;
+		return debug;
+	}
+
+	public boolean canInstallApps() {
+		return Secure.getInt(ctx.getContentResolver(),
+				Secure.INSTALL_NON_MARKET_APPS, 0) != 0;
+	}
+
+	public static void setComponentEnabled(Context ctx,
+			Class<? extends Context> component, boolean visible) {
+		PackageManager pm = ctx.getPackageManager();
+		ComponentName componentName = new ComponentName(ctx, component);
+		int state = visible ? COMPONENT_ENABLED_STATE_ENABLED
+				: COMPONENT_ENABLED_STATE_DISABLED;
+		pm.setComponentEnabledSetting(componentName, state, DONT_KILL_APP);
+	}
+
+}
