@@ -84,6 +84,10 @@ public class ModuleInjector {
 			L.d(e);
 			return null;
 		}
+		if (metaData == null) {
+			L.e("No <meta-data />.");
+			return null;
+		}
 		String className = metaData.getString(META_KEY);
 		try {
 			Class<?> cls = Class.forName(className);
