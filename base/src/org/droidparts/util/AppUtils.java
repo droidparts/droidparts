@@ -19,10 +19,12 @@ import static android.content.pm.ApplicationInfo.FLAG_DEBUGGABLE;
 import static android.content.pm.PackageManager.COMPONENT_ENABLED_STATE_DISABLED;
 import static android.content.pm.PackageManager.COMPONENT_ENABLED_STATE_ENABLED;
 import static android.content.pm.PackageManager.DONT_KILL_APP;
+import static android.content.pm.PackageManager.GET_META_DATA;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
+import android.content.pm.PackageManager.NameNotFoundException;
 import android.provider.Settings.Secure;
 
 public class AppUtils {
@@ -42,6 +44,27 @@ public class AppUtils {
 	public boolean canInstallApps() {
 		return Secure.getInt(ctx.getContentResolver(),
 				Secure.INSTALL_NON_MARKET_APPS, 0) != 0;
+	}
+
+	public String getVersionName() {
+		String verName = "?";
+		try {
+			verName = ctx.getPackageManager().getPackageInfo(
+					ctx.getPackageName(), 0).versionName;
+		} catch (NameNotFoundException e) {
+			L.e(e);
+		}
+		return verName;
+	}
+
+	public boolean isInstalled(String packageName) {
+		try {
+			ctx.getPackageManager().getApplicationInfo(packageName,
+					GET_META_DATA);
+			return true;
+		} catch (NameNotFoundException e) {
+			return false;
+		}
 	}
 
 	public static void setComponentEnabled(Context ctx,
