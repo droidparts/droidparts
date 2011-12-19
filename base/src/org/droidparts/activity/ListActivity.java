@@ -20,16 +20,15 @@ import org.droidparts.annotation.inject.InjectView;
 import org.droidparts.inject.Injector;
 
 import android.os.Bundle;
-import android.widget.ListView;
 import android.widget.TextView;
 
 public abstract class ListActivity extends android.app.ListActivity implements
 		Injectable {
 
+	// @InjectView(android.R.id.list)
+	// private ListView listView;
 	@InjectView(android.R.id.empty)
-	protected TextView emptyView;
-	@InjectView(android.R.id.list)
-	protected ListView listView;
+	private TextView emptyView;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -40,7 +39,11 @@ public abstract class ListActivity extends android.app.ListActivity implements
 
 	@Override
 	public void onPreInject() {
-		setContentView(R.layout.droidparts_list_activity);
+		setContentView(R.layout.activity_list);
+	}
+
+	public void setEmptyText(CharSequence text) {
+		emptyView.setText(text);
 	}
 
 }
