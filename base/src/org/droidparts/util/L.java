@@ -44,16 +44,22 @@ public class L {
 		log(ERROR, msg);
 	}
 
+	public static void wtf() {
+		e("WTF?!");
+	}
+
 	private static void log(int priority, Object msg) {
 		Log.println(priority, getTag(), String.valueOf(msg));
 	}
 
 	private static String getTag() {
-		// TODO
-		return "";
+		// TODO only pkg name for non-debug mode
+		StackTraceElement caller = Thread.currentThread().getStackTrace()[5];
+		String tag = caller.getClassName() + ":" + caller.getLineNumber();
+		return tag;
 	}
 
 	private L() {
-	};
+	}
 
 }

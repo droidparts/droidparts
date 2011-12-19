@@ -26,26 +26,18 @@ public class HTTPException extends Exception {
 
 	private final int code;
 
-	public static HTTPException unexpected(Throwable cause) {
-		return new HTTPException(-1, cause);
-	}
-
-	public static HTTPException unexpected(String message) {
-		return new HTTPException(-1, message);
-	}
-
 	public HTTPException(int code) {
 		this.code = code;
 	}
 
-	public HTTPException(int code, Throwable cause) {
+	public HTTPException(Throwable cause) {
 		super(cause);
-		this.code = code;
+		code = -1;
 	}
 
-	public HTTPException(int code, String message) {
+	public HTTPException(String message) {
 		super(message);
-		this.code = code;
+		code = -1;
 	}
 
 	/**
@@ -59,7 +51,7 @@ public class HTTPException extends Exception {
 	public String getMessage() {
 		String superMsg = super.getMessage();
 		if (isEmpty(superMsg)) {
-			return toString();
+			return "HTTP response code: " + code;
 		} else {
 			return superMsg;
 		}
@@ -67,6 +59,6 @@ public class HTTPException extends Exception {
 
 	@Override
 	public String toString() {
-		return "HTTP response code: " + code;
+		return getMessage();
 	}
 }

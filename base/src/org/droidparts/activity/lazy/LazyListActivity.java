@@ -17,14 +17,18 @@ package org.droidparts.activity.lazy;
 
 import static android.widget.Toast.LENGTH_LONG;
 
+import org.droidparts.R;
 import org.droidparts.activity.ListActivity;
 
 import android.view.Window;
 import android.widget.Toast;
 
-import org.droidparts.R;
-
 public class LazyListActivity extends ListActivity implements LazyLoadable {
+
+	@Override
+	public void onPreInject() {
+		requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
+	}
 
 	@Override
 	public void setLoadingState() {
@@ -42,11 +46,6 @@ public class LazyListActivity extends ListActivity implements LazyLoadable {
 	public void onException(Exception e) {
 		setDefaultState();
 		Toast.makeText(this, "" + e.getMessage(), LENGTH_LONG).show();
-	}
-
-	@Override
-	protected int getWindowFeature() {
-		return Window.FEATURE_INDETERMINATE_PROGRESS;
 	}
 
 }

@@ -48,7 +48,11 @@ public class ModuleInjector {
 				try {
 					val = method.invoke(module);
 				} catch (Exception e) {
-					throw new IllegalArgumentException(e);
+					try {
+						val = method.invoke(module, ctx);
+					} catch (Exception ex) {
+						throw new IllegalArgumentException(e);
+					}
 				}
 				if (val != null) {
 					ReflectionUtils.setFieldVal(field, target, val);

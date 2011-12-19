@@ -51,7 +51,6 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.impl.conn.SingleClientConnManager;
 import org.droidparts.util.L;
 
-
 public class RESTClient {
 
 	protected final DefaultHttpClient client;
@@ -118,7 +117,7 @@ public class RESTClient {
 			req.setEntity(entity);
 		} catch (UnsupportedEncodingException e) {
 			L.d(e);
-			throw HTTPException.unexpected(e);
+			throw new HTTPException(e);
 		}
 		HttpResponse resp = getResponse(req);
 		Header loc = resp.getLastHeader("Location");
@@ -143,7 +142,7 @@ public class RESTClient {
 			req.setEntity(entity);
 		} catch (UnsupportedEncodingException e) {
 			L.e(e);
-			throw HTTPException.unexpected(e);
+			throw new HTTPException(e);
 		}
 		HttpResponse resp = getResponse(req);
 		String respStr = getResponseBody(resp);
@@ -168,13 +167,12 @@ public class RESTClient {
 			BufferedInputStream bis = new EntityInputStream(is, entity);
 			return bis;
 		} catch (Exception e) {
-			e.printStackTrace();
-			throw HTTPException.unexpected(e);
+			L.d(e);
+			throw new HTTPException(e);
 		}
 	}
 
-	protected HttpResponse getResponse(HttpUriRequest req)
-			throws HTTPException {
+	protected HttpResponse getResponse(HttpUriRequest req) throws HTTPException {
 		for (String name : headers.keySet()) {
 			req.setHeader(name, headers.get(name));
 		}
@@ -192,7 +190,7 @@ public class RESTClient {
 			return resp;
 		} catch (IOException e) {
 			L.d(e);
-			throw HTTPException.unexpected(e);
+			throw new HTTPException(e);
 		}
 	}
 
@@ -218,7 +216,7 @@ public class RESTClient {
 			}
 		} catch (Exception e) {
 			L.d(e);
-			throw HTTPException.unexpected(e);
+			throw new HTTPException(e);
 		} finally {
 			silentlyClose(br);
 		}

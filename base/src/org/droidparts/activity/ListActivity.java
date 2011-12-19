@@ -23,7 +23,8 @@ import android.os.Bundle;
 import android.widget.ListView;
 import android.widget.TextView;
 
-public class ListActivity extends android.app.ListActivity {
+public abstract class ListActivity extends android.app.ListActivity implements
+		Injectable {
 
 	@InjectView(android.R.id.empty)
 	protected TextView emptyView;
@@ -33,20 +34,13 @@ public class ListActivity extends android.app.ListActivity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		int windowFeature = getWindowFeature();
-		if (windowFeature != -1) {
-			requestWindowFeature(windowFeature);
-		}
-		setContentView(getContentViewId());
+		onPreInject();
 		Injector.inject(this);
 	}
 
-	protected int getWindowFeature() {
-		return -1;
-	}
-
-	protected int getContentViewId() {
-		return R.layout.droidparts_list_activity;
+	@Override
+	public void onPreInject() {
+		setContentView(R.layout.droidparts_list_activity);
 	}
 
 }

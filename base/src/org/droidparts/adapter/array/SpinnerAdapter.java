@@ -13,29 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License. 
  */
-package org.droidparts.adapter.spinner;
+package org.droidparts.adapter.array;
 
 import java.util.List;
 
-import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 
 public class SpinnerAdapter<T> extends ArrayAdapter<T> {
 
 	protected final Spinner spinner;
 
-	public SpinnerAdapter(Spinner spinner, T[] arr) {
-		this(spinner, android.R.layout.simple_spinner_item, arr);
-	}
-
 	public SpinnerAdapter(Spinner spinner, List<T> list) {
 		this(spinner, android.R.layout.simple_spinner_item, list);
-	}
-
-	protected SpinnerAdapter(Spinner spinner, int textViewResourceId, T[] arr) {
-		super(spinner.getContext(), textViewResourceId, arr);
-		setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-		this.spinner = spinner;
 	}
 
 	protected SpinnerAdapter(Spinner spinner, int textViewResourceId,
@@ -43,6 +32,16 @@ public class SpinnerAdapter<T> extends ArrayAdapter<T> {
 		super(spinner.getContext(), textViewResourceId, list);
 		setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 		this.spinner = spinner;
+	}
+
+	public void setSelectedItem(T item) {
+		for (int i = 0; i < getCount(); i++) {
+			T it = getItem(i);
+			if (it.equals(item)) {
+				spinner.setSelection(i);
+				break;
+			}
+		}
 	}
 
 	public T getSelectedItem() {

@@ -17,8 +17,8 @@ package org.droidparts.model;
 
 public class Tuple<K, V> {
 
-	public K k;
-	public V v;
+	public final K k;
+	public final V v;
 
 	public Tuple(K k, V v) {
 		this.k = k;
@@ -53,7 +53,7 @@ public class Tuple<K, V> {
 		} else if (k != null) {
 			return k.toString();
 		} else {
-			return String.valueOf(null);
+			return super.toString();
 		}
 	}
 }
