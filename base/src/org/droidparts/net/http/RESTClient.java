@@ -29,7 +29,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
-import java.lang.reflect.Method;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.zip.GZIPInputStream;
@@ -49,20 +48,31 @@ import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.impl.conn.SingleClientConnManager;
+import org.apache.http.params.HttpConnectionParams;
+import org.apache.http.params.HttpParams;
+import org.apache.http.params.HttpProtocolParams;
+import org.droidparts.model.Tuple;
 import org.droidparts.util.L;
 
 public class RESTClient {
 
-	protected final DefaultHttpClient client;
-	protected final HashMap<String, String> headers = new HashMap<String, String>();
+	private static final int SOCKET_OPERATION_TIMEOUT = 60 * 1000;
+
+	private AndroidHttpClientWrapper androidHttpClient;
+	private DefaultHttpClient defaultHttpClient;
+
+	private final HashMap<String, String> headers = new HashMap<String, String>();
 
 	public RESTClient(String userAgent) {
-		client = getClient(userAgent);
+		initClient(userAgent);
 	}
+
+	//
 
 	public void setHeader(String key, String value) {
 		if (isEmpty(key) || isEmpty(value)) {
-			L.w("Empty header key or value.");
+			throw new IllegalArgumentException("Key: " + key + ", value: "
+					+ value + " should be non-null.");
 		} else {
 			headers.put(key, value);
 		}
@@ -71,14 +81,16 @@ public class RESTClient {
 	public void setProxy(URL proxy, String username, String password) {
 		HttpHost proxyHost = new HttpHost(proxy.getHost(), proxy.getPort(),
 				proxy.getProtocol());
-		client.getParams().setParameter(DEFAULT_PROXY, proxyHost);
+		// TODO androidHttpClient
+		defaultHttpClient.getParams().setParameter(DEFAULT_PROXY, proxyHost);
 		if (!isEmpty(username) && !isEmpty(password)) {
 			AuthScope authScope = new AuthScope(proxy.getHost(),
 					proxy.getPort());
 			UsernamePasswordCredentials credentials = new UsernamePasswordCredentials(
 					username, password);
-			client.getCredentialsProvider().setCredentials(authScope,
-					credentials);
+			// TODO androidHttpClient
+			defaultHttpClient.getCredentialsProvider().setCredentials(
+					authScope, credentials);
 		}
 	}
 
@@ -86,15 +98,16 @@ public class RESTClient {
 		AuthScope authScope = new AuthScope(ANY_HOST, ANY_PORT);
 		UsernamePasswordCredentials credentials = new UsernamePasswordCredentials(
 				username, password);
-		client.getCredentialsProvider().setCredentials(authScope, credentials);
+		// TODO androidHttpClient
+		defaultHttpClient.getCredentialsProvider().setCredentials(authScope,
+				credentials);
 	}
 
+	//
+
 	public void close() {
-		try {
-			Method m = client.getClass().getDeclaredMethod("close");
-			m.invoke(client);
-		} catch (Exception e) {
-			L.d(e);
+		if (androidHttpClient != null) {
+			androidHttpClient.close();
 		}
 	}
 
@@ -116,7 +129,6 @@ public class RESTClient {
 			entity.setContentType(contentEncoding);
 			req.setEntity(entity);
 		} catch (UnsupportedEncodingException e) {
-			L.d(e);
 			throw new HTTPException(e);
 		}
 		HttpResponse resp = getResponse(req);
@@ -157,17 +169,19 @@ public class RESTClient {
 		consumeResponse(resp);
 	}
 
-	public BufferedInputStream getInputStream(String uri) throws HTTPException {
+	public Tuple<Integer, BufferedInputStream> getInputStream(String uri)
+			throws HTTPException {
 		L.d("InputStream on " + uri);
 		HttpGet req = new HttpGet(uri);
 		HttpResponse resp = getResponse(req);
 		HttpEntity entity = resp.getEntity();
+		// 2G limit
+		int contentLength = (int) entity.getContentLength();
 		try {
 			InputStream is = getUnpackedInputStream(entity);
 			BufferedInputStream bis = new EntityInputStream(is, entity);
-			return bis;
+			return new Tuple<Integer, BufferedInputStream>(contentLength, bis);
 		} catch (Exception e) {
-			L.d(e);
 			throw new HTTPException(e);
 		}
 	}
@@ -180,7 +194,11 @@ public class RESTClient {
 		try {
 			HttpResponse resp;
 			synchronized (SingleClientConnManager.class) {
-				resp = client.execute(req);
+				if (androidHttpClient == null) {
+					resp = defaultHttpClient.execute(req);
+				} else {
+					resp = androidHttpClient.execute(req);
+				}
 			}
 			int respCode = resp.getStatusLine().getStatusCode();
 			if (respCode >= 400) {
@@ -189,7 +207,6 @@ public class RESTClient {
 			}
 			return resp;
 		} catch (IOException e) {
-			L.d(e);
 			throw new HTTPException(e);
 		}
 	}
@@ -215,7 +232,6 @@ public class RESTClient {
 				sb.append(line);
 			}
 		} catch (Exception e) {
-			L.d(e);
 			throw new HTTPException(e);
 		} finally {
 			silentlyClose(br);
@@ -244,20 +260,22 @@ public class RESTClient {
 		return is;
 	}
 
-	private DefaultHttpClient getClient(String userAgent) {
-		DefaultHttpClient client;
-		try {
-			// API 8
-			Class<?> cl = Class.forName("android.net.http.AndroidHttpClient");
-			Method m = cl.getDeclaredMethod("newInstance", String.class);
-			// FIXME AndroidHttpClient is not a subclass of DefaultHttpClient
-			client = (DefaultHttpClient) m.invoke(null, userAgent);
-		} catch (Exception e) {
-			L.d(e);
-			client = new DefaultHttpClient();
-			client.getParams().setParameter("http.useragent", userAgent);
+	private void initClient(String userAgent) {
+		// TODO
+		// try {
+		// androidHttpClient = new AndroidHttpClientWrapper(userAgent);
+		// } catch (Exception e) {
+		defaultHttpClient = new DefaultHttpClient();
+		HttpParams params = defaultHttpClient.getParams();
+		HttpConnectionParams.setConnectionTimeout(params,
+				SOCKET_OPERATION_TIMEOUT);
+		HttpConnectionParams.setSoTimeout(params, SOCKET_OPERATION_TIMEOUT);
+		HttpConnectionParams.setSocketBufferSize(params, BUFFER_SIZE);
+		if (userAgent != null) {
+			HttpProtocolParams.setUserAgent(params, userAgent);
 		}
-		return client;
+		// }
+
 	}
 
 	protected static final class EntityInputStream extends BufferedInputStream {
