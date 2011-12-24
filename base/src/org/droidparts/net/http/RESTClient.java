@@ -25,6 +25,7 @@ import static org.droidparts.util.IOUtils.silentlyClose;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
+import java.io.Closeable;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -54,7 +55,7 @@ import org.apache.http.params.HttpProtocolParams;
 import org.droidparts.model.Tuple;
 import org.droidparts.util.L;
 
-public class RESTClient {
+public class RESTClient implements Closeable {
 
 	private static final int SOCKET_OPERATION_TIMEOUT = 60 * 1000;
 
@@ -105,6 +106,7 @@ public class RESTClient {
 
 	//
 
+	@Override
 	public void close() {
 		if (androidHttpClient != null) {
 			androidHttpClient.close();

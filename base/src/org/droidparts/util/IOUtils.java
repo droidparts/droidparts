@@ -19,7 +19,6 @@ import static org.droidparts.contract.Constants.UTF8;
 
 import java.io.Closeable;
 import java.io.UnsupportedEncodingException;
-import java.util.zip.ZipFile;
 
 public class IOUtils {
 
@@ -31,25 +30,13 @@ public class IOUtils {
 		}
 	}
 
-	public static void silentlyClose(Closeable... streams) {
-		for (Closeable stream : streams) {
-			if (stream != null) {
+	public static void silentlyClose(Closeable... closeables) {
+		for (Closeable cl : closeables) {
+			if (cl != null) {
 				try {
-					stream.close();
+					cl.close();
 				} catch (Exception e) {
-					L.e(e);
-				}
-			}
-		}
-	}
-
-	public static void silentlyClose(ZipFile... files) {
-		for (ZipFile file : files) {
-			if (file != null) {
-				try {
-					file.close();
-				} catch (Exception e) {
-					L.e(e);
+					L.d(e);
 				}
 			}
 		}

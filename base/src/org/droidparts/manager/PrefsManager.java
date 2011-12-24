@@ -15,6 +15,11 @@
  */
 package org.droidparts.manager;
 
+import static android.content.Context.MODE_PRIVATE;
+import static org.droidparts.util.Strings.isEmpty;
+
+import org.droidparts.inject.Injector;
+
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
@@ -24,13 +29,24 @@ public class PrefsManager {
 
 	private static final String VERSION = "__prefs_version__";
 
+	protected final Context ctx;
 	protected final Resources res;
 	protected final SharedPreferences prefs;
 
-	public PrefsManager(Context ctx, int version) {
+	public PrefsManager(Context ctx, String prefsName, int version) {
+		Injector.inject(ctx, this);
+		this.ctx = ctx;
 		res = ctx.getResources();
-		prefs = PreferenceManager.getDefaultSharedPreferences(ctx);
+		if (isEmpty(prefsName)) {
+			prefs = PreferenceManager.getDefaultSharedPreferences(ctx);
+		} else {
+			prefs = ctx.getSharedPreferences(prefsName, MODE_PRIVATE);
+		}
 		init(version);
+	}
+
+	public SharedPreferences getPrefs() {
+		return prefs;
 	}
 
 	private void init(int newVersion) {
