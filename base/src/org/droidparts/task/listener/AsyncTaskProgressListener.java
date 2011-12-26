@@ -13,24 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License. 
  */
-package org.droidparts.task;
+package org.droidparts.task.listener;
 
-import org.droidparts.task.listener.AsyncTaskResultListener;
+public interface AsyncTaskProgressListener {
 
-import android.content.Context;
+	void show();
 
-public abstract class SimpleAsyncTask<Result> extends
-		AsyncTask<Void, Integer, Result> {
+	void setTitle(CharSequence title);
 
-	public SimpleAsyncTask(Context ctx, AsyncTaskResultListener<Result> listener) {
-		super(ctx, listener);
-	}
+	void setMessage(CharSequence message);
 
-	@Override
-	protected final Result executeInBackground(Void... params) throws Exception {
-		return executeInBackground();
-	}
-
-	protected abstract Result executeInBackground() throws Exception;
+	void cancel();
 
 }

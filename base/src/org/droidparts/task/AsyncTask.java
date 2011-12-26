@@ -17,6 +17,7 @@ package org.droidparts.task;
 
 import org.droidparts.inject.Injector;
 import org.droidparts.model.Tuple;
+import org.droidparts.task.listener.AsyncTaskResultListener;
 
 import android.content.Context;
 
@@ -24,13 +25,13 @@ public abstract class AsyncTask<Params, Progress, Result> extends
 		android.os.AsyncTask<Params, Progress, Tuple<Exception, Result>> {
 
 	protected final Context ctx;
-	protected final AsyncTaskListener<Result> listener;
+	protected final AsyncTaskResultListener<Result> listener;
 
 	public AsyncTask(Context ctx) {
 		this(ctx, null);
 	}
 
-	public AsyncTask(Context ctx, AsyncTaskListener<Result> listener) {
+	public AsyncTask(Context ctx, AsyncTaskResultListener<Result> listener) {
 		this.ctx = ctx;
 		this.listener = listener;
 		Injector.inject(ctx, this);

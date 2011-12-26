@@ -13,12 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License. 
  */
-package org.droidparts.task;
+package org.droidparts.task.listener;
 
-public interface AsyncTaskListener<Result> {
+public interface AsyncTaskResultListener<Result> {
 
 	void onAsyncTaskSuccess(Result result);
 
-	void onAsyncTaskFailure(Exception exception);
+	void onAsyncTaskFailure(Exception e);
 
 }
