@@ -13,16 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License. 
  */
-package org.droidparts.task.listener;
+package org.droidparts.service;
 
-public interface AsyncTaskProgressListener {
+import org.droidparts.inject.Injector;
 
-	void show();
+public abstract class IntentService extends android.app.IntentService {
 
-	void setTitle(CharSequence title);
-
-	void setMessage(CharSequence message);
-
-	void dismiss();
+	public IntentService(String name) {
+		super(name);
+		Injector.inject(this);
+	}
 
 }
