@@ -13,25 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License. 
  */
-package org.droidparts.activity;
+package org.droidparts.demo;
 
-import org.droidparts.inject.Injector;
+import org.droidparts.activity.AsyncListActivity;
 
-import android.os.Bundle;
-
-public abstract class PreferenceActivity extends
-		android.preference.PreferenceActivity implements DroidpartsActivity {
-
-	@Override
-	protected void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		onPreInject();
-		Injector.inject(this);
-	}
-
-	@Override
-	public void onPreInject() {
-
-	}
-
+public class HomeActivity extends AsyncListActivity {
 }

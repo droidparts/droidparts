@@ -13,34 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License. 
  */
-package org.droidparts.activity;
+package org.droidparts.fragment;
 
 import org.droidparts.inject.Injector;
 
-import android.content.Intent;
 import android.os.Bundle;
-import android.widget.TabHost.TabSpec;
 
-public abstract class TabActivity extends android.app.TabActivity implements
-		DroidpartsActivity {
+public class ListFragment extends android.support.v4.app.ListFragment {
 
 	@Override
-	protected void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		onPreInject();
-		Injector.inject(this);
-	}
-
-	@Override
-	public void onPreInject() {
-
-	}
-
-	protected void addTab(String tag, int textId, int imgId, Intent intent) {
-		TabSpec tab = getTabHost().newTabSpec(tag);
-		tab.setIndicator(getString(textId), getResources().getDrawable(imgId));
-		tab.setContent(intent);
-		getTabHost().addTab(tab);
+	public void onActivityCreated(Bundle savedInstanceState) {
+		super.onActivityCreated(savedInstanceState);
+		Injector.inject(getView(), this);
 	}
 
 }

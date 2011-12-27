@@ -13,10 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License. 
  */
-package org.droidparts.activity;
+package org.droidparts.fragment;
 
-interface Injectable {
+import org.droidparts.inject.Injector;
 
-	void onPreInject();
+import android.os.Bundle;
+
+public class Fragment extends android.support.v4.app.Fragment {
+
+	@Override
+	public void onActivityCreated(Bundle savedInstanceState) {
+		super.onActivityCreated(savedInstanceState);
+		Injector.inject(getView(), this);
+	}
 
 }

@@ -15,14 +15,13 @@
  */
 package org.droidparts.activity;
 
+import org.droidparts.activity.DroidpartsActivity;
 import org.droidparts.inject.Injector;
 
-import android.content.Intent;
 import android.os.Bundle;
-import android.widget.TabHost.TabSpec;
 
-public abstract class TabActivity extends android.app.TabActivity implements
-		DroidpartsActivity {
+public abstract class FragmentActivity extends
+		android.support.v4.app.FragmentActivity implements DroidpartsActivity {
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -33,14 +32,6 @@ public abstract class TabActivity extends android.app.TabActivity implements
 
 	@Override
 	public void onPreInject() {
-
-	}
-
-	protected void addTab(String tag, int textId, int imgId, Intent intent) {
-		TabSpec tab = getTabHost().newTabSpec(tag);
-		tab.setIndicator(getString(textId), getResources().getDrawable(imgId));
-		tab.setContent(intent);
-		getTabHost().addTab(tab);
 	}
 
 }

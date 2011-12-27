@@ -15,23 +15,8 @@
  */
 package org.droidparts.activity;
 
-import org.droidparts.inject.Injector;
+public interface DroidpartsActivity {
 
-import android.os.Bundle;
-
-public abstract class PreferenceActivity extends
-		android.preference.PreferenceActivity implements DroidpartsActivity {
-
-	@Override
-	protected void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		onPreInject();
-		Injector.inject(this);
-	}
-
-	@Override
-	public void onPreInject() {
-
-	}
+	void onPreInject();
 
 }
