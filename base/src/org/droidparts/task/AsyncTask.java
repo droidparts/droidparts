@@ -17,6 +17,7 @@ package org.droidparts.task;
 
 import org.droidparts.inject.Injector;
 import org.droidparts.model.Tuple;
+import org.droidparts.task.listener.AsyncTaskProgressListener;
 import org.droidparts.task.listener.AsyncTaskResultListener;
 
 import android.content.Context;
@@ -25,16 +26,26 @@ public abstract class AsyncTask<Params, Progress, Result> extends
 		android.os.AsyncTask<Params, Progress, Tuple<Exception, Result>> {
 
 	protected final Context ctx;
-	protected final AsyncTaskResultListener<Result> listener;
+	protected final AsyncTaskProgressListener progressListener;
+	protected final AsyncTaskResultListener<Result> resultListener;
 
 	public AsyncTask(Context ctx) {
-		this(ctx, null);
+		this(ctx, null, null);
 	}
 
-	public AsyncTask(Context ctx, AsyncTaskResultListener<Result> listener) {
-		this.ctx = ctx;
-		this.listener = listener;
+	public AsyncTask(Context ctx, AsyncTaskProgressListener progressListener,
+			AsyncTaskResultListener<Result> resultListener) {
 		Injector.inject(ctx, this);
+		this.ctx = ctx;
+		this.progressListener = progressListener;
+		this.resultListener = resultListener;
+	}
+
+	@Override
+	protected void onPreExecute() {
+		if (progressListener != null) {
+			progressListener.show();
+		}
 	}
 
 	@Override
@@ -50,7 +61,17 @@ public abstract class AsyncTask<Params, Progress, Result> extends
 	}
 
 	@Override
+	protected void onCancelled() {
+		if (progressListener != null) {
+			progressListener.dismiss();
+		}
+	}
+
+	@Override
 	protected final void onPostExecute(Tuple<Exception, Result> result) {
+		if (progressListener != null) {
+			progressListener.dismiss();
+		}
 		if (result.k != null) {
 			onFailurePostExecute(result.k);
 		} else {
@@ -62,14 +83,14 @@ public abstract class AsyncTask<Params, Progress, Result> extends
 			throws Exception;
 
 	protected void onSuccessPostExecute(Result result) {
-		if (listener != null) {
-			listener.onAsyncTaskSuccess(result);
+		if (resultListener != null) {
+			resultListener.onAsyncTaskSuccess(result);
 		}
 	}
 
 	protected void onFailurePostExecute(Exception exception) {
-		if (listener != null) {
-			listener.onAsyncTaskFailure(exception);
+		if (resultListener != null) {
+			resultListener.onAsyncTaskFailure(exception);
 		}
 	}
 

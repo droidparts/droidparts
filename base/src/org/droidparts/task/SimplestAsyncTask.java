@@ -19,18 +19,12 @@ import org.droidparts.task.listener.AsyncTaskResultListener;
 
 import android.content.Context;
 
-public abstract class SimpleAsyncTask<Result> extends
-		AsyncTask<Void, Integer, Result> {
+public abstract class SimplestAsyncTask<Result> extends
+		SimplerAsyncTask<Integer, Result> {
 
-	public SimpleAsyncTask(Context ctx, AsyncTaskResultListener<Result> listener) {
-		super(ctx, listener);
+	public SimplestAsyncTask(Context ctx,
+			AsyncTaskResultListener<Result> resultListener) {
+		super(ctx, null, resultListener);
 	}
-
-	@Override
-	protected final Result executeInBackground(Void... params) throws Exception {
-		return executeInBackground();
-	}
-
-	protected abstract Result executeInBackground() throws Exception;
 
 }
