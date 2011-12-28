@@ -13,24 +13,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License. 
  */
-package org.droidparts.util;
+package org.droidparts.util.intent;
 
 import static android.content.Intent.ACTION_VIEW;
-import static android.widget.Toast.LENGTH_SHORT;
 
 import org.droidparts.R;
+import org.droidparts.util.DialogFactory;
+import org.droidparts.util.L;
 
 import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
-import android.widget.Toast;
 
-public class AndroidMarketUtils {
+public class AndroidMarketHelper {
 
 	private final Context ctx;
 
-	public AndroidMarketUtils(Context ctx) {
+	public AndroidMarketHelper(Context ctx) {
 		this.ctx = ctx;
 	}
 
@@ -52,8 +52,7 @@ public class AndroidMarketUtils {
 			ctx.startActivity(intent);
 		} catch (ActivityNotFoundException e) {
 			L.e(e);
-			Toast.makeText(ctx, R.string.error_no_android_market, LENGTH_SHORT)
-					.show();
+			new DialogFactory(ctx).showToast(R.string.error_no_android_market);
 		}
 	}
 
