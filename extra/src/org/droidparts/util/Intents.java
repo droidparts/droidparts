@@ -15,6 +15,62 @@
  */
 package org.droidparts.util;
 
+import static android.content.Intent.ACTION_DIAL;
+import static android.content.Intent.ACTION_SEND;
+import static android.content.Intent.ACTION_SENDTO;
+import static android.content.Intent.ACTION_VIEW;
+import static android.content.Intent.EXTRA_SUBJECT;
+import static android.content.Intent.EXTRA_TEXT;
+import static org.droidparts.util.Strings.isNotEmpty;
+import android.content.ActivityNotFoundException;
+import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
+
 public class Intents {
+
+	public static void startOrWarn(Context ctx, Intent intent) {
+		try {
+			ctx.startActivity(intent);
+		} catch (ActivityNotFoundException e) {
+			// TODO warn
+			L.e(e);
+		}
+	}
+
+	public static Intent share(String subject, String body) {
+		Intent intent = new Intent(ACTION_SEND);
+		intent.setType("text/plain");
+		intent.putExtra(EXTRA_SUBJECT, subject);
+		intent.putExtra(EXTRA_TEXT, body);
+		return intent;
+	}
+
+	public static Intent sendEmail(String mailTo, String subject, String body) {
+		Intent intent = new Intent(ACTION_SENDTO);
+		intent.setType("text/plain");
+		if (mailTo == null) {
+			mailTo = "";
+		}
+		intent.setData(Uri.parse("mailto:" + mailTo));
+		if (isNotEmpty(subject)) {
+			intent.putExtra(EXTRA_SUBJECT, subject);
+		}
+		if (isNotEmpty(body)) {
+			intent.putExtra(EXTRA_TEXT, body);
+		}
+		return intent;
+	}
+
+	public static Intent openUrl(String webAddress) {
+		Intent intent = new Intent(ACTION_VIEW, Uri.parse(webAddress));
+		return intent;
+	}
+
+	public static Intent dial(String phoneNumber) {
+		Intent intent = new Intent(ACTION_DIAL);
+		intent.setData(Uri.parse("tel:" + phoneNumber));
+		return intent;
+	}
 
 }
