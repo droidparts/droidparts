@@ -23,7 +23,7 @@ import android.os.Bundle;
 import android.widget.TextView;
 
 public abstract class ListActivity extends android.app.ListActivity implements
-		DroidpartsActivity {
+		Injected {
 
 	// @InjectView(android.R.id.list)
 	// private ListView listView;
