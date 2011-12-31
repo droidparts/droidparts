@@ -1,1 +1,15 @@
 DroidParts is an Android utility library.
+
+Proguard:
+
+# droidparts
+
+-keepattributes Signature, *Annotation*
+-keep public class * extends org.droidparts.inject.AbstractModule
+-keepclassmembers class * extends org.droidparts.inject.AbstractModule {
+    *;
+}
+-keep public class * extends org.droidparts.model.Model
+-keepclassmembers class * extends org.droidparts.model.Model {
+    *;
+}

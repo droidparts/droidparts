@@ -22,7 +22,7 @@ import android.os.Bundle;
 import android.widget.TabHost.TabSpec;
 
 public abstract class TabActivity extends android.app.TabActivity implements
-		DroidpartsActivity {
+		Injected {
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {

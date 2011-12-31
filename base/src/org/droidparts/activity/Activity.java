@@ -15,8 +15,23 @@
  */
 package org.droidparts.activity;
 
-public interface DroidpartsActivity {
+import org.droidparts.inject.Injector;
 
-	void onPreInject();
+import android.os.Bundle;
+
+public class Activity extends android.app.Activity implements
+		Injected {
+
+	@Override
+	protected void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		onPreInject();
+		Injector.inject(this);
+	}
+
+	@Override
+	public void onPreInject() {
+
+	}
 
 }

@@ -15,22 +15,8 @@
  */
 package org.droidparts.activity;
 
-import org.droidparts.inject.Injector;
+public interface Injected {
 
-import android.os.Bundle;
-
-public abstract class FragmentActivity extends
-		android.support.v4.app.FragmentActivity implements Injected {
-
-	@Override
-	protected void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		onPreInject();
-		Injector.inject(this);
-	}
-
-	@Override
-	public void onPreInject() {
-	}
+	void onPreInject();
 
 }

@@ -20,7 +20,7 @@ import org.droidparts.inject.Injector;
 import android.os.Bundle;
 
 public abstract class PreferenceActivity extends
-		android.preference.PreferenceActivity implements DroidpartsActivity {
+		android.preference.PreferenceActivity implements Injected {
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
