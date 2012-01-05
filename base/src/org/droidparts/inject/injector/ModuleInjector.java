@@ -63,6 +63,10 @@ public class ModuleInjector {
 		return false;
 	}
 
+	public static AbstractModule getModule() {
+		return module;
+	}
+
 	private static void init(Context ctx) {
 		if (!inited) {
 			synchronized (ModuleInjector.class) {

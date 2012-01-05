@@ -45,6 +45,20 @@ import android.view.View;
  */
 public class Injector {
 
+	private static Context ctx;
+
+	public static void setUp(Context ctx) {
+		Injector.ctx = ctx.getApplicationContext();
+	}
+
+	public static void tearDown() {
+		AbstractModule module = ModuleInjector.getModule();
+		if (module != null) {
+			module.getDB().close();
+		}
+		ctx = null;
+	}
+
 	public static void inject(Activity act) {
 		// XXX
 		View root = act.findViewById(android.R.id.content).getRootView();
@@ -63,8 +77,19 @@ public class Injector {
 		inject(view.getContext(), view, target);
 	}
 
+	public static void inject(Object target) {
+		if (Injector.ctx != null) {
+			inject(Injector.ctx, null, target);
+		} else {
+			throw new IllegalStateException("No context provided.");
+		}
+	}
+
 	private static void inject(Context ctx, View root, Object target) {
 		long start = System.currentTimeMillis();
+		if (Injector.ctx == null) {
+			Injector.ctx = ctx.getApplicationContext();
+		}
 		final Class<?> cls = target.getClass();
 		List<Field> fields = getClassTreeFields(cls);
 		for (Field field : fields) {
@@ -99,10 +124,6 @@ public class Injector {
 		}
 		long end = System.currentTimeMillis() - start;
 		L.d(String.format("Injected on %s in %d ms.", cls.getSimpleName(), end));
-	}
-
-	public static void shutdown() {
-		// TODO close DB
 	}
 
 	private static Bundle getIntentExtras(Context ctx) {
