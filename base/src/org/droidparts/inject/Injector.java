@@ -64,10 +64,7 @@ public class Injector {
 	}
 
 	public void tearDown() {
-		AbstractModule module = ModuleInjector.getModule();
-		if (module != null) {
-			module.getDB().close();
-		}
+		ModuleInjector.tearDown();
 		ctx = null;
 	}
 

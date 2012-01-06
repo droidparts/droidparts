@@ -20,7 +20,10 @@ import android.database.sqlite.SQLiteDatabase;
 
 public abstract class AbstractModule {
 
+	protected final Context ctx;
+
 	public AbstractModule(Context ctx) {
+		this.ctx = ctx.getApplicationContext();
 	}
 
 	public abstract SQLiteDatabase getDB();

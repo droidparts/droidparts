@@ -63,8 +63,11 @@ public class ModuleInjector {
 		return false;
 	}
 
-	public static AbstractModule getModule() {
-		return module;
+	public static void tearDown() {
+		if (module != null) {
+			module.getDB().close();
+		}
+		module = null;
 	}
 
 	private static void init(Context ctx) {
