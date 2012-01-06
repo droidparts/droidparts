@@ -33,6 +33,10 @@ public class PrefsManager {
 	protected final Resources res;
 	protected final SharedPreferences prefs;
 
+	public PrefsManager(Context ctx, int version) {
+		this(ctx, null, version);
+	}
+
 	public PrefsManager(Context ctx, String prefsName, int version) {
 		Injector.get().inject(ctx, this);
 		this.ctx = ctx;
