@@ -15,9 +15,28 @@
  */
 package org.droidparts.fragment;
 
+import org.droidparts.inject.Injector;
+
+import android.support.v4.app.SupportActivity;
+import android.view.View;
 
 public class DialogFragment extends android.support.v4.app.DialogFragment {
 
-	// TODO
+	protected View contentView;
+
+	@Override
+	public void onAttach(SupportActivity activity) {
+		super.onAttach(activity);
+		int contentViewId = getContentViewId();
+		if (contentViewId != 0) {
+			contentView = getActivity().getLayoutInflater().inflate(
+					contentViewId, null);
+			Injector.inject(contentView, this);
+		}
+	}
+
+	protected int getContentViewId() {
+		return 0;
+	}
 
 }
