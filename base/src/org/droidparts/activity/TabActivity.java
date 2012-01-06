@@ -28,7 +28,7 @@ public abstract class TabActivity extends android.app.TabActivity implements
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		onPreInject();
-		Injector.inject(this);
+		Injector.get().inject(this);
 	}
 
 	@Override

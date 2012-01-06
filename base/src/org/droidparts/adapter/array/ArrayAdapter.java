@@ -35,7 +35,7 @@ public class ArrayAdapter<T> extends android.widget.ArrayAdapter<T> {
 
 	protected ArrayAdapter(Context ctx, int textViewResourceId, List<T> objects) {
 		super(ctx, textViewResourceId, objects);
-		Injector.inject(ctx, this);
+		Injector.get().inject(ctx, this);
 	}
 
 	public void reset(List<T> list) {

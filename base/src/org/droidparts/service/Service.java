@@ -22,7 +22,7 @@ public abstract class Service extends android.app.Service {
 	@Override
 	public void onCreate() {
 		super.onCreate();
-		Injector.inject(this);
+		Injector.get().inject(this);
 	}
 
 }

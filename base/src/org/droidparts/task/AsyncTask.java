@@ -35,7 +35,7 @@ public abstract class AsyncTask<Params, Progress, Result> extends
 
 	public AsyncTask(Context ctx, AsyncTaskProgressListener progressListener,
 			AsyncTaskResultListener<Result> resultListener) {
-		Injector.inject(ctx, this);
+		Injector.get().inject(ctx, this);
 		this.ctx = ctx;
 		this.progressListener = progressListener;
 		this.resultListener = resultListener;

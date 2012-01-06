@@ -34,7 +34,7 @@ public abstract class ListActivity extends android.app.ListActivity implements
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		onPreInject();
-		Injector.inject(this);
+		Injector.get().inject(this);
 	}
 
 	@Override

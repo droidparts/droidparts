@@ -17,33 +17,34 @@ package org.droidparts.inject.injector;
 
 import java.lang.reflect.Field;
 
-import org.droidparts.annotation.inject.InjectView;
+import org.droidparts.annotation.inject.InjectFragment;
 import org.droidparts.reflection.util.ReflectionUtils;
 import org.droidparts.util.L;
 import org.droidparts.util.inner.ResourceUtils;
 
-import android.content.Context;
-import android.view.View;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
 
-public class ViewInjector {
+public class FragmentInjector {
 
-	public static boolean inject(Context ctx, View root, InjectView ann,
-			Object target, Field field) {
-		int viewId = ann.value();
-		if (viewId == 0) {
+	public static boolean inject(FragmentActivity activity, InjectFragment ann,
+			Field field) {
+		int fragmenId = ann.value();
+		if (fragmenId == 0) {
 			String fieldName = field.getName();
-			viewId = ResourceUtils.getResourceId(ctx, fieldName);
+			fragmenId = ResourceUtils.getResourceId(activity, fieldName);
 		}
-		if (viewId != 0) {
-			View view = root.findViewById(viewId);
-			if (field.getType() != view.getClass()) {
+		if (fragmenId != 0) {
+			Fragment fragment = activity.getSupportFragmentManager()
+					.findFragmentById(fragmenId);
+			if (field.getType() != fragment.getClass()) {
 				// TODO
 				L.e("Incompatible types.");
 			}
-			ReflectionUtils.setFieldVal(field, target, view);
+			ReflectionUtils.setFieldVal(field, activity, fragment);
 			return true;
 		} else {
-			L.e("View not found.");
+			L.e("Fragment not found.");
 			return false;
 		}
 	}

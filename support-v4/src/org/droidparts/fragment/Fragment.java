@@ -15,7 +15,7 @@
  */
 package org.droidparts.fragment;
 
-import org.droidparts.inject.Injector;
+import org.droidparts.inject.FragmentsInjector;
 
 import android.os.Bundle;
 
@@ -24,7 +24,7 @@ public class Fragment extends android.support.v4.app.Fragment {
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
-		Injector.inject(getView(), this);
+		FragmentsInjector.get().inject(this);
 	}
 
 }

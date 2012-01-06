@@ -34,7 +34,7 @@ public class PrefsManager {
 	protected final SharedPreferences prefs;
 
 	public PrefsManager(Context ctx, String prefsName, int version) {
-		Injector.inject(ctx, this);
+		Injector.get().inject(ctx, this);
 		this.ctx = ctx;
 		res = ctx.getResources();
 		if (isEmpty(prefsName)) {

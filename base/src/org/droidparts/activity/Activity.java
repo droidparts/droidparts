@@ -19,14 +19,13 @@ import org.droidparts.inject.Injector;
 
 import android.os.Bundle;
 
-public class Activity extends android.app.Activity implements
-		Injected {
+public class Activity extends android.app.Activity implements Injected {
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		onPreInject();
-		Injector.inject(this);
+		Injector.get().inject(this);
 	}
 
 	@Override

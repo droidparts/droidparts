@@ -15,7 +15,7 @@
  */
 package org.droidparts.fragment;
 
-import org.droidparts.inject.Injector;
+import org.droidparts.inject.FragmentsInjector;
 
 import android.support.v4.app.SupportActivity;
 import android.view.View;
@@ -31,7 +31,7 @@ public class DialogFragment extends android.support.v4.app.DialogFragment {
 		if (contentViewId != 0) {
 			contentView = getActivity().getLayoutInflater().inflate(
 					contentViewId, null);
-			Injector.inject(contentView, this);
+			FragmentsInjector.get().inject(contentView, this);
 		}
 	}
 

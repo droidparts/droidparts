@@ -26,7 +26,7 @@ public abstract class PreferenceActivity extends
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		onPreInject();
-		Injector.inject(this);
+		Injector.get().inject(this);
 	}
 
 	@Override

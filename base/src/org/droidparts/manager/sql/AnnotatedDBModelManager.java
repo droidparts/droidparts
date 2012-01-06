@@ -60,7 +60,7 @@ public class AnnotatedDBModelManager<Model extends DBModel> extends
 	private final DBAnnotationProcessor processor;
 
 	public AnnotatedDBModelManager(Context ctx, Class<? extends DBModel> cls) {
-		Injector.inject(ctx, this);
+		Injector.get().inject(ctx, this);
 		this.ctx = ctx;
 		this.cls = cls;
 		processor = new DBAnnotationProcessor(cls);

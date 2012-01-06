@@ -45,13 +45,25 @@ import android.view.View;
  */
 public class Injector {
 
-	private static Context ctx;
+	protected static Context ctx;
+	private static Injector injector;
 
-	public static void setUp(Context ctx) {
+	public static Injector get() {
+		if (injector == null) {
+			synchronized (Injector.class) {
+				if (injector == null) {
+					injector = new Injector();
+				}
+			}
+		}
+		return injector;
+	}
+
+	public void setUp(Context ctx) {
 		Injector.ctx = ctx.getApplicationContext();
 	}
 
-	public static void tearDown() {
+	public void tearDown() {
 		AbstractModule module = ModuleInjector.getModule();
 		if (module != null) {
 			module.getDB().close();
@@ -59,33 +71,33 @@ public class Injector {
 		ctx = null;
 	}
 
-	public static void inject(Activity act) {
+	public void inject(Activity act) {
 		// XXX
 		View root = act.findViewById(android.R.id.content).getRootView();
 		inject(act, root, act);
 	}
 
-	public static void inject(Service serv) {
+	public void inject(Service serv) {
 		inject(serv, null, serv);
 	}
 
-	public static void inject(Context ctx, Object target) {
+	public void inject(Context ctx, Object target) {
 		inject(ctx, null, target);
 	}
 
-	public static void inject(View view, Object target) {
+	public void inject(View view, Object target) {
 		inject(view.getContext(), view, target);
 	}
 
-	public static void inject(Object target) {
-		if (Injector.ctx != null) {
-			inject(Injector.ctx, null, target);
+	public void inject(Object target) {
+		if (ctx != null) {
+			inject(ctx, null, target);
 		} else {
 			throw new IllegalStateException("No context provided.");
 		}
 	}
 
-	private static void inject(Context ctx, View root, Object target) {
+	protected void inject(Context ctx, View root, Object target) {
 		long start = System.currentTimeMillis();
 		if (Injector.ctx == null) {
 			Injector.ctx = ctx.getApplicationContext();
@@ -116,6 +128,8 @@ public class Injector {
 						success = ViewInjector.inject(ctx, root,
 								(InjectView) ann, target, field);
 					}
+				} else {
+					success = subInject(ctx, ann, target, field);
 				}
 				if (success) {
 					break;
@@ -126,15 +140,16 @@ public class Injector {
 		L.d(String.format("Injected on %s in %d ms.", cls.getSimpleName(), end));
 	}
 
-	private static Bundle getIntentExtras(Context ctx) {
+	protected boolean subInject(Context ctx, Annotation ann, Object target,
+			Field field) {
+		return false;
+	}
+
+	protected Bundle getIntentExtras(Context ctx) {
 		// FIXME or Service
 		Activity act = (Activity) ctx;
 		Bundle data = act.getIntent().getExtras();
 		return data;
-	}
-
-	private Injector() {
-
 	}
 
 }

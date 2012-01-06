@@ -13,24 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License. 
  */
-package org.droidparts.activity;
+package org.droidparts.annotation.inject;
 
-import org.droidparts.inject.FragmentsInjector;
+import static java.lang.annotation.ElementType.FIELD;
+import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
-import android.os.Bundle;
+import java.lang.annotation.Retention;
+import java.lang.annotation.Target;
 
-public abstract class FragmentActivity extends
-		android.support.v4.app.FragmentActivity implements Injected {
+@Retention(RUNTIME)
+@Target(FIELD)
+public @interface InjectFragment {
 
-	@Override
-	protected void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		onPreInject();
-		FragmentsInjector.get().inject(this);
-	}
-
-	@Override
-	public void onPreInject() {
-	}
+	int value() default 0;
 
 }

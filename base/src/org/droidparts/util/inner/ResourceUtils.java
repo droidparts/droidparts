@@ -19,8 +19,8 @@ import android.content.Context;
 
 public class ResourceUtils {
 
-	public static int getViewId(Context ctx, String viewName) {
-		return getId(ctx, "id", viewName);
+	public static int getResourceId(Context ctx, String resourceName) {
+		return getId(ctx, "id", resourceName);
 	}
 
 	private static int getId(Context ctx, String type, String name) {

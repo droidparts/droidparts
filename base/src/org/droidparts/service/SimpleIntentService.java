@@ -49,7 +49,7 @@ public abstract class SimpleIntentService extends android.app.IntentService {
 
 	public SimpleIntentService(String name) {
 		super(name);
-		Injector.inject(this);
+		Injector.get().inject(this);
 	}
 
 	@Override
