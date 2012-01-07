@@ -25,7 +25,7 @@ import android.database.sqlite.SQLiteDatabase;
 public abstract class DBModelManager<Model extends DBModel> implements
 		SQLConstants {
 
-	public Cursor list(String[] columns) {
+	public Cursor list(String... columns) {
 		Cursor cursor = getDB().query(getTableName(), columns, null, null,
 				null, null, null);
 		return cursor;
@@ -47,7 +47,7 @@ public abstract class DBModelManager<Model extends DBModel> implements
 	public Model read(long id) {
 		Model item = null;
 		Cursor cursor = getDB().query(getTableName(), null, Column.ID + EQUALS,
-				toWhereArgs(id), null, null, null);
+				toStrArr(id), null, null, null);
 		if (cursor.moveToFirst()) {
 			item = readFromCursor(cursor);
 		}
@@ -60,13 +60,13 @@ public abstract class DBModelManager<Model extends DBModel> implements
 		ContentValues cv = toContentValues(item);
 		cv.remove(Column.ID);
 		int rowCount = getDB().update(getTableName(), cv, Column.ID + EQUALS,
-				toWhereArgs(item.id));
+				toStrArr(item.id));
 		return rowCount > 0;
 	}
 
 	public boolean delete(long id) {
 		int rowCount = getDB().delete(getTableName(), Column.ID + EQUALS,
-				toWhereArgs(id));
+				toStrArr(id));
 		return rowCount > 0;
 	}
 
@@ -80,7 +80,7 @@ public abstract class DBModelManager<Model extends DBModel> implements
 		return success;
 	}
 
-	protected final String[] toWhereArgs(Object... args) {
+	protected final String[] toStrArr(Object... args) {
 		String[] strArgs = new String[args.length];
 		for (int i = 0; i < args.length; i++) {
 			Object arg = args[i];
