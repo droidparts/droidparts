@@ -37,8 +37,12 @@ public class DialogFactory {
 		showToast(R.string.error);
 	}
 
-	public void showToast(int msgResId) {
-		Toast.makeText(ctx, msgResId, LENGTH_SHORT).show();
+	public void showToast(int msgResId, Object... formatArgs) {
+		showToast(ctx.getString(msgResId, formatArgs));
+	}
+
+	public void showToast(CharSequence msg) {
+		Toast.makeText(ctx, msg, LENGTH_SHORT).show();
 	}
 
 }
