@@ -93,6 +93,8 @@ public abstract class DBModelManager<Model extends DBModel> implements
 		return strArgs;
 	}
 
+	public abstract Model readFromCursor(Cursor cursor);
+
 	public abstract void fillForeignKeys(Model item);
 
 	protected abstract SQLiteDatabase getDB();
@@ -100,8 +102,6 @@ public abstract class DBModelManager<Model extends DBModel> implements
 	protected abstract String getTableName();
 
 	protected abstract ContentValues toContentValues(Model item);
-
-	protected abstract Model readFromCursor(Cursor cursor);
 
 	protected abstract void createOrUpdateForeignKeys(Model item);
 

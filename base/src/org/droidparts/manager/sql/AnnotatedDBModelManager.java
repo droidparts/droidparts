@@ -72,6 +72,24 @@ public class AnnotatedDBModelManager<Model extends DBModel> extends
 	}
 
 	@Override
+	public Model readFromCursor(Cursor cursor) {
+		Model model = instantiate(cls);
+		DBField[] fields = processor.getFields();
+		for (DBField dbField : fields) {
+			int colIdx = cursor.getColumnIndex(dbField.columnName);
+			if (colIdx >= 0) {
+				Object columnVal = readFromCursor(cursor, colIdx,
+						dbField.fieldType);
+				if (columnVal != null) {
+					Field f = getField(model.getClass(), dbField.fieldName);
+					setFieldVal(f, model, columnVal);
+				}
+			}
+		}
+		return model;
+	}
+
+	@Override
 	public void fillForeignKeys(Model item) {
 		for (Field field : getClassTreeFields(cls)) {
 			Class<?> fieldType = field.getType();
@@ -106,24 +124,6 @@ public class AnnotatedDBModelManager<Model extends DBModel> extends
 					columnVal);
 		}
 		return cv;
-	}
-
-	@Override
-	protected Model readFromCursor(Cursor cursor) {
-		Model model = instantiate(cls);
-		DBField[] fields = processor.getFields();
-		for (DBField dbField : fields) {
-			int colIdx = cursor.getColumnIndex(dbField.columnName);
-			if (colIdx >= 0) {
-				Object columnVal = readFromCursor(cursor, colIdx,
-						dbField.fieldType);
-				if (columnVal != null) {
-					Field f = getField(model.getClass(), dbField.fieldName);
-					setFieldVal(f, model, columnVal);
-				}
-			}
-		}
-		return model;
 	}
 
 	@Override
