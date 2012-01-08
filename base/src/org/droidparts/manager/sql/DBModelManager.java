@@ -26,6 +26,9 @@ public abstract class DBModelManager<Model extends DBModel> implements
 		SQLConstants {
 
 	public Cursor list(String... columns) {
+		if (columns != null && columns.length == 0) {
+			columns = null;
+		}
 		Cursor cursor = getDB().query(getTableName(), columns, null, null,
 				null, null, null);
 		return cursor;

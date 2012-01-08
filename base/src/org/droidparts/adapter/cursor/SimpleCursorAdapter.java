@@ -21,7 +21,6 @@ import org.droidparts.model.DBModel;
 import android.app.Activity;
 import android.database.Cursor;
 
-
 public abstract class SimpleCursorAdapter<Model extends DBModel> extends
 		TypedCursorAdapter<Model> {
 
@@ -29,7 +28,7 @@ public abstract class SimpleCursorAdapter<Model extends DBModel> extends
 
 	public SimpleCursorAdapter(Activity activity,
 			DBModelManager<Model> modelManager) {
-		this(activity, modelManager.list(null), modelManager);
+		this(activity, modelManager.list(), modelManager);
 	}
 
 	public SimpleCursorAdapter(Activity activity, Cursor cursor,
