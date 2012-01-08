@@ -66,7 +66,7 @@ public abstract class DBOpenHelper extends SQLiteOpenHelper {
 		onCreateExtra(db);
 	}
 
-	public void execQueries(SQLiteDatabase db, ArrayList<String> queries) {
+	public static void execQueries(SQLiteDatabase db, ArrayList<String> queries) {
 		db.beginTransaction();
 		try {
 			for (String query : queries) {

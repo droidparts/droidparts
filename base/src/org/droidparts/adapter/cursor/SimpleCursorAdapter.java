@@ -37,24 +37,24 @@ public abstract class SimpleCursorAdapter<Model extends DBModel> extends
 		this.modelManager = modelManager;
 	}
 
-	public boolean createItem(Model item) {
+	public boolean create(Model item) {
 		boolean success = modelManager.create(item);
 		return requeryOnSuccess(success);
 	}
 
-	public Model readItem(int position) {
+	public Model read(int position) {
 		long id = getItemId(position);
 		Model item = modelManager.read(id);
 		modelManager.fillForeignKeys(item);
 		return item;
 	}
 
-	public boolean updateItem(Model item) {
+	public boolean update(Model item) {
 		boolean success = modelManager.update(item);
 		return requeryOnSuccess(success);
 	}
 
-	public boolean deleteItem(int position) {
+	public boolean delete(int position) {
 		long id = getItemId(position);
 		boolean success = modelManager.delete(id);
 		return requeryOnSuccess(success);
