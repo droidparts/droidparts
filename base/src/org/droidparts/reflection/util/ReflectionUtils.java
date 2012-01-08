@@ -17,7 +17,6 @@ package org.droidparts.reflection.util;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import org.droidparts.util.L;
@@ -78,26 +77,19 @@ public final class ReflectionUtils {
 	}
 
 	public static List<Field> getClassTreeFields(Class<?> cls) {
-		Class<?> stopCls = cls.getSuperclass();
-		boolean enteredDroidParts = false;
-		boolean droidPartsClass = false;
-		do {
-			// FIXME fails on Object subclass
-			droidPartsClass = stopCls.getCanonicalName().startsWith(
-					"org.droidparts");
-			if (droidPartsClass) {
-				enteredDroidParts = true;
-			}
-			stopCls = stopCls.getSuperclass();
-			// FIXME Shouldn't go up to Object.class
-		} while ((!enteredDroidParts || (enteredDroidParts && !droidPartsClass))
-				&& stopCls != Object.class);
 		ArrayList<Class<?>> clsTree = new ArrayList<Class<?>>();
-		while (cls != stopCls) {
-			clsTree.add(cls);
-			cls = cls.getSuperclass();
-		}
-		Collections.reverse(clsTree);
+		boolean enteredDroidParts = false;
+		do {
+			clsTree.add(0, cls);
+			boolean inDroidParts = cls.getCanonicalName().startsWith(
+					"org.droidparts");
+			if (enteredDroidParts && !inDroidParts) {
+				break;
+			} else {
+				enteredDroidParts = inDroidParts;
+				cls = cls.getSuperclass();
+			}
+		} while (cls != null);
 		ArrayList<Field> fields = new ArrayList<Field>();
 		for (Class<?> c : clsTree) {
 			for (Field f : c.getDeclaredFields()) {
