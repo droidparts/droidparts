@@ -15,7 +15,7 @@
  */
 package org.droidparts.manager.sql;
 
-import org.droidparts.contract.SQLConstants;
+import org.droidparts.contract.DB;
 import org.droidparts.model.DBModel;
 
 import android.content.ContentValues;
@@ -23,7 +23,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
 public abstract class DBModelManager<Model extends DBModel> implements
-		SQLConstants {
+		DB {
 
 	public Cursor list(String... columns) {
 		return list(null, columns);

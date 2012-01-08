@@ -15,7 +15,7 @@
  */
 package org.droidparts.model;
 
-import static org.droidparts.contract.SQLConstants.Column.ID;
+import static org.droidparts.contract.DB.Column.ID;
 
 import org.droidparts.annotation.sql.Column;
 

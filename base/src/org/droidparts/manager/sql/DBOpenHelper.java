@@ -15,17 +15,17 @@
  */
 package org.droidparts.manager.sql;
 
-import static org.droidparts.contract.SQLConstants.BLOB;
-import static org.droidparts.contract.SQLConstants.CLOSING_BRACE;
-import static org.droidparts.contract.SQLConstants.CREATE_TABLE;
-import static org.droidparts.contract.SQLConstants.INTEGER;
-import static org.droidparts.contract.SQLConstants.NOT_NULL;
-import static org.droidparts.contract.SQLConstants.OPENING_BRACE;
-import static org.droidparts.contract.SQLConstants.PK;
-import static org.droidparts.contract.SQLConstants.REAL;
-import static org.droidparts.contract.SQLConstants.SEPARATOR;
-import static org.droidparts.contract.SQLConstants.TEXT;
-import static org.droidparts.contract.SQLConstants.UNIQUE;
+import static org.droidparts.contract.DB.BLOB;
+import static org.droidparts.contract.DB.CLOSING_BRACE;
+import static org.droidparts.contract.DB.CREATE_TABLE;
+import static org.droidparts.contract.DB.INTEGER;
+import static org.droidparts.contract.DB.NOT_NULL;
+import static org.droidparts.contract.DB.OPENING_BRACE;
+import static org.droidparts.contract.DB.PK;
+import static org.droidparts.contract.DB.REAL;
+import static org.droidparts.contract.DB.SEPARATOR;
+import static org.droidparts.contract.DB.TEXT;
+import static org.droidparts.contract.DB.UNIQUE;
 import static org.droidparts.reflection.util.TypeHelper.isBoolean;
 import static org.droidparts.reflection.util.TypeHelper.isByteArray;
 import static org.droidparts.reflection.util.TypeHelper.isDBModel;
@@ -39,7 +39,7 @@ import static org.droidparts.reflection.util.TypeHelper.isUUID;
 
 import java.util.ArrayList;
 
-import org.droidparts.contract.SQLConstants.Column;
+import org.droidparts.contract.DB.Column;
 import org.droidparts.model.DBModel;
 import org.droidparts.reflection.model.DBField;
 import org.droidparts.reflection.processor.DBAnnotationProcessor;

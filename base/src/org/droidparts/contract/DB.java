@@ -17,7 +17,11 @@ package org.droidparts.contract;
 
 import android.provider.BaseColumns;
 
-public interface SQLConstants {
+public interface DB {
+
+	public interface Table {
+
+	}
 
 	public interface Column extends BaseColumns {
 
