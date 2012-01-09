@@ -76,7 +76,7 @@ public final class ReflectionUtils {
 		return en;
 	}
 
-	public static List<Field> getClassTreeFields(Class<?> cls) {
+	public static List<Field> listAnnotatedFields(Class<?> cls) {
 		ArrayList<Class<?>> clsTree = new ArrayList<Class<?>>();
 		boolean enteredDroidParts = false;
 		do {
@@ -93,7 +93,9 @@ public final class ReflectionUtils {
 		ArrayList<Field> fields = new ArrayList<Field>();
 		for (Class<?> c : clsTree) {
 			for (Field f : c.getDeclaredFields()) {
-				fields.add(f);
+				if (f.getAnnotations().length > 0) {
+					fields.add(f);
+				}
 			}
 		}
 		return fields;

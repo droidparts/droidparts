@@ -43,7 +43,7 @@ public class ModelUtils {
 		StringBuilder sb = new StringBuilder();
 		sb.append(cls.getSimpleName());
 		sb.append(" [");
-		List<Field> fields = ReflectionUtils.getClassTreeFields(cls);
+		List<Field> fields = ReflectionUtils.listAnnotatedFields(cls);
 		for (int i = 0; i < fields.size(); i++) {
 			Field field = fields.get(i);
 			sb.append(field.getName());

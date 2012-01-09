@@ -15,7 +15,7 @@
  */
 package org.droidparts.inject;
 
-import static org.droidparts.reflection.util.ReflectionUtils.getClassTreeFields;
+import static org.droidparts.reflection.util.ReflectionUtils.listAnnotatedFields;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
@@ -100,7 +100,7 @@ public class Injector {
 			Injector.ctx = ctx.getApplicationContext();
 		}
 		final Class<?> cls = target.getClass();
-		List<Field> fields = getClassTreeFields(cls);
+		List<Field> fields = listAnnotatedFields(cls);
 		for (Field field : fields) {
 			for (Annotation ann : field.getAnnotations()) {
 				Class<? extends Annotation> annType = ann.annotationType();

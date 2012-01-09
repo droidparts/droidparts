@@ -30,6 +30,6 @@ public abstract class AbstractAnnotationProcessor {
 	}
 
 	protected List<Field> getClassHierarchyFields() {
-		return ReflectionUtils.getClassTreeFields(cls);
+		return ReflectionUtils.listAnnotatedFields(cls);
 	}
 }

@@ -15,7 +15,7 @@
  */
 package org.droidparts.manager.sql;
 
-import static org.droidparts.reflection.util.ReflectionUtils.getClassTreeFields;
+import static org.droidparts.reflection.util.ReflectionUtils.listAnnotatedFields;
 import static org.droidparts.reflection.util.ReflectionUtils.getField;
 import static org.droidparts.reflection.util.ReflectionUtils.getTypedFieldVal;
 import static org.droidparts.reflection.util.ReflectionUtils.instantiate;
@@ -91,7 +91,7 @@ public class AnnotatedDBModelManager<Model extends DBModel> extends
 
 	@Override
 	public void fillForeignKeys(Model item) {
-		for (Field field : getClassTreeFields(cls)) {
+		for (Field field : listAnnotatedFields(cls)) {
 			Class<?> fieldType = field.getType();
 			if (isDBModel(fieldType)) {
 				DBModel model = ReflectionUtils.getTypedFieldVal(field, item);
@@ -128,7 +128,7 @@ public class AnnotatedDBModelManager<Model extends DBModel> extends
 
 	@Override
 	protected void createOrUpdateForeignKeys(Model item) {
-		for (Field f : getClassTreeFields(cls)) {
+		for (Field f : listAnnotatedFields(cls)) {
 			Class<?> cls = f.getType();
 			if (isDBModel(cls)) {
 				DBModel model = ReflectionUtils.getTypedFieldVal(f, item);
