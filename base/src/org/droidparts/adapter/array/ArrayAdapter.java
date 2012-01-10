@@ -20,7 +20,6 @@ import java.util.List;
 import org.droidparts.annotation.inject.InjectSystemService;
 import org.droidparts.inject.Injector;
 
-import android.R;
 import android.content.Context;
 import android.view.LayoutInflater;
 
@@ -30,11 +29,16 @@ public class ArrayAdapter<T> extends android.widget.ArrayAdapter<T> {
 	protected LayoutInflater layoutInflater;
 
 	public ArrayAdapter(Context ctx, List<T> objects) {
-		this(ctx, R.layout.simple_list_item_1, objects);
+		this(ctx, android.R.layout.simple_list_item_1, objects);
 	}
 
-	protected ArrayAdapter(Context ctx, int textViewResourceId, List<T> objects) {
-		super(ctx, textViewResourceId, objects);
+	protected ArrayAdapter(Context ctx, int rowResId, List<T> objects) {
+		this(ctx, rowResId, android.R.id.text1, objects);
+	}
+
+	protected ArrayAdapter(Context ctx, int rowResId, int textViewResId,
+			List<T> objects) {
+		super(ctx, rowResId, textViewResId, objects);
 		Injector.get().inject(ctx, this);
 	}
 

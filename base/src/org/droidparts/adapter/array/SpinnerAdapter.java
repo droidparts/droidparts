@@ -27,9 +27,8 @@ public class SpinnerAdapter<T> extends ArrayAdapter<T> {
 		this(spinner, android.R.layout.simple_spinner_item, list);
 	}
 
-	protected SpinnerAdapter(Spinner spinner, int textViewResourceId,
-			List<T> list) {
-		super(spinner.getContext(), textViewResourceId, list);
+	protected SpinnerAdapter(Spinner spinner, int rowResId, List<T> list) {
+		super(spinner.getContext(), rowResId, list);
 		setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 		this.spinner = spinner;
 	}
