@@ -15,30 +15,23 @@
  */
 package org.droidparts.util;
 
-import static android.content.pm.ApplicationInfo.FLAG_DEBUGGABLE;
 import static android.content.pm.PackageManager.COMPONENT_ENABLED_STATE_DISABLED;
 import static android.content.pm.PackageManager.COMPONENT_ENABLED_STATE_ENABLED;
 import static android.content.pm.PackageManager.DONT_KILL_APP;
 import static android.content.pm.PackageManager.GET_META_DATA;
 import android.content.ComponentName;
 import android.content.Context;
-import android.content.pm.ApplicationInfo;
+import android.content.ContextWrapper;
 import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.provider.Settings.Secure;
 
 public class AppUtils {
 
-	private final Context ctx;
+	protected final ContextWrapper ctx;
 
-	public AppUtils(Context ctx) {
+	public AppUtils(ContextWrapper ctx) {
 		this.ctx = ctx;
-	}
-
-	public boolean isDebuggable() {
-		ApplicationInfo appInfo = ctx.getApplicationInfo();
-		boolean debug = (appInfo.flags &= FLAG_DEBUGGABLE) != 0;
-		return debug;
 	}
 
 	public boolean canInstallApps() {
@@ -57,10 +50,9 @@ public class AppUtils {
 		return verName;
 	}
 
-	public boolean isInstalled(String packageName) {
+	public boolean isInstalled(String pkgName) {
 		try {
-			ctx.getPackageManager().getApplicationInfo(packageName,
-					GET_META_DATA);
+			ctx.getPackageManager().getApplicationInfo(pkgName, GET_META_DATA);
 			return true;
 		} catch (NameNotFoundException e) {
 			return false;
