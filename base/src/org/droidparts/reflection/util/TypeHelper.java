@@ -24,7 +24,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import android.R.array;
-
+import android.graphics.Bitmap;
 
 public final class TypeHelper {
 
@@ -66,6 +66,10 @@ public final class TypeHelper {
 
 	public static boolean isUUID(Class<?> cls) {
 		return UUID.class.isAssignableFrom(cls);
+	}
+
+	public static boolean isBitmap(Class<?> cls) {
+		return Bitmap.class.isAssignableFrom(cls);
 	}
 
 	public static boolean isEnum(Class<?> cls) {

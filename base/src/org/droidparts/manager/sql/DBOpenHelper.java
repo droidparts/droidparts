@@ -26,6 +26,7 @@ import static org.droidparts.contract.DB.REAL;
 import static org.droidparts.contract.DB.SEPARATOR;
 import static org.droidparts.contract.DB.TEXT;
 import static org.droidparts.contract.DB.UNIQUE;
+import static org.droidparts.reflection.util.TypeHelper.isBitmap;
 import static org.droidparts.reflection.util.TypeHelper.isBoolean;
 import static org.droidparts.reflection.util.TypeHelper.isByteArray;
 import static org.droidparts.reflection.util.TypeHelper.isDBModel;
@@ -133,7 +134,7 @@ public abstract class DBOpenHelper extends SQLiteOpenHelper {
 			return REAL;
 		} else if (isString(cls) || isUUID(cls) || isEnum(cls)) {
 			return TEXT;
-		} else if (isByteArray(cls)) {
+		} else if (isByteArray(cls) || isBitmap(cls)) {
 			return BLOB;
 		} else if (isDBModel(cls)) {
 			return INTEGER;

@@ -15,12 +15,13 @@
  */
 package org.droidparts.manager.sql;
 
-import static org.droidparts.reflection.util.ReflectionUtils.listAnnotatedFields;
 import static org.droidparts.reflection.util.ReflectionUtils.getField;
 import static org.droidparts.reflection.util.ReflectionUtils.getTypedFieldVal;
 import static org.droidparts.reflection.util.ReflectionUtils.instantiate;
 import static org.droidparts.reflection.util.ReflectionUtils.instantiateEnum;
+import static org.droidparts.reflection.util.ReflectionUtils.listAnnotatedFields;
 import static org.droidparts.reflection.util.ReflectionUtils.setFieldVal;
+import static org.droidparts.reflection.util.TypeHelper.isBitmap;
 import static org.droidparts.reflection.util.TypeHelper.isBoolean;
 import static org.droidparts.reflection.util.TypeHelper.isByte;
 import static org.droidparts.reflection.util.TypeHelper.isByteArray;
@@ -34,6 +35,7 @@ import static org.droidparts.reflection.util.TypeHelper.isShort;
 import static org.droidparts.reflection.util.TypeHelper.isString;
 import static org.droidparts.reflection.util.TypeHelper.isUUID;
 
+import java.io.ByteArrayOutputStream;
 import java.lang.reflect.Field;
 import java.util.UUID;
 
@@ -48,6 +50,9 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Bitmap;
+import android.graphics.Bitmap.CompressFormat;
+import android.graphics.BitmapFactory;
 
 public class AnnotatedDBModelManager<Model extends DBModel> extends
 		DBModelManager<Model> {
@@ -173,6 +178,11 @@ public class AnnotatedDBModelManager<Model extends DBModel> extends
 			cv.put(key, (String) value);
 		} else if (isUUID(valueCls)) {
 			cv.put(key, value.toString());
+		} else if (isBitmap(valueCls)) {
+			Bitmap bm = (Bitmap) value;
+			ByteArrayOutputStream baos = new ByteArrayOutputStream();
+			bm.compress(CompressFormat.PNG, 0, baos);
+			cv.put(key, baos.toByteArray());
 		} else if (isEnum(valueCls)) {
 			cv.put(key, value.toString());
 		} else if (isDBModel(valueCls)) {
@@ -207,6 +217,9 @@ public class AnnotatedDBModelManager<Model extends DBModel> extends
 			return cursor.getString(columnIndex);
 		} else if (isUUID(fieldCls)) {
 			return UUID.fromString(cursor.getString(columnIndex));
+		} else if (isBitmap(fieldCls)) {
+			byte[] arr = cursor.getBlob(columnIndex);
+			return BitmapFactory.decodeByteArray(arr, 0, arr.length);
 		} else if (isEnum(fieldCls)) {
 			return instantiateEnum(fieldCls, cursor.getString(columnIndex));
 		} else if (isDBModel(fieldCls)) {
