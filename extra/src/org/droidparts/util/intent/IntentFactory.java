@@ -22,6 +22,10 @@ import static android.content.Intent.ACTION_VIEW;
 import static android.content.Intent.EXTRA_SUBJECT;
 import static android.content.Intent.EXTRA_TEXT;
 import static org.droidparts.util.Strings.isNotEmpty;
+
+import java.io.File;
+import java.util.ArrayList;
+
 import android.content.Intent;
 import android.net.Uri;
 
@@ -35,18 +39,29 @@ public class IntentFactory {
 		return intent;
 	}
 
-	public static Intent getSendEmail(String mailTo, String subject, String body) {
+	public static Intent getSendEmail(String mailTo, String mailCC,
+			String subject, String body, File... attachments) {
 		Intent intent = new Intent(ACTION_SENDTO);
 		intent.setType("text/plain");
 		if (mailTo == null) {
 			mailTo = "";
 		}
 		intent.setData(Uri.parse("mailto:" + mailTo));
+		if (isNotEmpty(mailCC)) {
+			intent.putExtra(Intent.EXTRA_CC, new String[] { mailCC });
+		}
 		if (isNotEmpty(subject)) {
 			intent.putExtra(EXTRA_SUBJECT, subject);
 		}
 		if (isNotEmpty(body)) {
 			intent.putExtra(EXTRA_TEXT, body);
+		}
+		if (attachments.length > 0) {
+			ArrayList<Uri> uris = new ArrayList<Uri>();
+			for (File att : attachments) {
+				uris.add(Uri.fromFile(att));
+			}
+			intent.putParcelableArrayListExtra(Intent.EXTRA_STREAM, uris);
 		}
 		return intent;
 	}
