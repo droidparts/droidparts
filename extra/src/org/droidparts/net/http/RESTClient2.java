@@ -16,12 +16,31 @@
 package org.droidparts.net.http;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 public class RESTClient2 extends RESTClient {
 
 	public RESTClient2(String userAgent) {
 		super(userAgent);
+	}
+
+	public JSONObject getJSONObject(String uri) throws HTTPException {
+		String resp = get(uri);
+		try {
+			return new JSONObject(resp);
+		} catch (JSONException e) {
+			throw new HTTPException(e);
+		}
+	}
+
+	public JSONArray getJSONArray(String uri) throws HTTPException {
+		String resp = get(uri);
+		try {
+			return new JSONArray(resp);
+		} catch (JSONException e) {
+			throw new HTTPException(e);
+		}
 	}
 
 	public String put(String uri, String data) throws HTTPException {
