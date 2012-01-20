@@ -49,13 +49,18 @@ public class JSONSerializer<T extends Model> {
 		this.processor = new JSONAnnotationProcessor(cls);
 	}
 
+	public String getObjectName() {
+		return processor.getObjectName();
+	}
+
 	public JSONObject toJson(T item) throws JSONException {
 		JSONObject obj = new JSONObject();
 		JSONField[] fields = processor.getFields();
 		for (JSONField jsonField : fields) {
 			Field f = getField(item.getClass(), jsonField.fieldName);
 			Object columnVal = getTypedFieldVal(f, item);
-			putToJSONObject(obj, jsonField.keyName, jsonField.fieldType, columnVal);
+			putToJSONObject(obj, jsonField.keyName, jsonField.fieldType,
+					columnVal);
 		}
 		return obj;
 	}

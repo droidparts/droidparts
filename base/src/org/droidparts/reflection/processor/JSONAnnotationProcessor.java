@@ -24,11 +24,20 @@ import org.droidparts.annotation.json.Key;
 import org.droidparts.model.Model;
 import org.droidparts.reflection.model.JSONField;
 
-
 public class JSONAnnotationProcessor extends AbstractAnnotationProcessor {
 
 	public JSONAnnotationProcessor(Class<? extends Model> cls) {
 		super(cls);
+	}
+
+	public String getObjectName() {
+		org.droidparts.annotation.json.Object ann = cls
+				.getAnnotation(org.droidparts.annotation.json.Object.class);
+		if (ann != null) {
+			return ann.value();
+		} else {
+			return cls.getSimpleName();
+		}
 	}
 
 	public JSONField[] getFields() {
