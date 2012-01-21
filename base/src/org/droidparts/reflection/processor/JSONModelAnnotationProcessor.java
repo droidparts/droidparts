@@ -22,15 +22,17 @@ import java.util.ArrayList;
 
 import org.droidparts.annotation.json.Key;
 import org.droidparts.model.Model;
-import org.droidparts.reflection.model.JSONField;
+import org.droidparts.reflection.model.JSONModelField;
 
-public class JSONAnnotationProcessor extends AbstractAnnotationProcessor {
+public class JSONModelAnnotationProcessor extends
+		ModelAnnotationProcessor<JSONModelField> {
 
-	public JSONAnnotationProcessor(Class<? extends Model> cls) {
+	public JSONModelAnnotationProcessor(Class<? extends Model> cls) {
 		super(cls);
 	}
 
-	public String getObjectName() {
+	@Override
+	public String getModelClassName() {
 		org.droidparts.annotation.json.Object ann = cls
 				.getAnnotation(org.droidparts.annotation.json.Object.class);
 		if (ann != null) {
@@ -40,18 +42,19 @@ public class JSONAnnotationProcessor extends AbstractAnnotationProcessor {
 		}
 	}
 
-	public JSONField[] getFields() {
-		ArrayList<JSONField> list = new ArrayList<JSONField>();
+	@Override
+	public JSONModelField[] getModelClassFields() {
+		ArrayList<JSONModelField> list = new ArrayList<JSONModelField>();
 		for (Field field : getClassHierarchyFields()) {
 			Key columnAnn = field.getAnnotation(Key.class);
 			if (columnAnn != null) {
-				JSONField jsonField = new JSONField();
+				JSONModelField jsonField = new JSONModelField();
 				fillField(field, jsonField);
 				jsonField.keyName = getKeyName(columnAnn, field);
 				list.add(jsonField);
 			}
 		}
-		return list.toArray(new JSONField[list.size()]);
+		return list.toArray(new JSONModelField[list.size()]);
 	}
 
 	private String getKeyName(Key ann, Field field) {

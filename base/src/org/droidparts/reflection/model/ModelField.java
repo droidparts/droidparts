@@ -13,8 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License. 
  */
-package org.droidparts.serializer;
+package org.droidparts.reflection.model;
 
-public interface StringSerializer<TypeFrom> extends
-		Serializer<TypeFrom, String> {
+public abstract class ModelField {
+
+	public String fieldName;
+	public Class<?> fieldClass;
+	public Class<?>[] fieldClassGenericArgs;
+
 }

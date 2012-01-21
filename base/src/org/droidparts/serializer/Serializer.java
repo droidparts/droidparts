@@ -15,8 +15,9 @@
  */
 package org.droidparts.serializer;
 
-
 public interface Serializer<TypeFrom, TypeTo> {
+
+	public abstract String getModelClassName();
 
 	public abstract TypeTo serialize(TypeFrom item) throws Exception;
 

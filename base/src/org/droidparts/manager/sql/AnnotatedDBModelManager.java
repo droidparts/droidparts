@@ -42,8 +42,8 @@ import java.util.UUID;
 import org.droidparts.annotation.inject.Inject;
 import org.droidparts.inject.Injector;
 import org.droidparts.model.DBModel;
-import org.droidparts.reflection.model.DBField;
-import org.droidparts.reflection.processor.DBAnnotationProcessor;
+import org.droidparts.reflection.model.DBModelField;
+import org.droidparts.reflection.processor.DBModelAnnotationProcessor;
 import org.droidparts.reflection.util.ReflectionUtils;
 
 import android.content.ContentValues;
@@ -62,13 +62,13 @@ public class AnnotatedDBModelManager<Model extends DBModel> extends
 
 	protected final Context ctx;
 	private final Class<? extends DBModel> cls;
-	private final DBAnnotationProcessor processor;
+	private final DBModelAnnotationProcessor processor;
 
 	public AnnotatedDBModelManager(Context ctx, Class<? extends DBModel> cls) {
 		Injector.get().inject(ctx, this);
 		this.ctx = ctx;
 		this.cls = cls;
-		processor = new DBAnnotationProcessor(cls);
+		processor = new DBModelAnnotationProcessor(cls);
 	}
 
 	public boolean delete(long id) {
@@ -79,8 +79,8 @@ public class AnnotatedDBModelManager<Model extends DBModel> extends
 	@Override
 	public Model readFromCursor(Cursor cursor) {
 		Model model = instantiate(cls);
-		DBField[] fields = processor.getFields();
-		for (DBField dbField : fields) {
+		DBModelField[] fields = processor.getModelClassFields();
+		for (DBModelField dbField : fields) {
 			int colIdx = cursor.getColumnIndex(dbField.columnName);
 			if (colIdx >= 0) {
 				Object columnVal = readFromCursor(cursor, colIdx,
@@ -115,14 +115,14 @@ public class AnnotatedDBModelManager<Model extends DBModel> extends
 
 	@Override
 	protected String getTableName() {
-		return processor.getTableName();
+		return processor.getModelClassName();
 	}
 
 	@Override
 	protected ContentValues toContentValues(Model item) {
 		ContentValues cv = new ContentValues();
-		DBField[] fields = processor.getFields();
-		for (DBField dbField : fields) {
+		DBModelField[] fields = processor.getModelClassFields();
+		for (DBModelField dbField : fields) {
 			Field field = getField(item.getClass(), dbField.fieldName);
 			Object columnVal = getTypedFieldVal(field, item);
 			putToContentValues(cv, dbField.columnName, dbField.fieldClass,

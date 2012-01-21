@@ -30,18 +30,20 @@ import java.util.ArrayList;
 import org.droidparts.annotation.sql.Column;
 import org.droidparts.annotation.sql.Table;
 import org.droidparts.model.DBModel;
-import org.droidparts.reflection.model.DBField;
+import org.droidparts.reflection.model.DBModelField;
 import org.droidparts.util.L;
 
-public class DBAnnotationProcessor extends AbstractAnnotationProcessor {
+public class DBModelAnnotationProcessor extends
+		ModelAnnotationProcessor<DBModelField> {
 
 	private static final String ID_SUFFIX = "_id";
 
-	public DBAnnotationProcessor(Class<? extends DBModel> cls) {
+	public DBModelAnnotationProcessor(Class<? extends DBModel> cls) {
 		super(cls);
 	}
 
-	public String getTableName() {
+	@Override
+	public String getModelClassName() {
 		Table ann = cls.getAnnotation(Table.class);
 		if (ann != null) {
 			return ann.value();
@@ -50,12 +52,13 @@ public class DBAnnotationProcessor extends AbstractAnnotationProcessor {
 		}
 	}
 
-	public DBField[] getFields() {
-		ArrayList<DBField> list = new ArrayList<DBField>();
+	@Override
+	public DBModelField[] getModelClassFields() {
+		ArrayList<DBModelField> list = new ArrayList<DBModelField>();
 		for (Field field : getClassHierarchyFields()) {
 			Column columnAnn = field.getAnnotation(Column.class);
 			if (columnAnn != null) {
-				DBField dbField = new DBField();
+				DBModelField dbField = new DBModelField();
 				fillField(field, dbField);
 				dbField.columnName = getColumnName(columnAnn, field);
 				dbField.columnNullable = columnAnn.nullable();
@@ -64,7 +67,7 @@ public class DBAnnotationProcessor extends AbstractAnnotationProcessor {
 			}
 		}
 		sanitizeFields(list);
-		return list.toArray(new DBField[list.size()]);
+		return list.toArray(new DBModelField[list.size()]);
 	}
 
 	private String getColumnName(Column ann, Field field) {
@@ -78,8 +81,8 @@ public class DBAnnotationProcessor extends AbstractAnnotationProcessor {
 		return name;
 	}
 
-	private void sanitizeFields(ArrayList<DBField> fields) {
-		for (DBField field : fields) {
+	private void sanitizeFields(ArrayList<DBModelField> fields) {
+		for (DBModelField field : fields) {
 			if (field.columnNullable) {
 				Class<?> cls = field.fieldClass;
 				if (isBoolean(cls) || isByte(cls) || isFloat(cls)

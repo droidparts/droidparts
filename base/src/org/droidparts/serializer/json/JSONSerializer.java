@@ -38,8 +38,8 @@ import java.util.Collection;
 import java.util.UUID;
 
 import org.droidparts.model.Model;
-import org.droidparts.reflection.model.JSONField;
-import org.droidparts.reflection.processor.JSONAnnotationProcessor;
+import org.droidparts.reflection.model.JSONModelField;
+import org.droidparts.reflection.processor.JSONModelAnnotationProcessor;
 import org.droidparts.reflection.util.ReflectionUtils;
 import org.droidparts.serializer.Serializer;
 import org.json.JSONArray;
@@ -50,22 +50,23 @@ public class JSONSerializer<TypeFrom extends Model> implements
 		Serializer<TypeFrom, JSONObject> {
 
 	private final Class<? extends Model> cls;
-	private final JSONAnnotationProcessor processor;
+	private final JSONModelAnnotationProcessor processor;
 
 	public JSONSerializer(Class<? extends Model> cls) {
 		this.cls = cls;
-		this.processor = new JSONAnnotationProcessor(cls);
+		this.processor = new JSONModelAnnotationProcessor(cls);
 	}
 
-	public String getObjectName() {
-		return processor.getObjectName();
+	@Override
+	public String getModelClassName() {
+		return processor.getModelClassName();
 	}
 
 	@Override
 	public JSONObject serialize(TypeFrom item) throws JSONException {
 		JSONObject obj = new JSONObject();
-		JSONField[] fields = processor.getFields();
-		for (JSONField jsonField : fields) {
+		JSONModelField[] fields = processor.getModelClassFields();
+		for (JSONModelField jsonField : fields) {
 			Field f = getField(item.getClass(), jsonField.fieldName);
 			Object columnVal = getTypedFieldVal(f, item);
 			putToJSONObject(obj, jsonField.keyName, jsonField.fieldClass,
@@ -77,8 +78,8 @@ public class JSONSerializer<TypeFrom extends Model> implements
 	@Override
 	public TypeFrom deserialize(JSONObject obj) throws JSONException {
 		TypeFrom model = instantiate(cls);
-		JSONField[] fields = processor.getFields();
-		for (JSONField jsonField : fields) {
+		JSONModelField[] fields = processor.getModelClassFields();
+		for (JSONModelField jsonField : fields) {
 			if (obj.has(jsonField.keyName)) {
 				Object val = obj.get(jsonField.keyName);
 				Field f = getField(model.getClass(), jsonField.fieldName);

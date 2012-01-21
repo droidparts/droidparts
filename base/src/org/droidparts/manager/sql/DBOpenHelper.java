@@ -42,8 +42,8 @@ import java.util.ArrayList;
 
 import org.droidparts.contract.DB.Column;
 import org.droidparts.model.DBModel;
-import org.droidparts.reflection.model.DBField;
-import org.droidparts.reflection.processor.DBAnnotationProcessor;
+import org.droidparts.reflection.model.DBModelField;
+import org.droidparts.reflection.processor.DBModelAnnotationProcessor;
 import org.droidparts.util.L;
 
 import android.content.Context;
@@ -60,7 +60,7 @@ public abstract class DBOpenHelper extends SQLiteOpenHelper {
 	public final void onCreate(SQLiteDatabase db) {
 		ArrayList<String> queries = new ArrayList<String>();
 		for (Class<? extends DBModel> cls : getModelClasses()) {
-			String query = getSQLCreate(new DBAnnotationProcessor(cls));
+			String query = getSQLCreate(new DBModelAnnotationProcessor(cls));
 			queries.add(query);
 		}
 		execQueries(db, queries);
@@ -83,7 +83,7 @@ public abstract class DBOpenHelper extends SQLiteOpenHelper {
 	protected void dropAllTables(SQLiteDatabase db) {
 		ArrayList<String> queries = new ArrayList<String>();
 		for (Class<? extends DBModel> cls : getModelClasses()) {
-			String tableName = new DBAnnotationProcessor(cls).getTableName();
+			String tableName = new DBModelAnnotationProcessor(cls).getModelClassName();
 			queries.add("DROP TABLE IF EXISTS " + tableName + ";");
 		}
 		execQueries(db, queries);
@@ -94,13 +94,13 @@ public abstract class DBOpenHelper extends SQLiteOpenHelper {
 
 	protected abstract Class<? extends DBModel>[] getModelClasses();
 
-	private String getSQLCreate(DBAnnotationProcessor proc) {
-		DBField[] dbFields = proc.getFields();
+	private String getSQLCreate(DBModelAnnotationProcessor proc) {
+		DBModelField[] dbFields = proc.getModelClassFields();
 		StringBuilder sb = new StringBuilder();
-		sb.append(CREATE_TABLE + proc.getTableName() + OPENING_BRACE);
+		sb.append(CREATE_TABLE + proc.getModelClassName() + OPENING_BRACE);
 		sb.append(PK + SEPARATOR);
 		for (int i = 0; i < dbFields.length; i++) {
-			DBField dbField = dbFields[i];
+			DBModelField dbField = dbFields[i];
 			if (Column.ID.equals(dbField.columnName)) {
 				// already got it
 				continue;
