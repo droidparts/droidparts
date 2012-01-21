@@ -19,7 +19,9 @@ import static org.droidparts.reflection.util.ReflectionUtils.getField;
 import static org.droidparts.reflection.util.ReflectionUtils.getTypedFieldVal;
 import static org.droidparts.reflection.util.ReflectionUtils.instantiate;
 import static org.droidparts.reflection.util.ReflectionUtils.setFieldVal;
+import static org.droidparts.reflection.util.TypeHelper.isArray;
 import static org.droidparts.reflection.util.TypeHelper.isBoolean;
+import static org.droidparts.reflection.util.TypeHelper.isCollection;
 import static org.droidparts.reflection.util.TypeHelper.isDouble;
 import static org.droidparts.reflection.util.TypeHelper.isEnum;
 import static org.droidparts.reflection.util.TypeHelper.isFloat;
@@ -30,6 +32,9 @@ import static org.droidparts.reflection.util.TypeHelper.isString;
 import static org.droidparts.reflection.util.TypeHelper.isUUID;
 
 import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.UUID;
 
 import org.droidparts.model.Model;
@@ -37,6 +42,7 @@ import org.droidparts.reflection.model.JSONField;
 import org.droidparts.reflection.processor.JSONAnnotationProcessor;
 import org.droidparts.reflection.util.ReflectionUtils;
 import org.droidparts.serializer.Serializer;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -62,7 +68,7 @@ public class JSONSerializer<TypeFrom extends Model> implements
 		for (JSONField jsonField : fields) {
 			Field f = getField(item.getClass(), jsonField.fieldName);
 			Object columnVal = getTypedFieldVal(f, item);
-			putToJSONObject(obj, jsonField.keyName, jsonField.fieldType,
+			putToJSONObject(obj, jsonField.keyName, jsonField.fieldClass,
 					columnVal);
 		}
 		return obj;
@@ -76,13 +82,15 @@ public class JSONSerializer<TypeFrom extends Model> implements
 			if (obj.has(jsonField.keyName)) {
 				Object val = obj.get(jsonField.keyName);
 				Field f = getField(model.getClass(), jsonField.fieldName);
-				val = readFromJSON(jsonField.fieldType, model, val);
+				val = readFromJSON(jsonField.fieldClass,
+						jsonField.fieldClassGenericArgs, model, val);
 				setFieldVal(f, model, val);
 			}
 		}
 		return model;
 	}
 
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	private void putToJSONObject(JSONObject obj, String key, Class<?> valueCls,
 			Object value) throws JSONException {
 		if (isBoolean(valueCls)) {
@@ -101,33 +109,84 @@ public class JSONSerializer<TypeFrom extends Model> implements
 			obj.put(key, value.toString());
 		} else if (isEnum(valueCls)) {
 			obj.put(key, value.toString());
+		} else if (isArray(valueCls) || isCollection(valueCls)) {
+			ArrayList<Object> list = new ArrayList<Object>();
+			if (isArray(valueCls)) {
+				Object[] arr = (Object[]) value;
+				list.addAll(Arrays.asList(arr));
+			} else if (isCollection(valueCls)) {
+				Collection<Object> coll = (Collection<Object>) value;
+				list.addAll(coll);
+			}
+			JSONArray jarr = new JSONArray();
+			JSONSerializer serializer = null;
+			if (list.size() > 1) {
+				serializer = getSerializer(list.get(0).getClass());
+			}
+			for (Object o : list) {
+				try {
+					jarr.put(serializer.serialize(o));
+				} catch (Exception e) {
+					throw new JSONException(e.getMessage());
+				}
+			}
+			obj.put(key, jarr);
+		} else if (isCollection(valueCls)) {
 		} else if (isModel(valueCls)) {
-			@SuppressWarnings("unchecked")
-			JSONObject obj2 = getManager(valueCls).serialize((TypeFrom) value);
+			JSONObject obj2 = getSerializer(valueCls).serialize(
+					(TypeFrom) value);
 			obj.put(key, obj2);
 		} else {
 			throw new IllegalArgumentException("Unsupported class: " + valueCls);
 		}
 	}
 
-	private Object readFromJSON(Class<?> fieldCls, Object model, Object val)
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	private Object readFromJSON(Class<?> fieldCls,
+			Class<?>[] fieldClassGenericArguments, Object model, Object val)
 			throws JSONException {
 		if (isUUID(fieldCls)) {
 			return UUID.fromString((String) val);
 		} else if (isEnum(fieldCls)) {
 			return ReflectionUtils.instantiateEnum(fieldCls, (String) val);
 		} else if (isModel(fieldCls)) {
-			return getManager(fieldCls).deserialize((JSONObject) val);
+			return getSerializer(fieldCls).deserialize((JSONObject) val);
+		} else if (isArray(fieldCls) || isCollection(fieldCls)) {
+			boolean isArr = isArray(fieldCls);
+			boolean isColl = isCollection(fieldCls);
+			JSONArray jArr = (JSONArray) val;
+			Object[] arr = new Object[jArr.length()];
+			Collection<Object> coll = null;
+			if (isColl) {
+				coll = instantiate(fieldCls);
+			}
+			JSONSerializer serializer = getSerializer(fieldClassGenericArguments[0]);
+			for (int i = 0; i < jArr.length(); i++) {
+				try {
+					Object obj = serializer.deserialize(jArr.get(i));
+					if (isArr) {
+						arr[i] = obj;
+					} else {
+						coll.add(obj);
+					}
+				} catch (Exception e) {
+					throw new JSONException(e.getMessage());
+				}
+			}
+			if (isArr) {
+				return arr;
+			} else {
+				return coll;
+			}
 		} else {
 			return val;
 		}
 	}
 
-	private JSONSerializer<TypeFrom> getManager(Class<?> cls) {
-		@SuppressWarnings("unchecked")
-		JSONSerializer<TypeFrom> manager = new JSONSerializer<TypeFrom>(
-				(Class<? extends Model>) cls);
-		return manager;
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	private JSONSerializer getSerializer(Class<?> cls) {
+		JSONSerializer serializer = new JSONSerializer(cls);
+		return serializer;
 	}
 
 }

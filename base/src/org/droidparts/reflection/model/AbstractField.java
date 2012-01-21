@@ -18,6 +18,7 @@ package org.droidparts.reflection.model;
 public abstract class AbstractField {
 
 	public String fieldName;
-	public Class<?> fieldType;
+	public Class<?> fieldClass;
+	public Class<?>[] fieldClassGenericArgs;
 
 }

@@ -105,7 +105,7 @@ public abstract class DBOpenHelper extends SQLiteOpenHelper {
 				// already got it
 				continue;
 			}
-			String columnType = getColumnType(dbField.fieldType);
+			String columnType = getColumnType(dbField.fieldClass);
 			if (columnType != null) {
 				sb.append(dbField.columnName);
 				sb.append(" ");

@@ -22,7 +22,7 @@ public class JSONField extends AbstractField {
 
 	@Override
 	public String toString() {
-		return "fieldName: " + fieldName + ", fieldClass: " + fieldType
+		return "fieldName: " + fieldName + ", fieldClass: " + fieldClass
 				+ ", keyName: " + keyName;
 	}
 }

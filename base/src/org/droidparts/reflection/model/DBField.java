@@ -24,7 +24,7 @@ public class DBField extends AbstractField {
 
 	@Override
 	public String toString() {
-		return "fieldName: " + fieldName + ", fieldType: " + fieldType
+		return "fieldName: " + fieldName + ", fieldType: " + fieldClass
 				+ ", columnName: " + columnName + ", columnNullable: "
 				+ columnNullable + ", columnUnique: " + columnUnique;
 	}

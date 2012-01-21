@@ -84,7 +84,7 @@ public class AnnotatedDBModelManager<Model extends DBModel> extends
 			int colIdx = cursor.getColumnIndex(dbField.columnName);
 			if (colIdx >= 0) {
 				Object columnVal = readFromCursor(cursor, colIdx,
-						dbField.fieldType);
+						dbField.fieldClass);
 				if (columnVal != null) {
 					Field f = getField(model.getClass(), dbField.fieldName);
 					setFieldVal(f, model, columnVal);
@@ -125,7 +125,7 @@ public class AnnotatedDBModelManager<Model extends DBModel> extends
 		for (DBField dbField : fields) {
 			Field field = getField(item.getClass(), dbField.fieldName);
 			Object columnVal = getTypedFieldVal(field, item);
-			putToContentValues(cv, dbField.columnName, dbField.fieldType,
+			putToContentValues(cv, dbField.columnName, dbField.fieldClass,
 					columnVal);
 		}
 		return cv;

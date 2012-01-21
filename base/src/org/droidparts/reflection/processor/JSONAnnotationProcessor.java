@@ -46,8 +46,7 @@ public class JSONAnnotationProcessor extends AbstractAnnotationProcessor {
 			Key columnAnn = field.getAnnotation(Key.class);
 			if (columnAnn != null) {
 				JSONField jsonField = new JSONField();
-				jsonField.fieldName = field.getName();
-				jsonField.fieldType = field.getType();
+				fillField(field, jsonField);
 				jsonField.keyName = getKeyName(columnAnn, field);
 				list.add(jsonField);
 			}

@@ -56,8 +56,7 @@ public class DBAnnotationProcessor extends AbstractAnnotationProcessor {
 			Column columnAnn = field.getAnnotation(Column.class);
 			if (columnAnn != null) {
 				DBField dbField = new DBField();
-				dbField.fieldName = field.getName();
-				dbField.fieldType = field.getType();
+				fillField(field, dbField);
 				dbField.columnName = getColumnName(columnAnn, field);
 				dbField.columnNullable = columnAnn.nullable();
 				dbField.columnUnique = columnAnn.unique();
@@ -82,10 +81,10 @@ public class DBAnnotationProcessor extends AbstractAnnotationProcessor {
 	private void sanitizeFields(ArrayList<DBField> fields) {
 		for (DBField field : fields) {
 			if (field.columnNullable) {
-				Class<?> cls = field.fieldType;
+				Class<?> cls = field.fieldClass;
 				if (isBoolean(cls) || isByte(cls) || isFloat(cls)
 						|| isInteger(cls) || isLong(cls) || isShort(cls)) {
-					L.e(field.fieldType.getSimpleName() + " can't be null.");
+					L.e(field.fieldClass.getSimpleName() + " can't be null.");
 					field.columnNullable = false;
 				}
 			}
