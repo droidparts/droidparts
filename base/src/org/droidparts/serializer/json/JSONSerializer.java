@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License. 
  */
-package org.droidparts.manager.json;
+package org.droidparts.serializer.json;
 
 import static org.droidparts.reflection.util.ReflectionUtils.getField;
 import static org.droidparts.reflection.util.ReflectionUtils.getTypedFieldVal;
@@ -36,10 +36,12 @@ import org.droidparts.model.Model;
 import org.droidparts.reflection.model.JSONField;
 import org.droidparts.reflection.processor.JSONAnnotationProcessor;
 import org.droidparts.reflection.util.ReflectionUtils;
+import org.droidparts.serializer.Serializer;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class JSONSerializer<T extends Model> {
+public class JSONSerializer<TypeFrom extends Model> implements
+		Serializer<TypeFrom, JSONObject> {
 
 	private final Class<? extends Model> cls;
 	private final JSONAnnotationProcessor processor;
@@ -53,7 +55,8 @@ public class JSONSerializer<T extends Model> {
 		return processor.getObjectName();
 	}
 
-	public JSONObject toJson(T item) throws JSONException {
+	@Override
+	public JSONObject serialize(TypeFrom item) throws JSONException {
 		JSONObject obj = new JSONObject();
 		JSONField[] fields = processor.getFields();
 		for (JSONField jsonField : fields) {
@@ -65,8 +68,9 @@ public class JSONSerializer<T extends Model> {
 		return obj;
 	}
 
-	public T fromJson(JSONObject obj) throws JSONException {
-		T model = instantiate(cls);
+	@Override
+	public TypeFrom deserialize(JSONObject obj) throws JSONException {
+		TypeFrom model = instantiate(cls);
 		JSONField[] fields = processor.getFields();
 		for (JSONField jsonField : fields) {
 			if (obj.has(jsonField.keyName)) {
@@ -99,7 +103,7 @@ public class JSONSerializer<T extends Model> {
 			obj.put(key, value.toString());
 		} else if (isModel(valueCls)) {
 			@SuppressWarnings("unchecked")
-			JSONObject obj2 = getManager(valueCls).toJson((T) value);
+			JSONObject obj2 = getManager(valueCls).serialize((TypeFrom) value);
 			obj.put(key, obj2);
 		} else {
 			throw new IllegalArgumentException("Unsupported class: " + valueCls);
@@ -113,15 +117,15 @@ public class JSONSerializer<T extends Model> {
 		} else if (isEnum(fieldCls)) {
 			return ReflectionUtils.instantiateEnum(fieldCls, (String) val);
 		} else if (isModel(fieldCls)) {
-			return getManager(fieldCls).fromJson((JSONObject) val);
+			return getManager(fieldCls).deserialize((JSONObject) val);
 		} else {
 			return val;
 		}
 	}
 
-	private JSONSerializer<T> getManager(Class<?> cls) {
+	private JSONSerializer<TypeFrom> getManager(Class<?> cls) {
 		@SuppressWarnings("unchecked")
-		JSONSerializer<T> manager = new JSONSerializer<T>(
+		JSONSerializer<TypeFrom> manager = new JSONSerializer<TypeFrom>(
 				(Class<? extends Model>) cls);
 		return manager;
 	}

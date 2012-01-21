@@ -18,6 +18,7 @@ package org.droidparts.manager.json;
 import org.droidparts.model.Model;
 import org.droidparts.net.http.HTTPException;
 import org.droidparts.net.http.RESTClient;
+import org.droidparts.serializer.json.JSONSerializer;
 
 public abstract class JSONModelManager<T extends Model, IdClass> {
 

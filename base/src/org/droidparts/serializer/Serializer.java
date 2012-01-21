@@ -13,27 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License. 
  */
-package org.droidparts.annotation.sql;
+package org.droidparts.serializer;
 
-import static java.lang.annotation.ElementType.FIELD;
-import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
-import java.lang.annotation.Retention;
-import java.lang.annotation.Target;
+public interface Serializer<TypeFrom, TypeTo> {
 
-@Retention(RUNTIME)
-@Target(FIELD)
-public @interface Column {
+	public abstract TypeTo serialize(TypeFrom item) throws Exception;
 
-	String name() default "";
-
-	boolean nullable() default false;
-
-	boolean unique() default false;
-
-	// boolean index() default false;
-
-	// Class<? extends StringSerializer> serializer() default
-	// StringSerializer.class;
+	public abstract TypeFrom deserialize(TypeTo obj) throws Exception;
 
 }
