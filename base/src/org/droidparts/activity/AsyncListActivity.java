@@ -15,11 +15,12 @@
  */
 package org.droidparts.activity;
 
+import static android.view.View.GONE;
+import static android.view.View.VISIBLE;
 import static android.view.Window.FEATURE_INDETERMINATE_PROGRESS;
 import static android.widget.Toast.LENGTH_LONG;
 
 import org.droidparts.R;
-import org.droidparts.util.ViewUtils;
 
 import android.os.Bundle;
 import android.view.View;
@@ -49,15 +50,15 @@ public class AsyncListActivity extends ListActivity {
 		if (loading) {
 			boolean emptyList = getListView().getCount() == 0;
 			if (emptyList) {
-				ViewUtils.setVisible(progressContainer, true);
-				ViewUtils.setVisible(listContainer, false);
+				progressContainer.setVisibility(VISIBLE);
+				listContainer.setVisibility(GONE);
 			} else {
 				setProgressBarIndeterminate(loading);
 			}
 		} else {
 			setProgressBarIndeterminate(false);
-			ViewUtils.setVisible(progressContainer, false);
-			ViewUtils.setVisible(listContainer, true);
+			progressContainer.setVisibility(GONE);
+			listContainer.setVisibility(VISIBLE);
 		}
 	}
 
