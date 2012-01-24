@@ -17,6 +17,9 @@ package org.droidparts.util;
 
 import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
+
+import java.lang.reflect.Method;
+
 import android.view.View;
 import android.widget.EditText;
 
@@ -30,4 +33,16 @@ public class ViewUtils {
 		editText.setSelection(editText.getText().length());
 	}
 
+	public static void disableOverscroll(View view) {
+		Class<?> viewCls = view.getClass();
+		try {
+			Method m = viewCls.getMethod("setOverScrollMode",
+					new Class[] { int.class });
+			int OVER_SCROLL_NEVER = (Integer) viewCls.getField(
+					"OVER_SCROLL_NEVER").get(view);
+			m.invoke(view, OVER_SCROLL_NEVER);
+		} catch (Exception e) {
+			L.e(e);
+		}
+	}
 }
