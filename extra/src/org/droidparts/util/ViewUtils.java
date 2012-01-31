@@ -29,10 +29,6 @@ public class ViewUtils {
 		view.setVisibility(visible ? VISIBLE : GONE);
 	}
 
-	public static void putCursorAfterLastSymbol(EditText editText) {
-		editText.setSelection(editText.getText().length());
-	}
-
 	public static void disableOverscroll(View view) {
 		Class<?> viewCls = view.getClass();
 		try {
@@ -44,5 +40,9 @@ public class ViewUtils {
 		} catch (Exception e) {
 			L.e(e);
 		}
+	}
+
+	public static void putCursorAfterLastSymbol(EditText editText) {
+		editText.setSelection(editText.getText().length());
 	}
 }
