@@ -15,48 +15,48 @@
  */
 package org.droidparts.adapter.cursor;
 
-import org.droidparts.manager.sql.DBModelManager;
-import org.droidparts.model.DBModel;
+import org.droidparts.manager.sql.EntityManager;
+import org.droidparts.model.Entity;
 
 import android.app.Activity;
 import android.database.Cursor;
 
-public abstract class SimpleCursorAdapter<Model extends DBModel> extends
+public abstract class SimpleCursorAdapter<Model extends Entity> extends
 		TypedCursorAdapter<Model> {
 
-	protected final DBModelManager<Model> modelManager;
+	protected final EntityManager<Model> entityManager;
 
 	public SimpleCursorAdapter(Activity activity,
-			DBModelManager<Model> modelManager) {
-		this(activity, modelManager.list(), modelManager);
+			EntityManager<Model> entityManager) {
+		this(activity, entityManager.list(), entityManager);
 	}
 
 	public SimpleCursorAdapter(Activity activity, Cursor cursor,
-			DBModelManager<Model> modelManager) {
+			EntityManager<Model> entityManager) {
 		super(activity, cursor);
-		this.modelManager = modelManager;
+		this.entityManager = entityManager;
 	}
 
 	public boolean create(Model item) {
-		boolean success = modelManager.create(item);
+		boolean success = entityManager.create(item);
 		return requeryOnSuccess(success);
 	}
 
 	public Model read(int position) {
 		long id = getItemId(position);
-		Model item = modelManager.read(id);
-		modelManager.fillForeignKeys(item);
+		Model item = entityManager.read(id);
+		entityManager.fillForeignKeys(item);
 		return item;
 	}
 
 	public boolean update(Model item) {
-		boolean success = modelManager.update(item);
+		boolean success = entityManager.update(item);
 		return requeryOnSuccess(success);
 	}
 
 	public boolean delete(int position) {
 		long id = getItemId(position);
-		boolean success = modelManager.delete(id);
+		boolean success = entityManager.delete(id);
 		return requeryOnSuccess(success);
 	}
 

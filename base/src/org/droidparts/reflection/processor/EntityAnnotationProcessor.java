@@ -17,7 +17,7 @@ package org.droidparts.reflection.processor;
 
 import static org.droidparts.reflection.util.TypeHelper.isBoolean;
 import static org.droidparts.reflection.util.TypeHelper.isByte;
-import static org.droidparts.reflection.util.TypeHelper.isDBModel;
+import static org.droidparts.reflection.util.TypeHelper.isEntity;
 import static org.droidparts.reflection.util.TypeHelper.isFloat;
 import static org.droidparts.reflection.util.TypeHelper.isInteger;
 import static org.droidparts.reflection.util.TypeHelper.isLong;
@@ -29,16 +29,16 @@ import java.util.ArrayList;
 
 import org.droidparts.annotation.sql.Column;
 import org.droidparts.annotation.sql.Table;
-import org.droidparts.model.DBModel;
-import org.droidparts.reflection.model.DBModelField;
+import org.droidparts.model.Entity;
+import org.droidparts.reflection.model.EntityField;
 import org.droidparts.util.L;
 
-public class DBModelAnnotationProcessor extends
-		ModelAnnotationProcessor<DBModelField> {
+public class EntityAnnotationProcessor extends
+		ModelAnnotationProcessor<EntityField> {
 
 	private static final String ID_SUFFIX = "_id";
 
-	public DBModelAnnotationProcessor(Class<? extends DBModel> cls) {
+	public EntityAnnotationProcessor(Class<? extends Entity> cls) {
 		super(cls);
 	}
 
@@ -53,12 +53,12 @@ public class DBModelAnnotationProcessor extends
 	}
 
 	@Override
-	public DBModelField[] getModelClassFields() {
-		ArrayList<DBModelField> list = new ArrayList<DBModelField>();
+	public EntityField[] getModelClassFields() {
+		ArrayList<EntityField> list = new ArrayList<EntityField>();
 		for (Field field : getClassHierarchyFields()) {
 			Column columnAnn = field.getAnnotation(Column.class);
 			if (columnAnn != null) {
-				DBModelField dbField = new DBModelField();
+				EntityField dbField = new EntityField();
 				fillField(field, dbField);
 				dbField.columnName = getColumnName(columnAnn, field);
 				dbField.columnNullable = columnAnn.nullable();
@@ -67,7 +67,7 @@ public class DBModelAnnotationProcessor extends
 			}
 		}
 		sanitizeFields(list);
-		return list.toArray(new DBModelField[list.size()]);
+		return list.toArray(new EntityField[list.size()]);
 	}
 
 	private String getColumnName(Column ann, Field field) {
@@ -75,14 +75,14 @@ public class DBModelAnnotationProcessor extends
 		if (isEmpty(name)) {
 			name = field.getName();
 		}
-		if (isDBModel(field.getType()) && !name.endsWith(ID_SUFFIX)) {
+		if (isEntity(field.getType()) && !name.endsWith(ID_SUFFIX)) {
 			name += ID_SUFFIX;
 		}
 		return name;
 	}
 
-	private void sanitizeFields(ArrayList<DBModelField> fields) {
-		for (DBModelField field : fields) {
+	private void sanitizeFields(ArrayList<EntityField> fields) {
+		for (EntityField field : fields) {
 			if (field.columnNullable) {
 				Class<?> cls = field.fieldClass;
 				if (isBoolean(cls) || isByte(cls) || isFloat(cls)

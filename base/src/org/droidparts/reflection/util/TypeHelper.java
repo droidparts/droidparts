@@ -18,7 +18,7 @@ package org.droidparts.reflection.util;
 import java.util.Collection;
 import java.util.UUID;
 
-import org.droidparts.model.DBModel;
+import org.droidparts.model.Entity;
 import org.droidparts.model.Model;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -96,8 +96,8 @@ public final class TypeHelper {
 		return Model.class.isAssignableFrom(cls);
 	}
 
-	public static boolean isDBModel(Class<?> cls) {
-		return DBModel.class.isAssignableFrom(cls);
+	public static boolean isEntity(Class<?> cls) {
+		return Entity.class.isAssignableFrom(cls);
 	}
 
 	private TypeHelper() {

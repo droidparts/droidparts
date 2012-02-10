@@ -29,7 +29,7 @@ import static org.droidparts.contract.DB.UNIQUE;
 import static org.droidparts.reflection.util.TypeHelper.isBitmap;
 import static org.droidparts.reflection.util.TypeHelper.isBoolean;
 import static org.droidparts.reflection.util.TypeHelper.isByteArray;
-import static org.droidparts.reflection.util.TypeHelper.isDBModel;
+import static org.droidparts.reflection.util.TypeHelper.isEntity;
 import static org.droidparts.reflection.util.TypeHelper.isDouble;
 import static org.droidparts.reflection.util.TypeHelper.isEnum;
 import static org.droidparts.reflection.util.TypeHelper.isFloat;
@@ -41,9 +41,9 @@ import static org.droidparts.reflection.util.TypeHelper.isUUID;
 import java.util.ArrayList;
 
 import org.droidparts.contract.DB.Column;
-import org.droidparts.model.DBModel;
-import org.droidparts.reflection.model.DBModelField;
-import org.droidparts.reflection.processor.DBModelAnnotationProcessor;
+import org.droidparts.model.Entity;
+import org.droidparts.reflection.model.EntityField;
+import org.droidparts.reflection.processor.EntityAnnotationProcessor;
 import org.droidparts.util.L;
 
 import android.content.Context;
@@ -59,8 +59,8 @@ public abstract class DBOpenHelper extends SQLiteOpenHelper {
 	@Override
 	public final void onCreate(SQLiteDatabase db) {
 		ArrayList<String> queries = new ArrayList<String>();
-		for (Class<? extends DBModel> cls : getModelClasses()) {
-			String query = getSQLCreate(new DBModelAnnotationProcessor(cls));
+		for (Class<? extends Entity> cls : getModelClasses()) {
+			String query = getSQLCreate(new EntityAnnotationProcessor(cls));
 			queries.add(query);
 		}
 		execQueries(db, queries);
@@ -82,8 +82,8 @@ public abstract class DBOpenHelper extends SQLiteOpenHelper {
 
 	protected void dropAllTables(SQLiteDatabase db) {
 		ArrayList<String> queries = new ArrayList<String>();
-		for (Class<? extends DBModel> cls : getModelClasses()) {
-			String tableName = new DBModelAnnotationProcessor(cls).getModelClassName();
+		for (Class<? extends Entity> cls : getModelClasses()) {
+			String tableName = new EntityAnnotationProcessor(cls).getModelClassName();
 			queries.add("DROP TABLE IF EXISTS " + tableName + ";");
 		}
 		execQueries(db, queries);
@@ -92,15 +92,15 @@ public abstract class DBOpenHelper extends SQLiteOpenHelper {
 	protected void onCreateExtra(SQLiteDatabase db) {
 	}
 
-	protected abstract Class<? extends DBModel>[] getModelClasses();
+	protected abstract Class<? extends Entity>[] getModelClasses();
 
-	private String getSQLCreate(DBModelAnnotationProcessor proc) {
-		DBModelField[] dbFields = proc.getModelClassFields();
+	private String getSQLCreate(EntityAnnotationProcessor proc) {
+		EntityField[] dbFields = proc.getModelClassFields();
 		StringBuilder sb = new StringBuilder();
 		sb.append(CREATE_TABLE + proc.getModelClassName() + OPENING_BRACE);
 		sb.append(PK + SEPARATOR);
 		for (int i = 0; i < dbFields.length; i++) {
-			DBModelField dbField = dbFields[i];
+			EntityField dbField = dbFields[i];
 			if (Column.ID.equals(dbField.columnName)) {
 				// already got it
 				continue;
@@ -136,7 +136,7 @@ public abstract class DBOpenHelper extends SQLiteOpenHelper {
 			return TEXT;
 		} else if (isByteArray(cls) || isBitmap(cls)) {
 			return BLOB;
-		} else if (isDBModel(cls)) {
+		} else if (isEntity(cls)) {
 			return INTEGER;
 		} else {
 			return null;

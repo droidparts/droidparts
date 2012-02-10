@@ -19,10 +19,10 @@ import static org.droidparts.contract.DB.Column.ID;
 
 import org.droidparts.annotation.sql.Column;
 
-public class DBModel extends Model {
+public class Entity extends Model {
 	private static final long serialVersionUID = 1L;
 
-	public DBModel() {
+	public Entity() {
 		// subclasses must have a no-arg constructor
 	}
 
@@ -41,7 +41,7 @@ public class DBModel extends Model {
 		} else if (this == o) {
 			return true;
 		} else if (getClass() == o.getClass()) {
-			return id == ((DBModel) o).id;
+			return id == ((Entity) o).id;
 		} else {
 			return false;
 		}

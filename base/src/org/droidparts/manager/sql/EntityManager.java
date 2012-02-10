@@ -16,13 +16,13 @@
 package org.droidparts.manager.sql;
 
 import org.droidparts.contract.DB;
-import org.droidparts.model.DBModel;
+import org.droidparts.model.Entity;
 
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
-public abstract class DBModelManager<Model extends DBModel> implements
+public abstract class EntityManager<Model extends Entity> implements
 		DB {
 
 	public Cursor list(String... columns) {

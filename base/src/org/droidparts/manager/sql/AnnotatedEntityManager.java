@@ -25,7 +25,7 @@ import static org.droidparts.reflection.util.TypeHelper.isBitmap;
 import static org.droidparts.reflection.util.TypeHelper.isBoolean;
 import static org.droidparts.reflection.util.TypeHelper.isByte;
 import static org.droidparts.reflection.util.TypeHelper.isByteArray;
-import static org.droidparts.reflection.util.TypeHelper.isDBModel;
+import static org.droidparts.reflection.util.TypeHelper.isEntity;
 import static org.droidparts.reflection.util.TypeHelper.isDouble;
 import static org.droidparts.reflection.util.TypeHelper.isEnum;
 import static org.droidparts.reflection.util.TypeHelper.isFloat;
@@ -41,9 +41,9 @@ import java.util.UUID;
 
 import org.droidparts.annotation.inject.Inject;
 import org.droidparts.inject.Injector;
-import org.droidparts.model.DBModel;
-import org.droidparts.reflection.model.DBModelField;
-import org.droidparts.reflection.processor.DBModelAnnotationProcessor;
+import org.droidparts.model.Entity;
+import org.droidparts.reflection.model.EntityField;
+import org.droidparts.reflection.processor.EntityAnnotationProcessor;
 import org.droidparts.reflection.util.ReflectionUtils;
 
 import android.content.ContentValues;
@@ -54,21 +54,21 @@ import android.graphics.Bitmap;
 import android.graphics.Bitmap.CompressFormat;
 import android.graphics.BitmapFactory;
 
-public class AnnotatedDBModelManager<Model extends DBModel> extends
-		DBModelManager<Model> {
+public class AnnotatedEntityManager<Model extends Entity> extends
+		EntityManager<Model> {
 
 	@Inject
 	private SQLiteDatabase db;
 
 	protected final Context ctx;
-	private final Class<? extends DBModel> cls;
-	private final DBModelAnnotationProcessor processor;
+	private final Class<? extends Entity> cls;
+	private final EntityAnnotationProcessor processor;
 
-	public AnnotatedDBModelManager(Context ctx, Class<? extends DBModel> cls) {
+	public AnnotatedEntityManager(Context ctx, Class<? extends Entity> cls) {
 		Injector.get().inject(ctx, this);
 		this.ctx = ctx;
 		this.cls = cls;
-		processor = new DBModelAnnotationProcessor(cls);
+		processor = new EntityAnnotationProcessor(cls);
 	}
 
 	public boolean delete(long id) {
@@ -79,8 +79,8 @@ public class AnnotatedDBModelManager<Model extends DBModel> extends
 	@Override
 	public Model readFromCursor(Cursor cursor) {
 		Model model = instantiate(cls);
-		DBModelField[] fields = processor.getModelClassFields();
-		for (DBModelField dbField : fields) {
+		EntityField[] fields = processor.getModelClassFields();
+		for (EntityField dbField : fields) {
 			int colIdx = cursor.getColumnIndex(dbField.columnName);
 			if (colIdx >= 0) {
 				Object columnVal = readFromCursor(cursor, colIdx,
@@ -98,8 +98,8 @@ public class AnnotatedDBModelManager<Model extends DBModel> extends
 	public void fillForeignKeys(Model item) {
 		for (Field field : listAnnotatedFields(cls)) {
 			Class<?> fieldType = field.getType();
-			if (isDBModel(fieldType)) {
-				DBModel model = ReflectionUtils.getTypedFieldVal(field, item);
+			if (isEntity(fieldType)) {
+				Entity model = ReflectionUtils.getTypedFieldVal(field, item);
 				if (model != null) {
 					Object obj = getManager(fieldType).read(model.id);
 					setFieldVal(field, item, obj);
@@ -121,8 +121,8 @@ public class AnnotatedDBModelManager<Model extends DBModel> extends
 	@Override
 	protected ContentValues toContentValues(Model item) {
 		ContentValues cv = new ContentValues();
-		DBModelField[] fields = processor.getModelClassFields();
-		for (DBModelField dbField : fields) {
+		EntityField[] fields = processor.getModelClassFields();
+		for (EntityField dbField : fields) {
 			Field field = getField(item.getClass(), dbField.fieldName);
 			Object columnVal = getTypedFieldVal(field, item);
 			putToContentValues(cv, dbField.columnName, dbField.fieldClass,
@@ -135,8 +135,8 @@ public class AnnotatedDBModelManager<Model extends DBModel> extends
 	protected void createOrUpdateForeignKeys(Model item) {
 		for (Field f : listAnnotatedFields(cls)) {
 			Class<?> cls = f.getType();
-			if (isDBModel(cls)) {
-				DBModel model = ReflectionUtils.getTypedFieldVal(f, item);
+			if (isEntity(cls)) {
+				Entity model = ReflectionUtils.getTypedFieldVal(f, item);
 				if (model != null) {
 					getManager(cls).createOrUpdate(model);
 				}
@@ -185,8 +185,8 @@ public class AnnotatedDBModelManager<Model extends DBModel> extends
 			cv.put(key, baos.toByteArray());
 		} else if (isEnum(valueCls)) {
 			cv.put(key, value.toString());
-		} else if (isDBModel(valueCls)) {
-			Long id = value != null ? ((DBModel) value).id : null;
+		} else if (isEntity(valueCls)) {
+			Long id = value != null ? ((Entity) value).id : null;
 			cv.put(key, id);
 		} else {
 			subPutToContentValues(cv, key, valueCls, value);
@@ -222,7 +222,7 @@ public class AnnotatedDBModelManager<Model extends DBModel> extends
 			return BitmapFactory.decodeByteArray(arr, 0, arr.length);
 		} else if (isEnum(fieldCls)) {
 			return instantiateEnum(fieldCls, cursor.getString(columnIndex));
-		} else if (isDBModel(fieldCls)) {
+		} else if (isEntity(fieldCls)) {
 			long id = cursor.getLong(columnIndex);
 			Model model = instantiate(fieldCls);
 			model.id = id;
@@ -232,10 +232,10 @@ public class AnnotatedDBModelManager<Model extends DBModel> extends
 		}
 	}
 
-	private AnnotatedDBModelManager<DBModel> getManager(Class<?> cls) {
+	private AnnotatedEntityManager<Entity> getManager(Class<?> cls) {
 		@SuppressWarnings("unchecked")
-		AnnotatedDBModelManager<DBModel> manager = new AnnotatedDBModelManager<DBModel>(
-				ctx, (Class<? extends DBModel>) cls);
+		AnnotatedEntityManager<Entity> manager = new AnnotatedEntityManager<Entity>(
+				ctx, (Class<? extends Entity>) cls);
 		return manager;
 	}
 
