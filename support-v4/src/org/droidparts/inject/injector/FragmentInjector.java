@@ -17,13 +17,13 @@ package org.droidparts.inject.injector;
 
 import java.lang.reflect.Field;
 
+import org.droidparts.activity.FragmentActivity;
 import org.droidparts.annotation.inject.InjectFragment;
 import org.droidparts.reflection.util.ReflectionUtils;
 import org.droidparts.util.L;
 import org.droidparts.util.inner.ResourceUtils;
 
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
 
 public class FragmentInjector {
 

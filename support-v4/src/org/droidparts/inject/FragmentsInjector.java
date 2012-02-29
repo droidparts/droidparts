@@ -18,12 +18,12 @@ package org.droidparts.inject;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 
+import org.droidparts.activity.FragmentActivity;
 import org.droidparts.annotation.inject.InjectFragment;
 import org.droidparts.inject.injector.FragmentInjector;
 
 import android.content.Context;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
 
 public class FragmentsInjector extends Injector {
 

@@ -17,15 +17,17 @@ package org.droidparts.fragment;
 
 import org.droidparts.inject.FragmentsInjector;
 
-import android.support.v4.app.SupportActivity;
+import android.app.Activity;
 import android.view.View;
 
-public class DialogFragment extends android.support.v4.app.DialogFragment {
+import com.actionbarsherlock.app.SherlockDialogFragment;
+
+public class DialogFragment extends SherlockDialogFragment {
 
 	protected View contentView;
 
 	@Override
-	public void onAttach(SupportActivity activity) {
+	public void onAttach(Activity activity) {
 		super.onAttach(activity);
 		int contentViewId = getContentViewId();
 		if (contentViewId != 0) {

@@ -19,8 +19,10 @@ import org.droidparts.inject.FragmentsInjector;
 
 import android.os.Bundle;
 
-public abstract class FragmentActivity extends
-		android.support.v4.app.FragmentActivity implements Injected {
+import com.actionbarsherlock.app.SherlockFragmentActivity;
+
+public abstract class FragmentActivity extends SherlockFragmentActivity
+		implements Injected {
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {

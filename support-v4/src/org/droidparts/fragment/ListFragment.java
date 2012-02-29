@@ -19,7 +19,9 @@ import org.droidparts.inject.FragmentsInjector;
 
 import android.os.Bundle;
 
-public class ListFragment extends android.support.v4.app.ListFragment {
+import com.actionbarsherlock.app.SherlockListFragment;
+
+public class ListFragment extends SherlockListFragment {
 
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {

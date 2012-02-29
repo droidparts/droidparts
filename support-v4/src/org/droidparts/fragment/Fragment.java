@@ -19,7 +19,9 @@ import org.droidparts.inject.FragmentsInjector;
 
 import android.os.Bundle;
 
-public class Fragment extends android.support.v4.app.Fragment {
+import com.actionbarsherlock.app.SherlockFragment;
+
+public class Fragment extends SherlockFragment {
 
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
