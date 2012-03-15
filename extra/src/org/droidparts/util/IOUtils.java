@@ -18,7 +18,9 @@ package org.droidparts.util;
 import static org.droidparts.contract.Constants.UTF8;
 
 import java.io.Closeable;
+import java.io.File;
 import java.io.UnsupportedEncodingException;
+import java.util.HashSet;
 
 public class IOUtils {
 
@@ -40,6 +42,24 @@ public class IOUtils {
 				}
 			}
 		}
+	}
+
+	public static HashSet<File> getFileList(File dir, String fileExtension) {
+		final HashSet<File> files = new HashSet<File>();
+		for (File file : dir.listFiles()) {
+			if (file.isFile()) {
+				if (fileExtension == null) {
+					files.add(file);
+				} else {
+					if (file.getName().endsWith(fileExtension)) {
+						files.add(file);
+					}
+				}
+			} else {
+				files.addAll(getFileList(file, fileExtension));
+			}
+		}
+		return files;
 	}
 
 }
