@@ -76,7 +76,7 @@ public class FileCacher {
 		}
 	}
 
-	public void purgeCaches(long lastAccessedBefore) {
+	public void purgeCache(long lastAccessedBefore) {
 		for (File f : IOUtils.getFileList(cacheDir, null)) {
 			if (lastAccessedBefore <= 0
 					|| f.lastModified() < lastAccessedBefore) {
