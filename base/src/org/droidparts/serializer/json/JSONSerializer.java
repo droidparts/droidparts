@@ -91,6 +91,24 @@ public class JSONSerializer<TypeFrom extends Model> implements
 		return model;
 	}
 
+	public final JSONArray serialize(Collection<TypeFrom> coll)
+			throws JSONException {
+		JSONArray arr = new JSONArray();
+		for (TypeFrom item : coll) {
+			arr.put(serialize(item));
+		}
+		return arr;
+	}
+
+	public final ArrayList<TypeFrom> deserialize(JSONArray arr)
+			throws JSONException {
+		ArrayList<TypeFrom> list = new ArrayList<TypeFrom>();
+		for (int i = 0; i < arr.length(); i++) {
+			list.add(deserialize(arr.getJSONObject(i)));
+		}
+		return list;
+	}
+
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	private void putToJSONObject(JSONObject obj, String key, Class<?> valueCls,
 			Object value) throws JSONException {
