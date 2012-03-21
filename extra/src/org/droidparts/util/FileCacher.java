@@ -35,6 +35,7 @@ public class FileCacher {
 
 	public FileCacher(File cacheDir) {
 		this.cacheDir = cacheDir;
+		cacheDir.mkdirs();
 	}
 
 	public boolean saveToCache(String name, BitmapDrawable drawable) {
