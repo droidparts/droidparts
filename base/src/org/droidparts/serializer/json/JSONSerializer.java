@@ -91,7 +91,7 @@ public class JSONSerializer<TypeFrom extends Model> implements
 		return model;
 	}
 
-	public final JSONArray serialize(Collection<TypeFrom> coll)
+	public final JSONArray serializeList(Collection<TypeFrom> coll)
 			throws JSONException {
 		JSONArray arr = new JSONArray();
 		for (TypeFrom item : coll) {
@@ -100,7 +100,7 @@ public class JSONSerializer<TypeFrom extends Model> implements
 		return arr;
 	}
 
-	public final ArrayList<TypeFrom> deserialize(JSONArray arr)
+	public final ArrayList<TypeFrom> deserializeList(JSONArray arr)
 			throws JSONException {
 		ArrayList<TypeFrom> list = new ArrayList<TypeFrom>();
 		for (int i = 0; i < arr.length(); i++) {
@@ -144,7 +144,7 @@ public class JSONSerializer<TypeFrom extends Model> implements
 			}
 			for (Object o : list) {
 				try {
-					jarr.put(serializer.serialize(o));
+					jarr.put(serializer.serialize((Model) o));
 				} catch (Exception e) {
 					throw new JSONException(e.getMessage());
 				}
@@ -160,7 +160,7 @@ public class JSONSerializer<TypeFrom extends Model> implements
 		}
 	}
 
-	@SuppressWarnings({ "unchecked", "rawtypes" })
+	@SuppressWarnings("rawtypes")
 	private Object readFromJSON(Class<?> fieldCls,
 			Class<?>[] fieldClassGenericArguments, Object model, Object val)
 			throws JSONException {
@@ -182,7 +182,8 @@ public class JSONSerializer<TypeFrom extends Model> implements
 			JSONSerializer serializer = getSerializer(fieldClassGenericArguments[0]);
 			for (int i = 0; i < jArr.length(); i++) {
 				try {
-					Object obj = serializer.deserialize(jArr.get(i));
+					Object obj = serializer.deserialize((JSONObject) jArr
+							.get(i));
 					if (isArr) {
 						arr[i] = obj;
 					} else {
