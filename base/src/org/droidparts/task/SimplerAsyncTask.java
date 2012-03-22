@@ -30,7 +30,7 @@ public abstract class SimplerAsyncTask<Progress, Result> extends
 	}
 
 	@Override
-	protected final Result executeInBackground(Void... params) throws Exception {
+	public final Result executeInBackground(Void... params) throws Exception {
 		return executeInBackground();
 	}
 

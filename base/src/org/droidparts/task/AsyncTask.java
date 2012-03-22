@@ -79,7 +79,7 @@ public abstract class AsyncTask<Params, Progress, Result> extends
 		}
 	}
 
-	protected abstract Result executeInBackground(Params... params)
+	public abstract Result executeInBackground(Params... params)
 			throws Exception;
 
 	protected void onSuccessPostExecute(Result result) {
@@ -92,6 +92,10 @@ public abstract class AsyncTask<Params, Progress, Result> extends
 		if (resultListener != null) {
 			resultListener.onAsyncTaskFailure(exception);
 		}
+	}
+
+	public Context getContext() {
+		return ctx;
 	}
 
 }
