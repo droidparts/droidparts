@@ -18,6 +18,7 @@ package org.droidparts.activity;
 import static com.actionbarsherlock.app.ActionBar.NAVIGATION_MODE_TABS;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -31,6 +32,8 @@ import com.actionbarsherlock.app.ActionBar.TabListener;
 public abstract class TabbedFragmentActivity extends FragmentActivity {
 
 	private final ArrayList<int[]> tabSpecs = new ArrayList<int[]>();
+
+	private final HashSet<Integer> hiddenFragments = new HashSet<Integer>();
 
 	private final TabListener tabListener = new TabListener() {
 
@@ -70,19 +73,43 @@ public abstract class TabbedFragmentActivity extends FragmentActivity {
 		tabSpecs.add(fragmentIds);
 	}
 
-	// TODO make private
-	protected void onTabSelected(Tab tab, FragmentTransaction ft) {
+	@Override
+	public void setFragmentVisible(int fragmentId, boolean visible) {
+		if (visible) {
+			hiddenFragments.remove(fragmentId);
+			int[] currTab = tabSpecs.get(getSelectedTabPos());
+			for (int fId : currTab) {
+				if (fId == fragmentId) {
+					super.setFragmentVisible(fragmentId, true);
+					break;
+				}
+			}
+		} else {
+			hiddenFragments.add(fragmentId);
+			super.setFragmentVisible(fragmentId, false);
+		}
+	}
+
+	private void onTabSelected(Tab tab, FragmentTransaction ft) {
 		int pos = tab.getPosition();
 		FragmentManager fm = getSupportFragmentManager();
-		for (int i = 0; i < tabSpecs.size(); i++) {
-			int[] tabSpec = tabSpecs.get(i);
+		for (int tabPos = 0; tabPos < tabSpecs.size(); tabPos++) {
+			int[] tabSpec = tabSpecs.get(tabPos);
 			for (int fragmentId : tabSpec) {
-				Fragment f = fm.findFragmentById(fragmentId);
-				if (f != null) {
-					if (i == pos) {
-						ft.show(f);
+				Fragment fragment = fm.findFragmentById(fragmentId);
+				if (fragment != null) {
+					boolean tabSelected = (tabPos == pos);
+					if (tabSelected) {
+						if (!hiddenFragments.contains(fragmentId)) {
+							ft.show(fragment);
+						}
 					} else {
-						ft.hide(f);
+						if (fragment.isHidden()) {
+							hiddenFragments.add(fragmentId);
+						} else {
+							hiddenFragments.remove(fragmentId);
+							ft.hide(fragment);
+						}
 					}
 				}
 			}

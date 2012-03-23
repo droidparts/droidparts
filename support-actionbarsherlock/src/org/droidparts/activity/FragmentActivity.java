@@ -18,6 +18,9 @@ package org.droidparts.activity;
 import org.droidparts.inject.FragmentsInjector;
 
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 
@@ -35,4 +38,17 @@ public abstract class FragmentActivity extends SherlockFragmentActivity
 	public void onPreInject() {
 	}
 
+	public void setFragmentVisible(int fragmentId, boolean visible) {
+		FragmentManager fm = getSupportFragmentManager();
+		Fragment f = fm.findFragmentById(fragmentId);
+		if (f != null) {
+			FragmentTransaction ft = fm.beginTransaction();
+			if (visible) {
+				ft.show(f);
+			} else {
+				ft.hide(f);
+			}
+			ft.commit();
+		}
+	}
 }
