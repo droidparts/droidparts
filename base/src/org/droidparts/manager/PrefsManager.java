@@ -67,23 +67,23 @@ public class PrefsManager {
 
 	// shortcuts
 
-	protected boolean putBoolean(String key, boolean val) {
+	protected boolean saveBoolean(String key, boolean val) {
 		return prefs.edit().putBoolean(key, val).commit();
 	}
 
-	protected boolean putFloat(String key, float val) {
+	protected boolean saveFloat(String key, float val) {
 		return prefs.edit().putFloat(key, val).commit();
 	}
 
-	protected boolean putInt(String key, int val) {
+	protected boolean saveInt(String key, int val) {
 		return prefs.edit().putInt(key, val).commit();
 	}
 
-	protected boolean putLong(String key, long val) {
+	protected boolean saveLong(String key, long val) {
 		return prefs.edit().putLong(key, val).commit();
 	}
 
-	protected boolean putString(String key, String val) {
+	protected boolean saveString(String key, String val) {
 		return prefs.edit().putString(key, val).commit();
 	}
 
