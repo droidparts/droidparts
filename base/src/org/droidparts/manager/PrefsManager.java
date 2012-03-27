@@ -65,4 +65,26 @@ public class PrefsManager {
 		prefs.edit().clear().putInt(VERSION, newVersion).commit();
 	}
 
+	// shortcuts
+
+	protected boolean putBoolean(String key, boolean val) {
+		return prefs.edit().putBoolean(key, val).commit();
+	}
+
+	protected boolean putFloat(String key, float val) {
+		return prefs.edit().putFloat(key, val).commit();
+	}
+
+	protected boolean putInt(String key, int val) {
+		return prefs.edit().putInt(key, val).commit();
+	}
+
+	protected boolean putLong(String key, long val) {
+		return prefs.edit().putLong(key, val).commit();
+	}
+
+	protected boolean putString(String key, String val) {
+		return prefs.edit().putString(key, val).commit();
+	}
+
 }
