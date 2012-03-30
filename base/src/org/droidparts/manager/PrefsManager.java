@@ -67,6 +67,10 @@ public class PrefsManager {
 
 	// shortcuts
 
+	protected String resToKey(int resId) {
+		return ctx.getString(resId);
+	}
+
 	protected boolean saveBoolean(String key, boolean val) {
 		return prefs.edit().putBoolean(key, val).commit();
 	}
