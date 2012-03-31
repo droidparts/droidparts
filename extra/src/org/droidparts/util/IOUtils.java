@@ -19,7 +19,11 @@ import static org.droidparts.contract.Constants.UTF8;
 
 import java.io.Closeable;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.nio.channels.FileChannel;
 import java.util.HashSet;
 
 public class IOUtils {
@@ -60,6 +64,19 @@ public class IOUtils {
 			}
 		}
 		return files;
+	}
+
+	public static void copy(File fileFrom, File fileTo) throws IOException {
+		FileChannel src = null;
+		FileChannel dst = null;
+		try {
+			src = new FileInputStream(fileFrom).getChannel();
+			dst = new FileOutputStream(fileTo).getChannel();
+			dst.transferFrom(src, 0, src.size());
+		} finally {
+			silentlyClose(src, dst);
+		}
+
 	}
 
 }
