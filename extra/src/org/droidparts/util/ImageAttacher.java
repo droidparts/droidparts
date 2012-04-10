@@ -47,7 +47,7 @@ public final class ImageAttacher {
 
 			@Override
 			public void run() {
-				final Drawable image = get(fileUrl);
+				final Drawable image = getCachedOrFetchAndCache(fileUrl);
 				if (image != null) {
 					view.post(new AttachRunnable(view, image));
 				}
@@ -55,7 +55,7 @@ public final class ImageAttacher {
 		});
 	}
 
-	private Drawable get(String fileUrl) {
+	public Drawable getCachedOrFetchAndCache(String fileUrl) {
 
 		BitmapDrawable image = null;
 		if (fileCacher != null) {
