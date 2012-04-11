@@ -17,16 +17,34 @@ package org.droidparts.inject.injector;
 
 import java.lang.reflect.Field;
 
-import org.droidparts.annotation.inject.InjectResource;
+import org.droidparts.annotation.inject.InjectView;
+import org.droidparts.reflection.util.ReflectionUtils;
+import org.droidparts.util.L;
+import org.droidparts.util.inner.ResourceUtils;
 
 import android.content.Context;
+import android.view.View;
 
-public class ResourceInjector {
+public class InjectViewInjector {
 
-	public static boolean inject(Context ctx, InjectResource ann,
+	public static boolean inject(Context ctx, View root, InjectView ann,
 			Object target, Field field) {
-		// TODO
-		return false;
+		int viewId = ann.value();
+		if (viewId == 0) {
+			String fieldName = field.getName();
+			viewId = ResourceUtils.getResourceId(ctx, fieldName);
+		}
+		if (viewId != 0) {
+			View view = root.findViewById(viewId);
+			if (field.getType() != view.getClass()) {
+				// TODO
+				L.e("Incompatible types.");
+			}
+			ReflectionUtils.setFieldVal(field, target, view);
+			return true;
+		} else {
+			L.e("View not found.");
+			return false;
+		}
 	}
-
 }

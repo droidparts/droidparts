@@ -15,31 +15,18 @@
  */
 package org.droidparts.inject.injector;
 
-import static org.droidparts.reflection.util.ReflectionUtils.setFieldVal;
-
 import java.lang.reflect.Field;
 
-import org.droidparts.annotation.inject.InjectIntentExtra;
+import org.droidparts.annotation.inject.InjectResource;
 
 import android.content.Context;
-import android.os.Bundle;
 
-public class IntentExtraInjector {
+public class InjectResourceInjector {
 
-	public static boolean inject(Context ctx, Bundle data,
-			InjectIntentExtra ann, Object target, Field field) {
-		String key = ann.value();
-		boolean optional = ann.optional();
-		Object val = data.get(key);
-		if (val == null && !optional) {
-			throw new IllegalArgumentException("Bundle contains no key: " + key);
-		}
-		if (val != null) {
-			setFieldVal(field, target, val);
-			return true;
-		} else {
-			return false;
-		}
+	public static boolean inject(Context ctx, InjectResource ann,
+			Object target, Field field) {
+		// TODO
+		return false;
 	}
 
 }

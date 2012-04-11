@@ -31,7 +31,7 @@ import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.os.Bundle;
 
-public class ModuleInjector {
+public class InjectInjector {
 
 	private static final String META_KEY = "droidparts_module";
 
@@ -72,7 +72,7 @@ public class ModuleInjector {
 
 	public static void init(Context ctx) {
 		if (!inited) {
-			synchronized (ModuleInjector.class) {
+			synchronized (InjectInjector.class) {
 				if (!inited) {
 					module = getModule(ctx);
 					Method[] methods = module.getClass().getMethods();

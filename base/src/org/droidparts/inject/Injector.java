@@ -26,11 +26,11 @@ import org.droidparts.annotation.inject.InjectIntentExtra;
 import org.droidparts.annotation.inject.InjectResource;
 import org.droidparts.annotation.inject.InjectSystemService;
 import org.droidparts.annotation.inject.InjectView;
-import org.droidparts.inject.injector.IntentExtraInjector;
-import org.droidparts.inject.injector.ModuleInjector;
-import org.droidparts.inject.injector.ResourceInjector;
-import org.droidparts.inject.injector.SystemServiceInjector;
-import org.droidparts.inject.injector.ViewInjector;
+import org.droidparts.inject.injector.InjectIntentExtraInjector;
+import org.droidparts.inject.injector.InjectInjector;
+import org.droidparts.inject.injector.InjectResourceInjector;
+import org.droidparts.inject.injector.InjectSystemServiceInjector;
+import org.droidparts.inject.injector.InjectViewInjector;
 import org.droidparts.util.L;
 
 import android.app.Activity;
@@ -61,11 +61,11 @@ public class Injector {
 
 	public void setUp(Context ctx) {
 		Injector.ctx = ctx.getApplicationContext();
-		ModuleInjector.init(Injector.ctx);
+		InjectInjector.init(Injector.ctx);
 	}
 
 	public void tearDown() {
-		ModuleInjector.tearDown();
+		InjectInjector.tearDown();
 		ctx = null;
 	}
 
@@ -107,23 +107,23 @@ public class Injector {
 				Class<? extends Annotation> annType = ann.annotationType();
 				boolean success = false;
 				if (annType == Inject.class) {
-					success = ModuleInjector.inject(ctx, target, field);
+					success = InjectInjector.inject(ctx, target, field);
 					if (!success) {
 						// TODO try injecting resource?
 					}
 				} else if (annType == InjectIntentExtra.class) {
 					Bundle data = getIntentExtras(ctx);
-					success = IntentExtraInjector.inject(ctx, data,
+					success = InjectIntentExtraInjector.inject(ctx, data,
 							(InjectIntentExtra) ann, target, field);
 				} else if (annType == InjectResource.class) {
-					success = ResourceInjector.inject(ctx,
+					success = InjectResourceInjector.inject(ctx,
 							(InjectResource) ann, target, field);
 				} else if (annType == InjectSystemService.class) {
-					success = SystemServiceInjector.inject(ctx,
+					success = InjectSystemServiceInjector.inject(ctx,
 							(InjectSystemService) ann, target, field);
 				} else if (annType == InjectView.class) {
 					if (root != null) {
-						success = ViewInjector.inject(ctx, root,
+						success = InjectViewInjector.inject(ctx, root,
 								(InjectView) ann, target, field);
 					}
 				} else {

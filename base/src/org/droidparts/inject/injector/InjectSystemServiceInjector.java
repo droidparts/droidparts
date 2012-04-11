@@ -45,7 +45,7 @@ import android.view.LayoutInflater;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 
-public class SystemServiceInjector {
+public class InjectSystemServiceInjector {
 
 	public static boolean inject(Context ctx, InjectSystemService ann,
 			Object target, Field field) {
