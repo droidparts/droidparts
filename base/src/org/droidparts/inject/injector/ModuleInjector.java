@@ -70,7 +70,7 @@ public class ModuleInjector {
 		module = null;
 	}
 
-	private static void init(Context ctx) {
+	public static void init(Context ctx) {
 		if (!inited) {
 			synchronized (ModuleInjector.class) {
 				if (!inited) {

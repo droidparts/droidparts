@@ -61,6 +61,7 @@ public class Injector {
 
 	public void setUp(Context ctx) {
 		Injector.ctx = ctx.getApplicationContext();
+		ModuleInjector.init(Injector.ctx);
 	}
 
 	public void tearDown() {
