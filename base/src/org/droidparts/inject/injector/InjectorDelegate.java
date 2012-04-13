@@ -64,7 +64,6 @@ public class InjectorDelegate {
 	protected boolean inject(Context ctx, View root, Object target,
 			Annotation ann, Field field) {
 		Class<? extends Annotation> annType = ann.annotationType();
-		L.wtf(annType.getCanonicalName());
 		boolean success = false;
 		if (annType == InjectDependency.class) {
 			success = DependencyInjector.inject(ctx, target, field);
