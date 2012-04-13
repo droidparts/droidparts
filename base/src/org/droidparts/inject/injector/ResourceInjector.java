@@ -38,6 +38,7 @@ public class ResourceInjector {
 			if (isString(cls)) {
 				val = res.getString(resId);
 			}
+			// TODO more resource types
 			if (val != null && cls.isAssignableFrom(val.getClass())) {
 				setFieldVal(field, target, val);
 				return true;
