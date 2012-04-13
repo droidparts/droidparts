@@ -22,7 +22,9 @@ public class Application extends android.app.Application {
 	@Override
 	public void onCreate() {
 		super.onCreate();
-		Injector.get().setUp(this);
+		Injector inj = Injector.get();
+		inj.setUp(this);
+		inj.inject(this, this);
 	}
 
 	@Override
