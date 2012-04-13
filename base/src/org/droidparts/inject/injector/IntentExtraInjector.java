@@ -15,36 +15,31 @@
  */
 package org.droidparts.inject.injector;
 
+import static org.droidparts.reflection.util.ReflectionUtils.setFieldVal;
+
 import java.lang.reflect.Field;
 
-import org.droidparts.annotation.inject.InjectView;
-import org.droidparts.reflection.util.ReflectionUtils;
-import org.droidparts.util.L;
-import org.droidparts.util.inner.ResourceUtils;
+import org.droidparts.annotation.inject.InjectIntentExtra;
 
 import android.content.Context;
-import android.view.View;
+import android.os.Bundle;
 
-public class InjectViewInjector {
+public class IntentExtraInjector {
 
-	public static boolean inject(Context ctx, View root, InjectView ann,
-			Object target, Field field) {
-		int viewId = ann.value();
-		if (viewId == 0) {
-			String fieldName = field.getName();
-			viewId = ResourceUtils.getResourceId(ctx, fieldName);
+	public static boolean inject(Context ctx, Bundle data,
+			InjectIntentExtra ann, Object target, Field field) {
+		String key = ann.value();
+		boolean optional = ann.optional();
+		Object val = data.get(key);
+		if (val == null && !optional) {
+			throw new IllegalArgumentException("Bundle contains no key: " + key);
 		}
-		if (viewId != 0) {
-			View view = root.findViewById(viewId);
-			if (field.getType() != view.getClass()) {
-				// TODO
-				L.e("Incompatible types.");
-			}
-			ReflectionUtils.setFieldVal(field, target, view);
+		if (val != null) {
+			setFieldVal(field, target, val);
 			return true;
 		} else {
-			L.e("View not found.");
 			return false;
 		}
 	}
+
 }

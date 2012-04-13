@@ -39,7 +39,7 @@ import java.io.ByteArrayOutputStream;
 import java.lang.reflect.Field;
 import java.util.UUID;
 
-import org.droidparts.annotation.inject.Inject;
+import org.droidparts.annotation.inject.InjectDependency;
 import org.droidparts.inject.Injector;
 import org.droidparts.model.Entity;
 import org.droidparts.reflection.model.EntityField;
@@ -57,7 +57,7 @@ import android.graphics.BitmapFactory;
 public class AnnotatedEntityManager<Model extends Entity> extends
 		EntityManager<Model> {
 
-	@Inject
+	@InjectDependency
 	private SQLiteDatabase db;
 
 	protected final Context ctx;

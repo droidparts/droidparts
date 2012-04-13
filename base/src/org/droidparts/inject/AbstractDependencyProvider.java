@@ -13,20 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License. 
  */
-package org.droidparts.inject.injector;
-
-import java.lang.reflect.Field;
-
-import org.droidparts.annotation.inject.InjectResource;
+package org.droidparts.inject;
 
 import android.content.Context;
+import android.database.sqlite.SQLiteDatabase;
 
-public class InjectResourceInjector {
+public abstract class AbstractDependencyProvider {
 
-	public static boolean inject(Context ctx, InjectResource ann,
-			Object target, Field field) {
-		// TODO
-		return false;
+	protected final Context ctx;
+
+	public AbstractDependencyProvider(Context ctx) {
+		this.ctx = ctx.getApplicationContext();
 	}
+
+	public abstract SQLiteDatabase getDB();
 
 }

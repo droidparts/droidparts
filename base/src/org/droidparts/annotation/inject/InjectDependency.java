@@ -13,19 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License. 
  */
-package org.droidparts.inject;
+package org.droidparts.annotation.inject;
 
-import android.content.Context;
-import android.database.sqlite.SQLiteDatabase;
+import static java.lang.annotation.ElementType.FIELD;
+import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
-public abstract class AbstractModule {
+import java.lang.annotation.Retention;
+import java.lang.annotation.Target;
 
-	protected final Context ctx;
-
-	public AbstractModule(Context ctx) {
-		this.ctx = ctx.getApplicationContext();
-	}
-
-	public abstract SQLiteDatabase getDB();
+@Retention(RUNTIME)
+@Target(FIELD)
+public @interface InjectDependency {
 
 }

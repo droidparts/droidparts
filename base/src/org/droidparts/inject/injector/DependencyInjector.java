@@ -22,7 +22,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 
-import org.droidparts.inject.AbstractModule;
+import org.droidparts.inject.AbstractDependencyProvider;
 import org.droidparts.reflection.util.ReflectionUtils;
 import org.droidparts.util.L;
 
@@ -31,12 +31,12 @@ import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.os.Bundle;
 
-public class InjectInjector {
+public class DependencyInjector {
 
-	private static final String META_KEY = "droidparts_module";
+	private static final String META_KEY = "droidparts_dependency_provider";
 
 	private static volatile boolean inited = false;
-	private static AbstractModule module;
+	private static AbstractDependencyProvider module;
 	private static HashMap<Class<?>, Method> methodRegistry = new HashMap<Class<?>, Method>();
 
 	public static boolean inject(Context ctx, Object target, Field field) {
@@ -72,7 +72,7 @@ public class InjectInjector {
 
 	public static void init(Context ctx) {
 		if (!inited) {
-			synchronized (InjectInjector.class) {
+			synchronized (DependencyInjector.class) {
 				if (!inited) {
 					module = getModule(ctx);
 					Method[] methods = module.getClass().getMethods();
@@ -85,7 +85,7 @@ public class InjectInjector {
 		}
 	}
 
-	private static AbstractModule getModule(Context ctx) {
+	private static AbstractDependencyProvider getModule(Context ctx) {
 		PackageManager pm = ctx.getPackageManager();
 		Bundle metaData;
 		try {
@@ -103,8 +103,8 @@ public class InjectInjector {
 		try {
 			Class<?> cls = Class.forName(className);
 			Constructor<?> constr = cls.getConstructor(Context.class);
-			AbstractModule module = (AbstractModule) constr.newInstance(ctx
-					.getApplicationContext());
+			AbstractDependencyProvider module = (AbstractDependencyProvider) constr
+					.newInstance(ctx.getApplicationContext());
 			return module;
 		} catch (Exception e) {
 			L.e("No such droidparts module: " + className);

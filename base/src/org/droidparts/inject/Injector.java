@@ -21,16 +21,16 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.util.List;
 
-import org.droidparts.annotation.inject.Inject;
+import org.droidparts.annotation.inject.InjectDependency;
 import org.droidparts.annotation.inject.InjectIntentExtra;
 import org.droidparts.annotation.inject.InjectResource;
 import org.droidparts.annotation.inject.InjectSystemService;
 import org.droidparts.annotation.inject.InjectView;
-import org.droidparts.inject.injector.InjectIntentExtraInjector;
-import org.droidparts.inject.injector.InjectInjector;
-import org.droidparts.inject.injector.InjectResourceInjector;
-import org.droidparts.inject.injector.InjectSystemServiceInjector;
-import org.droidparts.inject.injector.InjectViewInjector;
+import org.droidparts.inject.injector.DependencyInjector;
+import org.droidparts.inject.injector.IntentExtraInjector;
+import org.droidparts.inject.injector.ResourceInjector;
+import org.droidparts.inject.injector.SystemServiceInjector;
+import org.droidparts.inject.injector.ViewInjector;
 import org.droidparts.util.L;
 
 import android.app.Activity;
@@ -61,11 +61,11 @@ public class Injector {
 
 	public void setUp(Context ctx) {
 		Injector.ctx = ctx.getApplicationContext();
-		InjectInjector.init(Injector.ctx);
+		DependencyInjector.init(Injector.ctx);
 	}
 
 	public void tearDown() {
-		InjectInjector.tearDown();
+		DependencyInjector.tearDown();
 		ctx = null;
 	}
 
@@ -106,24 +106,21 @@ public class Injector {
 			for (Annotation ann : field.getAnnotations()) {
 				Class<? extends Annotation> annType = ann.annotationType();
 				boolean success = false;
-				if (annType == Inject.class) {
-					success = InjectInjector.inject(ctx, target, field);
-					if (!success) {
-						// TODO try injecting resource?
-					}
+				if (annType == InjectDependency.class) {
+					success = DependencyInjector.inject(ctx, target, field);
 				} else if (annType == InjectIntentExtra.class) {
-					Bundle data = getIntentExtras(ctx);
-					success = InjectIntentExtraInjector.inject(ctx, data,
+					Bundle data = getIntentExtras(target);
+					success = IntentExtraInjector.inject(ctx, data,
 							(InjectIntentExtra) ann, target, field);
 				} else if (annType == InjectResource.class) {
-					success = InjectResourceInjector.inject(ctx,
+					success = ResourceInjector.inject(ctx,
 							(InjectResource) ann, target, field);
 				} else if (annType == InjectSystemService.class) {
-					success = InjectSystemServiceInjector.inject(ctx,
+					success = SystemServiceInjector.inject(ctx,
 							(InjectSystemService) ann, target, field);
 				} else if (annType == InjectView.class) {
 					if (root != null) {
-						success = InjectViewInjector.inject(ctx, root,
+						success = ViewInjector.inject(ctx, root,
 								(InjectView) ann, target, field);
 					}
 				} else {
@@ -143,10 +140,13 @@ public class Injector {
 		return false;
 	}
 
-	protected Bundle getIntentExtras(Context ctx) {
-		// FIXME or Service
-		Activity act = (Activity) ctx;
-		Bundle data = act.getIntent().getExtras();
+	protected Bundle getIntentExtras(Object obj) {
+		Bundle data = null;
+		if (obj instanceof Activity) {
+			data = ((Activity) obj).getIntent().getExtras();
+		} else if (obj instanceof Service) {
+			// TODO
+		}
 		return data;
 	}
 

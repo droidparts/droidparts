@@ -13,16 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License. 
  */
-package org.droidparts.annotation.inject;
+package org.droidparts.inject.injector;
 
-import static java.lang.annotation.ElementType.FIELD;
-import static java.lang.annotation.RetentionPolicy.RUNTIME;
+import java.lang.reflect.Field;
 
-import java.lang.annotation.Retention;
-import java.lang.annotation.Target;
+import org.droidparts.annotation.inject.InjectResource;
 
-@Retention(RUNTIME)
-@Target(FIELD)
-public @interface Inject {
+import android.content.Context;
+
+public class ResourceInjector {
+
+	public static boolean inject(Context ctx, InjectResource ann,
+			Object target, Field field) {
+		// TODO
+		return false;
+	}
 
 }
