@@ -28,7 +28,7 @@ import android.view.View;
 
 public class ViewInjector {
 
-	public static boolean inject(Context ctx, View root, InjectView ann,
+	static boolean inject(Context ctx, View root, InjectView ann,
 			Object target, Field field) {
 		int viewId = ann.value();
 		if (viewId == 0) {

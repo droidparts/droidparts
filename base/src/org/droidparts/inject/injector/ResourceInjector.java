@@ -28,8 +28,8 @@ import android.content.res.Resources;
 
 public class ResourceInjector {
 
-	public static boolean inject(Context ctx, InjectResource ann,
-			Object target, Field field) {
+	static boolean inject(Context ctx, InjectResource ann, Object target,
+			Field field) {
 		int resId = ann.value();
 		if (resId != 0) {
 			Resources res = ctx.getResources();

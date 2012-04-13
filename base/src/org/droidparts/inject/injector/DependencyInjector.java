@@ -39,7 +39,29 @@ public class DependencyInjector {
 	private static AbstractDependencyProvider module;
 	private static HashMap<Class<?>, Method> methodRegistry = new HashMap<Class<?>, Method>();
 
-	public static boolean inject(Context ctx, Object target, Field field) {
+	static void init(Context ctx) {
+		if (!inited) {
+			synchronized (DependencyInjector.class) {
+				if (!inited) {
+					module = getModule(ctx);
+					Method[] methods = module.getClass().getMethods();
+					for (Method method : methods) {
+						methodRegistry.put(method.getReturnType(), method);
+					}
+					inited = true;
+				}
+			}
+		}
+	}
+
+	static void tearDown() {
+		if (module != null) {
+			module.getDB().close();
+		}
+		module = null;
+	}
+
+	static boolean inject(Context ctx, Object target, Field field) {
 		init(ctx);
 		if (module != null) {
 			Method method = methodRegistry.get(field.getType());
@@ -61,28 +83,6 @@ public class DependencyInjector {
 			}
 		}
 		return false;
-	}
-
-	public static void tearDown() {
-		if (module != null) {
-			module.getDB().close();
-		}
-		module = null;
-	}
-
-	public static void init(Context ctx) {
-		if (!inited) {
-			synchronized (DependencyInjector.class) {
-				if (!inited) {
-					module = getModule(ctx);
-					Method[] methods = module.getClass().getMethods();
-					for (Method method : methods) {
-						methodRegistry.put(method.getReturnType(), method);
-					}
-					inited = true;
-				}
-			}
-		}
 	}
 
 	private static AbstractDependencyProvider getModule(Context ctx) {

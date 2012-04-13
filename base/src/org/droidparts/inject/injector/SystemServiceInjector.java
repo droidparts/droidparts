@@ -47,8 +47,8 @@ import android.view.inputmethod.InputMethodManager;
 
 public class SystemServiceInjector {
 
-	public static boolean inject(Context ctx, InjectSystemService ann,
-			Object target, Field field) {
+	static boolean inject(Context ctx, InjectSystemService ann, Object target,
+			Field field) {
 		String serviceName = ann.value();
 		String name = isEmpty(serviceName) ? serviceRegistry.get(field
 				.getType()) : serviceName;

@@ -26,8 +26,8 @@ import android.os.Bundle;
 
 public class BundleExtraInjector {
 
-	public static boolean inject(Context ctx, Bundle data,
-			InjectBundleExtra ann, Object target, Field field) {
+	static boolean inject(Context ctx, Bundle data, InjectBundleExtra ann,
+			Object target, Field field) {
 		String key = ann.value();
 		boolean optional = ann.optional();
 		Object val = data.get(key);

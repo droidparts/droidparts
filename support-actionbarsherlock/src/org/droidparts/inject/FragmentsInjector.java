@@ -15,15 +15,10 @@
  */
 package org.droidparts.inject;
 
-import java.lang.annotation.Annotation;
-import java.lang.reflect.Field;
-
 import org.droidparts.activity.FragmentActivity;
-import org.droidparts.annotation.inject.InjectFragment;
-import org.droidparts.inject.injector.FragmentInjector;
+import org.droidparts.inject.injector.FragmentsInjectorDelegate;
+import org.droidparts.inject.injector.InjectorDelegate;
 
-import android.content.Context;
-import android.os.Bundle;
 import android.support.v4.app.Fragment;
 
 public class FragmentsInjector extends Injector {
@@ -32,7 +27,8 @@ public class FragmentsInjector extends Injector {
 		if (injector == null) {
 			synchronized (Injector.class) {
 				if (injector == null) {
-					injector = new FragmentsInjector();
+					injector = new FragmentsInjector(
+							new FragmentsInjectorDelegate());
 				}
 			}
 		}
@@ -49,26 +45,8 @@ public class FragmentsInjector extends Injector {
 		super.inject(activity);
 	}
 
-	@Override
-	protected boolean subInject(Context ctx, Annotation ann, Object target,
-			Field field) {
-		boolean isFragmentActivity = FragmentActivity.class
-				.isAssignableFrom(ctx.getClass());
-		boolean isInjectFragmentAnnotation = ann.annotationType() == InjectFragment.class;
-		if (isFragmentActivity && isInjectFragmentAnnotation) {
-			return FragmentInjector.inject((FragmentActivity) ctx,
-					(InjectFragment) ann, field);
-		}
-		return false;
-	}
-
-	@Override
-	protected Bundle getIntentExtras(Object obj) {
-		Bundle data = super.getIntentExtras(obj);
-		if (obj instanceof Fragment) {
-			data = ((Fragment) obj).getArguments();
-		}
-		return data;
+	protected FragmentsInjector(InjectorDelegate delegate) {
+		super(delegate);
 	}
 
 }

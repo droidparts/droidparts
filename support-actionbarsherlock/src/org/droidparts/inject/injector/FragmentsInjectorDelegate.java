@@ -15,37 +15,38 @@
  */
 package org.droidparts.inject.injector;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 
 import org.droidparts.activity.FragmentActivity;
 import org.droidparts.annotation.inject.InjectFragment;
-import org.droidparts.reflection.util.ReflectionUtils;
-import org.droidparts.util.L;
-import org.droidparts.util.inner.ResourceUtils;
 
+import android.content.Context;
+import android.os.Bundle;
 import android.support.v4.app.Fragment;
 
-public class FragmentInjector {
+public class FragmentsInjectorDelegate extends InjectorDelegate {
 
-	static boolean inject(FragmentActivity activity, InjectFragment ann,
+	@Override
+	protected boolean subInject(Context ctx, Annotation ann, Object target,
 			Field field) {
-		int fragmenId = ann.value();
-		if (fragmenId == 0) {
-			String fieldName = field.getName();
-			fragmenId = ResourceUtils.getResourceId(activity, fieldName);
+		boolean isFragmentActivity = FragmentActivity.class
+				.isAssignableFrom(ctx.getClass());
+		boolean isInjectFragmentAnnotation = ann.annotationType() == InjectFragment.class;
+		if (isFragmentActivity && isInjectFragmentAnnotation) {
+			return FragmentInjector.inject((FragmentActivity) ctx,
+					(InjectFragment) ann, field);
 		}
-		if (fragmenId != 0) {
-			Fragment fragment = activity.getSupportFragmentManager()
-					.findFragmentById(fragmenId);
-			if (field.getType() != fragment.getClass()) {
-				// TODO
-				L.e("Incompatible types.");
-			}
-			ReflectionUtils.setFieldVal(field, activity, fragment);
-			return true;
-		} else {
-			L.e("Fragment not found.");
-			return false;
-		}
+		return false;
 	}
+
+	@Override
+	protected Bundle getIntentExtras(Object obj) {
+		Bundle data = super.getIntentExtras(obj);
+		if (obj instanceof Fragment) {
+			data = ((Fragment) obj).getArguments();
+		}
+		return data;
+	}
+
 }
