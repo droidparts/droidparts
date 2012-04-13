@@ -15,11 +15,17 @@
  */
 package org.droidparts.util;
 
+import static android.content.pm.ApplicationInfo.FLAG_DEBUGGABLE;
 import static android.util.Log.DEBUG;
 import static android.util.Log.ERROR;
 import static android.util.Log.INFO;
 import static android.util.Log.VERBOSE;
 import static android.util.Log.WARN;
+
+import org.droidparts.inject.Injector;
+
+import android.content.Context;
+import android.content.pm.ApplicationInfo;
 import android.util.Log;
 
 public class L {
@@ -45,7 +51,7 @@ public class L {
 	}
 
 	public static void wtf(Object msg) {
-		e("WTF: " + msg);
+		log(ERROR, "WTF: " + msg);
 	}
 
 	private static void log(int priority, Object msg) {
@@ -53,11 +59,30 @@ public class L {
 	}
 
 	private static String getTag() {
-		// TODO only pkg name for non-debug mode
+		if (debug == null) {
+			Context ctx = Injector.get().getApplicationContext();
+			if (ctx != null) {
+				ApplicationInfo appInfo = ctx.getApplicationInfo();
+				debug = (appInfo.flags &= FLAG_DEBUGGABLE) != 0;
+			}
+		}
 		StackTraceElement caller = Thread.currentThread().getStackTrace()[5];
-		String tag = caller.getClassName() + ":" + caller.getLineNumber();
-		return tag;
+		String className = caller.getFileName().substring(0,
+				caller.getFileName().length() - 5);
+		if (debug != null && debug) {
+			StringBuilder sb = new StringBuilder(5);
+			sb.append(className);
+			sb.append(".");
+			sb.append(caller.getMethodName());
+			sb.append("():");
+			sb.append(caller.getLineNumber());
+			return sb.toString();
+		} else {
+			return className;
+		}
 	}
+
+	private static Boolean debug;
 
 	private L() {
 	}
