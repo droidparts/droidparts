@@ -44,8 +44,8 @@ public class L {
 		log(ERROR, msg);
 	}
 
-	public static void wtf() {
-		e("WTF?!");
+	public static void wtf(Object msg) {
+		e("WTF: " + msg);
 	}
 
 	private static void log(int priority, Object msg) {
