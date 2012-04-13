@@ -30,32 +30,34 @@ import android.util.Log;
 
 public class L {
 
-	public static void v(Object msg) {
-		log(VERBOSE, msg);
+	public static void v(Object obj) {
+		log(VERBOSE, obj);
 	}
 
-	public static void d(Object msg) {
-		log(DEBUG, msg);
+	public static void d(Object obj) {
+		log(DEBUG, obj);
 	}
 
-	public static void i(Object msg) {
-		log(INFO, msg);
+	public static void i(Object obj) {
+		log(INFO, obj);
 	}
 
-	public static void w(Object msg) {
-		log(WARN, msg);
+	public static void w(Object obj) {
+		log(WARN, obj);
 	}
 
-	public static void e(Object msg) {
-		log(ERROR, msg);
+	public static void e(Object obj) {
+		log(ERROR, obj);
 	}
 
-	public static void wtf(Object msg) {
-		log(ERROR, "WTF: " + msg);
+	public static void wtf(Object obj) {
+		log(ERROR, "WTF: " + obj);
 	}
 
-	private static void log(int priority, Object msg) {
-		Log.println(priority, getTag(), String.valueOf(msg));
+	private static void log(int priority, Object obj) {
+		String msg = (obj instanceof Exception) ? Log
+				.getStackTraceString((Exception) obj) : String.valueOf(obj);
+		Log.println(priority, getTag(), msg);
 	}
 
 	private static String getTag() {
