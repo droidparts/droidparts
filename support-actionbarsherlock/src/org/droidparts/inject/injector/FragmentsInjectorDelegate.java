@@ -17,6 +17,7 @@ package org.droidparts.inject.injector;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
+import java.util.HashSet;
 
 import org.droidparts.activity.FragmentActivity;
 import org.droidparts.annotation.inject.InjectFragment;
@@ -62,6 +63,15 @@ public class FragmentsInjectorDelegate extends InjectorDelegate {
 			data = ((Fragment) obj).getArguments();
 		}
 		return data;
+	}
+
+	@Override
+	protected HashSet<Class<? extends Annotation>> getSupportedAnnotations() {
+		HashSet<Class<? extends Annotation>> set = super
+				.getSupportedAnnotations();
+		set.add(InjectFragment.class);
+		set.add(InjectParentActivity.class);
+		return set;
 	}
 
 }

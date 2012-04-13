@@ -19,6 +19,7 @@ import static org.droidparts.reflection.util.ReflectionUtils.listAnnotatedFields
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
+import java.util.HashSet;
 import java.util.List;
 
 import org.droidparts.annotation.inject.InjectBundleExtra;
@@ -35,6 +36,12 @@ import android.os.Bundle;
 import android.view.View;
 
 public class InjectorDelegate {
+
+	private final HashSet<Class<? extends Annotation>> supportedAnnotations;
+
+	public InjectorDelegate() {
+		supportedAnnotations = getSupportedAnnotations();
+	}
 
 	public static void setUp(Context ctx) {
 		DependencyInjector.init(ctx);
@@ -53,8 +60,10 @@ public class InjectorDelegate {
 				boolean success = inject(ctx, root, target, ann, field);
 				if (success) {
 					break;
+				} else if (supportedAnnotations.contains(ann.annotationType())) {
+					L.e("Failed to inject field '" + field.getName() + "' in "
+							+ cls.getSimpleName() + ".");
 				}
-				// TODO error logging
 			}
 		}
 		long end = System.currentTimeMillis() - start;
@@ -94,6 +103,16 @@ public class InjectorDelegate {
 			// TODO
 		}
 		return data;
+	}
+
+	protected HashSet<Class<? extends Annotation>> getSupportedAnnotations() {
+		HashSet<Class<? extends Annotation>> set = new HashSet<Class<? extends Annotation>>();
+		set.add(InjectBundleExtra.class);
+		set.add(InjectDependency.class);
+		set.add(InjectResource.class);
+		set.add(InjectSystemService.class);
+		set.add(InjectView.class);
+		return set;
 	}
 
 }
