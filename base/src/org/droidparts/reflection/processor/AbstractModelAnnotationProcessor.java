@@ -21,27 +21,44 @@ import java.lang.reflect.Type;
 import java.util.List;
 
 import org.droidparts.model.Model;
-import org.droidparts.reflection.model.ModelField;
+import org.droidparts.reflection.model.AbstractModelField;
 import org.droidparts.reflection.util.ReflectionUtils;
 import org.droidparts.util.L;
 
-public abstract class ModelAnnotationProcessor<ModelFieldType> {
+public abstract class AbstractModelAnnotationProcessor<ModelFieldType> {
 
 	protected final Class<? extends Model> cls;
 
-	public ModelAnnotationProcessor(Class<? extends Model> cls) {
+	private String modelClassName;
+	private ModelFieldType[] modelClassFields;
+
+	public AbstractModelAnnotationProcessor(Class<? extends Model> cls) {
 		this.cls = cls;
 	}
 
-	public abstract String getModelClassName();
+	public final String getModelClassName() {
+		if (modelClassName == null) {
+			modelClassName = modelClassName();
+		}
+		return modelClassName;
+	}
 
-	public abstract ModelFieldType[] getModelClassFields();
+	public final ModelFieldType[] getModelClassFields() {
+		if (modelClassFields == null) {
+			modelClassFields = modelClassFields();
+		}
+		return modelClassFields;
+	}
 
-	protected List<Field> getClassHierarchyFields() {
+	protected abstract String modelClassName();
+
+	protected abstract ModelFieldType[] modelClassFields();
+
+	protected final List<Field> getClassHierarchyFields() {
 		return ReflectionUtils.listAnnotatedFields(cls);
 	}
 
-	protected void fillField(Field source, ModelField target) {
+	protected final void fillField(Field source, AbstractModelField target) {
 		target.fieldName = source.getName();
 		target.fieldClass = source.getType();
 		Type genericType = source.getGenericType();

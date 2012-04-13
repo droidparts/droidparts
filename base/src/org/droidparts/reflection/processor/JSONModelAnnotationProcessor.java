@@ -25,14 +25,14 @@ import org.droidparts.model.Model;
 import org.droidparts.reflection.model.JSONModelField;
 
 public class JSONModelAnnotationProcessor extends
-		ModelAnnotationProcessor<JSONModelField> {
+		AbstractModelAnnotationProcessor<JSONModelField> {
 
 	public JSONModelAnnotationProcessor(Class<? extends Model> cls) {
 		super(cls);
 	}
 
 	@Override
-	public String getModelClassName() {
+	protected String modelClassName() {
 		org.droidparts.annotation.json.Object ann = cls
 				.getAnnotation(org.droidparts.annotation.json.Object.class);
 		if (ann != null) {
@@ -43,7 +43,7 @@ public class JSONModelAnnotationProcessor extends
 	}
 
 	@Override
-	public JSONModelField[] getModelClassFields() {
+	protected JSONModelField[] modelClassFields() {
 		ArrayList<JSONModelField> list = new ArrayList<JSONModelField>();
 		for (Field field : getClassHierarchyFields()) {
 			Key columnAnn = field.getAnnotation(Key.class);

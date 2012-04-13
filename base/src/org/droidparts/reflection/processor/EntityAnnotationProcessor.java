@@ -34,7 +34,7 @@ import org.droidparts.reflection.model.EntityField;
 import org.droidparts.util.L;
 
 public class EntityAnnotationProcessor extends
-		ModelAnnotationProcessor<EntityField> {
+		AbstractModelAnnotationProcessor<EntityField> {
 
 	private static final String ID_SUFFIX = "_id";
 
@@ -43,7 +43,7 @@ public class EntityAnnotationProcessor extends
 	}
 
 	@Override
-	public String getModelClassName() {
+	protected String modelClassName() {
 		Table ann = cls.getAnnotation(Table.class);
 		if (ann != null) {
 			return ann.value();
@@ -53,7 +53,7 @@ public class EntityAnnotationProcessor extends
 	}
 
 	@Override
-	public EntityField[] getModelClassFields() {
+	protected EntityField[] modelClassFields() {
 		ArrayList<EntityField> list = new ArrayList<EntityField>();
 		for (Field field : getClassHierarchyFields()) {
 			Column columnAnn = field.getAnnotation(Column.class);

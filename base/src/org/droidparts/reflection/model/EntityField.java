@@ -16,7 +16,7 @@
 package org.droidparts.reflection.model;
 
 
-public class EntityField extends ModelField {
+public class EntityField extends AbstractModelField {
 
 	public String columnName;
 	public boolean columnNullable;

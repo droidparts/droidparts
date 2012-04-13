@@ -16,7 +16,7 @@
 package org.droidparts.reflection.model;
 
 
-public class JSONModelField extends ModelField {
+public class JSONModelField extends AbstractModelField {
 
 	public String keyName;
 
