@@ -15,12 +15,13 @@
  */
 package org.droidparts.inject.injector;
 
+import static org.droidparts.reflection.util.ReflectionUtils.canAssign;
+import static org.droidparts.reflection.util.ReflectionUtils.setFieldVal;
+
 import java.lang.reflect.Field;
 
 import org.droidparts.activity.FragmentActivity;
 import org.droidparts.annotation.inject.InjectFragment;
-import org.droidparts.reflection.util.ReflectionUtils;
-import org.droidparts.util.L;
 import org.droidparts.util.inner.ResourceUtils;
 
 import android.support.v4.app.Fragment;
@@ -31,21 +32,17 @@ public class FragmentInjector {
 			Field field) {
 		int fragmenId = ann.value();
 		if (fragmenId == 0) {
-			String fieldName = field.getName();
-			fragmenId = ResourceUtils.getResourceId(activity, fieldName);
+			fragmenId = ResourceUtils.getResourceId(activity, field.getName());
 		}
 		if (fragmenId != 0) {
 			Fragment fragment = activity.getSupportFragmentManager()
 					.findFragmentById(fragmenId);
-			if (field.getType() != fragment.getClass()) {
-				// TODO
-				L.e("Incompatible types.");
+			if (fragment != null && canAssign(field, fragment)) {
+				setFieldVal(field, activity, fragment);
+				return true;
 			}
-			ReflectionUtils.setFieldVal(field, activity, fragment);
-			return true;
-		} else {
-			L.e("Fragment not found.");
-			return false;
 		}
+		return false;
 	}
+
 }

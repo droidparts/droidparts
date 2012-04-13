@@ -23,6 +23,10 @@ import org.droidparts.util.L;
 
 public final class ReflectionUtils {
 
+	public static boolean canAssign(Field to, Object obj) {
+		return to.getType().isAssignableFrom(obj.getClass());
+	}
+
 	public static Field getField(Class<?> cls, String fieldName)
 			throws IllegalArgumentException {
 		try {

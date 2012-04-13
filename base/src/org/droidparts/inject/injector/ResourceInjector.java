@@ -15,6 +15,7 @@
  */
 package org.droidparts.inject.injector;
 
+import static org.droidparts.reflection.util.ReflectionUtils.canAssign;
 import static org.droidparts.reflection.util.ReflectionUtils.setFieldVal;
 import static org.droidparts.reflection.util.TypeHelper.isString;
 
@@ -37,19 +38,15 @@ public class ResourceInjector {
 			Object val = null;
 			if (isString(cls)) {
 				val = res.getString(resId);
+			} else {
+				L.e("Resource not supported yet: " + field.getType().getName());
 			}
-			// TODO more resource types
-			if (val != null && cls.isAssignableFrom(val.getClass())) {
+			if (val != null && canAssign(field, val)) {
 				setFieldVal(field, target, val);
 				return true;
-			} else {
-				L.e("Null or incompatible: " + val);
-				return false;
 			}
-		} else {
-			L.e("0 resource id.");
-			return false;
 		}
+		return false;
 	}
 
 }

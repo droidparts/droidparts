@@ -20,22 +20,15 @@ import static org.droidparts.reflection.util.ReflectionUtils.setFieldVal;
 
 import java.lang.reflect.Field;
 
-import org.droidparts.annotation.inject.InjectBundleExtra;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
 
-import android.content.Context;
-import android.os.Bundle;
+public class ParentActivityInjector {
 
-public class BundleExtraInjector {
-
-	static boolean inject(Context ctx, Bundle data, InjectBundleExtra ann,
-			Object target, Field field) {
-		String key = ann.value();
-		boolean optional = ann.optional();
-		Object val = data.get(key);
-		if (val == null && optional) {
-			return true;
-		} else if (val != null && canAssign(field, val)) {
-			setFieldVal(field, target, val);
+	static boolean inject(Fragment fragment, Field field) {
+		FragmentActivity activity = fragment.getActivity();
+		if (canAssign(field, activity)) {
+			setFieldVal(field, fragment, activity);
 			return true;
 		}
 		return false;

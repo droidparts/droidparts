@@ -20,24 +20,39 @@ import java.lang.reflect.Field;
 
 import org.droidparts.activity.FragmentActivity;
 import org.droidparts.annotation.inject.InjectFragment;
+import org.droidparts.annotation.inject.InjectParentActivity;
 
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.view.View;
 
 public class FragmentsInjectorDelegate extends InjectorDelegate {
 
 	@Override
-	protected boolean subInject(Context ctx, Annotation ann, Object target,
-			Field field) {
-		boolean isFragmentActivity = FragmentActivity.class
-				.isAssignableFrom(ctx.getClass());
-		boolean isInjectFragmentAnnotation = ann.annotationType() == InjectFragment.class;
-		if (isFragmentActivity && isInjectFragmentAnnotation) {
-			return FragmentInjector.inject((FragmentActivity) ctx,
-					(InjectFragment) ann, field);
+	protected boolean inject(Context ctx, View root, Object target,
+			Annotation ann, Field field) {
+		boolean success = super.inject(ctx, root, target, ann, field);
+		if (!success) {
+			Class<? extends Annotation> annType = ann.annotationType();
+			if (annType == InjectFragment.class) {
+				boolean isFragmentActivity = FragmentActivity.class
+						.isAssignableFrom(target.getClass());
+				if (isFragmentActivity) {
+					success = FragmentInjector.inject(
+							(FragmentActivity) target, (InjectFragment) ann,
+							field);
+				}
+			} else if (annType == InjectParentActivity.class) {
+				boolean isFragment = Fragment.class.isAssignableFrom(target
+						.getClass());
+				if (isFragment) {
+					success = ParentActivityInjector.inject((Fragment) target,
+							field);
+				}
+			}
 		}
-		return false;
+		return success;
 	}
 
 	@Override

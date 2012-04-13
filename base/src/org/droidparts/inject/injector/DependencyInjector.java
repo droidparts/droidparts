@@ -16,6 +16,7 @@
 package org.droidparts.inject.injector;
 
 import static android.content.pm.PackageManager.GET_META_DATA;
+import static org.droidparts.reflection.util.ReflectionUtils.setFieldVal;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
@@ -23,7 +24,6 @@ import java.lang.reflect.Method;
 import java.util.HashMap;
 
 import org.droidparts.inject.AbstractDependencyProvider;
-import org.droidparts.reflection.util.ReflectionUtils;
 import org.droidparts.util.L;
 
 import android.content.Context;
@@ -73,13 +73,15 @@ public class DependencyInjector {
 					try {
 						val = method.invoke(module, ctx);
 					} catch (Exception ex) {
-						throw new IllegalArgumentException(e);
+						L.e("No dependency provided for "
+								+ field.getType().getCanonicalName());
+						return false;
 					}
 				}
 				if (val != null) {
-					ReflectionUtils.setFieldVal(field, target, val);
+					setFieldVal(field, target, val);
+					return true;
 				}
-				return true;
 			}
 		}
 		return false;
@@ -107,7 +109,7 @@ public class DependencyInjector {
 					.newInstance(ctx.getApplicationContext());
 			return module;
 		} catch (Exception e) {
-			L.e("No such droidparts module: " + className);
+			L.e("No such droidparts dependency provider: " + className);
 			return null;
 		}
 	}

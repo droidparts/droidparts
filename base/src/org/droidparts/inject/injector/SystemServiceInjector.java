@@ -15,13 +15,14 @@
  */
 package org.droidparts.inject.injector;
 
+import static org.droidparts.reflection.util.ReflectionUtils.canAssign;
+import static org.droidparts.reflection.util.ReflectionUtils.setFieldVal;
 import static org.droidparts.util.Strings.isEmpty;
 
 import java.lang.reflect.Field;
 import java.util.HashMap;
 
 import org.droidparts.annotation.inject.InjectSystemService;
-import org.droidparts.reflection.util.ReflectionUtils;
 import org.droidparts.util.L;
 
 import android.accessibilityservice.AccessibilityService;
@@ -52,13 +53,12 @@ public class SystemServiceInjector {
 		String serviceName = ann.value();
 		String name = isEmpty(serviceName) ? serviceRegistry.get(field
 				.getType()) : serviceName;
-		if (name != null) {
-			Object val = ctx.getSystemService(name);
-			ReflectionUtils.setFieldVal(field, target, val);
+		Object serv = ctx.getSystemService(name);
+		if (serv != null && canAssign(field, serv)) {
+			setFieldVal(field, target, serv);
 			return true;
-		} else {
-			return false;
 		}
+		return false;
 	}
 
 	private static final HashMap<Class<?>, String> serviceRegistry = new HashMap<Class<?>, String>();

@@ -50,40 +50,41 @@ public class InjectorDelegate {
 		List<Field> fields = listAnnotatedFields(cls);
 		for (Field field : fields) {
 			for (Annotation ann : field.getAnnotations()) {
-				Class<? extends Annotation> annType = ann.annotationType();
-				boolean success = false;
-				if (annType == InjectDependency.class) {
-					success = DependencyInjector.inject(ctx, target, field);
-				} else if (annType == InjectBundleExtra.class) {
-					Bundle data = getIntentExtras(target);
-					success = BundleExtraInjector.inject(ctx, data,
-							(InjectBundleExtra) ann, target, field);
-				} else if (annType == InjectResource.class) {
-					success = ResourceInjector.inject(ctx,
-							(InjectResource) ann, target, field);
-				} else if (annType == InjectSystemService.class) {
-					success = SystemServiceInjector.inject(ctx,
-							(InjectSystemService) ann, target, field);
-				} else if (annType == InjectView.class) {
-					if (root != null) {
-						success = ViewInjector.inject(ctx, root,
-								(InjectView) ann, target, field);
-					}
-				} else {
-					success = subInject(ctx, ann, target, field);
-				}
+				boolean success = inject(ctx, root, target, ann, field);
 				if (success) {
 					break;
 				}
+				// TODO error logging
 			}
 		}
 		long end = System.currentTimeMillis() - start;
 		L.d(String.format("Injected on %s in %d ms.", cls.getSimpleName(), end));
 	}
 
-	protected boolean subInject(Context ctx, Annotation ann, Object target,
-			Field field) {
-		return false;
+	protected boolean inject(Context ctx, View root, Object target,
+			Annotation ann, Field field) {
+		Class<? extends Annotation> annType = ann.annotationType();
+		L.wtf(annType.getCanonicalName());
+		boolean success = false;
+		if (annType == InjectDependency.class) {
+			success = DependencyInjector.inject(ctx, target, field);
+		} else if (annType == InjectBundleExtra.class) {
+			Bundle data = getIntentExtras(target);
+			success = BundleExtraInjector.inject(ctx, data,
+					(InjectBundleExtra) ann, target, field);
+		} else if (annType == InjectResource.class) {
+			success = ResourceInjector.inject(ctx, (InjectResource) ann,
+					target, field);
+		} else if (annType == InjectSystemService.class) {
+			success = SystemServiceInjector.inject(ctx,
+					(InjectSystemService) ann, target, field);
+		} else if (annType == InjectView.class) {
+			if (root != null) {
+				success = ViewInjector.inject(ctx, root, (InjectView) ann,
+						target, field);
+			}
+		}
+		return success;
 	}
 
 	protected Bundle getIntentExtras(Object obj) {

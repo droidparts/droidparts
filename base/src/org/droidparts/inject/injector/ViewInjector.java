@@ -15,12 +15,12 @@
  */
 package org.droidparts.inject.injector;
 
+import static org.droidparts.reflection.util.ReflectionUtils.canAssign;
 import static org.droidparts.reflection.util.ReflectionUtils.setFieldVal;
 
 import java.lang.reflect.Field;
 
 import org.droidparts.annotation.inject.InjectView;
-import org.droidparts.util.L;
 import org.droidparts.util.inner.ResourceUtils;
 
 import android.content.Context;
@@ -37,17 +37,11 @@ public class ViewInjector {
 		}
 		if (viewId != 0) {
 			View view = root.findViewById(viewId);
-			Class<?> cls = field.getType();
-			if (view != null && cls.isAssignableFrom(view.getClass())) {
+			if (view != null && canAssign(field, view)) {
 				setFieldVal(field, target, view);
 				return true;
-			} else {
-				L.e("Null or incompatible: " + view);
-				return false;
 			}
-		} else {
-			L.e("View not found.");
-			return false;
 		}
+		return false;
 	}
 }
