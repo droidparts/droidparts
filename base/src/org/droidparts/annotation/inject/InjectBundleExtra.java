@@ -23,7 +23,7 @@ import java.lang.annotation.Target;
 
 @Retention(RUNTIME)
 @Target(FIELD)
-public @interface InjectIntentExtra {
+public @interface InjectBundleExtra {
 
 	String value();
 

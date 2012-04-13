@@ -19,15 +19,15 @@ import static org.droidparts.reflection.util.ReflectionUtils.setFieldVal;
 
 import java.lang.reflect.Field;
 
-import org.droidparts.annotation.inject.InjectIntentExtra;
+import org.droidparts.annotation.inject.InjectBundleExtra;
 
 import android.content.Context;
 import android.os.Bundle;
 
-public class IntentExtraInjector {
+public class BundleExtraInjector {
 
 	public static boolean inject(Context ctx, Bundle data,
-			InjectIntentExtra ann, Object target, Field field) {
+			InjectBundleExtra ann, Object target, Field field) {
 		String key = ann.value();
 		boolean optional = ann.optional();
 		Object val = data.get(key);

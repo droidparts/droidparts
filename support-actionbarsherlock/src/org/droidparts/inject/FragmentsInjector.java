@@ -23,6 +23,7 @@ import org.droidparts.annotation.inject.InjectFragment;
 import org.droidparts.inject.injector.FragmentInjector;
 
 import android.content.Context;
+import android.os.Bundle;
 import android.support.v4.app.Fragment;
 
 public class FragmentsInjector extends Injector {
@@ -59,6 +60,15 @@ public class FragmentsInjector extends Injector {
 					(InjectFragment) ann, field);
 		}
 		return false;
+	}
+
+	@Override
+	protected Bundle getIntentExtras(Object obj) {
+		Bundle data = super.getIntentExtras(obj);
+		if (obj instanceof Fragment) {
+			data = ((Fragment) obj).getArguments();
+		}
+		return data;
 	}
 
 }

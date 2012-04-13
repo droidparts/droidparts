@@ -22,12 +22,12 @@ import java.lang.reflect.Field;
 import java.util.List;
 
 import org.droidparts.annotation.inject.InjectDependency;
-import org.droidparts.annotation.inject.InjectIntentExtra;
+import org.droidparts.annotation.inject.InjectBundleExtra;
 import org.droidparts.annotation.inject.InjectResource;
 import org.droidparts.annotation.inject.InjectSystemService;
 import org.droidparts.annotation.inject.InjectView;
 import org.droidparts.inject.injector.DependencyInjector;
-import org.droidparts.inject.injector.IntentExtraInjector;
+import org.droidparts.inject.injector.BundleExtraInjector;
 import org.droidparts.inject.injector.ResourceInjector;
 import org.droidparts.inject.injector.SystemServiceInjector;
 import org.droidparts.inject.injector.ViewInjector;
@@ -40,8 +40,8 @@ import android.os.Bundle;
 import android.view.View;
 
 /**
- * <meta-data android:name="droidparts_module"
- * android:value="com.yanchenko.android.sample.Module" />
+ * <meta-data android:name="droidparts_dependency_provider"
+ * android:value="com.yanchenko.android.sample.DependencyProvider" />
  */
 public class Injector {
 
@@ -108,10 +108,10 @@ public class Injector {
 				boolean success = false;
 				if (annType == InjectDependency.class) {
 					success = DependencyInjector.inject(ctx, target, field);
-				} else if (annType == InjectIntentExtra.class) {
+				} else if (annType == InjectBundleExtra.class) {
 					Bundle data = getIntentExtras(target);
-					success = IntentExtraInjector.inject(ctx, data,
-							(InjectIntentExtra) ann, target, field);
+					success = BundleExtraInjector.inject(ctx, data,
+							(InjectBundleExtra) ann, target, field);
 				} else if (annType == InjectResource.class) {
 					success = ResourceInjector.inject(ctx,
 							(InjectResource) ann, target, field);

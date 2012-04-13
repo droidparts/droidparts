@@ -15,18 +15,40 @@
  */
 package org.droidparts.inject.injector;
 
+import static org.droidparts.reflection.util.ReflectionUtils.setFieldVal;
+import static org.droidparts.reflection.util.TypeHelper.isString;
+
 import java.lang.reflect.Field;
 
 import org.droidparts.annotation.inject.InjectResource;
+import org.droidparts.util.L;
 
 import android.content.Context;
+import android.content.res.Resources;
 
 public class ResourceInjector {
 
 	public static boolean inject(Context ctx, InjectResource ann,
 			Object target, Field field) {
-		// TODO
-		return false;
+		int resId = ann.value();
+		if (resId != 0) {
+			Resources res = ctx.getResources();
+			Class<?> cls = field.getType();
+			Object val = null;
+			if (isString(cls)) {
+				val = res.getString(resId);
+			}
+			if (val != null && cls.isAssignableFrom(val.getClass())) {
+				setFieldVal(field, target, val);
+				return true;
+			} else {
+				L.e("Null or incompatible: " + val);
+				return false;
+			}
+		} else {
+			L.e("0 resource id.");
+			return false;
+		}
 	}
 
 }
