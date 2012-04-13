@@ -21,7 +21,7 @@ import android.os.Bundle;
 
 import com.actionbarsherlock.app.SherlockPreferenceActivity;
 
-public class PreferenceActivity extends SherlockPreferenceActivity implements
+public class PreferenceFragmentActivity extends SherlockPreferenceActivity implements
 		Injected {
 
 	@Override
