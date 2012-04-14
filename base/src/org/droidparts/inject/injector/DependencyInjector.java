@@ -89,13 +89,12 @@ public class DependencyInjector {
 
 	private static AbstractDependencyProvider getModule(Context ctx) {
 		PackageManager pm = ctx.getPackageManager();
-		Bundle metaData;
+		Bundle metaData = null;
 		try {
 			metaData = pm.getApplicationInfo(ctx.getPackageName(),
 					GET_META_DATA).metaData;
 		} catch (NameNotFoundException e) {
 			L.d(e);
-			return null;
 		}
 		if (metaData == null) {
 			L.e("No <meta-data />.");
@@ -109,6 +108,7 @@ public class DependencyInjector {
 					.newInstance(ctx.getApplicationContext());
 			return module;
 		} catch (Exception e) {
+			L.d(e);
 			L.e("No such droidparts dependency provider: " + className);
 			return null;
 		}

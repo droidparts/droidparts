@@ -44,7 +44,7 @@ public class Injector {
 		return injector;
 	}
 
-	public Context getApplicationContext() {
+	public static Context getApplicationContext() {
 		return ctx;
 	}
 

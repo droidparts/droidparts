@@ -62,16 +62,16 @@ public class L {
 
 	private static String getTag() {
 		if (debug == null) {
-			Context ctx = Injector.get().getApplicationContext();
+			Context ctx = Injector.getApplicationContext();
 			if (ctx != null) {
 				ApplicationInfo appInfo = ctx.getApplicationInfo();
 				debug = (appInfo.flags &= FLAG_DEBUGGABLE) != 0;
 			}
 		}
-		StackTraceElement caller = Thread.currentThread().getStackTrace()[5];
-		String className = caller.getFileName().substring(0,
-				caller.getFileName().length() - 5);
 		if (debug != null && debug) {
+			StackTraceElement caller = Thread.currentThread().getStackTrace()[5];
+			String c = caller.getClassName();
+			String className = c.substring(c.lastIndexOf(".") + 1, c.length());
 			StringBuilder sb = new StringBuilder(5);
 			sb.append(className);
 			sb.append(".");
@@ -80,11 +80,18 @@ public class L {
 			sb.append(caller.getLineNumber());
 			return sb.toString();
 		} else {
-			return className;
+			if (tag == null) {
+				Context ctx = Injector.getApplicationContext();
+				if (ctx != null) {
+					tag = ctx.getPackageName();
+				}
+			}
+			return (tag != null) ? tag : "";
 		}
 	}
 
 	private static Boolean debug;
+	private static String tag;
 
 	private L() {
 	}
