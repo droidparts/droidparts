@@ -21,6 +21,9 @@ import org.json.JSONObject;
 
 public class RESTClient2 extends RESTClient {
 
+	private static final String TEXT_PLAIN = "text/plain";
+	private static final String APPLICATION_JSON = "application/json";
+
 	public RESTClient2(String userAgent) {
 		super(userAgent);
 	}
@@ -44,27 +47,27 @@ public class RESTClient2 extends RESTClient {
 	}
 
 	public String put(String uri, String data) throws HTTPException {
-		return put(uri, "text/plain", data);
+		return put(uri, TEXT_PLAIN, data);
 	}
 
 	public String put(String uri, JSONObject data) throws HTTPException {
-		return put(uri, "application/json", data.toString());
+		return put(uri, APPLICATION_JSON, data.toString());
 	}
 
 	public String put(String uri, JSONArray data) throws HTTPException {
-		return put(uri, "application/json", data.toString());
+		return put(uri, APPLICATION_JSON, data.toString());
 	}
 
 	public String post(String uri, String data) throws HTTPException {
-		return post(uri, "text/plain", data);
+		return post(uri, TEXT_PLAIN, data);
 	}
 
 	public String post(String uri, JSONObject data) throws HTTPException {
-		return post(uri, "application/json", data.toString());
+		return post(uri, APPLICATION_JSON, data.toString());
 	}
 
 	public String post(String uri, JSONArray data) throws HTTPException {
-		return post(uri, "application/json", data.toString());
+		return post(uri, APPLICATION_JSON, data.toString());
 	}
 
 }
