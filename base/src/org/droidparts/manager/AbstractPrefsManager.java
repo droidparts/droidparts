@@ -25,7 +25,7 @@ import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.preference.PreferenceManager;
 
-public class PrefsManager {
+public abstract class AbstractPrefsManager {
 
 	private static final String VERSION = "__prefs_version__";
 
@@ -33,11 +33,11 @@ public class PrefsManager {
 	protected final Resources res;
 	protected final SharedPreferences prefs;
 
-	public PrefsManager(Context ctx, int version) {
+	public AbstractPrefsManager(Context ctx, int version) {
 		this(ctx, null, version);
 	}
 
-	public PrefsManager(Context ctx, String prefsName, int version) {
+	public AbstractPrefsManager(Context ctx, String prefsName, int version) {
 		Injector.get().inject(ctx, this);
 		this.ctx = ctx;
 		res = ctx.getResources();

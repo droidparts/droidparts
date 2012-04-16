@@ -50,9 +50,9 @@ import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
-public abstract class DBOpenHelper extends SQLiteOpenHelper {
+public abstract class AbstractDBOpenHelper extends SQLiteOpenHelper {
 
-	public DBOpenHelper(Context context, String name, int version) {
+	public AbstractDBOpenHelper(Context context, String name, int version) {
 		super(context, name, null, version);
 	}
 
