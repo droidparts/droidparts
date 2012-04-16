@@ -20,8 +20,13 @@ import java.util.List;
 
 import org.droidparts.model.Model;
 import org.droidparts.reflection.util.ReflectionUtils;
+import org.droidparts.util.L;
 
 public class ModelUtils {
+
+	private ModelUtils() {
+
+	}
 
 	public static boolean equals(Model model, Object other) {
 		if (other == null) {
@@ -29,7 +34,22 @@ public class ModelUtils {
 		} else if (model == other) {
 			return true;
 		} else if (other.getClass() == model.getClass()) {
-			// TODO
+			List<Field> fields = ReflectionUtils.listAnnotatedFields(model
+					.getClass());
+			for (Field f : fields) {
+				try {
+					Object thisF = f.get(model);
+					Object otherF = f.get(other);
+					if (thisF == null && otherF != null) {
+						return false;
+					} else if (!thisF.equals(otherF)) {
+						return false;
+					}
+				} catch (Exception e) {
+					L.d(e);
+				}
+			}
+			return true;
 		}
 		return false;
 	}
@@ -51,6 +71,7 @@ public class ModelUtils {
 			try {
 				sb.append(String.valueOf(field.get(model)));
 			} catch (Exception e) {
+				L.d(e);
 				sb.append("n/a");
 			}
 			if (i < fields.size() - 1) {
