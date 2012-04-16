@@ -17,15 +17,12 @@ package org.droidparts.service;
 
 import static android.app.Activity.RESULT_CANCELED;
 import static android.app.Activity.RESULT_OK;
-
-import org.droidparts.inject.Injector;
-
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.ResultReceiver;
 
-public abstract class SimpleIntentService extends android.app.IntentService {
+public abstract class SimpleIntentService extends IntentService {
 
 	public static final String EXTRA_EXCEPTION = "exception";
 
@@ -49,7 +46,6 @@ public abstract class SimpleIntentService extends android.app.IntentService {
 
 	public SimpleIntentService(String name) {
 		super(name);
-		Injector.get().inject(this);
 	}
 
 	@Override
