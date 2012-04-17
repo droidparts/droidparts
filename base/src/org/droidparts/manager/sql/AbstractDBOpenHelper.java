@@ -52,8 +52,8 @@ import android.database.sqlite.SQLiteOpenHelper;
 
 public abstract class AbstractDBOpenHelper extends SQLiteOpenHelper {
 
-	public AbstractDBOpenHelper(Context context, String name, int version) {
-		super(context, name, null, version);
+	public AbstractDBOpenHelper(Context ctx, String name, int version) {
+		super(ctx, name, null, version);
 	}
 
 	@Override

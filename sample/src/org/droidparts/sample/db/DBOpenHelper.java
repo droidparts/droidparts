@@ -11,8 +11,8 @@ public class DBOpenHelper extends
 	private static final String DB_FILE = "droidparts_sample.sqlite";
 	private static final int DB_VER = 1;
 
-	public DBOpenHelper(Context context) {
-		super(context, DB_FILE, DB_VER);
+	public DBOpenHelper(Context ctx) {
+		super(ctx, DB_FILE, DB_VER);
 	}
 
 	@Override
