@@ -1,7 +1,9 @@
-package org.droidparts.sample.db;
+package org.droidparts.sample.adapter;
 
 import org.droidparts.adapter.cursor.SimpleCursorAdapter;
 import org.droidparts.adapter.tag.Text2Tag;
+import org.droidparts.sample.db.EntryManager;
+import org.droidparts.sample.model.Entry;
 
 import android.app.Activity;
 import android.content.Context;
@@ -9,9 +11,9 @@ import android.database.Cursor;
 import android.view.View;
 import android.view.ViewGroup;
 
-public class EntryAdapter extends SimpleCursorAdapter<Entry> {
+public class EntryListAdapter extends SimpleCursorAdapter<Entry> {
 
-	public EntryAdapter(Activity activity) {
+	public EntryListAdapter(Activity activity) {
 		super(activity, new EntryManager(activity));
 	}
 

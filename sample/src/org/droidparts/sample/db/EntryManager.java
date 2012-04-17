@@ -1,6 +1,7 @@
 package org.droidparts.sample.db;
 
 import org.droidparts.manager.sql.AnnotatedEntityManager;
+import org.droidparts.sample.model.Entry;
 
 import android.content.Context;
 

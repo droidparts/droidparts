@@ -1,6 +1,7 @@
 package org.droidparts.sample.db;
 
 import org.droidparts.model.Entity;
+import org.droidparts.sample.model.Entry;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;

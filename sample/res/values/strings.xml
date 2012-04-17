@@ -2,5 +2,8 @@
 <resources>
 
     <string name="app_name">DroidParts Sample</string>
+    
+    <string name="add">Add</string>
+    <string name="to_json">To JSON</string>
 
 </resources>
