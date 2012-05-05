@@ -26,7 +26,8 @@ import android.content.DialogInterface.OnMultiChoiceClickListener;
 import android.preference.ListPreference;
 import android.util.AttributeSet;
 
-public class MultipleChoiceListPreference extends ListPreference {
+// android:defaultValue="entryValue1|entryValue2"
+public class MultiSelectListPreference extends ListPreference {
 
 	public static String[] splitPreferenceValue(String val) {
 		return val.split("\\" + SEP);
@@ -49,11 +50,11 @@ public class MultipleChoiceListPreference extends ListPreference {
 
 	private boolean[] checkedEntryIndexes;
 
-	public MultipleChoiceListPreference(Context context, AttributeSet attrs) {
+	public MultiSelectListPreference(Context context, AttributeSet attrs) {
 		super(context, attrs);
 	}
 
-	public MultipleChoiceListPreference(Context context) {
+	public MultiSelectListPreference(Context context) {
 		super(context);
 	}
 
