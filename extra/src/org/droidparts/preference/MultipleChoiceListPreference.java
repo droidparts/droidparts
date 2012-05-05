@@ -15,6 +15,7 @@
  */
 package org.droidparts.preference;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 
@@ -31,40 +32,45 @@ public class MultipleChoiceListPreference extends ListPreference {
 		return val.split("\\" + SEP);
 	}
 
+	public CharSequence[] getCheckedEntries() {
+		CharSequence[] entries = getEntries();
+		ArrayList<CharSequence> checkedEntries = new ArrayList<CharSequence>();
+		for (int i = 0; i < entries.length; i++) {
+			if (checkedEntryIndexes[i]) {
+				checkedEntries.add(entries[i]);
+			}
+		}
+		return checkedEntries.toArray(new String[checkedEntries.size()]);
+	}
+
+	// boring stuff
+
 	private static final String SEP = "|";
 
 	private boolean[] checkedEntryIndexes;
 
 	public MultipleChoiceListPreference(Context context, AttributeSet attrs) {
 		super(context, attrs);
-		checkedEntryIndexes = new boolean[getEntries().length];
 	}
 
 	public MultipleChoiceListPreference(Context context) {
 		super(context);
-		checkedEntryIndexes = new boolean[getEntries().length];
 	}
 
 	@Override
 	public void setEntries(CharSequence[] entries) {
-		checkedEntryIndexes = new boolean[entries.length];
 		super.setEntries(entries);
+		updateCheckedEntryIndexes();
+	}
+
+	@Override
+	public void setValue(String value) {
+		super.setValue(value);
+		updateCheckedEntryIndexes();
 	}
 
 	@Override
 	protected void onPrepareDialogBuilder(Builder builder) {
-		// restore checked state
-		String val = getValue();
-		if (val != null) {
-			HashSet<String> checkedEntryVals = new HashSet<String>(
-					Arrays.asList(splitPreferenceValue(val)));
-			CharSequence[] entryVals = getEntryValues();
-			for (int i = 0; i < entryVals.length; i++) {
-				checkedEntryIndexes[i] = checkedEntryVals
-						.contains(entryVals[i]);
-			}
-		}
-		// set multiple choice items
 		builder.setMultiChoiceItems(getEntries(), checkedEntryIndexes,
 				new OnMultiChoiceClickListener() {
 
@@ -94,6 +100,21 @@ public class MultipleChoiceListPreference extends ListPreference {
 			}
 			if (callChangeListener(val)) {
 				setValue(val);
+			}
+		}
+	}
+
+	private void updateCheckedEntryIndexes() {
+		String val = getValue();
+		CharSequence[] entries = getEntries();
+		checkedEntryIndexes = new boolean[entries.length];
+		if (val != null) {
+			HashSet<String> checkedEntryVals = new HashSet<String>(
+					Arrays.asList(splitPreferenceValue(val)));
+			CharSequence[] entryVals = getEntryValues();
+			for (int i = 0; i < entryVals.length; i++) {
+				checkedEntryIndexes[i] = checkedEntryVals
+						.contains(entryVals[i]);
 			}
 		}
 	}
