@@ -15,6 +15,8 @@
  */
 package org.droidparts.util;
 
+import java.util.Collection;
+
 public class Strings {
 
 	public static boolean isNotEmpty(CharSequence str) {
@@ -23,6 +25,26 @@ public class Strings {
 
 	public static boolean isEmpty(CharSequence str) {
 		return str == null || str.length() == 0;
+	}
+
+	public String toEnumeratingString(Collection<CharSequence> coll,
+			boolean terminateWithDot) {
+		return toEnumeratingString(
+				coll.toArray(new CharSequence[coll.size()]), terminateWithDot);
+	}
+
+	public String toEnumeratingString(CharSequence[] arr,
+			boolean terminateWithDot) {
+		StringBuilder sb = new StringBuilder();
+		for (int i = 0; i < arr.length; i++) {
+			sb.append(arr[i]);
+			if (i < arr.length - 1) {
+				sb.append(", ");
+			} else if (terminateWithDot) {
+				sb.append(".");
+			}
+		}
+		return sb.toString();
 	}
 
 	private Strings() {
