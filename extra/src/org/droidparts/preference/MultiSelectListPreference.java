@@ -108,6 +108,9 @@ public class MultiSelectListPreference extends ListPreference {
 					.toArray(new CharSequence[checkedVals.size()]));
 			if (callChangeListener(val)) {
 				setValue(val);
+			} else {
+				// to reset for subsequent call
+				updateCheckedEntryIndexes();
 			}
 		}
 	}
