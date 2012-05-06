@@ -29,22 +29,19 @@ import android.util.AttributeSet;
 // android:defaultValue="entryValue1|entryValue2"
 public class MultiSelectListPreference extends ListPreference {
 
-	public static String[] fromPreferenceValue(String val) {
+	public static String[] fromPersistedPreferenceValue(String val) {
 		return val.split("\\" + SEP);
 	}
 
-	public static String toPreferenceValue(CharSequence... entryKeys) {
+	public static String toPersistedPreferenceValue(CharSequence... entryKeys) {
 		StringBuilder sb = new StringBuilder();
-		for (CharSequence key : entryKeys) {
-			sb.append(key);
-			sb.append(SEP);
+		for (int i = 0; i < entryKeys.length; i++) {
+			sb.append(entryKeys[i]);
+			if (i < entryKeys.length - 1) {
+				sb.append(SEP);
+			}
 		}
-		String val = sb.toString();
-		// strip last separator
-		if (val.length() > 0) {
-			val = val.substring(0, val.length() - SEP.length());
-		}
-		return val;
+		return sb.toString();
 	}
 
 	public CharSequence[] getCheckedEntries() {
@@ -107,7 +104,7 @@ public class MultiSelectListPreference extends ListPreference {
 					checkedVals.add(entryVals[i]);
 				}
 			}
-			String val = toPreferenceValue(checkedVals
+			String val = toPersistedPreferenceValue(checkedVals
 					.toArray(new CharSequence[checkedVals.size()]));
 			if (callChangeListener(val)) {
 				setValue(val);
@@ -121,7 +118,7 @@ public class MultiSelectListPreference extends ListPreference {
 		checkedEntryIndexes = new boolean[entries.length];
 		if (val != null) {
 			HashSet<String> checkedEntryVals = new HashSet<String>(
-					Arrays.asList(fromPreferenceValue(val)));
+					Arrays.asList(fromPersistedPreferenceValue(val)));
 			CharSequence[] entryVals = getEntryValues();
 			for (int i = 0; i < entryVals.length; i++) {
 				checkedEntryIndexes[i] = checkedEntryVals
