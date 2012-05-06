@@ -26,10 +26,25 @@ import android.content.DialogInterface.OnMultiChoiceClickListener;
 import android.preference.ListPreference;
 import android.util.AttributeSet;
 
-public class MultipleChoiceListPreference extends ListPreference {
+// android:defaultValue="entryValue1|entryValue2"
+public class MultiSelectListPreference extends ListPreference {
 
-	public static String[] splitPreferenceValue(String val) {
+	public static String[] fromPreferenceValue(String val) {
 		return val.split("\\" + SEP);
+	}
+
+	public static String toPreferenceValue(CharSequence... entryKeys) {
+		StringBuilder sb = new StringBuilder();
+		for (CharSequence key : entryKeys) {
+			sb.append(key);
+			sb.append(SEP);
+		}
+		String val = sb.toString();
+		// strip last separator
+		if (val.length() > 0) {
+			val = val.substring(0, val.length() - SEP.length());
+		}
+		return val;
 	}
 
 	public CharSequence[] getCheckedEntries() {
@@ -49,11 +64,11 @@ public class MultipleChoiceListPreference extends ListPreference {
 
 	private boolean[] checkedEntryIndexes;
 
-	public MultipleChoiceListPreference(Context context, AttributeSet attrs) {
+	public MultiSelectListPreference(Context context, AttributeSet attrs) {
 		super(context, attrs);
 	}
 
-	public MultipleChoiceListPreference(Context context) {
+	public MultiSelectListPreference(Context context) {
 		super(context);
 	}
 
@@ -86,18 +101,14 @@ public class MultipleChoiceListPreference extends ListPreference {
 	protected void onDialogClosed(boolean positiveResult) {
 		if (positiveResult) {
 			CharSequence[] entryVals = getEntryValues();
-			StringBuilder sb = new StringBuilder();
+			ArrayList<CharSequence> checkedVals = new ArrayList<CharSequence>();
 			for (int i = 0; i < entryVals.length; i++) {
 				if (checkedEntryIndexes[i]) {
-					sb.append(entryVals[i]);
-					sb.append(SEP);
+					checkedVals.add(entryVals[i]);
 				}
 			}
-			String val = sb.toString();
-			// strip last separator
-			if (val.length() > 0) {
-				val = val.substring(0, val.length() - SEP.length());
-			}
+			String val = toPreferenceValue(checkedVals
+					.toArray(new CharSequence[checkedVals.size()]));
 			if (callChangeListener(val)) {
 				setValue(val);
 			}
@@ -110,7 +121,7 @@ public class MultipleChoiceListPreference extends ListPreference {
 		checkedEntryIndexes = new boolean[entries.length];
 		if (val != null) {
 			HashSet<String> checkedEntryVals = new HashSet<String>(
-					Arrays.asList(splitPreferenceValue(val)));
+					Arrays.asList(fromPreferenceValue(val)));
 			CharSequence[] entryVals = getEntryValues();
 			for (int i = 0; i < entryVals.length; i++) {
 				checkedEntryIndexes[i] = checkedEntryVals
