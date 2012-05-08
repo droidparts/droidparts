@@ -22,9 +22,9 @@ import static android.content.pm.PackageManager.GET_META_DATA;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.ContextWrapper;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
-import android.provider.Settings.Secure;
 
 public class AppUtils {
 
@@ -32,11 +32,6 @@ public class AppUtils {
 
 	public AppUtils(ContextWrapper ctx) {
 		this.ctx = ctx;
-	}
-
-	public boolean canInstallApps() {
-		return Secure.getInt(ctx.getContentResolver(),
-				Secure.INSTALL_NON_MARKET_APPS, 0) != 0;
 	}
 
 	public String getVersionName() {
@@ -48,6 +43,10 @@ public class AppUtils {
 			L.e(e);
 		}
 		return verName;
+	}
+
+	public boolean gotActivityForIntent(Intent intent) {
+		return ctx.getPackageManager().resolveActivity(intent, 0) != null;
 	}
 
 	public boolean isInstalled(String pkgName) {

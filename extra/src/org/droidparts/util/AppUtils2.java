@@ -28,6 +28,7 @@ import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
+import android.provider.Settings.Secure;
 
 public class AppUtils2 extends AppUtils {
 
@@ -36,6 +37,11 @@ public class AppUtils2 extends AppUtils {
 	public AppUtils2(ContextWrapper ctx) {
 		super(ctx);
 		pkgMngr = ctx.getPackageManager();
+	}
+
+	public boolean canInstallNonMarketApps() {
+		return Secure.getInt(ctx.getContentResolver(),
+				Secure.INSTALL_NON_MARKET_APPS, 0) != 0;
 	}
 
 	public boolean isDebuggable() {
