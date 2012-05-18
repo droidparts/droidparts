@@ -44,9 +44,11 @@ public class DependencyInjector {
 			synchronized (DependencyInjector.class) {
 				if (!inited) {
 					module = getModule(ctx);
-					Method[] methods = module.getClass().getMethods();
-					for (Method method : methods) {
-						methodRegistry.put(method.getReturnType(), method);
+					if (module != null) {
+						Method[] methods = module.getClass().getMethods();
+						for (Method method : methods) {
+							methodRegistry.put(method.getReturnType(), method);
+						}
 					}
 					inited = true;
 				}
