@@ -28,7 +28,6 @@ import org.droidparts.util.L;
 
 import android.content.Context;
 import android.content.pm.PackageManager;
-import android.content.pm.PackageManager.NameNotFoundException;
 import android.os.Bundle;
 
 public class DependencyInjector {
@@ -36,16 +35,17 @@ public class DependencyInjector {
 	private static final String META_KEY = "droidparts_dependency_provider";
 
 	private static volatile boolean inited = false;
-	private static AbstractDependencyProvider module;
+	private static AbstractDependencyProvider dependencyProvider;
 	private static HashMap<Class<?>, Method> methodRegistry = new HashMap<Class<?>, Method>();
 
 	static void init(Context ctx) {
 		if (!inited) {
 			synchronized (DependencyInjector.class) {
 				if (!inited) {
-					module = getModule(ctx);
-					if (module != null) {
-						Method[] methods = module.getClass().getMethods();
+					dependencyProvider = getDependencyProvider(ctx);
+					if (dependencyProvider != null) {
+						Method[] methods = dependencyProvider.getClass()
+								.getMethods();
 						for (Method method : methods) {
 							methodRegistry.put(method.getReturnType(), method);
 						}
@@ -57,23 +57,23 @@ public class DependencyInjector {
 	}
 
 	static void tearDown() {
-		if (module != null) {
-			module.getDB().close();
+		if (dependencyProvider != null) {
+			dependencyProvider.getDB().close();
 		}
-		module = null;
+		dependencyProvider = null;
 	}
 
 	static boolean inject(Context ctx, Object target, Field field) {
 		init(ctx);
-		if (module != null) {
+		if (dependencyProvider != null) {
 			Method method = methodRegistry.get(field.getType());
 			if (method != null) {
 				Object val = null;
 				try {
-					val = method.invoke(module);
+					val = method.invoke(dependencyProvider);
 				} catch (Exception e) {
 					try {
-						val = method.invoke(module, ctx);
+						val = method.invoke(dependencyProvider, ctx);
 					} catch (Exception ex) {
 						L.e("No dependency provided for "
 								+ field.getType().getCanonicalName());
@@ -89,29 +89,32 @@ public class DependencyInjector {
 		return false;
 	}
 
-	private static AbstractDependencyProvider getModule(Context ctx) {
+	private static AbstractDependencyProvider getDependencyProvider(Context ctx) {
 		PackageManager pm = ctx.getPackageManager();
-		Bundle metaData = null;
+		String className = null;
 		try {
-			metaData = pm.getApplicationInfo(ctx.getPackageName(),
+			Bundle metaData = pm.getApplicationInfo(ctx.getPackageName(),
 					GET_META_DATA).metaData;
-		} catch (NameNotFoundException e) {
+			className = metaData.getString(META_KEY);
+		} catch (Exception e) {
 			L.d(e);
 		}
-		if (metaData == null) {
-			L.e("No <meta-data />.");
+		if (className == null) {
+			L.e("No <meta-data android:name=\"droidparts_dependency_provider\" android:value=\"...\"/> in AndroidManifest.xml.");
 			return null;
 		}
-		String className = metaData.getString(META_KEY);
+		if (className.startsWith(".")) {
+			className = ctx.getPackageName() + className;
+		}
 		try {
 			Class<?> cls = Class.forName(className);
 			Constructor<?> constr = cls.getConstructor(Context.class);
-			AbstractDependencyProvider module = (AbstractDependencyProvider) constr
+			AbstractDependencyProvider adp = (AbstractDependencyProvider) constr
 					.newInstance(ctx.getApplicationContext());
-			return module;
+			return adp;
 		} catch (Exception e) {
 			L.d(e);
-			L.e("No such droidparts dependency provider: " + className);
+			L.e("Not a valid DroidParts dependency provider: " + className);
 			return null;
 		}
 	}
