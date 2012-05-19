@@ -15,18 +15,34 @@
  */
 package org.droidparts.util;
 
+import static android.content.Context.INPUT_METHOD_SERVICE;
 import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
 
 import java.lang.reflect.Method;
 
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 
 public class ViewUtils {
 
 	public static void setVisible(View view, boolean visible) {
 		view.setVisibility(visible ? VISIBLE : GONE);
+	}
+
+	public static void setKeyboardVisible(View view, boolean visible) {
+		InputMethodManager imm = (InputMethodManager) view.getContext()
+				.getSystemService(INPUT_METHOD_SERVICE);
+		if (visible) {
+			imm.showSoftInput(view, 0);
+		} else {
+			imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+		}
+	}
+
+	public static void putCursorAfterLastSymbol(EditText editText) {
+		editText.setSelection(editText.getText().length());
 	}
 
 	public static void disableOverscroll(View view) {
@@ -40,9 +56,5 @@ public class ViewUtils {
 		} catch (Exception e) {
 			L.e(e);
 		}
-	}
-
-	public static void putCursorAfterLastSymbol(EditText editText) {
-		editText.setSelection(editText.getText().length());
 	}
 }
