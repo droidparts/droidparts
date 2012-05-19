@@ -56,9 +56,10 @@ public final class ReflectionUtils {
 			field.setAccessible(true);
 			field.set(obj, val);
 		} catch (Exception e) {
-			L.e("Error assigning " + val.getClass().getSimpleName() + " to "
-					+ obj.getClass().getSimpleName() + "#" + field.getName()
-					+ ".");
+			L.e("Error assigning (" + val.getClass().getSimpleName() + ")"
+					+ val + " to (" + field.getType().getSimpleName()
+					+ ") field " + obj.getClass().getSimpleName() + "#"
+					+ field.getName() + ".");
 			throw new IllegalArgumentException(e);
 		}
 	}

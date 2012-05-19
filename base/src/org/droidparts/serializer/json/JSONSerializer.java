@@ -42,6 +42,7 @@ import org.droidparts.reflection.model.JSONModelField;
 import org.droidparts.reflection.processor.JSONModelAnnotationProcessor;
 import org.droidparts.reflection.util.ReflectionUtils;
 import org.droidparts.serializer.Serializer;
+import org.droidparts.util.L;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -85,7 +86,11 @@ public class JSONSerializer<TypeFrom extends Model> implements
 				Field f = getField(model.getClass(), jsonField.fieldName);
 				val = readFromJSON(jsonField.fieldClass,
 						jsonField.fieldClassGenericArgs, model, val);
-				setFieldVal(f, model, val);
+				try {
+					setFieldVal(f, model, val);
+				} catch (IllegalArgumentException e) {
+					L.e("Failed to deserialize '" + jsonField.keyName + "'.");
+				}
 			}
 		}
 		return model;
