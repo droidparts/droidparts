@@ -17,6 +17,9 @@ package org.droidparts.inject.injector;
 
 import static org.droidparts.reflection.util.ReflectionUtils.canAssign;
 import static org.droidparts.reflection.util.ReflectionUtils.setFieldVal;
+import static org.droidparts.reflection.util.TypeHelper.isArray;
+import static org.droidparts.reflection.util.TypeHelper.isDrawable;
+import static org.droidparts.reflection.util.TypeHelper.isInteger;
 import static org.droidparts.reflection.util.TypeHelper.isString;
 
 import java.lang.reflect.Field;
@@ -38,6 +41,17 @@ public class ResourceInjector {
 			Object val = null;
 			if (isString(cls)) {
 				val = res.getString(resId);
+			} else if (isInteger(cls)) {
+				val = res.getInteger(resId);
+			} else if (isDrawable(cls)) {
+				val = res.getDrawable(resId);
+			} else if (isArray(cls)) {
+				Class<?> type = cls.getComponentType();
+				if (isInteger(type)) {
+					val = res.getIntArray(resId);
+				} else if (isString(type)) {
+					val = res.getStringArray(resId);
+				}
 			} else {
 				L.e("Resource not supported yet: " + field.getType().getName());
 			}
@@ -48,5 +62,4 @@ public class ResourceInjector {
 		}
 		return false;
 	}
-
 }

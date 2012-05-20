@@ -25,6 +25,7 @@ import org.json.JSONObject;
 
 import android.R.array;
 import android.graphics.Bitmap;
+import android.graphics.drawable.Drawable;
 
 public final class TypeHelper {
 
@@ -34,10 +35,6 @@ public final class TypeHelper {
 
 	public static boolean isByte(Class<?> cls) {
 		return cls == Byte.class || cls == byte.class;
-	}
-
-	public static boolean isByteArray(Class<?> cls) {
-		return cls == byte[].class;
 	}
 
 	public static boolean isDouble(Class<?> cls) {
@@ -64,24 +61,36 @@ public final class TypeHelper {
 		return cls == String.class;
 	}
 
+	public static boolean isEnum(Class<?> cls) {
+		// cls.isEnum()
+		return Enum.class.isAssignableFrom(cls);
+	}
+
 	public static boolean isUUID(Class<?> cls) {
 		return UUID.class.isAssignableFrom(cls);
 	}
+
+	public static boolean isArray(Class<?> cls) {
+		// cls.isArray()
+		return cls == array.class;
+	}
+
+	public static boolean isByteArray(Class<?> cls) {
+		return cls == byte[].class;
+	}
+
+	public static boolean isCollection(Class<?> cls) {
+		return Collection.class.isAssignableFrom(cls);
+	}
+
+	//
 
 	public static boolean isBitmap(Class<?> cls) {
 		return Bitmap.class.isAssignableFrom(cls);
 	}
 
-	public static boolean isEnum(Class<?> cls) {
-		return Enum.class.isAssignableFrom(cls);
-	}
-
-	public static boolean isArray(Class<?> cls) {
-		return cls == array.class;
-	}
-
-	public static boolean isCollection(Class<?> cls) {
-		return Collection.class.isAssignableFrom(cls);
+	public static boolean isDrawable(Class<?> cls) {
+		return Drawable.class.isAssignableFrom(cls);
 	}
 
 	public static boolean isJsonObject(Class<?> cls) {
@@ -91,6 +100,8 @@ public final class TypeHelper {
 	public static boolean isJsonArray(Class<?> cls) {
 		return JSONArray.class.isAssignableFrom(cls);
 	}
+
+	//
 
 	public static boolean isModel(Class<?> cls) {
 		return Model.class.isAssignableFrom(cls);
