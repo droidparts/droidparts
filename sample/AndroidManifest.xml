@@ -14,14 +14,18 @@
         <meta-data android:name="droidparts_dependency_provider" android:value=".DependencyProvider" />
         
         <activity
-            android:name=".activity.EntryListActivity"
-            android:label="@string/app_name" >
+            android:name=".activity.EntryListActivity" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        
+        <activity
+            android:name=".activity.EntryListAsJSONActivity"
+            android:theme="@android:style/Theme.Dialog" />
+        
     </application>
 
 </manifest>

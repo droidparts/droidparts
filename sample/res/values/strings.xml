@@ -5,5 +5,6 @@
     
     <string name="add">Add</string>
     <string name="to_json">To JSON</string>
+    <string name="close">Close</string>
 
 </resources>

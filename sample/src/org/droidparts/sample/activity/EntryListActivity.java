@@ -18,17 +18,13 @@ package org.droidparts.sample.activity;
 import java.util.ArrayList;
 
 import org.droidparts.activity.ListActivity;
-import org.droidparts.annotation.inject.InjectDependency;
 import org.droidparts.annotation.inject.InjectView;
 import org.droidparts.sample.R;
 import org.droidparts.sample.adapter.EntryListAdapter;
-import org.droidparts.sample.json.EntrySerializer;
 import org.droidparts.sample.model.Entry;
-import org.droidparts.util.DialogFactory;
 import org.droidparts.util.L;
-import org.json.JSONArray;
-import org.json.JSONException;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -43,11 +39,6 @@ public class EntryListActivity extends ListActivity implements OnClickListener {
 	private Button addButton;
 	@InjectView
 	private Button toJsonButton;
-
-	@InjectDependency
-	private EntrySerializer entrySerializer;
-	@InjectDependency
-	private DialogFactory dialogFactory;
 
 	@Override
 	public void onPreInject() {
@@ -90,14 +81,7 @@ public class EntryListActivity extends ListActivity implements OnClickListener {
 			Entry entry = adapter.read(i);
 			list.add(entry);
 		}
-		String msg;
-		try {
-			JSONArray arr = entrySerializer.serializeList(list);
-			msg = arr.toString();
-		} catch (JSONException e) {
-			L.e(e);
-			msg = "o_O";
-		}
-		dialogFactory.showToast(msg);
+		Intent intent = EntryListAsJSONActivity.getIntent(this, list);
+		startActivity(intent);
 	}
 }
