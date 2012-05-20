@@ -20,7 +20,7 @@ import java.util.Iterator;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class YJSONUtils {
+public class JSONUtils {
 
 	public static void merge(JSONObject source, JSONObject target,
 			boolean overwrite) throws JSONException {
@@ -34,7 +34,7 @@ public class YJSONUtils {
 		}
 	}
 
-	private YJSONUtils() {
+	private JSONUtils() {
 	}
 
 }
