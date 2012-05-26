@@ -31,6 +31,9 @@ public @interface Column {
 
 	boolean unique() default false;
 
+	// for foreign keys
+	boolean eager() default false;
+
 	// boolean index() default false;
 
 	// Class<? extends StringSerializer> serializer() default

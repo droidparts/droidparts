@@ -63,6 +63,7 @@ public class EntityAnnotationProcessor extends
 				dbField.columnName = getColumnName(columnAnn, field);
 				dbField.columnNullable = columnAnn.nullable();
 				dbField.columnUnique = columnAnn.unique();
+				dbField.eagerField = columnAnn.eager();
 				list.add(dbField);
 			}
 		}

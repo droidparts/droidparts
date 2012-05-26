@@ -15,17 +15,18 @@
  */
 package org.droidparts.reflection.model;
 
-
 public class EntityField extends AbstractModelField {
 
 	public String columnName;
 	public boolean columnNullable;
 	public boolean columnUnique;
+	public boolean eagerField;
 
 	@Override
 	public String toString() {
 		return "fieldName: " + fieldName + ", fieldType: " + fieldClass
 				+ ", columnName: " + columnName + ", columnNullable: "
-				+ columnNullable + ", columnUnique: " + columnUnique;
+				+ columnNullable + ", columnUnique: " + columnUnique
+				+ ", eagerField: " + eagerField;
 	}
 }

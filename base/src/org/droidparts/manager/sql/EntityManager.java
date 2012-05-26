@@ -22,8 +22,7 @@ import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
-public abstract class EntityManager<Model extends Entity> implements
-		DB {
+public abstract class EntityManager<Model extends Entity> implements DB {
 
 	public Cursor list(String... columns) {
 		return list(null, columns);
@@ -102,7 +101,7 @@ public abstract class EntityManager<Model extends Entity> implements
 
 	public abstract Model readFromCursor(Cursor cursor);
 
-	public abstract void fillForeignKeys(Model item);
+	public abstract void fillForeignKeys(Model item, String... fieldNames);
 
 	protected abstract SQLiteDatabase getDB();
 

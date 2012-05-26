@@ -15,6 +15,7 @@
  */
 package org.droidparts.adapter.cursor;
 
+import org.droidparts.manager.sql.AnnotatedEntityManager;
 import org.droidparts.manager.sql.EntityManager;
 import org.droidparts.model.Entity;
 
@@ -45,7 +46,13 @@ public abstract class SimpleCursorAdapter<Model extends Entity> extends
 	public Model read(int position) {
 		long id = getItemId(position);
 		Model item = entityManager.read(id);
-		entityManager.fillForeignKeys(item);
+		String[] fieldNames = new String[0];
+		if (entityManager instanceof AnnotatedEntityManager) {
+			@SuppressWarnings("rawtypes")
+			AnnotatedEntityManager aem = ((AnnotatedEntityManager) entityManager);
+			fieldNames = aem.getEagerForeignKeyFieldNames();
+		}
+		entityManager.fillForeignKeys(item, fieldNames);
 		return item;
 	}
 

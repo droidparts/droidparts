@@ -37,6 +37,8 @@ import static org.droidparts.reflection.util.TypeHelper.isUUID;
 
 import java.io.ByteArrayOutputStream;
 import java.lang.reflect.Field;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.UUID;
 
 import org.droidparts.annotation.inject.InjectDependency;
@@ -71,6 +73,7 @@ public class AnnotatedEntityManager<Model extends Entity> extends
 		processor = new EntityAnnotationProcessor(cls);
 	}
 
+	@Override
 	public boolean delete(long id) {
 		// TODO delete models referencing this one via foreign keys.
 		return super.delete(id);
@@ -95,10 +98,14 @@ public class AnnotatedEntityManager<Model extends Entity> extends
 	}
 
 	@Override
-	public void fillForeignKeys(Model item) {
+	public void fillForeignKeys(Model item, String... fieldNames) {
+		HashSet<String> fieldNameSet = new HashSet<String>(
+				Arrays.asList(fieldNames));
+		boolean acceptAny = fieldNameSet.size() == 0;
 		for (Field field : listAnnotatedFields(cls)) {
 			Class<?> fieldType = field.getType();
-			if (isEntity(fieldType)) {
+			if (isEntity(fieldType)
+					&& (acceptAny || fieldNameSet.contains(field.getName()))) {
 				Entity model = ReflectionUtils.getTypedFieldVal(field, item);
 				if (model != null) {
 					Object obj = getManager(fieldType).read(model.id);
@@ -143,6 +150,22 @@ public class AnnotatedEntityManager<Model extends Entity> extends
 			}
 		}
 	}
+
+	public String[] getEagerForeignKeyFieldNames() {
+		if (eagerForeignKeyFieldNames == null) {
+			HashSet<String> eagerFieldNames = new HashSet<String>();
+			for (EntityField ef : processor.getModelClassFields()) {
+				if (ef.eagerField) {
+					eagerFieldNames.add(ef.fieldName);
+				}
+			}
+			eagerForeignKeyFieldNames = eagerFieldNames
+					.toArray(new String[eagerFieldNames.size()]);
+		}
+		return eagerForeignKeyFieldNames;
+	}
+
+	private String[] eagerForeignKeyFieldNames;
 
 	protected void subPutToContentValues(ContentValues cv, String key,
 			Class<?> valueCls, Object value) {
