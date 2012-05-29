@@ -59,25 +59,29 @@ public abstract class TabbedFragmentActivity extends FragmentActivity {
 		getSupportActionBar().setNavigationMode(NAVIGATION_MODE_TABS);
 	}
 
-	public int getSelectedTabPos() {
-		return getSupportActionBar().getSelectedTab().getPosition();
-	}
-
-	protected void onTabSelected(int pos) {
-
-	}
-
 	protected final void addTab(ActionBar.Tab tab, int[] fragmentIds) {
 		tab.setTabListener(tabListener);
 		getSupportActionBar().addTab(tab);
 		tabSpecs.add(fragmentIds);
 	}
 
+	public final void setCurrentTab(int position) {
+		getSupportActionBar().setSelectedNavigationItem(position);
+	}
+
+	public final int getCurrentTab() {
+		return getSupportActionBar().getSelectedTab().getPosition();
+	}
+
+	protected void onTabChanged(int position) {
+
+	}
+
 	@Override
 	public void setFragmentVisible(int fragmentId, boolean visible) {
 		if (visible) {
 			hiddenFragments.remove(fragmentId);
-			int[] currTab = tabSpecs.get(getSelectedTabPos());
+			int[] currTab = tabSpecs.get(getCurrentTab());
 			for (int fId : currTab) {
 				if (fId == fragmentId) {
 					super.setFragmentVisible(fragmentId, true);
@@ -114,6 +118,6 @@ public abstract class TabbedFragmentActivity extends FragmentActivity {
 				}
 			}
 		}
-		onTabSelected(pos);
+		onTabChanged(pos);
 	}
 }
