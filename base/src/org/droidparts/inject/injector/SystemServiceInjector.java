@@ -15,7 +15,6 @@
  */
 package org.droidparts.inject.injector;
 
-import static org.droidparts.reflection.util.ReflectionUtils.canAssign;
 import static org.droidparts.reflection.util.ReflectionUtils.setFieldVal;
 import static org.droidparts.util.Strings.isEmpty;
 
@@ -54,9 +53,11 @@ public class SystemServiceInjector {
 		String name = isEmpty(serviceName) ? serviceRegistry.get(field
 				.getType()) : serviceName;
 		Object serv = ctx.getSystemService(name);
-		if (serv != null && canAssign(field, serv)) {
+		try {
 			setFieldVal(field, target, serv);
 			return true;
+		} catch (IllegalArgumentException e) {
+			// swallow
 		}
 		return false;
 	}

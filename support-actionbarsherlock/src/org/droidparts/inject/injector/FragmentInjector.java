@@ -15,7 +15,6 @@
  */
 package org.droidparts.inject.injector;
 
-import static org.droidparts.reflection.util.ReflectionUtils.canAssign;
 import static org.droidparts.reflection.util.ReflectionUtils.setFieldVal;
 
 import java.lang.reflect.Field;
@@ -37,9 +36,11 @@ public class FragmentInjector {
 		if (fragmenId != 0) {
 			Fragment fragment = activity.getSupportFragmentManager()
 					.findFragmentById(fragmenId);
-			if (fragment != null && canAssign(field, fragment)) {
+			try {
 				setFieldVal(field, activity, fragment);
 				return true;
+			} catch (IllegalArgumentException e) {
+				// swallow
 			}
 		}
 		return false;

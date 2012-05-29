@@ -15,7 +15,6 @@
  */
 package org.droidparts.inject.injector;
 
-import static org.droidparts.reflection.util.ReflectionUtils.canAssign;
 import static org.droidparts.reflection.util.ReflectionUtils.setFieldVal;
 
 import java.lang.reflect.Field;
@@ -27,9 +26,11 @@ public class ParentActivityInjector {
 
 	static boolean inject(Fragment fragment, Field field) {
 		FragmentActivity activity = fragment.getActivity();
-		if (canAssign(field, activity)) {
+		try {
 			setFieldVal(field, fragment, activity);
 			return true;
+		} catch (IllegalArgumentException e) {
+			// swallow
 		}
 		return false;
 	}

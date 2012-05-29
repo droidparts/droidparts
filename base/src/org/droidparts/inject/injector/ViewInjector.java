@@ -15,7 +15,6 @@
  */
 package org.droidparts.inject.injector;
 
-import static org.droidparts.reflection.util.ReflectionUtils.canAssign;
 import static org.droidparts.reflection.util.ReflectionUtils.setFieldVal;
 
 import java.lang.reflect.Field;
@@ -37,9 +36,11 @@ public class ViewInjector {
 		}
 		if (viewId != 0) {
 			View view = root.findViewById(viewId);
-			if (view != null && canAssign(field, view)) {
+			try {
 				setFieldVal(field, target, view);
 				return true;
+			} catch (IllegalArgumentException e) {
+				// swallow
 			}
 		}
 		return false;

@@ -15,7 +15,6 @@
  */
 package org.droidparts.inject.injector;
 
-import static org.droidparts.reflection.util.ReflectionUtils.canAssign;
 import static org.droidparts.reflection.util.ReflectionUtils.setFieldVal;
 
 import java.lang.reflect.Field;
@@ -34,9 +33,13 @@ public class BundleExtraInjector {
 		Object val = data.get(key);
 		if (val == null && optional) {
 			return true;
-		} else if (val != null && canAssign(field, val)) {
-			setFieldVal(field, target, val);
-			return true;
+		} else {
+			try {
+				setFieldVal(field, target, val);
+				return true;
+			} catch (IllegalArgumentException e) {
+				// swallow
+			}
 		}
 		return false;
 	}

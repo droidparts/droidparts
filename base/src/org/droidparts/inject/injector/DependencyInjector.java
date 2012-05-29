@@ -80,9 +80,11 @@ public class DependencyInjector {
 						return false;
 					}
 				}
-				if (val != null) {
+				try {
 					setFieldVal(field, target, val);
 					return true;
+				} catch (IllegalArgumentException e) {
+					// swallow
 				}
 			}
 		}

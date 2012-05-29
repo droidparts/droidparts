@@ -23,10 +23,6 @@ import org.droidparts.util.L;
 
 public final class ReflectionUtils {
 
-	public static boolean canAssign(Field to, Object obj) {
-		return to.getType().isAssignableFrom(obj.getClass());
-	}
-
 	public static Field getField(Class<?> cls, String fieldName)
 			throws IllegalArgumentException {
 		try {
@@ -53,13 +49,16 @@ public final class ReflectionUtils {
 	public static void setFieldVal(Field field, Object obj, Object val)
 			throws IllegalArgumentException {
 		try {
+			if (val == null) {
+				throw new IllegalArgumentException("null val");
+			}
 			field.setAccessible(true);
 			field.set(obj, val);
 		} catch (Exception e) {
 			L.e("Error assigning (" + val.getClass().getSimpleName() + ")"
 					+ val + " to (" + field.getType().getSimpleName()
 					+ ") field " + obj.getClass().getSimpleName() + "#"
-					+ field.getName() + ".");
+					+ field.getName() + ": " + e.getMessage());
 			throw new IllegalArgumentException(e);
 		}
 	}
