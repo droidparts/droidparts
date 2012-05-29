@@ -59,17 +59,23 @@ public abstract class TabbedFragmentActivity extends FragmentActivity {
 		getSupportActionBar().setNavigationMode(NAVIGATION_MODE_TABS);
 	}
 
-	protected final void addTab(ActionBar.Tab tab, int[] fragmentIds) {
-		tab.setTabListener(tabListener);
-		getSupportActionBar().addTab(tab);
-		tabSpecs.add(fragmentIds);
+	public void addTab(ActionBar.Tab tab, int[] fragmentIds) {
+		addTab(tabSpecs.size(), tab, fragmentIds);
 	}
 
-	public final void setCurrentTab(int position) {
+	public void addTab(int position, ActionBar.Tab tab, int[] fragmentIds) {
+		tab.setTabListener(tabListener);
+		getSupportActionBar().addTab(tab, position);
+		tabSpecs.add(position, fragmentIds);
+		// XXX
+		setCurrentTab(position);
+	}
+
+	public void setCurrentTab(int position) {
 		getSupportActionBar().setSelectedNavigationItem(position);
 	}
 
-	public final int getCurrentTab() {
+	public int getCurrentTab() {
 		return getSupportActionBar().getSelectedTab().getPosition();
 	}
 
