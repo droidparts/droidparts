@@ -23,7 +23,6 @@ import org.droidparts.model.Model;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import android.R.array;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 
@@ -62,8 +61,7 @@ public final class TypeHelper {
 	}
 
 	public static boolean isEnum(Class<?> cls) {
-		// cls.isEnum()
-		return Enum.class.isAssignableFrom(cls);
+		return cls.isEnum();
 	}
 
 	public static boolean isUUID(Class<?> cls) {
@@ -71,8 +69,7 @@ public final class TypeHelper {
 	}
 
 	public static boolean isArray(Class<?> cls) {
-		// cls.isArray()
-		return cls == array.class;
+		return cls.isArray();
 	}
 
 	public static boolean isByteArray(Class<?> cls) {
