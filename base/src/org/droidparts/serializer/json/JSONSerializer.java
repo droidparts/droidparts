@@ -202,6 +202,22 @@ public class JSONSerializer<TypeFrom extends Model> implements
 			} else {
 				return coll;
 			}
+		} else if (isString(val.getClass())) {
+			// primitive might arrive as string
+			String strVal = (String) val;
+			if (isBoolean(fieldCls)) {
+				return Boolean.valueOf(strVal);
+			} else if (isDouble(fieldCls)) {
+				return Double.valueOf(strVal);
+			} else if (isFloat(fieldCls)) {
+				return Float.valueOf(strVal);
+			} else if (isInteger(fieldCls)) {
+				return Integer.valueOf(strVal);
+			} else if (isLong(fieldCls)) {
+				return Long.valueOf(strVal);
+			} else {
+				return strVal;
+			}
 		} else {
 			return val;
 		}
