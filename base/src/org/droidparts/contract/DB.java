@@ -49,6 +49,8 @@ public interface DB {
 	// query constraints
 	String EQUALS = " = ?";
 	String NOT_EQUAL = " != ?";
+	String GREATER = " > ?";
+	String LESS = " < ?";
 	// http://code.google.com/p/android/issues/detail?id=3153
 	String LIKE_START = " LIKE '%s%%'";
 	String LIKE_MIDDLE = " LIKE '%%%s%%'";
