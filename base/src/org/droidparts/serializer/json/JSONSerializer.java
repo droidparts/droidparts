@@ -70,8 +70,12 @@ public class JSONSerializer<TypeFrom extends Model> implements
 		for (JSONModelField jsonField : fields) {
 			Field f = getField(item.getClass(), jsonField.fieldName);
 			Object columnVal = getTypedFieldVal(f, item);
-			putToJSONObject(obj, jsonField.keyName, jsonField.fieldClass,
-					columnVal);
+			try {
+				putToJSONObject(obj, jsonField.keyName, jsonField.fieldClass,
+						columnVal);
+			} catch (Exception e) {
+				throw new JSONException(e.getMessage());
+			}
 		}
 		return obj;
 	}
@@ -84,8 +88,12 @@ public class JSONSerializer<TypeFrom extends Model> implements
 			if (obj.has(jsonField.keyName)) {
 				Object val = obj.get(jsonField.keyName);
 				Field f = getField(model.getClass(), jsonField.fieldName);
-				val = readFromJSON(jsonField.fieldClass,
-						jsonField.fieldClassGenericArgs, model, val);
+				try {
+					val = readFromJSON(jsonField.fieldClass,
+							jsonField.fieldClassGenericArgs, model, val);
+				} catch (Exception e) {
+					throw new JSONException(e.getMessage());
+				}
 				try {
 					setFieldVal(f, model, val);
 				} catch (IllegalArgumentException e) {
@@ -116,7 +124,7 @@ public class JSONSerializer<TypeFrom extends Model> implements
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	private void putToJSONObject(JSONObject obj, String key, Class<?> valueCls,
-			Object value) throws JSONException {
+			Object value) throws Exception {
 		if (isBoolean(valueCls)) {
 			obj.put(key, ((Boolean) value));
 		} else if (isDouble(valueCls)) {
@@ -148,11 +156,7 @@ public class JSONSerializer<TypeFrom extends Model> implements
 				serializer = getSerializer(list.get(0).getClass());
 			}
 			for (Object o : list) {
-				try {
-					jarr.put(serializer.serialize((Model) o));
-				} catch (Exception e) {
-					throw new JSONException(e.getMessage());
-				}
+				jarr.put(serializer.serialize((Model) o));
 			}
 			obj.put(key, jarr);
 		} else if (isCollection(valueCls)) {
@@ -168,7 +172,7 @@ public class JSONSerializer<TypeFrom extends Model> implements
 	@SuppressWarnings("rawtypes")
 	private Object readFromJSON(Class<?> fieldCls,
 			Class<?>[] fieldClassGenericArguments, Object model, Object val)
-			throws JSONException {
+			throws Exception {
 		if (isUUID(fieldCls)) {
 			return UUID.fromString((String) val);
 		} else if (isEnum(fieldCls)) {
@@ -186,16 +190,11 @@ public class JSONSerializer<TypeFrom extends Model> implements
 			}
 			JSONSerializer serializer = getSerializer(fieldClassGenericArguments[0]);
 			for (int i = 0; i < jArr.length(); i++) {
-				try {
-					Object obj = serializer.deserialize((JSONObject) jArr
-							.get(i));
-					if (isArr) {
-						arr[i] = obj;
-					} else {
-						coll.add(obj);
-					}
-				} catch (Exception e) {
-					throw new JSONException(e.getMessage());
+				Object obj = serializer.deserialize((JSONObject) jArr.get(i));
+				if (isArr) {
+					arr[i] = obj;
+				} else {
+					coll.add(obj);
 				}
 			}
 			if (isArr) {
