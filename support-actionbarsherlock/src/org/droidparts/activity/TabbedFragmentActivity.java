@@ -31,9 +31,9 @@ import com.actionbarsherlock.app.ActionBar.TabListener;
 
 public abstract class TabbedFragmentActivity extends FragmentActivity {
 
-	private final ArrayList<int[]> tabSpecs = new ArrayList<int[]>();
+	private final ArrayList<int[]> fragmentsOnTab = new ArrayList<int[]>();
 
-	private final HashSet<Integer> hiddenFragments = new HashSet<Integer>();
+	private final HashSet<Integer> manuallyHiddenFragments = new HashSet<Integer>();
 
 	private final TabListener tabListener = new TabListener() {
 
@@ -60,14 +60,13 @@ public abstract class TabbedFragmentActivity extends FragmentActivity {
 	}
 
 	public void addTab(ActionBar.Tab tab, int[] fragmentIds) {
-		addTab(tabSpecs.size(), tab, fragmentIds);
+		addTab(fragmentsOnTab.size(), tab, fragmentIds);
 	}
 
 	public void addTab(int position, ActionBar.Tab tab, int[] fragmentIds) {
 		tab.setTabListener(tabListener);
 		getSupportActionBar().addTab(tab, position);
-		tabSpecs.add(position, fragmentIds);
-		// XXX
+		fragmentsOnTab.add(position, fragmentIds);
 		setCurrentTab(position);
 	}
 
@@ -85,17 +84,18 @@ public abstract class TabbedFragmentActivity extends FragmentActivity {
 
 	@Override
 	public void setFragmentVisible(int fragmentId, boolean visible) {
+		// set visible only if it's on current tab
 		if (visible) {
-			hiddenFragments.remove(fragmentId);
-			int[] currTab = tabSpecs.get(getCurrentTab());
-			for (int fId : currTab) {
+			manuallyHiddenFragments.remove(fragmentId);
+			int[] currTabFragments = fragmentsOnTab.get(getCurrentTab());
+			for (int fId : currTabFragments) {
 				if (fId == fragmentId) {
 					super.setFragmentVisible(fragmentId, true);
 					break;
 				}
 			}
 		} else {
-			hiddenFragments.add(fragmentId);
+			manuallyHiddenFragments.add(fragmentId);
 			super.setFragmentVisible(fragmentId, false);
 		}
 	}
@@ -103,27 +103,23 @@ public abstract class TabbedFragmentActivity extends FragmentActivity {
 	private void onTabSelected(Tab tab, FragmentTransaction ft) {
 		int pos = tab.getPosition();
 		FragmentManager fm = getSupportFragmentManager();
-		for (int tabPos = 0; tabPos < tabSpecs.size(); tabPos++) {
-			int[] tabSpec = tabSpecs.get(tabPos);
-			for (int fragmentId : tabSpec) {
+		for (int tabPos = 0; tabPos < fragmentsOnTab.size(); tabPos++) {
+			boolean isCurrTab = (tabPos == pos);
+			int[] tabFragments = fragmentsOnTab.get(tabPos);
+			for (int fragmentId : tabFragments) {
 				Fragment fragment = fm.findFragmentById(fragmentId);
 				if (fragment != null) {
-					boolean tabSelected = (tabPos == pos);
-					if (tabSelected) {
-						if (!hiddenFragments.contains(fragmentId)) {
+					if (isCurrTab) {
+						if (!manuallyHiddenFragments.contains(fragmentId)) {
 							ft.show(fragment);
 						}
 					} else {
-						if (fragment.isHidden()) {
-							hiddenFragments.add(fragmentId);
-						} else {
-							hiddenFragments.remove(fragmentId);
-							ft.hide(fragment);
-						}
+						ft.hide(fragment);
 					}
 				}
 			}
 		}
 		onTabChanged(pos);
 	}
+
 }
