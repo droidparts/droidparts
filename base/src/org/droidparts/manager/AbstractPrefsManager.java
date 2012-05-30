@@ -67,8 +67,14 @@ public abstract class AbstractPrefsManager {
 
 	// shortcuts
 
-	protected String resToKey(int resId) {
-		return ctx.getString(resId);
+	protected boolean getBoolean(int keyResId, int defValueResId) {
+		return prefs.getBoolean(ctx.getString(keyResId),
+				Boolean.valueOf(ctx.getString(defValueResId)));
+	}
+
+	protected String getString(int keyResId, int defValueResId) {
+		return prefs.getString(ctx.getString(keyResId),
+				ctx.getString(defValueResId));
 	}
 
 	protected boolean saveBoolean(String key, boolean val) {
