@@ -15,27 +15,16 @@
  */
 package org.droidparts.loader;
 
-import org.droidparts.task.AsyncTask;
-import org.droidparts.util.L;
+import org.droidparts.inject.Injector;
 
-public class AsyncTaskLoaderAdapter<Result> extends AsyncTaskLoader<Result> {
+import android.content.Context;
 
-	private final AsyncTask<?, ?, Result> task;
+public abstract class AsyncTaskLoader<Result> extends
+		android.support.v4.content.AsyncTaskLoader<Result> {
 
-	public AsyncTaskLoaderAdapter(AsyncTask<?, ?, Result> task) {
-		super(task.getContext());
-		this.task = task;
-	}
-
-	@SuppressWarnings("unchecked")
-	@Override
-	public Result loadInBackground() {
-		try {
-			return task.executeInBackground();
-		} catch (Exception e) {
-			L.e(e);
-			return null;
-		}
+	public AsyncTaskLoader(Context ctx) {
+		super(ctx);
+		Injector.get().inject(ctx, this);
 	}
 
 }
