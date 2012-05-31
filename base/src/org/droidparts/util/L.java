@@ -67,15 +67,27 @@ public class L {
 	}
 
 	private static void log(int priority, Object obj) {
-		if (getLogLevel() <= priority) {
+		boolean debug = isDebug();
+		if (debug || getLogLevel() <= priority) {
 			String msg = (obj instanceof Exception) ? Log
 					.getStackTraceString((Exception) obj) : String.valueOf(obj);
-			Log.println(priority, getTag(), msg);
+			Log.println(priority, getTag(debug), msg);
 		}
 	}
 
+	private static boolean isDebug() {
+		if (_debug == null) {
+			Context ctx = Injector.getApplicationContext();
+			if (ctx != null) {
+				ApplicationInfo appInfo = ctx.getApplicationInfo();
+				_debug = (appInfo.flags &= FLAG_DEBUGGABLE) != 0;
+			}
+		}
+		return (_debug != null && _debug);
+	}
+
 	private static int getLogLevel() {
-		if (logLevel == 0) {
+		if (_logLevel == 0) {
 			Context ctx = Injector.getApplicationContext();
 			if (ctx != null) {
 				PackageManager pm = ctx.getPackageManager();
@@ -88,38 +100,31 @@ public class L {
 					Log.d(TAG, "", e);
 				}
 				if (ManifestMeta.DISABLE.equalsIgnoreCase(logLevelStr)) {
-					logLevel = DISABLE;
+					_logLevel = DISABLE;
 				} else if (ManifestMeta.VERBOSE.equalsIgnoreCase(logLevelStr)) {
-					logLevel = VERBOSE;
+					_logLevel = VERBOSE;
 				} else if (ManifestMeta.DEBUG.equalsIgnoreCase(logLevelStr)) {
-					logLevel = DEBUG;
+					_logLevel = DEBUG;
 				} else if (ManifestMeta.INFO.equalsIgnoreCase(logLevelStr)) {
-					logLevel = INFO;
+					_logLevel = INFO;
 				} else if (ManifestMeta.WARN.equalsIgnoreCase(logLevelStr)) {
-					logLevel = WARN;
+					_logLevel = WARN;
 				} else if (ManifestMeta.ERROR.equalsIgnoreCase(logLevelStr)) {
-					logLevel = ERROR;
+					_logLevel = ERROR;
 				} else if (ManifestMeta.ASSERT.equalsIgnoreCase(logLevelStr)) {
-					logLevel = ASSERT;
+					_logLevel = ASSERT;
 				} else {
+					_logLevel = DISABLE;
 					Log.i(TAG,
 							"No <meta-data android:name=\"droidparts_log_level\" android:value=\"...\"/> in AndroidManifest.xml. Logging disabled.");
-					logLevel = DISABLE;
 				}
 			}
 		}
-		return (logLevel != 0) ? logLevel : DISABLE;
+		return (_logLevel != 0) ? _logLevel : DISABLE;
 	}
 
-	private static String getTag() {
-		if (debug == null) {
-			Context ctx = Injector.getApplicationContext();
-			if (ctx != null) {
-				ApplicationInfo appInfo = ctx.getApplicationInfo();
-				debug = (appInfo.flags &= FLAG_DEBUGGABLE) != 0;
-			}
-		}
-		if (debug != null && debug) {
+	private static String getTag(boolean debug) {
+		if (debug) {
 			StackTraceElement caller = Thread.currentThread().getStackTrace()[5];
 			String c = caller.getClassName();
 			String className = c.substring(c.lastIndexOf(".") + 1, c.length());
@@ -131,19 +136,19 @@ public class L {
 			sb.append(caller.getLineNumber());
 			return sb.toString();
 		} else {
-			if (tag == null) {
+			if (_tag == null) {
 				Context ctx = Injector.getApplicationContext();
 				if (ctx != null) {
-					tag = ctx.getPackageName();
+					_tag = ctx.getPackageName();
 				}
 			}
-			return (tag != null) ? tag : "";
+			return (_tag != null) ? _tag : "";
 		}
 	}
 
-	private static Boolean debug;
-	private static int logLevel;
-	private static String tag;
+	private static Boolean _debug;
+	private static int _logLevel;
+	private static String _tag;
 
 	private L() {
 	}
