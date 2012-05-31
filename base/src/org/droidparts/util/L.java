@@ -74,36 +74,6 @@ public class L {
 		}
 	}
 
-	private static String getTag() {
-		if (debug == null) {
-			Context ctx = Injector.getApplicationContext();
-			if (ctx != null) {
-				ApplicationInfo appInfo = ctx.getApplicationInfo();
-				debug = (appInfo.flags &= FLAG_DEBUGGABLE) != 0;
-			}
-		}
-		if (debug != null && debug) {
-			StackTraceElement caller = Thread.currentThread().getStackTrace()[5];
-			String c = caller.getClassName();
-			String className = c.substring(c.lastIndexOf(".") + 1, c.length());
-			StringBuilder sb = new StringBuilder(5);
-			sb.append(className);
-			sb.append(".");
-			sb.append(caller.getMethodName());
-			sb.append("():");
-			sb.append(caller.getLineNumber());
-			return sb.toString();
-		} else {
-			if (tag == null) {
-				Context ctx = Injector.getApplicationContext();
-				if (ctx != null) {
-					tag = ctx.getPackageName();
-				}
-			}
-			return (tag != null) ? tag : "";
-		}
-	}
-
 	private static int getLogLevel() {
 		if (logLevel == 0) {
 			Context ctx = Injector.getApplicationContext();
@@ -139,6 +109,36 @@ public class L {
 			}
 		}
 		return (logLevel != 0) ? logLevel : DISABLE;
+	}
+
+	private static String getTag() {
+		if (debug == null) {
+			Context ctx = Injector.getApplicationContext();
+			if (ctx != null) {
+				ApplicationInfo appInfo = ctx.getApplicationInfo();
+				debug = (appInfo.flags &= FLAG_DEBUGGABLE) != 0;
+			}
+		}
+		if (debug != null && debug) {
+			StackTraceElement caller = Thread.currentThread().getStackTrace()[5];
+			String c = caller.getClassName();
+			String className = c.substring(c.lastIndexOf(".") + 1, c.length());
+			StringBuilder sb = new StringBuilder(5);
+			sb.append(className);
+			sb.append(".");
+			sb.append(caller.getMethodName());
+			sb.append("():");
+			sb.append(caller.getLineNumber());
+			return sb.toString();
+		} else {
+			if (tag == null) {
+				Context ctx = Injector.getApplicationContext();
+				if (ctx != null) {
+					tag = ctx.getPackageName();
+				}
+			}
+			return (tag != null) ? tag : "";
+		}
 	}
 
 	private static Boolean debug;
