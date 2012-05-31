@@ -23,6 +23,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 
+import org.droidparts.contract.Constants.ManifestMeta;
 import org.droidparts.inject.AbstractDependencyProvider;
 import org.droidparts.util.L;
 
@@ -31,8 +32,6 @@ import android.content.pm.PackageManager;
 import android.os.Bundle;
 
 public class DependencyInjector {
-
-	private static final String META_KEY = "droidparts_dependency_provider";
 
 	private static volatile boolean inited = false;
 	private static AbstractDependencyProvider dependencyProvider;
@@ -97,7 +96,7 @@ public class DependencyInjector {
 		try {
 			Bundle metaData = pm.getApplicationInfo(ctx.getPackageName(),
 					GET_META_DATA).metaData;
-			className = metaData.getString(META_KEY);
+			className = metaData.getString(ManifestMeta.DEPENDENCY_PROVIDER);
 		} catch (Exception e) {
 			L.d(e);
 		}

@@ -16,19 +16,27 @@
 package org.droidparts.util;
 
 import static android.content.pm.ApplicationInfo.FLAG_DEBUGGABLE;
-import static android.util.Log.DEBUG;
-import static android.util.Log.ERROR;
-import static android.util.Log.INFO;
-import static android.util.Log.VERBOSE;
-import static android.util.Log.WARN;
+import static android.content.pm.PackageManager.GET_META_DATA;
+import static org.droidparts.contract.Constants.TAG;
 
+import org.droidparts.contract.Constants.ManifestMeta;
 import org.droidparts.inject.Injector;
 
 import android.content.Context;
 import android.content.pm.ApplicationInfo;
+import android.content.pm.PackageManager;
+import android.os.Bundle;
 import android.util.Log;
 
 public class L {
+
+	private static final int DISABLE = -1;
+	private static final int VERBOSE = Log.VERBOSE;
+	private static final int DEBUG = Log.DEBUG;
+	private static final int INFO = Log.INFO;
+	private static final int WARN = Log.WARN;
+	private static final int ERROR = Log.ERROR;
+	private static final int ASSERT = Log.ASSERT;
 
 	public static void v(Object obj) {
 		log(VERBOSE, obj);
@@ -51,13 +59,19 @@ public class L {
 	}
 
 	public static void wtf(Object obj) {
-		log(ERROR, "WTF: " + obj);
+		log(ASSERT, "WTF: " + obj);
+	}
+
+	public static void wtf() {
+		log(ASSERT, "WTF");
 	}
 
 	private static void log(int priority, Object obj) {
-		String msg = (obj instanceof Exception) ? Log
-				.getStackTraceString((Exception) obj) : String.valueOf(obj);
-		Log.println(priority, getTag(), msg);
+		if (getLogLevel() <= priority) {
+			String msg = (obj instanceof Exception) ? Log
+					.getStackTraceString((Exception) obj) : String.valueOf(obj);
+			Log.println(priority, getTag(), msg);
+		}
 	}
 
 	private static String getTag() {
@@ -90,7 +104,45 @@ public class L {
 		}
 	}
 
+	private static int getLogLevel() {
+		if (logLevel == 0) {
+			Context ctx = Injector.getApplicationContext();
+			if (ctx != null) {
+				PackageManager pm = ctx.getPackageManager();
+				String logLevelStr = null;
+				try {
+					Bundle metaData = pm.getApplicationInfo(
+							ctx.getPackageName(), GET_META_DATA).metaData;
+					logLevelStr = metaData.getString(ManifestMeta.LOG_LEVEL);
+				} catch (Exception e) {
+					Log.d(TAG, "", e);
+				}
+				if (ManifestMeta.DISABLE.equalsIgnoreCase(logLevelStr)) {
+					logLevel = DISABLE;
+				} else if (ManifestMeta.VERBOSE.equalsIgnoreCase(logLevelStr)) {
+					logLevel = VERBOSE;
+				} else if (ManifestMeta.DEBUG.equalsIgnoreCase(logLevelStr)) {
+					logLevel = DEBUG;
+				} else if (ManifestMeta.INFO.equalsIgnoreCase(logLevelStr)) {
+					logLevel = INFO;
+				} else if (ManifestMeta.WARN.equalsIgnoreCase(logLevelStr)) {
+					logLevel = WARN;
+				} else if (ManifestMeta.ERROR.equalsIgnoreCase(logLevelStr)) {
+					logLevel = ERROR;
+				} else if (ManifestMeta.ASSERT.equalsIgnoreCase(logLevelStr)) {
+					logLevel = ASSERT;
+				} else {
+					Log.i(TAG,
+							"No <meta-data android:name=\"droidparts_log_level\" android:value=\"...\"/> in AndroidManifest.xml. Logging disabled.");
+					logLevel = DISABLE;
+				}
+			}
+		}
+		return (logLevel != 0) ? logLevel : DISABLE;
+	}
+
 	private static Boolean debug;
+	private static int logLevel;
 	private static String tag;
 
 	private L() {
