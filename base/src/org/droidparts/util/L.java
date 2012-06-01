@@ -30,13 +30,13 @@ import android.util.Log;
 
 public class L {
 
-	private static final int DISABLE = -1;
 	private static final int VERBOSE = Log.VERBOSE;
 	private static final int DEBUG = Log.DEBUG;
 	private static final int INFO = Log.INFO;
 	private static final int WARN = Log.WARN;
 	private static final int ERROR = Log.ERROR;
 	private static final int ASSERT = Log.ASSERT;
+	private static final int DISABLE = 1024;
 
 	public static void v(Object obj) {
 		log(VERBOSE, obj);
@@ -68,7 +68,7 @@ public class L {
 
 	private static void log(int priority, Object obj) {
 		boolean debug = isDebug();
-		if (debug || getLogLevel() <= priority) {
+		if (debug || (!debug && priority >= getLogLevel())) {
 			String msg = (obj instanceof Exception) ? Log
 					.getStackTraceString((Exception) obj) : String.valueOf(obj);
 			Log.println(priority, getTag(debug), msg);
@@ -80,7 +80,7 @@ public class L {
 			Context ctx = Injector.getApplicationContext();
 			if (ctx != null) {
 				ApplicationInfo appInfo = ctx.getApplicationInfo();
-				_debug = (appInfo.flags &= FLAG_DEBUGGABLE) != 0;
+				_debug = (appInfo.flags & FLAG_DEBUGGABLE) != 0;
 			}
 		}
 		return (_debug != null && _debug);

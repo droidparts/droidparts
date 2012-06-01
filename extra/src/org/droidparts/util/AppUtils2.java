@@ -46,7 +46,7 @@ public class AppUtils2 extends AppUtils {
 
 	public boolean isDebuggable() {
 		ApplicationInfo appInfo = ctx.getApplicationInfo();
-		boolean debug = (appInfo.flags &= FLAG_DEBUGGABLE) != 0;
+		boolean debug = (appInfo.flags & FLAG_DEBUGGABLE) != 0;
 		return debug;
 	}
 
