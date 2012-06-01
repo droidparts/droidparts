@@ -25,6 +25,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 
+import android.content.Context;
 import android.graphics.drawable.BitmapDrawable;
 
 //TODO make universal
@@ -32,6 +33,10 @@ import android.graphics.drawable.BitmapDrawable;
 public class FileCacher {
 
 	private final File cacheDir;
+
+	public FileCacher(Context ctx) {
+		this(ctx.getCacheDir());
+	}
 
 	public FileCacher(File cacheDir) {
 		this.cacheDir = cacheDir;
