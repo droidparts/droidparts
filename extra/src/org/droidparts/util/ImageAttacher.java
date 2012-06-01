@@ -22,6 +22,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import org.droidparts.model.Tuple;
 import org.droidparts.net.http.HTTPException;
 import org.droidparts.net.http.RESTClient;
 
@@ -37,7 +38,7 @@ public final class ImageAttacher {
 	private final RESTClient client;
 	private final FileCacher fileCacher;
 
-	private final ConcurrentHashMap<View, String> viewsToUrls = new ConcurrentHashMap<View, String>();
+	private final ConcurrentHashMap<View, Tuple<String, Drawable>> viewsToUrlsAndDefaultImages = new ConcurrentHashMap<View, Tuple<String, Drawable>>();
 
 	public ImageAttacher(FileCacher fileCacher) {
 		exec = Executors.newSingleThreadExecutor();
@@ -46,7 +47,11 @@ public final class ImageAttacher {
 	}
 
 	public void setImage(View view, String fileUrl) {
-		viewsToUrls.put(view, fileUrl);
+		setImage(view, fileUrl, null);
+	}
+
+	public void setImage(View view, String fileUrl, Drawable defaultImg) {
+		viewsToUrlsAndDefaultImages.put(view, new Tuple<String, Drawable>(fileUrl, defaultImg));
 		exec.execute(fetchAndAttachRunnable);
 	}
 
@@ -79,11 +84,16 @@ public final class ImageAttacher {
 
 		@Override
 		public void run() {
-			for (View view : viewsToUrls.keySet()) {
-				String fileUrl = viewsToUrls.get(view);
-				if (fileUrl != null) {
-					viewsToUrls.remove(view);
-					final Drawable image = getCachedOrFetchAndCache(fileUrl);
+			for (View view : viewsToUrlsAndDefaultImages.keySet()) {
+				Tuple<String, Drawable> tuple = viewsToUrlsAndDefaultImages.get(view);
+				if (tuple != null) {
+					viewsToUrlsAndDefaultImages.remove(view);
+					String fileUrl = tuple.k;
+					Drawable defaultImg = tuple.v;
+					Drawable image = getCachedOrFetchAndCache(fileUrl);
+					if (image == null) {
+						image = defaultImg;
+					}
 					if (image != null) {
 						view.post(new AttachRunnable(view, image));
 					}
