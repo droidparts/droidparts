@@ -51,7 +51,8 @@ public final class ImageAttacher {
 	}
 
 	public void setImage(View view, String fileUrl, Drawable defaultImg) {
-		viewsToUrlsAndDefaultImages.put(view, new Tuple<String, Drawable>(fileUrl, defaultImg));
+		viewsToUrlsAndDefaultImages.put(view, new Tuple<String, Drawable>(
+				fileUrl, defaultImg));
 		exec.execute(fetchAndAttachRunnable);
 	}
 
@@ -67,6 +68,7 @@ public final class ImageAttacher {
 			try {
 				bis = new BufferedInputStream(client.getInputStream(fileUrl).v);
 				image = new BitmapDrawable(bis);
+				image = processFetchedImage(fileUrl, image);
 			} catch (HTTPException e) {
 				L.e(e);
 			} finally {
@@ -80,12 +82,17 @@ public final class ImageAttacher {
 		return image;
 	}
 
+	protected BitmapDrawable processFetchedImage(String url, BitmapDrawable img) {
+		return img;
+	}
+
 	private final Runnable fetchAndAttachRunnable = new Runnable() {
 
 		@Override
 		public void run() {
 			for (View view : viewsToUrlsAndDefaultImages.keySet()) {
-				Tuple<String, Drawable> tuple = viewsToUrlsAndDefaultImages.get(view);
+				Tuple<String, Drawable> tuple = viewsToUrlsAndDefaultImages
+						.get(view);
 				if (tuple != null) {
 					viewsToUrlsAndDefaultImages.remove(view);
 					String fileUrl = tuple.k;
