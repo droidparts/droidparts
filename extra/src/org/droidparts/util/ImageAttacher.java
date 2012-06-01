@@ -18,6 +18,7 @@ package org.droidparts.util;
 import static org.droidparts.util.IOUtils.silentlyClose;
 
 import java.io.BufferedInputStream;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -36,23 +37,17 @@ public final class ImageAttacher {
 	private final RESTClient client;
 	private final FileCacher fileCacher;
 
+	private final ConcurrentHashMap<View, String> viewsToUrls = new ConcurrentHashMap<View, String>();
+
 	public ImageAttacher(FileCacher fileCacher) {
 		exec = Executors.newSingleThreadExecutor();
 		client = new RESTClient(null);
 		this.fileCacher = fileCacher;
 	}
 
-	public void setImage(final String fileUrl, final View view) {
-		exec.execute(new Runnable() {
-
-			@Override
-			public void run() {
-				final Drawable image = getCachedOrFetchAndCache(fileUrl);
-				if (image != null) {
-					view.post(new AttachRunnable(view, image));
-				}
-			}
-		});
+	public void setImage(View view, String fileUrl) {
+		viewsToUrls.put(view, fileUrl);
+		exec.execute(fetchAndAttachRunnable);
 	}
 
 	public Drawable getCachedOrFetchAndCache(String fileUrl) {
@@ -79,6 +74,23 @@ public final class ImageAttacher {
 		}
 		return image;
 	}
+
+	private final Runnable fetchAndAttachRunnable = new Runnable() {
+
+		@Override
+		public void run() {
+			for (View view : viewsToUrls.keySet()) {
+				String fileUrl = viewsToUrls.get(view);
+				if (fileUrl != null) {
+					viewsToUrls.remove(view);
+					final Drawable image = getCachedOrFetchAndCache(fileUrl);
+					if (image != null) {
+						view.post(new AttachRunnable(view, image));
+					}
+				}
+			}
+		}
+	};
 
 	private static class AttachRunnable implements Runnable {
 
