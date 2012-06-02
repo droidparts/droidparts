@@ -35,14 +35,12 @@ public abstract class TabbedFragmentActivity extends FragmentActivity {
 
 	private final HashSet<Integer> manuallyHiddenFragments = new HashSet<Integer>();
 
-	// TODO better solution
-	private boolean callOnTabChanged = true;
-
 	private final TabListener tabListener = new TabListener() {
 
 		@Override
 		public void onTabSelected(Tab tab, FragmentTransaction ft) {
-			TabbedFragmentActivity.this.onTabSelected(tab, ft);
+			showFragmentsForCurrentTab(ft);
+			onTabChanged(getCurrentTab());
 		}
 
 		@Override
@@ -70,9 +68,9 @@ public abstract class TabbedFragmentActivity extends FragmentActivity {
 		tab.setTabListener(tabListener);
 		getSupportActionBar().addTab(tab, position);
 		fragmentsOnTab.add(position, fragmentIds);
-		callOnTabChanged = false;
-		setCurrentTab(position);
-		callOnTabChanged = true;
+		FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+		showFragmentsForCurrentTab(ft);
+		ft.commit();
 	}
 
 	public void setCurrentTab(int position) {
@@ -105,11 +103,11 @@ public abstract class TabbedFragmentActivity extends FragmentActivity {
 		}
 	}
 
-	private void onTabSelected(Tab tab, FragmentTransaction ft) {
-		int pos = tab.getPosition();
+	private void showFragmentsForCurrentTab(FragmentTransaction ft) {
+		int currTabPos = getCurrentTab();
 		FragmentManager fm = getSupportFragmentManager();
 		for (int tabPos = 0; tabPos < fragmentsOnTab.size(); tabPos++) {
-			boolean isCurrTab = (tabPos == pos);
+			boolean isCurrTab = (tabPos == currTabPos);
 			int[] tabFragments = fragmentsOnTab.get(tabPos);
 			for (int fragmentId : tabFragments) {
 				Fragment fragment = fm.findFragmentById(fragmentId);
@@ -123,9 +121,6 @@ public abstract class TabbedFragmentActivity extends FragmentActivity {
 					}
 				}
 			}
-		}
-		if (callOnTabChanged) {
-			onTabChanged(pos);
 		}
 	}
 
