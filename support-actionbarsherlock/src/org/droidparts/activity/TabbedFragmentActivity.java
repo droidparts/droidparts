@@ -35,6 +35,9 @@ public abstract class TabbedFragmentActivity extends FragmentActivity {
 
 	private final HashSet<Integer> manuallyHiddenFragments = new HashSet<Integer>();
 
+	// TODO better solution
+	private boolean callOnTabChanged = true;
+
 	private final TabListener tabListener = new TabListener() {
 
 		@Override
@@ -67,7 +70,9 @@ public abstract class TabbedFragmentActivity extends FragmentActivity {
 		tab.setTabListener(tabListener);
 		getSupportActionBar().addTab(tab, position);
 		fragmentsOnTab.add(position, fragmentIds);
+		callOnTabChanged = false;
 		setCurrentTab(position);
+		callOnTabChanged = true;
 	}
 
 	public void setCurrentTab(int position) {
@@ -119,7 +124,9 @@ public abstract class TabbedFragmentActivity extends FragmentActivity {
 				}
 			}
 		}
-		onTabChanged(pos);
+		if (callOnTabChanged) {
+			onTabChanged(pos);
+		}
 	}
 
 }
