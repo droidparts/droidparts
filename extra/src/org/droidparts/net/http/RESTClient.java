@@ -52,8 +52,9 @@ import org.apache.http.impl.conn.SingleClientConnManager;
 import org.apache.http.params.HttpConnectionParams;
 import org.apache.http.params.HttpParams;
 import org.apache.http.params.HttpProtocolParams;
-import org.droidparts.model.Tuple;
 import org.droidparts.util.L;
+
+import android.util.Pair;
 
 public class RESTClient implements Closeable {
 
@@ -171,7 +172,7 @@ public class RESTClient implements Closeable {
 		consumeResponse(resp);
 	}
 
-	public Tuple<Integer, BufferedInputStream> getInputStream(String uri)
+	public Pair<Integer, BufferedInputStream> getInputStream(String uri)
 			throws HTTPException {
 		L.d("InputStream on " + uri);
 		HttpGet req = new HttpGet(uri);
@@ -182,7 +183,7 @@ public class RESTClient implements Closeable {
 		try {
 			InputStream is = getUnpackedInputStream(entity);
 			BufferedInputStream bis = new EntityInputStream(is, entity);
-			return new Tuple<Integer, BufferedInputStream>(contentLength, bis);
+			return new Pair<Integer, BufferedInputStream>(contentLength, bis);
 		} catch (Exception e) {
 			throw new HTTPException(e);
 		}

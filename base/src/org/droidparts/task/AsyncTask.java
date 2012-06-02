@@ -16,14 +16,14 @@
 package org.droidparts.task;
 
 import org.droidparts.inject.Injector;
-import org.droidparts.model.Tuple;
 import org.droidparts.task.listener.AsyncTaskProgressListener;
 import org.droidparts.task.listener.AsyncTaskResultListener;
 
 import android.content.Context;
+import android.util.Pair;
 
 public abstract class AsyncTask<Params, Progress, Result> extends
-		android.os.AsyncTask<Params, Progress, Tuple<Exception, Result>> {
+		android.os.AsyncTask<Params, Progress, Pair<Exception, Result>> {
 
 	protected final Context ctx;
 	protected final AsyncTaskProgressListener progressListener;
@@ -49,7 +49,7 @@ public abstract class AsyncTask<Params, Progress, Result> extends
 	}
 
 	@Override
-	protected final Tuple<Exception, Result> doInBackground(Params... params) {
+	protected final Pair<Exception, Result> doInBackground(Params... params) {
 		Result res = null;
 		Exception ex = null;
 		try {
@@ -57,7 +57,7 @@ public abstract class AsyncTask<Params, Progress, Result> extends
 		} catch (Exception e) {
 			ex = e;
 		}
-		return new Tuple<Exception, Result>(ex, res);
+		return new Pair<Exception, Result>(ex, res);
 	}
 
 	@Override
@@ -68,14 +68,14 @@ public abstract class AsyncTask<Params, Progress, Result> extends
 	}
 
 	@Override
-	protected final void onPostExecute(Tuple<Exception, Result> result) {
+	protected final void onPostExecute(Pair<Exception, Result> result) {
 		if (progressListener != null) {
 			progressListener.dismiss();
 		}
-		if (result.k != null) {
-			onFailurePostExecute(result.k);
+		if (result.first != null) {
+			onFailurePostExecute(result.first);
 		} else {
-			onSuccessPostExecute(result.v);
+			onSuccessPostExecute(result.second);
 		}
 	}
 

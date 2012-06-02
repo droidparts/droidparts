@@ -22,12 +22,12 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import org.droidparts.model.Tuple;
 import org.droidparts.net.http.HTTPException;
 import org.droidparts.net.http.RESTClient;
 
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.util.Pair;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -38,7 +38,7 @@ public final class ImageAttacher {
 	private final RESTClient client;
 	private final FileCacher fileCacher;
 
-	private final ConcurrentHashMap<View, Tuple<String, Drawable>> viewsToUrlsAndDefaultImages = new ConcurrentHashMap<View, Tuple<String, Drawable>>();
+	private final ConcurrentHashMap<View, Pair<String, Drawable>> viewsToUrlsAndDefaultImages = new ConcurrentHashMap<View, Pair<String, Drawable>>();
 
 	public ImageAttacher(FileCacher fileCacher) {
 		exec = Executors.newSingleThreadExecutor();
@@ -51,7 +51,7 @@ public final class ImageAttacher {
 	}
 
 	public void setImage(View view, String fileUrl, Drawable defaultImg) {
-		viewsToUrlsAndDefaultImages.put(view, new Tuple<String, Drawable>(
+		viewsToUrlsAndDefaultImages.put(view, new Pair<String, Drawable>(
 				fileUrl, defaultImg));
 		exec.execute(fetchAndAttachRunnable);
 	}
@@ -66,7 +66,8 @@ public final class ImageAttacher {
 		if (image == null) {
 			BufferedInputStream bis = null;
 			try {
-				bis = new BufferedInputStream(client.getInputStream(fileUrl).v);
+				bis = new BufferedInputStream(
+						client.getInputStream(fileUrl).second);
 				image = new BitmapDrawable(bis);
 				image = processFetchedImage(fileUrl, image);
 			} catch (HTTPException e) {
@@ -91,12 +92,12 @@ public final class ImageAttacher {
 		@Override
 		public void run() {
 			for (View view : viewsToUrlsAndDefaultImages.keySet()) {
-				Tuple<String, Drawable> tuple = viewsToUrlsAndDefaultImages
+				Pair<String, Drawable> tuple = viewsToUrlsAndDefaultImages
 						.get(view);
 				if (tuple != null) {
 					viewsToUrlsAndDefaultImages.remove(view);
-					String fileUrl = tuple.k;
-					Drawable defaultImg = tuple.v;
+					String fileUrl = tuple.first;
+					Drawable defaultImg = tuple.second;
 					Drawable image = getCachedOrFetchAndCache(fileUrl);
 					if (image == null) {
 						image = defaultImg;
