@@ -169,12 +169,14 @@ public class AnnotatedEntityManager<Model extends Entity> extends
 
 	protected void subPutToContentValues(ContentValues cv, String key,
 			Class<?> valueCls, Object value) {
-		throw new IllegalArgumentException("Unsupported class: " + valueCls);
+		throw new IllegalArgumentException("Need to manually put " + valueCls
+				+ " to ContentValues.");
 	}
 
 	protected Object subReadFromCursor(Cursor cursor, int columnIndex,
 			Class<?> fieldCls) {
-		return null;
+		throw new IllegalArgumentException("Need to manually read " + fieldCls
+				+ " from Cursor.");
 	}
 
 	private void putToContentValues(ContentValues cv, String key,
