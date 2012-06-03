@@ -17,9 +17,16 @@ package org.droidparts.service;
 
 import static android.app.Activity.RESULT_CANCELED;
 import static android.app.Activity.RESULT_OK;
+
+import java.lang.reflect.Field;
+
+import org.droidparts.util.L;
+
+import android.app.IntentService;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.ResultReceiver;
 
 public abstract class SimpleIntentService extends IntentService {
@@ -47,13 +54,28 @@ public abstract class SimpleIntentService extends IntentService {
 		return intent;
 	}
 
-	public void cancel(Intent... intents) {
-		// TODO
+	public void removePendingIntents() {
+		if (mServiceHandler != null) {
+			mServiceHandler.removeMessages(0);
+		}
 	}
 
 	public SimpleIntentService(String name) {
 		super(name);
+		reflect();
 	}
+
+	private void reflect() {
+		try {
+			Field f = IntentService.class.getField("mServiceHandler");
+			f.setAccessible(true);
+			mServiceHandler = (Handler) f.get(this);
+		} catch (Exception e) {
+			L.e(e);
+		}
+	}
+
+	private volatile Handler mServiceHandler;
 
 	@Override
 	protected final void onHandleIntent(Intent intent) {
