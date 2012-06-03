@@ -29,8 +29,8 @@ import static org.droidparts.contract.DB.UNIQUE;
 import static org.droidparts.reflection.util.TypeHelper.isBitmap;
 import static org.droidparts.reflection.util.TypeHelper.isBoolean;
 import static org.droidparts.reflection.util.TypeHelper.isByteArray;
-import static org.droidparts.reflection.util.TypeHelper.isEntity;
 import static org.droidparts.reflection.util.TypeHelper.isDouble;
+import static org.droidparts.reflection.util.TypeHelper.isEntity;
 import static org.droidparts.reflection.util.TypeHelper.isEnum;
 import static org.droidparts.reflection.util.TypeHelper.isFloat;
 import static org.droidparts.reflection.util.TypeHelper.isInteger;
@@ -53,7 +53,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 public abstract class AbstractDBOpenHelper extends SQLiteOpenHelper {
 
 	public AbstractDBOpenHelper(Context ctx, String name, int version) {
-		super(ctx, name, null, version);
+		super(ctx.getApplicationContext(), name, null, version);
 	}
 
 	@Override
@@ -83,7 +83,8 @@ public abstract class AbstractDBOpenHelper extends SQLiteOpenHelper {
 	protected void dropAllTables(SQLiteDatabase db) {
 		ArrayList<String> queries = new ArrayList<String>();
 		for (Class<? extends Entity> cls : getModelClasses()) {
-			String tableName = new EntityAnnotationProcessor(cls).getModelClassName();
+			String tableName = new EntityAnnotationProcessor(cls)
+					.getModelClassName();
 			queries.add("DROP TABLE IF EXISTS " + tableName + ";");
 		}
 		execQueries(db, queries);

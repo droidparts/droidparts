@@ -68,7 +68,7 @@ public class AnnotatedEntityManager<Model extends Entity> extends
 
 	public AnnotatedEntityManager(Context ctx, Class<? extends Entity> cls) {
 		Injector.get().inject(ctx, this);
-		this.ctx = ctx;
+		this.ctx = ctx.getApplicationContext();
 		this.cls = cls;
 		processor = new EntityAnnotationProcessor(cls);
 	}

@@ -39,7 +39,7 @@ public abstract class AbstractPrefsManager {
 
 	public AbstractPrefsManager(Context ctx, String prefsName, int version) {
 		Injector.get().inject(ctx, this);
-		this.ctx = ctx;
+		this.ctx = ctx.getApplicationContext();
 		res = ctx.getResources();
 		if (isEmpty(prefsName)) {
 			prefs = PreferenceManager.getDefaultSharedPreferences(ctx);
