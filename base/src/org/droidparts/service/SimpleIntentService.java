@@ -22,7 +22,6 @@ import java.lang.reflect.Field;
 
 import org.droidparts.util.L;
 
-import android.app.IntentService;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -55,8 +54,8 @@ public abstract class SimpleIntentService extends IntentService {
 	}
 
 	public void removePendingIntents() {
-		if (mServiceHandler != null) {
-			mServiceHandler.removeMessages(0);
+		if (mHandler != null) {
+			mHandler.removeMessages(0);
 		}
 	}
 
@@ -67,15 +66,16 @@ public abstract class SimpleIntentService extends IntentService {
 
 	private void reflect() {
 		try {
-			Field f = IntentService.class.getField("mServiceHandler");
+			Field f = android.app.IntentService.class
+					.getDeclaredField("mServiceHandler");
 			f.setAccessible(true);
-			mServiceHandler = (Handler) f.get(this);
+			mHandler = (Handler) f.get(this);
 		} catch (Exception e) {
 			L.e(e);
 		}
 	}
 
-	private volatile Handler mServiceHandler;
+	private volatile Handler mHandler;
 
 	@Override
 	protected final void onHandleIntent(Intent intent) {
