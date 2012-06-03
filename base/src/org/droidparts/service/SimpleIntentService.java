@@ -24,9 +24,12 @@ import android.os.ResultReceiver;
 
 public abstract class SimpleIntentService extends IntentService {
 
-	public static final String EXTRA_EXCEPTION = "exception";
+	// in
+	private static final String EXTRA_RESULT_RECEIVER = "_result_receiver";
 
-	private static final String EXTRA_RESULT_RECEIVER = "result_receiver";
+	// out
+	public static final String EXTRA_ACTION = "_action";
+	public static final String EXTRA_EXCEPTION = "_exception";
 
 	protected final static Intent getIntent(Context ctx,
 			Class<? extends SimpleIntentService> cls, String action) {
@@ -57,6 +60,7 @@ public abstract class SimpleIntentService extends IntentService {
 		}
 		ResultReceiver resultReceiver = data
 				.getParcelable(EXTRA_RESULT_RECEIVER);
+		data.putString(EXTRA_ACTION, action);
 		try {
 			data = execute(action, data);
 			if (resultReceiver != null) {
