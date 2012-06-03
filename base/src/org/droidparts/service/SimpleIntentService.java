@@ -47,6 +47,10 @@ public abstract class SimpleIntentService extends IntentService {
 		return intent;
 	}
 
+	public void cancel(Intent... intents) {
+		// TODO
+	}
+
 	public SimpleIntentService(String name) {
 		super(name);
 	}
