@@ -159,7 +159,6 @@ public class JSONSerializer<TypeFrom extends Model> implements
 				jarr.put(serializer.serialize((Model) o));
 			}
 			obj.put(key, jarr);
-		} else if (isCollection(valueCls)) {
 		} else if (isModel(valueCls)) {
 			JSONObject obj2 = getSerializer(valueCls).serialize(
 					(TypeFrom) value);
