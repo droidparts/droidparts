@@ -21,10 +21,12 @@ import static org.droidparts.reflection.util.ReflectionUtils.instantiate;
 import static org.droidparts.reflection.util.ReflectionUtils.instantiateEnum;
 import static org.droidparts.reflection.util.ReflectionUtils.listAnnotatedFields;
 import static org.droidparts.reflection.util.ReflectionUtils.setFieldVal;
+import static org.droidparts.reflection.util.TypeHelper.isArray;
 import static org.droidparts.reflection.util.TypeHelper.isBitmap;
 import static org.droidparts.reflection.util.TypeHelper.isBoolean;
 import static org.droidparts.reflection.util.TypeHelper.isByte;
 import static org.droidparts.reflection.util.TypeHelper.isByteArray;
+import static org.droidparts.reflection.util.TypeHelper.isCollection;
 import static org.droidparts.reflection.util.TypeHelper.isDouble;
 import static org.droidparts.reflection.util.TypeHelper.isEntity;
 import static org.droidparts.reflection.util.TypeHelper.isEnum;
@@ -37,7 +39,9 @@ import static org.droidparts.reflection.util.TypeHelper.isUUID;
 
 import java.io.ByteArrayOutputStream;
 import java.lang.reflect.Field;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.UUID;
 
@@ -47,6 +51,7 @@ import org.droidparts.model.Entity;
 import org.droidparts.reflection.model.EntityField;
 import org.droidparts.reflection.processor.EntityAnnotationProcessor;
 import org.droidparts.reflection.util.ReflectionUtils;
+import org.droidparts.util.L;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -87,7 +92,7 @@ public class AnnotatedEntityManager<Model extends Entity> extends
 			int colIdx = cursor.getColumnIndex(dbField.columnName);
 			if (colIdx >= 0) {
 				Object columnVal = readFromCursor(cursor, colIdx,
-						dbField.fieldClass);
+						dbField.fieldClass, dbField.fieldClassGenericArgs);
 				if (columnVal != null) {
 					Field f = getField(model.getClass(), dbField.fieldName);
 					setFieldVal(f, model, columnVal);
@@ -133,7 +138,7 @@ public class AnnotatedEntityManager<Model extends Entity> extends
 			Field field = getField(item.getClass(), dbField.fieldName);
 			Object columnVal = getTypedFieldVal(field, item);
 			putToContentValues(cv, dbField.columnName, dbField.fieldClass,
-					columnVal);
+					dbField.fieldClassGenericArgs, columnVal);
 		}
 		return cv;
 	}
@@ -169,18 +174,20 @@ public class AnnotatedEntityManager<Model extends Entity> extends
 
 	protected void subPutToContentValues(ContentValues cv, String key,
 			Class<?> valueCls, Object value) {
+		// TODO ObjectOutputStream
 		throw new IllegalArgumentException("Need to manually put " + valueCls
 				+ " to ContentValues.");
 	}
 
 	protected Object subReadFromCursor(Cursor cursor, int columnIndex,
 			Class<?> fieldCls) {
+		// TODO ObjectInputStream
 		throw new IllegalArgumentException("Need to manually read " + fieldCls
 				+ " from Cursor.");
 	}
 
 	private void putToContentValues(ContentValues cv, String key,
-			Class<?> valueCls, Object value) {
+			Class<?> valueCls, Class<?>[] valueClsGenericArgs, Object value) {
 		if (value == null) {
 			cv.putNull(key);
 		} else if (isBoolean(valueCls)) {
@@ -213,13 +220,19 @@ public class AnnotatedEntityManager<Model extends Entity> extends
 		} else if (isEntity(valueCls)) {
 			Long id = value != null ? ((Entity) value).id : null;
 			cv.put(key, id);
+		} else if (isArray(valueCls) || isCollection(valueCls)) {
+			if (isCollection(valueCls)) {
+				value = ((Collection<?>) value).toArray();
+				cv.put(key, Arrays.toString((Object[]) value));
+			}
+			new ArrayList<Object>().toArray();
 		} else {
 			subPutToContentValues(cv, key, valueCls, value);
 		}
 	}
 
 	private Object readFromCursor(Cursor cursor, int columnIndex,
-			Class<?> fieldCls) {
+			Class<?> fieldCls, Class<?>[] valueClsGenericArgs) {
 		if (cursor.isNull(columnIndex)) {
 			return null;
 		} else if (isBoolean(fieldCls)) {
@@ -252,6 +265,11 @@ public class AnnotatedEntityManager<Model extends Entity> extends
 			Model model = instantiate(fieldCls);
 			model.id = id;
 			return model;
+		} else if (isArray(fieldCls) || isCollection(fieldCls)) {
+			String str = cursor.getString(columnIndex);
+			// TODO
+			L.e(str);
+			return subReadFromCursor(cursor, columnIndex, fieldCls);
 		} else {
 			return subReadFromCursor(cursor, columnIndex, fieldCls);
 		}

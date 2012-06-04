@@ -26,9 +26,11 @@ import static org.droidparts.contract.DB.REAL;
 import static org.droidparts.contract.DB.SEPARATOR;
 import static org.droidparts.contract.DB.TEXT;
 import static org.droidparts.contract.DB.UNIQUE;
+import static org.droidparts.reflection.util.TypeHelper.isArray;
 import static org.droidparts.reflection.util.TypeHelper.isBitmap;
 import static org.droidparts.reflection.util.TypeHelper.isBoolean;
 import static org.droidparts.reflection.util.TypeHelper.isByteArray;
+import static org.droidparts.reflection.util.TypeHelper.isCollection;
 import static org.droidparts.reflection.util.TypeHelper.isDouble;
 import static org.droidparts.reflection.util.TypeHelper.isEntity;
 import static org.droidparts.reflection.util.TypeHelper.isEnum;
@@ -106,29 +108,28 @@ public abstract class AbstractDBOpenHelper extends SQLiteOpenHelper {
 				// already got it
 				continue;
 			}
-			String columnType = getColumnType(dbField.fieldClass);
-			if (columnType != null) {
-				sb.append(dbField.columnName);
+			String columnType = getColumnType(dbField.fieldClass,
+					dbField.fieldClassGenericArgs);
+			sb.append(dbField.columnName);
+			sb.append(" ");
+			sb.append(columnType);
+			if (!dbField.columnNullable) {
 				sb.append(" ");
-				sb.append(columnType);
-				if (!dbField.columnNullable) {
-					sb.append(" ");
-					sb.append(NOT_NULL);
-				}
-				if (dbField.columnUnique) {
-					sb.append(" ");
-					sb.append(UNIQUE);
-				}
-				if (i < dbFields.length - 1) {
-					sb.append(SEPARATOR);
-				}
+				sb.append(NOT_NULL);
+			}
+			if (dbField.columnUnique) {
+				sb.append(" ");
+				sb.append(UNIQUE);
+			}
+			if (i < dbFields.length - 1) {
+				sb.append(SEPARATOR);
 			}
 		}
 		sb.append(CLOSING_BRACE);
 		return sb.toString();
 	}
 
-	private String getColumnType(Class<?> cls) {
+	private String getColumnType(Class<?> cls, Class<?>[] genericArgs) {
 		if (isBoolean(cls) || isInteger(cls) || isLong(cls)) {
 			return INTEGER;
 		} else if (isFloat(cls) || isDouble(cls)) {
@@ -139,9 +140,18 @@ public abstract class AbstractDBOpenHelper extends SQLiteOpenHelper {
 			return BLOB;
 		} else if (isEntity(cls)) {
 			return INTEGER;
-		} else {
-			return null;
+		} else if (isArray(cls) || isCollection(cls)) {
+			if (genericArgs != null && genericArgs.length != 0) {
+				Class<?> type = genericArgs[0];
+				if (isBoolean(type) || isInteger(type) || isLong(type)
+						|| isFloat(type) || isDouble(type) || isString(type)
+						|| isUUID(type) || isEnum(type)) {
+					return TEXT;
+				}
+			}
 		}
+		// persist any other type as blob
+		return BLOB;
 	}
 
 }
