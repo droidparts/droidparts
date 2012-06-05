@@ -30,7 +30,9 @@ public interface DB {
 	}
 
 	String CREATE_TABLE = "CREATE TABLE ";
+
 	String CREATE_INDEX = "CREATE INDEX ";
+	String CREATE_UNIQUE_INDEX = "CREATE UNIQUE INDEX ";
 	String ON = " ON ";
 
 	String OPENING_BRACE = " (";
