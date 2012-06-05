@@ -39,7 +39,6 @@ import static org.droidparts.reflection.util.TypeHelper.isUUID;
 
 import java.io.ByteArrayOutputStream;
 import java.lang.reflect.Field;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
@@ -63,6 +62,8 @@ import android.graphics.BitmapFactory;
 
 public class AnnotatedEntityManager<Model extends Entity> extends
 		EntityManager<Model> {
+
+	private static final String SEP = " " + (char) 7 + " ";
 
 	@InjectDependency
 	private SQLiteDatabase db;
@@ -221,11 +222,21 @@ public class AnnotatedEntityManager<Model extends Entity> extends
 			Long id = value != null ? ((Entity) value).id : null;
 			cv.put(key, id);
 		} else if (isArray(valueCls) || isCollection(valueCls)) {
+			// FIXME only for primitives
+			Object[] arr;
 			if (isCollection(valueCls)) {
-				value = ((Collection<?>) value).toArray();
-				cv.put(key, Arrays.toString((Object[]) value));
+				arr = ((Collection<?>) value).toArray();
+			} else {
+				arr = (Object[]) value;
 			}
-			new ArrayList<Object>().toArray();
+			StringBuilder sb = new StringBuilder(arr.length * 2);
+			for (int i = 0; i < arr.length; i++) {
+				sb.append(arr[i]);
+				if (i < arr.length - 1) {
+					sb.append(SEP);
+				}
+			}
+			cv.put(key, sb.toString());
 		} else {
 			subPutToContentValues(cv, key, valueCls, value);
 		}
@@ -267,8 +278,9 @@ public class AnnotatedEntityManager<Model extends Entity> extends
 			return model;
 		} else if (isArray(fieldCls) || isCollection(fieldCls)) {
 			String str = cursor.getString(columnIndex);
+			String[] parts = str.split(SEP);
 			// TODO
-			L.e(str);
+			L.e(Arrays.toString(parts));
 			return subReadFromCursor(cursor, columnIndex, fieldCls);
 		} else {
 			return subReadFromCursor(cursor, columnIndex, fieldCls);
