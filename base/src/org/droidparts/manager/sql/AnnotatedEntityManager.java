@@ -26,7 +26,6 @@ import static org.droidparts.reflection.util.TypeHelper.isBitmap;
 import static org.droidparts.reflection.util.TypeHelper.isBoolean;
 import static org.droidparts.reflection.util.TypeHelper.isByte;
 import static org.droidparts.reflection.util.TypeHelper.isByteArray;
-import static org.droidparts.reflection.util.TypeHelper.isCollection;
 import static org.droidparts.reflection.util.TypeHelper.isDouble;
 import static org.droidparts.reflection.util.TypeHelper.isEntity;
 import static org.droidparts.reflection.util.TypeHelper.isEnum;
@@ -40,7 +39,6 @@ import static org.droidparts.reflection.util.TypeHelper.isUUID;
 import java.io.ByteArrayOutputStream;
 import java.lang.reflect.Field;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.HashSet;
 import java.util.UUID;
 
@@ -50,7 +48,6 @@ import org.droidparts.model.Entity;
 import org.droidparts.reflection.model.EntityField;
 import org.droidparts.reflection.processor.EntityAnnotationProcessor;
 import org.droidparts.reflection.util.ReflectionUtils;
-import org.droidparts.util.L;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -222,22 +219,18 @@ public class AnnotatedEntityManager<Model extends Entity> extends
 		} else if (isEntity(valueCls)) {
 			Long id = value != null ? ((Entity) value).id : null;
 			cv.put(key, id);
-		} else if (isArray(valueCls) || isCollection(valueCls)) {
-			// FIXME only for primitives
-			Object[] arr = null;
-			if (isCollection(valueCls)) {
-				arr = ((Collection<?>) value).toArray();
-			} else {
-				arr = toObjectArr(valueCls, value);
-			}
-			StringBuilder sb = new StringBuilder(arr.length * 2);
-			for (int i = 0; i < arr.length; i++) {
-				sb.append(arr[i]);
-				if (i < arr.length - 1) {
-					sb.append(SEP);
+		} else if (isArray(valueCls)) {
+			Object[] arr = toObjectArr(valueCls, value);
+			if (arr != null) {
+				StringBuilder sb = new StringBuilder(arr.length * 2);
+				for (int i = 0; i < arr.length; i++) {
+					sb.append(arr[i]);
+					if (i < arr.length - 1) {
+						sb.append(SEP);
+					}
 				}
+				cv.put(key, sb.toString());
 			}
-			cv.put(key, sb.toString());
 		} else {
 			subPutToContentValues(cv, key, valueCls, value);
 		}
@@ -277,16 +270,10 @@ public class AnnotatedEntityManager<Model extends Entity> extends
 			Model model = instantiate(fieldCls);
 			model.id = id;
 			return model;
-		} else if (isArray(fieldCls) || isCollection(fieldCls)) {
+		} else if (isArray(fieldCls)) {
 			String str = cursor.getString(columnIndex);
 			String[] parts = str.split(SEP);
-			if (isCollection(fieldCls)) {
-				// TODO
-				L.e(Arrays.toString(parts));
-				return subReadFromCursor(cursor, columnIndex, fieldCls);
-			} else {
-				return toTypeArr(fieldCls, parts);
-			}
+			return toTypeArr(fieldCls, parts);
 		} else {
 			return subReadFromCursor(cursor, columnIndex, fieldCls);
 		}
@@ -348,6 +335,7 @@ public class AnnotatedEntityManager<Model extends Entity> extends
 				arr[i] = tArr[i];
 			}
 		} else {
+			// XXX
 			arr = (Object[]) value;
 		}
 		return arr;
@@ -397,6 +385,7 @@ public class AnnotatedEntityManager<Model extends Entity> extends
 			}
 			return tArr;
 		} else {
+			// XXX
 			return arr;
 		}
 	}
