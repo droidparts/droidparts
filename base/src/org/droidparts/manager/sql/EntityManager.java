@@ -15,6 +15,8 @@
  */
 package org.droidparts.manager.sql;
 
+import static org.droidparts.reflection.util.TypeHelper.isBoolean;
+
 import org.droidparts.contract.DB;
 import org.droidparts.model.Entity;
 
@@ -53,7 +55,7 @@ public abstract class EntityManager<Model extends Entity> implements DB {
 	public Model read(long id) {
 		Model item = null;
 		Cursor cursor = getDB().query(getTableName(), null, Column.ID + EQUALS,
-				toStrArr(id), null, null, null);
+				toArgs(id), null, null, null);
 		if (cursor.moveToFirst()) {
 			item = readFromCursor(cursor);
 		}
@@ -66,13 +68,13 @@ public abstract class EntityManager<Model extends Entity> implements DB {
 		ContentValues cv = toContentValues(item);
 		cv.remove(Column.ID);
 		int rowCount = getDB().update(getTableName(), cv, Column.ID + EQUALS,
-				toStrArr(item.id));
+				toArgs(item.id));
 		return rowCount > 0;
 	}
 
 	public boolean delete(long id) {
 		int rowCount = getDB().delete(getTableName(), Column.ID + EQUALS,
-				toStrArr(id));
+				toArgs(id));
 		return rowCount > 0;
 	}
 
@@ -86,17 +88,21 @@ public abstract class EntityManager<Model extends Entity> implements DB {
 		return success;
 	}
 
-	protected final String[] toStrArr(Object... args) {
-		String[] strArgs = new String[args.length];
+	protected final String[] toArgs(Object... args) {
+		String[] arr = new String[args.length];
 		for (int i = 0; i < args.length; i++) {
 			Object arg = args[i];
-			if (arg != null) {
-				strArgs[i] = String.valueOf(arg);
-			} else {
+			if (arg == null) {
+				// TODO nullable columns?
 				throw new IllegalArgumentException("null arg at index " + i);
+			} else if (isBoolean(arg.getClass())) {
+				int intArg = ((Boolean) arg) ? 1 : 0;
+				arr[i] = String.valueOf(intArg);
+			} else {
+				arr[i] = String.valueOf(arg);
 			}
 		}
-		return strArgs;
+		return arr;
 	}
 
 	public abstract Model readFromCursor(Cursor cursor);
@@ -110,5 +116,12 @@ public abstract class EntityManager<Model extends Entity> implements DB {
 	protected abstract ContentValues toContentValues(Model item);
 
 	protected abstract void createOrUpdateForeignKeys(Model item);
+
+	//
+
+	@Deprecated
+	protected final String[] toStrArr(Object... args) {
+		return toArgs(args);
+	}
 
 }
