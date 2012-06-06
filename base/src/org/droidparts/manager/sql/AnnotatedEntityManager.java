@@ -221,7 +221,7 @@ public class AnnotatedEntityManager<Model extends Entity> extends
 		} else if (isArray(valueCls)) {
 			Object[] arr = toObjectArr(valueCls, value);
 			if (arr != null) {
-				String val = Strings.toEnumeration(arr, SEP, null);
+				String val = Strings.join(arr, SEP, null);
 				cv.put(key, val);
 			}
 		} else {

@@ -19,19 +19,19 @@ import java.util.Collection;
 
 public class Strings2 extends Strings {
 
-	public static String toEnumeration(Collection<CharSequence> coll,
+	public static String join(Collection<CharSequence> coll,
 			boolean terminateWithDot) {
-		return toEnumeration(coll.toArray(new CharSequence[coll.size()]),
+		return join(coll.toArray(new CharSequence[coll.size()]),
 				terminateWithDot);
 	}
 
-	public static String toEnumeration(CharSequence[] arr,
+	public static String join(CharSequence[] arr,
 			boolean terminateWithDot) {
 		String end = terminateWithDot ? "." : null;
 		return toEnumeration(arr, ", ", end);
 	}
 
-	public static String toEnumeration(Collection<CharSequence> coll,
+	public static String join(Collection<CharSequence> coll,
 			String separator, String terminator) {
 		return toEnumeration(coll.toArray(new CharSequence[coll.size()]),
 				separator, terminator);

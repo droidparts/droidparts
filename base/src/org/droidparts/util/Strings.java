@@ -25,7 +25,7 @@ public class Strings {
 		return str == null || str.length() == 0;
 	}
 
-	public static String toEnumeration(Object[] arr, String separator,
+	public static String join(Object[] arr, String separator,
 			String terminator) {
 		StringBuilder sb = new StringBuilder(arr.length * 2);
 		for (int i = 0; i < arr.length; i++) {
