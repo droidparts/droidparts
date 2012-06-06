@@ -19,24 +19,22 @@ import java.util.Collection;
 
 public class Strings2 extends Strings {
 
-	public String toEnumeratingString(Collection<CharSequence> coll,
+	public static String toEnumeration(Collection<CharSequence> coll,
 			boolean terminateWithDot) {
-		return toEnumeratingString(coll.toArray(new CharSequence[coll.size()]),
+		return toEnumeration(coll.toArray(new CharSequence[coll.size()]),
 				terminateWithDot);
 	}
 
-	public String toEnumeratingString(CharSequence[] arr,
+	public static String toEnumeration(CharSequence[] arr,
 			boolean terminateWithDot) {
-		StringBuilder sb = new StringBuilder();
-		for (int i = 0; i < arr.length; i++) {
-			sb.append(arr[i]);
-			if (i < arr.length - 1) {
-				sb.append(", ");
-			} else if (terminateWithDot) {
-				sb.append(".");
-			}
-		}
-		return sb.toString();
+		String end = terminateWithDot ? "." : null;
+		return toEnumeration(arr, ", ", end);
+	}
+
+	public static String toEnumeration(Collection<CharSequence> coll,
+			String separator, String terminator) {
+		return toEnumeration(coll.toArray(new CharSequence[coll.size()]),
+				separator, terminator);
 	}
 
 	protected Strings2() {

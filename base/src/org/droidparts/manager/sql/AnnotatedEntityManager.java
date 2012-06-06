@@ -49,6 +49,7 @@ import org.droidparts.model.Entity;
 import org.droidparts.reflection.model.EntityField;
 import org.droidparts.reflection.processor.EntityAnnotationProcessor;
 import org.droidparts.reflection.util.ReflectionUtils;
+import org.droidparts.util.Strings;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -220,14 +221,8 @@ public class AnnotatedEntityManager<Model extends Entity> extends
 		} else if (isArray(valueCls)) {
 			Object[] arr = toObjectArr(valueCls, value);
 			if (arr != null) {
-				StringBuilder sb = new StringBuilder(arr.length * 2);
-				for (int i = 0; i < arr.length; i++) {
-					sb.append(arr[i]);
-					if (i < arr.length - 1) {
-						sb.append(SEP);
-					}
-				}
-				cv.put(key, sb.toString());
+				String val = Strings.toEnumeration(arr, SEP, null);
+				cv.put(key, val);
 			}
 		} else {
 			subPutToContentValues(cv, key, valueCls, value);
