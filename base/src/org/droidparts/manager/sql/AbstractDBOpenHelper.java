@@ -73,6 +73,9 @@ public abstract class AbstractDBOpenHelper extends SQLiteOpenHelper {
 		onCreateExtra(db);
 	}
 
+	protected void onCreateExtra(SQLiteDatabase db) {
+	}
+
 	public static void execQueries(SQLiteDatabase db, ArrayList<String> queries) {
 		db.beginTransaction();
 		try {
@@ -98,17 +101,27 @@ public abstract class AbstractDBOpenHelper extends SQLiteOpenHelper {
 		db.execSQL(sb.toString());
 	}
 
-	protected void dropAllTables(SQLiteDatabase db) {
+	protected void dropAll(SQLiteDatabase db, boolean tables, boolean indexes) {
 		ArrayList<String> queries = new ArrayList<String>();
 		for (Class<? extends Entity> cls : getModelClasses()) {
 			String tableName = new EntityAnnotationProcessor(cls)
 					.getModelClassName();
-			queries.add("DROP TABLE IF EXISTS " + tableName + ";");
+			if (tables) {
+				queries.add("DROP TABLE IF EXISTS " + tableName + ";");
+			}
+			if (indexes) {
+				// TODO
+				// SELECT name FROM sqlite_master WHERE type='index'
+				// if (index.startsWith("idx_" + tableName)
+				// queries.add("DROP INDEX IF EXISTS " + indexName + ";");
+			}
 		}
 		execQueries(db, queries);
 	}
 
-	protected void onCreateExtra(SQLiteDatabase db) {
+	@Deprecated
+	protected void dropAllTables(SQLiteDatabase db) {
+		dropAll(db, true, false);
 	}
 
 	protected abstract Class<? extends Entity>[] getModelClasses();
