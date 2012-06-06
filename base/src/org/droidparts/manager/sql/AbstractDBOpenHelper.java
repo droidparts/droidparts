@@ -17,9 +17,12 @@ package org.droidparts.manager.sql;
 
 import static org.droidparts.contract.DB.BLOB;
 import static org.droidparts.contract.DB.CLOSING_BRACE;
+import static org.droidparts.contract.DB.CREATE_INDEX;
 import static org.droidparts.contract.DB.CREATE_TABLE;
+import static org.droidparts.contract.DB.CREATE_UNIQUE_INDEX;
 import static org.droidparts.contract.DB.INTEGER;
 import static org.droidparts.contract.DB.NOT_NULL;
+import static org.droidparts.contract.DB.ON;
 import static org.droidparts.contract.DB.OPENING_BRACE;
 import static org.droidparts.contract.DB.PK;
 import static org.droidparts.contract.DB.REAL;
@@ -39,6 +42,7 @@ import static org.droidparts.reflection.util.TypeHelper.isInteger;
 import static org.droidparts.reflection.util.TypeHelper.isLong;
 import static org.droidparts.reflection.util.TypeHelper.isString;
 import static org.droidparts.reflection.util.TypeHelper.isUUID;
+import static org.droidparts.util.Strings.join;
 
 import java.util.ArrayList;
 
@@ -80,6 +84,18 @@ public abstract class AbstractDBOpenHelper extends SQLiteOpenHelper {
 		} finally {
 			db.endTransaction();
 		}
+	}
+
+	protected static void createIndex(SQLiteDatabase db, String table,
+			boolean unique, String... columns) {
+		StringBuilder sb = new StringBuilder();
+		sb.append(unique ? CREATE_UNIQUE_INDEX : CREATE_INDEX);
+		sb.append("idx_" + table + "_" + join(columns, "_", null));
+		sb.append(ON + table);
+		sb.append(OPENING_BRACE);
+		sb.append(join(columns, SEPARATOR, null));
+		sb.append(CLOSING_BRACE);
+		db.execSQL(sb.toString());
 	}
 
 	protected void dropAllTables(SQLiteDatabase db) {

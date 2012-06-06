@@ -34,9 +34,4 @@ public @interface Column {
 	// for foreign keys
 	boolean eager() default false;
 
-	// boolean index() default false;
-
-	// Class<? extends StringSerializer> serializer() default
-	// StringSerializer.class;
-
 }
