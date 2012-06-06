@@ -15,6 +15,7 @@
  */
 package org.droidparts.manager.sql;
 
+import static org.droidparts.contract.Constants.SEP;
 import static org.droidparts.reflection.util.ReflectionUtils.getField;
 import static org.droidparts.reflection.util.ReflectionUtils.getTypedFieldVal;
 import static org.droidparts.reflection.util.ReflectionUtils.instantiate;
@@ -59,9 +60,6 @@ import android.graphics.BitmapFactory;
 
 public class AnnotatedEntityManager<Model extends Entity> extends
 		EntityManager<Model> {
-
-	// ASCII BEL
-	private static final String SEP = String.valueOf((char) 7);
 
 	@InjectDependency
 	private SQLiteDatabase db;

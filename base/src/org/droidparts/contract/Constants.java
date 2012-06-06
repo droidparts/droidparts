@@ -22,6 +22,9 @@ public interface Constants {
 
 	int BUFFER_SIZE = 8 * 1024;
 
+	// ASCII BEL
+	String SEP = String.valueOf((char) 7);
+
 	static interface ManifestMeta {
 
 		String DEPENDENCY_PROVIDER = "droidparts_dependency_provider";
