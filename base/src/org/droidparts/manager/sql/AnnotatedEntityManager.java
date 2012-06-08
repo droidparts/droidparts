@@ -61,8 +61,8 @@ import android.graphics.BitmapFactory;
 public class AnnotatedEntityManager<Model extends Entity> extends
 		EntityManager<Model> {
 
-	// ASCII BEL
-	private static final String SEP = String.valueOf((char) 7);
+	// ASCII US
+	private static final String SEP = "|" + (char) 31;
 
 	@InjectDependency
 	private SQLiteDatabase db;
