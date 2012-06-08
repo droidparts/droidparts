@@ -33,7 +33,6 @@ import static org.droidparts.reflection.util.TypeHelper.isArray;
 import static org.droidparts.reflection.util.TypeHelper.isBitmap;
 import static org.droidparts.reflection.util.TypeHelper.isBoolean;
 import static org.droidparts.reflection.util.TypeHelper.isByteArray;
-import static org.droidparts.reflection.util.TypeHelper.isCollection;
 import static org.droidparts.reflection.util.TypeHelper.isDouble;
 import static org.droidparts.reflection.util.TypeHelper.isEntity;
 import static org.droidparts.reflection.util.TypeHelper.isEnum;
@@ -137,8 +136,7 @@ public abstract class AbstractDBOpenHelper extends SQLiteOpenHelper {
 				// already got it
 				continue;
 			}
-			String columnType = getColumnType(dbField.fieldClass,
-					dbField.fieldClassGenericArgs);
+			String columnType = getColumnType(dbField.fieldClass);
 			sb.append(dbField.columnName);
 			sb.append(" ");
 			sb.append(columnType);
@@ -158,7 +156,7 @@ public abstract class AbstractDBOpenHelper extends SQLiteOpenHelper {
 		return sb.toString();
 	}
 
-	private String getColumnType(Class<?> cls, Class<?>[] genericArgs) {
+	private String getColumnType(Class<?> cls) {
 		if (isBoolean(cls) || isInteger(cls) || isLong(cls)) {
 			return INTEGER;
 		} else if (isFloat(cls) || isDouble(cls)) {
@@ -169,18 +167,17 @@ public abstract class AbstractDBOpenHelper extends SQLiteOpenHelper {
 			return BLOB;
 		} else if (isEntity(cls)) {
 			return INTEGER;
-		} else if (isArray(cls) || isCollection(cls)) {
-			if (genericArgs != null && genericArgs.length != 0) {
-				Class<?> type = genericArgs[0];
-				if (isBoolean(type) || isInteger(type) || isLong(type)
-						|| isFloat(type) || isDouble(type) || isString(type)
-						|| isUUID(type) || isEnum(type)) {
-					return TEXT;
-				}
-			}
+		} else if (isPrimitiveArray(cls)) {
+			return TEXT;
+		} else {
+			// persist any other type as blob
+			return BLOB;
 		}
-		// persist any other type as blob
-		return BLOB;
+	}
+
+	boolean isPrimitiveArray(Class<?> cls) {
+		// TODO
+		return isArray(cls);
 	}
 
 }

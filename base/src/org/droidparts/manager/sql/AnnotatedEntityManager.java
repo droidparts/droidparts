@@ -92,7 +92,7 @@ public class AnnotatedEntityManager<Model extends Entity> extends
 			int colIdx = cursor.getColumnIndex(dbField.columnName);
 			if (colIdx >= 0) {
 				Object columnVal = readFromCursor(cursor, colIdx,
-						dbField.fieldClass, dbField.fieldClassGenericArgs);
+						dbField.fieldClass);
 				if (columnVal != null) {
 					Field f = getField(model.getClass(), dbField.fieldName);
 					setFieldVal(f, model, columnVal);
@@ -138,7 +138,7 @@ public class AnnotatedEntityManager<Model extends Entity> extends
 			Field field = getField(item.getClass(), dbField.fieldName);
 			Object columnVal = getTypedFieldVal(field, item);
 			putToContentValues(cv, dbField.columnName, dbField.fieldClass,
-					dbField.fieldClassGenericArgs, columnVal);
+					columnVal);
 		}
 		return cv;
 	}
@@ -187,7 +187,7 @@ public class AnnotatedEntityManager<Model extends Entity> extends
 	}
 
 	private void putToContentValues(ContentValues cv, String key,
-			Class<?> valueCls, Class<?>[] valueClsGenericArgs, Object value) {
+			Class<?> valueCls, Object value) {
 		if (value == null) {
 			cv.putNull(key);
 		} else if (isBoolean(valueCls)) {
@@ -232,7 +232,7 @@ public class AnnotatedEntityManager<Model extends Entity> extends
 	}
 
 	private Object readFromCursor(Cursor cursor, int columnIndex,
-			Class<?> fieldCls, Class<?>[] valueClsGenericArgs) {
+			Class<?> fieldCls) {
 		if (cursor.isNull(columnIndex)) {
 			return null;
 		} else if (isBoolean(fieldCls)) {
