@@ -62,7 +62,7 @@ public class AnnotatedEntityManager<Model extends Entity> extends
 		EntityManager<Model> {
 
 	// ASCII US
-	private static final String SEP = "|" + (char) 037;
+	private static final String SEP = "|" + (char) 31;
 
 	@InjectDependency
 	private SQLiteDatabase db;
