@@ -13,13 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License. 
  */
-package org.droidparts.util;
+package org.droidparts.util.ui;
 
 import static android.content.Context.INPUT_METHOD_SERVICE;
 import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
 
 import java.lang.reflect.Method;
+
+import org.droidparts.util.L;
 
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;

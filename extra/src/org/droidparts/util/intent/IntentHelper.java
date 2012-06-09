@@ -15,8 +15,8 @@
  */
 package org.droidparts.util.intent;
 
-import org.droidparts.util.DialogFactory;
 import org.droidparts.util.L;
+import org.droidparts.util.ui.DialogFactory;
 
 import android.content.ActivityNotFoundException;
 import android.content.Context;

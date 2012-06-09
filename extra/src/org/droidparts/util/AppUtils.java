@@ -19,6 +19,14 @@ import static android.content.pm.PackageManager.COMPONENT_ENABLED_STATE_DISABLED
 import static android.content.pm.PackageManager.COMPONENT_ENABLED_STATE_ENABLED;
 import static android.content.pm.PackageManager.DONT_KILL_APP;
 import static android.content.pm.PackageManager.GET_META_DATA;
+import static org.droidparts.contract.Constants.BUFFER_SIZE;
+import static org.droidparts.util.io.IOUtils.silentlyClose;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.ContextWrapper;
@@ -65,6 +73,24 @@ public class AppUtils {
 		int state = visible ? COMPONENT_ENABLED_STATE_ENABLED
 				: COMPONENT_ENABLED_STATE_DISABLED;
 		pm.setComponentEnabledSetting(componentName, state, DONT_KILL_APP);
+	}
+
+	public static String readStringResource(Context ctx, int resId)
+			throws IOException {
+		InputStream is = null;
+		BufferedReader reader = null;
+		try {
+			is = ctx.getResources().openRawResource(resId);
+			reader = new BufferedReader(new InputStreamReader(is), BUFFER_SIZE);
+			StringBuilder sb = new StringBuilder();
+			String line;
+			while ((line = reader.readLine()) != null) {
+				sb.append(line);
+			}
+			return sb.toString();
+		} finally {
+			silentlyClose(reader, is);
+		}
 	}
 
 }

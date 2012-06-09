@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License. 
  */
-package org.droidparts.util;
+package org.droidparts.util.io;
 
 import static org.droidparts.contract.Constants.UTF8;
 
@@ -25,6 +25,8 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.nio.channels.FileChannel;
 import java.util.HashSet;
+
+import org.droidparts.util.L;
 
 public class IOUtils {
 

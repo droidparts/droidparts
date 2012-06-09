@@ -13,9 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License. 
  */
-package org.droidparts.util;
+package org.droidparts.util.io;
 
-import static org.droidparts.util.IOUtils.silentlyClose;
+import static org.droidparts.util.io.IOUtils.silentlyClose;
 
 import java.io.BufferedInputStream;
 import java.util.concurrent.ConcurrentHashMap;
@@ -24,6 +24,7 @@ import java.util.concurrent.Executors;
 
 import org.droidparts.net.http.HTTPException;
 import org.droidparts.net.http.RESTClient;
+import org.droidparts.util.L;
 
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
@@ -32,7 +33,7 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-public class ImageAttacher {
+public class ImageAttacher extends FileFetcher {
 
 	private final ExecutorService exec;
 	private final RESTClient client;

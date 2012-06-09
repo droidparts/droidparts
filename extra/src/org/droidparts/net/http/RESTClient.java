@@ -21,7 +21,7 @@ import static org.apache.http.auth.AuthScope.ANY_PORT;
 import static org.apache.http.conn.params.ConnRoutePNames.DEFAULT_PROXY;
 import static org.droidparts.contract.Constants.BUFFER_SIZE;
 import static org.droidparts.contract.Constants.UTF8;
-import static org.droidparts.util.IOUtils.silentlyClose;
+import static org.droidparts.util.io.IOUtils.silentlyClose;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;

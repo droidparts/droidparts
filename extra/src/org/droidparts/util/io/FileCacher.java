@@ -13,17 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License. 
  */
-package org.droidparts.util;
+package org.droidparts.util.io;
 
 import static android.graphics.Bitmap.CompressFormat.PNG;
 import static org.droidparts.contract.Constants.BUFFER_SIZE;
-import static org.droidparts.util.IOUtils.silentlyClose;
+import static org.droidparts.util.io.IOUtils.silentlyClose;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+
+import org.droidparts.util.HashCalc;
+import org.droidparts.util.L;
 
 import android.graphics.drawable.BitmapDrawable;
 

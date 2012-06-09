@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License. 
  */
-package org.droidparts.util;
+package org.droidparts.util.ui;
 
 import static android.widget.Toast.LENGTH_SHORT;
 
