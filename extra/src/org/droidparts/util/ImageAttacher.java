@@ -32,7 +32,7 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-public final class ImageAttacher {
+public class ImageAttacher {
 
 	private final ExecutorService exec;
 	private final RESTClient client;
