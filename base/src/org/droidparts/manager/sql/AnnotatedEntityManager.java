@@ -268,7 +268,7 @@ public class AnnotatedEntityManager<Model extends Entity> extends
 			return model;
 		} else if (isArray(fieldCls)) {
 			String str = cursor.getString(columnIndex);
-			String[] parts = str.split(SEP);
+			String[] parts = str.split("\\" + SEP);
 			return toTypeArr(fieldCls, parts);
 		} else {
 			return subReadFromCursor(cursor, columnIndex, fieldCls);
