@@ -13,10 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License. 
  */
-package org.droidparts.fragment;
+package org.droidparts.activity;
 
-public interface WithContent<T> {
+import org.droidparts.fragment.Fragment;
 
-	public void setContent(T content);
+public abstract class SingleFragmentActivity<T extends Fragment> extends
+		FragmentActivity {
+
+	// TODO
+
+	protected T fragment;
+
+	protected abstract Class<T> getFragmentClass();
 
 }
