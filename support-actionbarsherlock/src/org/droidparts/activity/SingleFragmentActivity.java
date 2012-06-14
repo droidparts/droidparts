@@ -15,15 +15,35 @@
  */
 package org.droidparts.activity;
 
+import org.droidparts.R;
 import org.droidparts.fragment.Fragment;
 
-public abstract class SingleFragmentActivity<T extends Fragment> extends
+import android.os.Bundle;
+import android.support.v4.app.FragmentTransaction;
+
+public abstract class SingleFragmentActivity<F extends Fragment> extends
 		FragmentActivity {
 
-	// TODO
+	private F fragment;
 
-	protected T fragment;
+	@Override
+	public void onPreInject() {
+		setContentView(R.layout.activity_single_fragment);
+	}
 
-	protected abstract Class<T> getFragmentClass();
+	@Override
+	protected void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		fragment = newFragment();
+		FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+		ft.add(R.id.view_content, fragment);
+		ft.commit();
+	}
+
+	protected F getFragment() {
+		return fragment;
+	}
+
+	protected abstract F newFragment();
 
 }
