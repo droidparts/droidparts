@@ -20,9 +20,12 @@ import org.droidparts.model.Entity;
 
 import android.content.ContentValues;
 import android.database.Cursor;
+import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteDatabase;
 
 public abstract class EntityManager<Model extends Entity> implements DB {
+
+	// CRUD methods
 
 	public Cursor list(String... columns) {
 		return list(null, columns);
@@ -86,7 +89,9 @@ public abstract class EntityManager<Model extends Entity> implements DB {
 		return success;
 	}
 
-	protected final String[] toArgs(Object... args) {
+	// utility methods
+
+	protected static final String[] toArgs(Object... args) {
 		String[] arr = new String[args.length];
 		for (int i = 0; i < args.length; i++) {
 			Object arg = args[i];
@@ -100,6 +105,12 @@ public abstract class EntityManager<Model extends Entity> implements DB {
 		return arr;
 	}
 
+	protected static String sqlEscapeString(String val) {
+		val = DatabaseUtils.sqlEscapeString(val);
+		val = val.substring(1, val.length() - 1);
+		return val;
+	}
+
 	public abstract Model readFromCursor(Cursor cursor);
 
 	public abstract void fillForeignKeys(Model item, String... fieldNames);
@@ -108,11 +119,11 @@ public abstract class EntityManager<Model extends Entity> implements DB {
 
 	protected abstract String getTableName();
 
+	// boring stuff
+
 	protected abstract ContentValues toContentValues(Model item);
 
 	protected abstract void createOrUpdateForeignKeys(Model item);
-
-	//
 
 	@Deprecated
 	protected final String[] toStrArr(Object... args) {
