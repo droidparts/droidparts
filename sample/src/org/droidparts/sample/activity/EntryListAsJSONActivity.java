@@ -9,8 +9,8 @@ import org.droidparts.annotation.inject.InjectView;
 import org.droidparts.sample.R;
 import org.droidparts.sample.json.EntrySerializer;
 import org.droidparts.sample.model.Entry;
-import org.droidparts.util.DialogFactory;
 import org.droidparts.util.L;
+import org.droidparts.util.ui.DialogFactory;
 import org.json.JSONArray;
 import org.json.JSONException;
 

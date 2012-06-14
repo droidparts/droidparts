@@ -15,14 +15,15 @@
  */
 package org.droidparts.activity;
 
+import org.droidparts.contract.Injected;
 import org.droidparts.inject.Injector;
 
 import android.os.Bundle;
 
 import com.actionbarsherlock.app.SherlockPreferenceActivity;
 
-public class PreferenceFragmentActivity extends SherlockPreferenceActivity implements
-		Injected {
+public class PreferenceFragmentActivity extends SherlockPreferenceActivity
+		implements Injected {
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
