@@ -15,7 +15,6 @@
  */
 package org.droidparts.activity;
 
-import org.droidparts.R;
 import org.droidparts.inject.Injector;
 
 import android.os.Bundle;
@@ -32,7 +31,6 @@ public abstract class ListActivity extends android.app.ListActivity implements
 
 	@Override
 	public void onPreInject() {
-		setContentView(R.layout.activity_list);
 	}
 
 }

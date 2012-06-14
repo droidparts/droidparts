@@ -36,7 +36,7 @@ public class AsyncListActivity extends ListActivity {
 	@Override
 	public void onPreInject() {
 		requestWindowFeature(FEATURE_INDETERMINATE_PROGRESS);
-		super.onPreInject();
+		setContentView(R.layout.activity_list);
 	}
 
 	@Override
