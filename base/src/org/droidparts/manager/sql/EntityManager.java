@@ -15,8 +15,6 @@
  */
 package org.droidparts.manager.sql;
 
-import static org.droidparts.reflection.util.TypeHelper.isBoolean;
-
 import org.droidparts.contract.DB;
 import org.droidparts.model.Entity;
 
@@ -93,14 +91,11 @@ public abstract class EntityManager<Model extends Entity> implements DB {
 		for (int i = 0; i < args.length; i++) {
 			Object arg = args[i];
 			if (arg == null) {
-				// TODO nullable columns?
-				throw new IllegalArgumentException("null arg at index " + i);
-			} else if (isBoolean(arg.getClass())) {
-				int intArg = ((Boolean) arg) ? 1 : 0;
-				arr[i] = String.valueOf(intArg);
-			} else {
-				arr[i] = String.valueOf(arg);
+				arg = "NULL";
+			} else if (arg instanceof Boolean) {
+				arg = ((Boolean) arg) ? 1 : 0;
 			}
+			arr[i] = String.valueOf(arg);
 		}
 		return arr;
 	}
