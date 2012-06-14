@@ -34,7 +34,7 @@ public abstract class SingleFragmentActivity<F extends Fragment> extends
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		fragment = newFragment();
+		fragment = onCreateFragment();
 		FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
 		ft.add(R.id.view_content, fragment);
 		ft.commit();
@@ -44,6 +44,6 @@ public abstract class SingleFragmentActivity<F extends Fragment> extends
 		return fragment;
 	}
 
-	protected abstract F newFragment();
+	protected abstract F onCreateFragment();
 
 }
