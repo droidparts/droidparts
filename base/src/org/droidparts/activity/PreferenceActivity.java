@@ -32,7 +32,6 @@ public abstract class PreferenceActivity extends
 
 	@Override
 	public void onPreInject() {
-
 	}
 
 }

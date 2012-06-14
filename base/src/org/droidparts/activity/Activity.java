@@ -31,7 +31,6 @@ public class Activity extends android.app.Activity implements Injected {
 
 	@Override
 	public void onPreInject() {
-
 	}
 
 }

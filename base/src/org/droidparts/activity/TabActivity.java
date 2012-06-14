@@ -34,7 +34,6 @@ public abstract class TabActivity extends android.app.TabActivity implements
 
 	@Override
 	public void onPreInject() {
-
 	}
 
 	protected void addTab(String tag, int textId, int imgId, Intent intent) {
