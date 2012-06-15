@@ -15,14 +15,19 @@
  */
 package org.droidparts.net.http;
 
+import java.util.Map;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import android.net.Uri;
 
 public class RESTClient2 extends RESTClient {
 
 	private static final String TEXT_PLAIN = "text/plain";
 	private static final String APPLICATION_JSON = "application/json";
+	private static final String APPLICATION_FORM_DATA = "application/x-www-form-urlencoded";
 
 	public RESTClient2(String userAgent) {
 		super(userAgent);
@@ -68,6 +73,17 @@ public class RESTClient2 extends RESTClient {
 
 	public String post(String uri, JSONArray data) throws HTTPException {
 		return post(uri, APPLICATION_JSON, data.toString());
+	}
+
+	public String post(String uri, Map<String, String> formData)
+			throws HTTPException {
+		Uri.Builder builder = new Uri.Builder();
+		for (String key : formData.keySet()) {
+			String val = formData.get(key);
+			builder.appendQueryParameter(key, (val != null) ? val : "");
+		}
+		String query = builder.build().getQuery();
+		return post(uri, APPLICATION_FORM_DATA, query);
 	}
 
 }
