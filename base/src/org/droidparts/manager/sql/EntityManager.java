@@ -16,11 +16,14 @@
 package org.droidparts.manager.sql;
 
 import org.droidparts.contract.DB;
+import org.droidparts.manager.sql.stmt.DeleteBuilder;
+import org.droidparts.manager.sql.stmt.QueryBuilder;
+import org.droidparts.manager.sql.stmt.StatementBuilder;
+import org.droidparts.manager.sql.stmt.UpdateBuilder;
 import org.droidparts.model.Entity;
 
 import android.content.ContentValues;
 import android.database.Cursor;
-import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteDatabase;
 
 public abstract class EntityManager<Model extends Entity> implements DB {
@@ -89,26 +92,30 @@ public abstract class EntityManager<Model extends Entity> implements DB {
 		return success;
 	}
 
+	// statement builders
+
+	protected QueryBuilder query() {
+		return new QueryBuilder(getDB(), getTableName());
+	};
+
+	protected UpdateBuilder update() {
+		return new UpdateBuilder(getDB(), getTableName());
+	};
+
+	protected DeleteBuilder delete() {
+		return new DeleteBuilder(getDB(), getTableName());
+	};
+
 	// utility methods
 
+	// TODO deprecate here
 	protected static final String[] toArgs(Object... args) {
-		String[] arr = new String[args.length];
-		for (int i = 0; i < args.length; i++) {
-			Object arg = args[i];
-			if (arg == null) {
-				arg = "NULL";
-			} else if (arg instanceof Boolean) {
-				arg = ((Boolean) arg) ? 1 : 0;
-			}
-			arr[i] = String.valueOf(arg);
-		}
-		return arr;
+		return StatementBuilder.toArgs(args);
 	}
 
+	// TODO deprecate here
 	protected static String sqlEscapeString(String val) {
-		val = DatabaseUtils.sqlEscapeString(val);
-		val = val.substring(1, val.length() - 1);
-		return val;
+		return StatementBuilder.sqlEscapeString(val);
 	}
 
 	public abstract Model readFromCursor(Cursor cursor);
