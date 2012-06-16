@@ -15,20 +15,20 @@
  */
 package org.droidparts.manager.sql;
 
-import static org.droidparts.contract.DB.BLOB;
-import static org.droidparts.contract.DB.CLOSING_BRACE;
-import static org.droidparts.contract.DB.CREATE_INDEX;
-import static org.droidparts.contract.DB.CREATE_TABLE;
-import static org.droidparts.contract.DB.CREATE_UNIQUE_INDEX;
-import static org.droidparts.contract.DB.INTEGER;
-import static org.droidparts.contract.DB.NOT_NULL;
-import static org.droidparts.contract.DB.ON;
-import static org.droidparts.contract.DB.OPENING_BRACE;
-import static org.droidparts.contract.DB.PK;
-import static org.droidparts.contract.DB.REAL;
-import static org.droidparts.contract.DB.SEPARATOR;
-import static org.droidparts.contract.DB.TEXT;
-import static org.droidparts.contract.DB.UNIQUE;
+import static org.droidparts.contract.DB.DDL.BLOB;
+import static org.droidparts.contract.DB.DDL.CLOSING_BRACE;
+import static org.droidparts.contract.DB.DDL.CREATE_INDEX;
+import static org.droidparts.contract.DB.DDL.CREATE_TABLE;
+import static org.droidparts.contract.DB.DDL.CREATE_UNIQUE_INDEX;
+import static org.droidparts.contract.DB.DDL.INTEGER;
+import static org.droidparts.contract.DB.DDL.NOT_NULL;
+import static org.droidparts.contract.DB.DDL.ON;
+import static org.droidparts.contract.DB.DDL.OPENING_BRACE;
+import static org.droidparts.contract.DB.DDL.PK;
+import static org.droidparts.contract.DB.DDL.REAL;
+import static org.droidparts.contract.DB.DDL.SEPARATOR;
+import static org.droidparts.contract.DB.DDL.TEXT;
+import static org.droidparts.contract.DB.DDL.UNIQUE;
 import static org.droidparts.reflection.util.TypeHelper.isArray;
 import static org.droidparts.reflection.util.TypeHelper.isBitmap;
 import static org.droidparts.reflection.util.TypeHelper.isBoolean;

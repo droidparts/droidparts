@@ -29,26 +29,7 @@ public interface DB {
 
 	}
 
-	String CREATE_TABLE = "CREATE TABLE ";
-
-	String CREATE_INDEX = "CREATE INDEX ";
-	String CREATE_UNIQUE_INDEX = "CREATE UNIQUE INDEX ";
-	String ON = " ON ";
-
-	String OPENING_BRACE = " (";
-	String SEPARATOR = ", ";
-	String CLOSING_BRACE = ");";
-
-	String INTEGER = "INTEGER";
-	String REAL = "REAL";
-	String TEXT = "TEXT";
-	String BLOB = "BLOB";
-
-	String PK = Column.ID + " INTEGER PRIMARY KEY";
-	String NOT_NULL = "NOT NULL";
-	String UNIQUE = "UNIQUE";
-
-	// query constraints
+	// sql chunks
 	String EQUALS = " = ?";
 	String NOT_EQUAL = " != ?";
 	String GREATER = " > ?";
@@ -62,5 +43,26 @@ public interface DB {
 	String DESC = " DESC";
 	String IS_NULL = " IS NULL";
 	String IS_NOT_NULL = " IS NOT NULL";
+
+	public interface DDL {
+		String CREATE_TABLE = "CREATE TABLE ";
+
+		String CREATE_INDEX = "CREATE INDEX ";
+		String CREATE_UNIQUE_INDEX = "CREATE UNIQUE INDEX ";
+		String ON = " ON ";
+
+		String OPENING_BRACE = " (";
+		String SEPARATOR = ", ";
+		String CLOSING_BRACE = ");";
+
+		String INTEGER = "INTEGER";
+		String REAL = "REAL";
+		String TEXT = "TEXT";
+		String BLOB = "BLOB";
+
+		String PK = Column.ID + " INTEGER PRIMARY KEY";
+		String NOT_NULL = "NOT NULL";
+		String UNIQUE = "UNIQUE";
+	}
 
 }
