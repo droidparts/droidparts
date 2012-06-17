@@ -47,10 +47,20 @@ public class ImageAttacher extends FileFetcher {
 		this.fileCacher = fileCacher;
 	}
 
+	public void setCrossfadeDuration(int millisec) {
+		// TODO
+	}
+
+	public void attachImage(String imgUrlFrom, View viewTo) {
+		setImage(viewTo, imgUrlFrom, null);
+	}
+
+	@Deprecated
 	public void setImage(View view, String fileUrl) {
 		setImage(view, fileUrl, null);
 	}
 
+	@Deprecated
 	public void setImage(View view, String fileUrl, Drawable defaultImg) {
 		viewsToUrlsAndDefaultImages.put(view, new Pair<String, Drawable>(
 				fileUrl, defaultImg));
