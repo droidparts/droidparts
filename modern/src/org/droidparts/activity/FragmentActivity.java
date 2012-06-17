@@ -24,9 +24,12 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 
 import com.actionbarsherlock.app.SherlockFragmentActivity;
+import com.actionbarsherlock.view.MenuItem;
 
 public abstract class FragmentActivity extends SherlockFragmentActivity
 		implements Injected {
+
+	private MenuItem reloadMenuItem;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -37,6 +40,20 @@ public abstract class FragmentActivity extends SherlockFragmentActivity
 
 	@Override
 	public void onPreInject() {
+	}
+
+	@Override
+	public void setSupportProgressBarIndeterminateVisibility(boolean visible) {
+		if (reloadMenuItem != null) {
+			// TODO IcsProgressBar or something to show spinner; don't handle
+			// clicks while spinning
+		} else {
+			super.setSupportProgressBarIndeterminateVisibility(visible);
+		}
+	}
+
+	public void setReloadMenuItem(MenuItem menuItem) {
+		this.reloadMenuItem = menuItem;
 	}
 
 	public void setFragmentVisible(int fragmentId, boolean visible) {
