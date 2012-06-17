@@ -54,6 +54,8 @@ public abstract class TabbedFragmentActivity extends FragmentActivity {
 		}
 	};
 
+	private int enterAnimation, exitAnimation;
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -71,6 +73,11 @@ public abstract class TabbedFragmentActivity extends FragmentActivity {
 		FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
 		showFragmentsForCurrentTab(ft);
 		ft.commit();
+	}
+
+	public void setCustomAnimations(int enter, int exit) {
+		this.enterAnimation = enter;
+		this.exitAnimation = exit;
 	}
 
 	public void setCurrentTab(int position) {
@@ -106,6 +113,9 @@ public abstract class TabbedFragmentActivity extends FragmentActivity {
 	private void showFragmentsForCurrentTab(FragmentTransaction ft) {
 		int currTabPos = getCurrentTab();
 		FragmentManager fm = getSupportFragmentManager();
+		if (enterAnimation != 0 && exitAnimation != 0) {
+			ft.setCustomAnimations(enterAnimation, exitAnimation);
+		}
 		for (int tabPos = 0; tabPos < fragmentsOnTab.size(); tabPos++) {
 			boolean isCurrTab = (tabPos == currTabPos);
 			int[] tabFragments = fragmentsOnTab.get(tabPos);
@@ -123,5 +133,4 @@ public abstract class TabbedFragmentActivity extends FragmentActivity {
 			}
 		}
 	}
-
 }
