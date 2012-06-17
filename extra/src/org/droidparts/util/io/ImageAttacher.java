@@ -28,8 +28,8 @@ import org.droidparts.util.L;
 
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
-import android.util.Pair;
 import android.view.View;
+import android.view.animation.Animation;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -39,7 +39,9 @@ public class ImageAttacher extends FileFetcher {
 	private final RESTClient client;
 	private final FileCacher fileCacher;
 
-	private final ConcurrentHashMap<View, Pair<String, Drawable>> viewsToUrlsAndDefaultImages = new ConcurrentHashMap<View, Pair<String, Drawable>>();
+	private final ConcurrentHashMap<View, String> viewsToUrlsAndDefaultImages = new ConcurrentHashMap<View, String>();
+
+	private Animation anim;
 
 	public ImageAttacher(FileCacher fileCacher) {
 		exec = Executors.newSingleThreadExecutor();
@@ -48,23 +50,26 @@ public class ImageAttacher extends FileFetcher {
 	}
 
 	public void setCrossfadeDuration(int millisec) {
-		// TODO
+		if (millisec <= 0) {
+			anim = null;
+		} else {
+			// TODO
+		}
 	}
 
 	public void attachImage(String imgUrlFrom, View viewTo) {
-		setImage(viewTo, imgUrlFrom, null);
+		viewsToUrlsAndDefaultImages.put(viewTo, imgUrlFrom);
+		exec.execute(fetchAndAttachRunnable);
 	}
 
 	@Deprecated
 	public void setImage(View view, String fileUrl) {
-		setImage(view, fileUrl, null);
+		attachImage(fileUrl, view);
 	}
 
 	@Deprecated
 	public void setImage(View view, String fileUrl, Drawable defaultImg) {
-		viewsToUrlsAndDefaultImages.put(view, new Pair<String, Drawable>(
-				fileUrl, defaultImg));
-		exec.execute(fetchAndAttachRunnable);
+		attachImage(fileUrl, view);
 	}
 
 	public Drawable getCachedOrFetchAndCache(String fileUrl) {
@@ -103,16 +108,10 @@ public class ImageAttacher extends FileFetcher {
 		@Override
 		public void run() {
 			for (View view : viewsToUrlsAndDefaultImages.keySet()) {
-				Pair<String, Drawable> tuple = viewsToUrlsAndDefaultImages
-						.get(view);
-				if (tuple != null) {
+				String fileUrl = viewsToUrlsAndDefaultImages.get(view);
+				if (fileUrl != null) {
 					viewsToUrlsAndDefaultImages.remove(view);
-					String fileUrl = tuple.first;
-					Drawable defaultImg = tuple.second;
 					Drawable image = getCachedOrFetchAndCache(fileUrl);
-					if (image == null) {
-						image = defaultImg;
-					}
 					if (image != null) {
 						view.post(new AttachRunnable(view, image));
 					}
