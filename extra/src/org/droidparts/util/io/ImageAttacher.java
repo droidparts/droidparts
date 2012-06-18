@@ -26,6 +26,7 @@ import org.droidparts.net.http.HTTPException;
 import org.droidparts.net.http.RESTClient;
 import org.droidparts.util.L;
 
+import android.app.Activity;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.view.View;
@@ -113,7 +114,8 @@ public class ImageAttacher extends FileFetcher {
 					viewsToUrlsAndDefaultImages.remove(view);
 					Drawable image = getCachedOrFetchAndCache(fileUrl);
 					if (image != null) {
-						view.post(new AttachRunnable(view, image));
+						Activity activity = (Activity) view.getContext();
+						activity.runOnUiThread(new AttachRunnable(view, image));
 					}
 				}
 			}
