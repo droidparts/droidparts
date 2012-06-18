@@ -41,7 +41,7 @@ public class FileCacher {
 		cacheDir.mkdirs();
 	}
 
-	public boolean saveToCache(String name, BitmapDrawable drawable) {
+	public boolean saveBitmapToCache(String name, BitmapDrawable drawable) {
 		File file = new File(cacheDir, getFileName(name));
 		BufferedOutputStream bos = null;
 		try {
@@ -57,7 +57,7 @@ public class FileCacher {
 		}
 	}
 
-	public BitmapDrawable readFromCache(String name) {
+	public BitmapDrawable readBitmapFromCache(String name) {
 		File file = new File(cacheDir, getFileName(name));
 		if (file.exists()) {
 			BufferedInputStream bis = null;

@@ -75,7 +75,7 @@ public class ImageAttacher extends FileFetcher {
 
 		BitmapDrawable image = null;
 		if (fileCacher != null) {
-			image = fileCacher.readFromCache(fileUrl);
+			image = fileCacher.readBitmapFromCache(fileUrl);
 		}
 
 		if (image == null) {
@@ -92,7 +92,7 @@ public class ImageAttacher extends FileFetcher {
 			}
 
 			if (fileCacher != null && image != null) {
-				fileCacher.saveToCache(fileUrl, image);
+				fileCacher.saveBitmapToCache(fileUrl, image);
 			}
 		}
 		return image;
