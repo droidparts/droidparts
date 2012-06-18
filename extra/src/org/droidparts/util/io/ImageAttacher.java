@@ -45,7 +45,15 @@ public class ImageAttacher extends FileFetcher {
 	private Animation anim;
 
 	public ImageAttacher(FileCacher fileCacher) {
-		exec = Executors.newSingleThreadExecutor();
+		this(fileCacher, 1);
+	}
+
+	public ImageAttacher(FileCacher fileCacher, int nThreads) {
+		if (nThreads == 1) {
+			exec = Executors.newSingleThreadExecutor();
+		} else {
+			exec = Executors.newFixedThreadPool(nThreads);
+		}
 		client = new RESTClient(null);
 		this.fileCacher = fileCacher;
 	}
@@ -61,16 +69,6 @@ public class ImageAttacher extends FileFetcher {
 	public void attachImage(String imgUrlFrom, View viewTo) {
 		viewsToUrlsAndDefaultImages.put(viewTo, imgUrlFrom);
 		exec.execute(fetchAndAttachRunnable);
-	}
-
-	@Deprecated
-	public void setImage(View view, String fileUrl) {
-		attachImage(fileUrl, view);
-	}
-
-	@Deprecated
-	public void setImage(View view, String fileUrl, Drawable defaultImg) {
-		attachImage(fileUrl, view);
 	}
 
 	public Drawable getCachedOrFetchAndCache(String fileUrl) {
@@ -146,6 +144,18 @@ public class ImageAttacher extends FileFetcher {
 			}
 		}
 
+	}
+
+	//
+
+	@Deprecated
+	public void setImage(View view, String fileUrl) {
+		attachImage(fileUrl, view);
+	}
+
+	@Deprecated
+	public void setImage(View view, String fileUrl, Drawable defaultImg) {
+		attachImage(fileUrl, view);
 	}
 
 }
