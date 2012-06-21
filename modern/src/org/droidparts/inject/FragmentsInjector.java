@@ -15,11 +15,8 @@
  */
 package org.droidparts.inject;
 
-import org.droidparts.activity.FragmentActivity;
 import org.droidparts.inject.injector.FragmentsInjectorDelegate;
 import org.droidparts.inject.injector.InjectorDelegate;
-
-import android.support.v4.app.Fragment;
 
 public class FragmentsInjector extends Injector {
 
@@ -36,14 +33,6 @@ public class FragmentsInjector extends Injector {
 	}
 
 	private static FragmentsInjector injector;
-
-	public void inject(Fragment fragment) {
-		inject(fragment.getView(), fragment);
-	}
-
-	public void inject(FragmentActivity activity) {
-		super.inject(activity);
-	}
 
 	protected FragmentsInjector(InjectorDelegate delegate) {
 		super(delegate);

@@ -18,15 +18,25 @@ package org.droidparts.fragment;
 import org.droidparts.inject.FragmentsInjector;
 
 import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 
 import com.actionbarsherlock.app.SherlockListFragment;
 
 public class ListFragment extends SherlockListFragment {
 
 	@Override
-	public void onActivityCreated(Bundle savedInstanceState) {
-		super.onActivityCreated(savedInstanceState);
-		FragmentsInjector.get().inject(this);
+	public final View onCreateView(LayoutInflater inflater,
+			ViewGroup container, Bundle savedInstanceState) {
+		View view = onCreateView(savedInstanceState, inflater, container);
+		FragmentsInjector.get().inject(view, this);
+		return view;
+	}
+
+	public View onCreateView(Bundle savedInstanceState,
+			LayoutInflater inflater, ViewGroup container) {
+		return super.onCreateView(inflater, container, savedInstanceState);
 	}
 
 }

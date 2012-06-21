@@ -17,28 +17,26 @@ package org.droidparts.fragment;
 
 import org.droidparts.inject.FragmentsInjector;
 
-import android.app.Activity;
+import android.os.Bundle;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 
 import com.actionbarsherlock.app.SherlockDialogFragment;
 
 public class DialogFragment extends SherlockDialogFragment {
 
-	protected View contentView;
-
 	@Override
-	public void onAttach(Activity activity) {
-		super.onAttach(activity);
-		int contentViewId = getContentViewId();
-		if (contentViewId != 0) {
-			contentView = getActivity().getLayoutInflater().inflate(
-					contentViewId, null);
-			FragmentsInjector.get().inject(contentView, this);
-		}
+	public final View onCreateView(LayoutInflater inflater,
+			ViewGroup container, Bundle savedInstanceState) {
+		View view = onCreateView(savedInstanceState, inflater, container);
+		FragmentsInjector.get().inject(view, this);
+		return view;
 	}
 
-	protected int getContentViewId() {
-		return 0;
+	public View onCreateView(Bundle savedInstanceState,
+			LayoutInflater inflater, ViewGroup container) {
+		return super.onCreateView(inflater, container, savedInstanceState);
 	}
 
 }
