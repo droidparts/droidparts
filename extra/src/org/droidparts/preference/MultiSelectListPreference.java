@@ -15,6 +15,8 @@
  */
 package org.droidparts.preference;
 
+import static org.droidparts.util.Strings.isEmpty;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -30,7 +32,11 @@ import android.util.AttributeSet;
 public class MultiSelectListPreference extends ListPreference {
 
 	public static String[] fromPersistedPreferenceValue(String val) {
-		return val.split("\\" + SEP);
+		if (isEmpty(val)) {
+			return new String[0];
+		} else {
+			return val.split("\\" + SEP);
+		}
 	}
 
 	public static String toPersistedPreferenceValue(CharSequence... entryKeys) {
