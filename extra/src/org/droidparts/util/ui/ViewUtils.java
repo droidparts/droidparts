@@ -17,13 +17,17 @@ package org.droidparts.util.ui;
 
 import static android.content.Context.INPUT_METHOD_SERVICE;
 import static android.view.View.GONE;
+import static android.view.View.INVISIBLE;
 import static android.view.View.VISIBLE;
 
 import java.lang.reflect.Method;
 
+import org.droidparts.adapter.ui.AnimationListenerAdapter;
 import org.droidparts.util.L;
 
 import android.view.View;
+import android.view.animation.AlphaAnimation;
+import android.view.animation.Animation;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 
@@ -31,6 +35,28 @@ public class ViewUtils {
 
 	public static void setVisible(View view, boolean visible) {
 		view.setVisibility(visible ? VISIBLE : GONE);
+	}
+
+	public static void crossFade(final View lowerViewFrom, final View upperViewTo,
+			int durationMillis) {
+		Animation animFrom = new AlphaAnimation(1, 0);
+		Animation animTo = new AlphaAnimation(0, 1);
+		animFrom.setDuration(durationMillis);
+		animTo.setDuration(durationMillis);
+		animFrom.setAnimationListener(new AnimationListenerAdapter() {
+			@Override
+			public void onAnimationEnd(Animation animation) {
+				lowerViewFrom.setVisibility(INVISIBLE);
+			}
+		});
+		animTo.setAnimationListener(new AnimationListenerAdapter() {
+			@Override
+			public void onAnimationEnd(Animation animation) {
+				upperViewTo.setVisibility(VISIBLE);
+			}
+		});
+		lowerViewFrom.startAnimation(animFrom);
+		upperViewTo.startAnimation(animTo);
 	}
 
 	public static void setKeyboardVisible(View view, boolean visible) {

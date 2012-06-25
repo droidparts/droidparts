@@ -15,6 +15,8 @@
  */
 package org.droidparts.util.io;
 
+import static android.view.View.INVISIBLE;
+import static android.view.View.VISIBLE;
 import static org.droidparts.util.io.IOUtils.silentlyClose;
 
 import java.io.BufferedInputStream;
@@ -25,14 +27,14 @@ import java.util.concurrent.Executors;
 import org.droidparts.net.http.HTTPException;
 import org.droidparts.net.http.RESTClient;
 import org.droidparts.util.L;
+import org.droidparts.util.ui.ViewUtils;
 
 import android.app.Activity;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.util.Pair;
 import android.view.View;
-import android.view.animation.Animation;
 import android.widget.ImageView;
-import android.widget.TextView;
 
 public class ImageAttacher extends FileFetcher {
 
@@ -40,9 +42,9 @@ public class ImageAttacher extends FileFetcher {
 	private final RESTClient client;
 	private final FileCacher fileCacher;
 
-	private final ConcurrentHashMap<View, String> viewsToUrlsAndDefaultImages = new ConcurrentHashMap<View, String>();
+	private final ConcurrentHashMap<ImageView, Pair<String, View>> map = new ConcurrentHashMap<ImageView, Pair<String, View>>();
 
-	private Animation anim;
+	private int crossFadeAnimationDuration = 400;
 
 	public ImageAttacher(FileCacher fileCacher) {
 		this(fileCacher, 1);
@@ -58,20 +60,23 @@ public class ImageAttacher extends FileFetcher {
 		this.fileCacher = fileCacher;
 	}
 
-	public void setCrossfadeDuration(int millisec) {
-		if (millisec <= 0) {
-			anim = null;
-		} else {
-			// TODO
-		}
+	public void setCrossFadeDuration(int millisec) {
+		this.crossFadeAnimationDuration = millisec;
 	}
 
-	public void attachImage(String imgUrlFrom, View viewTo) {
-		viewsToUrlsAndDefaultImages.put(viewTo, imgUrlFrom);
+	public void attachImage(ImageView view, String imgUrl) {
+		attachImageCrossFaded(view, imgUrl, null);
+	}
+
+	public void attachImageCrossFaded(ImageView view, String imgUrl,
+			View placeholderView) {
+		placeholderView.setVisibility(VISIBLE);
+		view.setVisibility(INVISIBLE);
+		map.put(view, new Pair<String, View>(imgUrl, placeholderView));
 		exec.execute(fetchAndAttachRunnable);
 	}
 
-	public Drawable getCachedOrFetchAndCache(String fileUrl) {
+	public BitmapDrawable getCachedOrFetchAndCache(String fileUrl) {
 
 		BitmapDrawable image = null;
 		if (fileCacher != null) {
@@ -84,7 +89,6 @@ public class ImageAttacher extends FileFetcher {
 				bis = new BufferedInputStream(
 						client.getInputStream(fileUrl).second);
 				image = new BitmapDrawable(bis);
-				image = processFetchedImage(fileUrl, image);
 			} catch (HTTPException e) {
 				L.e(e);
 			} finally {
@@ -98,7 +102,9 @@ public class ImageAttacher extends FileFetcher {
 		return image;
 	}
 
-	protected BitmapDrawable processFetchedImage(String url, BitmapDrawable img) {
+	protected BitmapDrawable processBeforeAttaching(String url, ImageView view,
+			BitmapDrawable img) {
+		// TODO scale by default
 		return img;
 	}
 
@@ -106,41 +112,45 @@ public class ImageAttacher extends FileFetcher {
 
 		@Override
 		public void run() {
-			for (View view : viewsToUrlsAndDefaultImages.keySet()) {
-				String fileUrl = viewsToUrlsAndDefaultImages.get(view);
-				if (fileUrl != null) {
-					viewsToUrlsAndDefaultImages.remove(view);
-					Drawable image = getCachedOrFetchAndCache(fileUrl);
-					if (image != null) {
+			for (ImageView view : map.keySet()) {
+				Pair<String, View> pair = map.get(view);
+				if (pair != null) {
+					String fileUrl = pair.first;
+					View placeholderView = pair.second;
+					map.remove(view);
+					BitmapDrawable img = getCachedOrFetchAndCache(fileUrl);
+					img = processBeforeAttaching(fileUrl, view, img);
+					if (img != null) {
 						Activity activity = (Activity) view.getContext();
-						activity.runOnUiThread(new AttachRunnable(view, image));
+						activity.runOnUiThread(new AttachRunnable(view, img,
+								placeholderView));
 					}
 				}
 			}
 		}
 	};
 
-	private static class AttachRunnable implements Runnable {
+	private class AttachRunnable implements Runnable {
 
-		private final View view;
+		private final ImageView imageView;
 		private final Drawable drawable;
+		private final View placeholderView;
 
-		public AttachRunnable(View view, Drawable drawable) {
-			this.view = view;
+		public AttachRunnable(ImageView imageView, Drawable drawable,
+				View placeholderView) {
+			this.imageView = imageView;
 			this.drawable = drawable;
+			this.placeholderView = placeholderView;
 		}
 
 		@Override
 		public void run() {
-			if (view instanceof ImageView) {
-				ImageView imageView = (ImageView) view;
-				imageView.setImageDrawable(drawable);
-			} else if (view instanceof TextView) {
-				TextView textView = (TextView) view;
-				textView.setCompoundDrawablesWithIntrinsicBounds(null,
-						drawable, null, null);
+			imageView.setImageDrawable(drawable);
+			if (placeholderView != null) {
+				ViewUtils.crossFade(placeholderView, imageView,
+						crossFadeAnimationDuration);
 			} else {
-				L.e("Unsupported type: " + view.getClass());
+				imageView.setVisibility(VISIBLE);
 			}
 		}
 
@@ -150,12 +160,12 @@ public class ImageAttacher extends FileFetcher {
 
 	@Deprecated
 	public void setImage(View view, String fileUrl) {
-		attachImage(fileUrl, view);
+		attachImage((ImageView) view, fileUrl);
 	}
 
 	@Deprecated
 	public void setImage(View view, String fileUrl, Drawable defaultImg) {
-		attachImage(fileUrl, view);
+		attachImage((ImageView) view, fileUrl);
 	}
 
 }
