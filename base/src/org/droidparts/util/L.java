@@ -83,7 +83,8 @@ public class L {
 				_debug = (appInfo.flags & FLAG_DEBUGGABLE) != 0;
 			}
 		}
-		return (_debug != null && _debug);
+		boolean debug = (_debug == null) ? true : _debug;
+		return debug;
 	}
 
 	private static int getLogLevel() {
