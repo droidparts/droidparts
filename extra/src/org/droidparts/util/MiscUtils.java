@@ -22,7 +22,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.content.Context;
-import android.preference.Preference;
 
 public class MiscUtils {
 
@@ -38,13 +37,12 @@ public class MiscUtils {
 		}
 	}
 
-	public static void setListPreferenceSummary(Context ctx, int valsArrId,
-			int namesArrId, Preference preference, Object newValue) {
-		String[] valsArr = ctx.getResources().getStringArray(valsArrId);
-		String[] namesArr = ctx.getResources().getStringArray(namesArrId);
-		int idx = Arrays.asList(valsArr).indexOf(newValue);
-		String summary = (idx != -1) ? namesArr[idx] : "...";
-		preference.setSummary(summary);
+	public static String valueForKey(Context ctx, int keysArrId,
+			int valuesArrId, String key) {
+		String[] keysArr = ctx.getResources().getStringArray(keysArrId);
+		String[] valuesArr = ctx.getResources().getStringArray(valuesArrId);
+		int idx = Arrays.asList(keysArr).indexOf(key);
+		return (idx != -1) ? valuesArr[idx] : null;
 	}
 
 	private MiscUtils() {
