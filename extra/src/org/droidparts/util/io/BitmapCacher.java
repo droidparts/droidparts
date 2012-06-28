@@ -28,26 +28,25 @@ import java.io.FileOutputStream;
 import org.droidparts.util.HashCalc;
 import org.droidparts.util.L;
 
-import android.graphics.drawable.BitmapDrawable;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 
-//TODO make universal
-
-public class FileCacher {
+public class BitmapCacher {
 
 	private final File cacheDir;
 
-	public FileCacher(File cacheDir) {
+	public BitmapCacher(File cacheDir) {
 		this.cacheDir = cacheDir;
 		cacheDir.mkdirs();
 	}
 
-	public boolean saveBitmapToCache(String name, BitmapDrawable drawable) {
+	public boolean saveToCache(String name, Bitmap bm) {
 		File file = new File(cacheDir, getFileName(name));
 		BufferedOutputStream bos = null;
 		try {
 			bos = new BufferedOutputStream(new FileOutputStream(file),
 					BUFFER_SIZE);
-			drawable.getBitmap().compress(PNG, 100, bos);
+			bm.compress(PNG, 100, bos);
 			return true;
 		} catch (Exception e) {
 			L.e(e);
@@ -57,17 +56,17 @@ public class FileCacher {
 		}
 	}
 
-	public BitmapDrawable readBitmapFromCache(String name) {
+	public Bitmap readFromCache(String name) {
 		File file = new File(cacheDir, getFileName(name));
 		if (file.exists()) {
 			BufferedInputStream bis = null;
 			try {
 				bis = new BufferedInputStream(new FileInputStream(file),
 						BUFFER_SIZE);
-				BitmapDrawable drawable = new BitmapDrawable(bis);
+				Bitmap bm = BitmapFactory.decodeStream(bis);
 				// only after successful restore
 				file.setLastModified(System.currentTimeMillis());
-				return drawable;
+				return bm;
 			} catch (Exception e) {
 				L.e(e);
 				return null;
