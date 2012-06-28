@@ -15,12 +15,16 @@
  */
 package org.droidparts.util;
 
+import java.util.Arrays;
 import java.util.Iterator;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class JSONUtils {
+import android.content.Context;
+import android.preference.Preference;
+
+public class MiscUtils {
 
 	public static void merge(JSONObject source, JSONObject target,
 			boolean overwrite) throws JSONException {
@@ -34,7 +38,16 @@ public class JSONUtils {
 		}
 	}
 
-	private JSONUtils() {
+	public static void setListPreferenceSummary(Context ctx, int valsArrId,
+			int namesArrId, Preference preference, Object newValue) {
+		String[] valsArr = ctx.getResources().getStringArray(valsArrId);
+		String[] namesArr = ctx.getResources().getStringArray(namesArrId);
+		int idx = Arrays.asList(valsArr).indexOf(newValue);
+		String summary = (idx != -1) ? namesArr[idx] : "...";
+		preference.setSummary(summary);
+	}
+
+	private MiscUtils() {
 	}
 
 }
