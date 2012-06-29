@@ -108,12 +108,8 @@ public class ImageAttacher {
 		return bm;
 	}
 
-	protected Bitmap processBitmap(ImageView imageView, String url, Bitmap bm) {
-		int h = imageView.getHeight();
-		int w = imageView.getWidth();
-		if (h != 0 && w != 0) {
-			bm = Bitmap.createScaledBitmap(bm, w, h, true);
-		}
+	protected Bitmap processBitmapBeforeAttaching(ImageView imageView,
+			String url, Bitmap bm) {
 		return bm;
 	}
 
@@ -129,7 +125,7 @@ public class ImageAttacher {
 					data.remove(view);
 					Bitmap bm = getCachedOrFetchAndCache(fileUrl);
 					if (bm != null) {
-						bm = processBitmap(view, fileUrl, bm);
+						bm = processBitmapBeforeAttaching(view, fileUrl, bm);
 						Activity activity = (Activity) view.getContext();
 						activity.runOnUiThread(new AttachRunnable(
 								placeholderView, view, bm));
