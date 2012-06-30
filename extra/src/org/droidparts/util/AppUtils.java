@@ -23,22 +23,24 @@ import static org.droidparts.contract.Constants.BUFFER_SIZE;
 import static org.droidparts.util.io.IOUtils.silentlyClose;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
 import android.content.ComponentName;
 import android.content.Context;
-import android.content.ContextWrapper;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
+import android.os.Build;
+import android.os.Environment;
 
 public class AppUtils {
 
-	protected final ContextWrapper ctx;
+	protected final Context ctx;
 
-	public AppUtils(ContextWrapper ctx) {
+	public AppUtils(Context ctx) {
 		this.ctx = ctx;
 	}
 
@@ -51,6 +53,21 @@ public class AppUtils {
 			L.e(e);
 		}
 		return verName;
+	}
+
+	public File getCacheDir() {
+		if (Build.VERSION.SDK_INT > 7) {
+			File dir = ctx.getExternalCacheDir();
+			return dir;
+		} else {
+			File esd = Environment.getExternalStorageDirectory();
+			if (esd != null) {
+				return new File(esd, "/Android/data/" + ctx.getPackageName()
+						+ "/cache");
+			} else {
+				return null;
+			}
+		}
 	}
 
 	public boolean gotActivityForIntent(Intent intent) {
@@ -66,8 +83,8 @@ public class AppUtils {
 		}
 	}
 
-	public static void setComponentEnabled(Context ctx,
-			Class<? extends Context> component, boolean visible) {
+	public void setComponentEnabled(Class<? extends Context> component,
+			boolean visible) {
 		PackageManager pm = ctx.getPackageManager();
 		ComponentName componentName = new ComponentName(ctx, component);
 		int state = visible ? COMPONENT_ENABLED_STATE_ENABLED
@@ -75,8 +92,7 @@ public class AppUtils {
 		pm.setComponentEnabledSetting(componentName, state, DONT_KILL_APP);
 	}
 
-	public static String readStringResource(Context ctx, int resId)
-			throws IOException {
+	public String readStringResource(int resId) throws IOException {
 		InputStream is = null;
 		BufferedReader reader = null;
 		try {

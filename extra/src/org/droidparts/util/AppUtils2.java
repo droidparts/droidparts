@@ -23,7 +23,7 @@ import java.io.IOException;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
-import android.content.ContextWrapper;
+import android.content.Context;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
@@ -34,7 +34,7 @@ public class AppUtils2 extends AppUtils {
 
 	private final PackageManager pkgMngr;
 
-	public AppUtils2(ContextWrapper ctx) {
+	public AppUtils2(Context ctx) {
 		super(ctx);
 		pkgMngr = ctx.getPackageManager();
 	}

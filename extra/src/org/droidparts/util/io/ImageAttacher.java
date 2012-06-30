@@ -26,6 +26,7 @@ import java.util.concurrent.Executors;
 
 import org.droidparts.net.http.HTTPException;
 import org.droidparts.net.http.RESTClient;
+import org.droidparts.util.AppUtils;
 import org.droidparts.util.L;
 import org.droidparts.util.ui.ViewUtils;
 
@@ -50,7 +51,8 @@ public class ImageAttacher {
 
 	public ImageAttacher(Context ctx) {
 		this(Executors.newSingleThreadExecutor(), new RESTClient(null),
-				new BitmapCacher(ctx));
+				new AppUtils(ctx).getCacheDir() != null ? new BitmapCacher(
+						new AppUtils(ctx).getCacheDir()) : null);
 	}
 
 	public ImageAttacher(ExecutorService executorService,
