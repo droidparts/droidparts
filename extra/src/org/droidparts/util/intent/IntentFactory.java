@@ -21,6 +21,7 @@ import static android.content.Intent.ACTION_SENDTO;
 import static android.content.Intent.ACTION_VIEW;
 import static android.content.Intent.EXTRA_SUBJECT;
 import static android.content.Intent.EXTRA_TEXT;
+import static android.text.Html.fromHtml;
 import static org.droidparts.util.Strings.isNotEmpty;
 
 import java.io.File;
@@ -40,7 +41,7 @@ public class IntentFactory {
 	}
 
 	public static Intent getSendEmail(String mailTo, String mailCC,
-			String subject, String body, File... attachments) {
+			String subject, String bodyHtml, File... attachments) {
 		Intent intent = new Intent(ACTION_SENDTO);
 		// intent.setType("text/plain");
 		intent.setType("message/rfc822");
@@ -54,8 +55,8 @@ public class IntentFactory {
 		if (isNotEmpty(subject)) {
 			intent.putExtra(EXTRA_SUBJECT, subject);
 		}
-		if (isNotEmpty(body)) {
-			intent.putExtra(EXTRA_TEXT, body);
+		if (isNotEmpty(bodyHtml)) {
+			intent.putExtra(EXTRA_TEXT, fromHtml(bodyHtml));
 		}
 		if (attachments.length > 0) {
 			ArrayList<Uri> uris = new ArrayList<Uri>();
