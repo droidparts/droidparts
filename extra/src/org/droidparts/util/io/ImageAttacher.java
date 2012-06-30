@@ -41,25 +41,31 @@ import android.widget.ImageView;
 
 public class ImageAttacher {
 
+	private final BitmapCacher bitmapCacher;
 	private final ExecutorService executorService;
 	private final RESTClient restClient;
-	private final BitmapCacher bitmapCacher;
 
 	private final ConcurrentHashMap<ImageView, Pair<String, View>> data = new ConcurrentHashMap<ImageView, Pair<String, View>>();
 
 	private int crossFadeAnimationDuration = 400;
 
 	public ImageAttacher(Context ctx) {
-		this(Executors.newSingleThreadExecutor(), new RESTClient(null),
-				new AppUtils(ctx).getCacheDir() != null ? new BitmapCacher(
-						new AppUtils(ctx).getCacheDir()) : null);
+		this(ctx, Executors.newSingleThreadExecutor(), new RESTClient(null));
 	}
 
-	public ImageAttacher(ExecutorService executorService,
-			RESTClient restClient, BitmapCacher bitmapCacher) {
+	public ImageAttacher(Context ctx, ExecutorService executorService,
+			RESTClient restClient) {
+		this(
+				new AppUtils(ctx).getExternalCacheDir() != null ? new BitmapCacher(
+						new AppUtils(ctx).getExternalCacheDir()) : null,
+				executorService, restClient);
+	}
+
+	public ImageAttacher(BitmapCacher bitmapCacher,
+			ExecutorService executorService, RESTClient restClient) {
+		this.bitmapCacher = bitmapCacher;
 		this.executorService = executorService;
 		this.restClient = restClient;
-		this.bitmapCacher = bitmapCacher;
 	}
 
 	public void setCrossFadeDuration(int millisec) {

@@ -55,7 +55,7 @@ public class AppUtils {
 		return verName;
 	}
 
-	public File getCacheDir() {
+	public File getExternalCacheDir() {
 		if (Build.VERSION.SDK_INT > 7) {
 			File dir = ctx.getExternalCacheDir();
 			return dir;
