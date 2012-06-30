@@ -13,13 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License. 
  */
-package org.droidparts.concurrent;
+package org.droidparts.util.concurrent;
 
 import static android.content.Context.CONNECTIVITY_SERVICE;
 import static android.net.ConnectivityManager.CONNECTIVITY_ACTION;
 import static android.net.ConnectivityManager.TYPE_MOBILE;
 import static android.net.ConnectivityManager.TYPE_WIFI;
 import static android.net.ConnectivityManager.TYPE_WIMAX;
+import static java.lang.Thread.MIN_PRIORITY;
 
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadFactory;
@@ -113,7 +114,9 @@ public class ConnectivityAwareExecutor extends ThreadPoolExecutor {
 
 		@Override
 		public Thread newThread(Runnable r) {
-			return new Thread(r);
+			Thread t = new Thread(r);
+			t.setPriority(MIN_PRIORITY);
+			return t;
 		}
 
 	}
