@@ -28,12 +28,19 @@ import java.io.FileOutputStream;
 import org.droidparts.util.HashCalc;
 import org.droidparts.util.L;
 
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.os.Build;
+import android.os.Environment;
 
 public class BitmapCacher {
 
 	private final File cacheDir;
+
+	public BitmapCacher(Context ctx) {
+		this(getCacheDir(ctx));
+	}
 
 	public BitmapCacher(File cacheDir) {
 		this.cacheDir = cacheDir;
@@ -85,6 +92,16 @@ public class BitmapCacher {
 					|| f.lastModified() < lastAccessedBefore) {
 				f.delete();
 			}
+		}
+	}
+
+	private static File getCacheDir(Context ctx) {
+		if (Build.VERSION.SDK_INT > 7) {
+			return ctx.getExternalCacheDir();
+		} else {
+			File esd = Environment.getExternalStorageDirectory();
+			return new File(esd, "/Android/data/" + ctx.getPackageName()
+					+ "/cache");
 		}
 	}
 

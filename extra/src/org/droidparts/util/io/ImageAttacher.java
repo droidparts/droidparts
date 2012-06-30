@@ -30,6 +30,7 @@ import org.droidparts.util.L;
 import org.droidparts.util.ui.ViewUtils;
 
 import android.app.Activity;
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.Drawable;
@@ -39,25 +40,23 @@ import android.widget.ImageView;
 
 public class ImageAttacher {
 
-	private final ExecutorService exec;
-	private final RESTClient client;
+	private final ExecutorService executorService;
+	private final RESTClient restClient;
 	private final BitmapCacher bitmapCacher;
 
 	private final ConcurrentHashMap<ImageView, Pair<String, View>> data = new ConcurrentHashMap<ImageView, Pair<String, View>>();
 
 	private int crossFadeAnimationDuration = 400;
 
-	public ImageAttacher(BitmapCacher bitmapCacher) {
-		this(bitmapCacher, 1);
+	public ImageAttacher(Context ctx) {
+		this(Executors.newSingleThreadExecutor(), new RESTClient(null),
+				new BitmapCacher(ctx));
 	}
 
-	public ImageAttacher(BitmapCacher bitmapCacher, int nThreads) {
-		if (nThreads == 1) {
-			exec = Executors.newSingleThreadExecutor();
-		} else {
-			exec = Executors.newFixedThreadPool(nThreads);
-		}
-		client = new RESTClient(null);
+	public ImageAttacher(ExecutorService executorService,
+			RESTClient restClient, BitmapCacher bitmapCacher) {
+		this.executorService = executorService;
+		this.restClient = restClient;
 		this.bitmapCacher = bitmapCacher;
 	}
 
@@ -79,7 +78,7 @@ public class ImageAttacher {
 
 	private void addAndExecute(ImageView view, Pair<String, View> pair) {
 		data.put(view, pair);
-		exec.execute(fetchAndAttachRunnable);
+		executorService.execute(fetchAndAttachRunnable);
 	}
 
 	public Bitmap getCachedOrFetchAndCache(String fileUrl) {
@@ -93,7 +92,7 @@ public class ImageAttacher {
 			BufferedInputStream bis = null;
 			try {
 				bis = new BufferedInputStream(
-						client.getInputStream(fileUrl).second);
+						restClient.getInputStream(fileUrl).second);
 				bm = BitmapFactory.decodeStream(bis);
 			} catch (HTTPException e) {
 				L.e(e);
