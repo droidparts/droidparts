@@ -25,7 +25,6 @@ import static org.droidparts.util.io.IOUtils.silentlyClose;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
-import java.io.Closeable;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -56,11 +55,10 @@ import org.droidparts.util.L;
 
 import android.util.Pair;
 
-public class RESTClient implements Closeable {
+public class RESTClient {
 
 	private static final int SOCKET_OPERATION_TIMEOUT = 60 * 1000;
 
-	private AndroidHttpClientWrapper androidHttpClient;
 	private DefaultHttpClient defaultHttpClient;
 
 	private final HashMap<String, String> headers = new HashMap<String, String>();
@@ -83,7 +81,6 @@ public class RESTClient implements Closeable {
 	public void setProxy(URL proxy, String username, String password) {
 		HttpHost proxyHost = new HttpHost(proxy.getHost(), proxy.getPort(),
 				proxy.getProtocol());
-		// TODO androidHttpClient
 		defaultHttpClient.getParams().setParameter(DEFAULT_PROXY, proxyHost);
 		if (!isEmpty(username) && !isEmpty(password)) {
 			AuthScope authScope = new AuthScope(proxy.getHost(),
@@ -106,13 +103,6 @@ public class RESTClient implements Closeable {
 	}
 
 	//
-
-	@Override
-	public void close() {
-		if (androidHttpClient != null) {
-			androidHttpClient.close();
-		}
-	}
 
 	public String get(String uri) throws HTTPException {
 		L.d("GET on " + uri);
@@ -197,11 +187,7 @@ public class RESTClient implements Closeable {
 		try {
 			HttpResponse resp;
 			synchronized (SingleClientConnManager.class) {
-				if (androidHttpClient == null) {
-					resp = defaultHttpClient.execute(req);
-				} else {
-					resp = androidHttpClient.execute(req);
-				}
+				resp = defaultHttpClient.execute(req);
 			}
 			int respCode = resp.getStatusLine().getStatusCode();
 			if (respCode >= 400) {
@@ -264,10 +250,6 @@ public class RESTClient implements Closeable {
 	}
 
 	private void initClient(String userAgent) {
-		// TODO
-		// try {
-		// androidHttpClient = new AndroidHttpClientWrapper(userAgent);
-		// } catch (Exception e) {
 		defaultHttpClient = new DefaultHttpClient();
 		HttpParams params = defaultHttpClient.getParams();
 		HttpConnectionParams.setConnectionTimeout(params,
@@ -277,8 +259,6 @@ public class RESTClient implements Closeable {
 		if (userAgent != null) {
 			HttpProtocolParams.setUserAgent(params, userAgent);
 		}
-		// }
-
 	}
 
 	protected static final class EntityInputStream extends BufferedInputStream {
