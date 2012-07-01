@@ -47,7 +47,6 @@ import org.apache.http.client.methods.HttpPut;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.impl.conn.SingleClientConnManager;
 import org.apache.http.params.HttpConnectionParams;
 import org.apache.http.params.HttpParams;
 import org.apache.http.params.HttpProtocolParams;
@@ -59,12 +58,14 @@ public class RESTClient {
 
 	private static final int SOCKET_OPERATION_TIMEOUT = 60 * 1000;
 
-	private DefaultHttpClient defaultHttpClient;
-
+	private final String userAgent;
 	private final HashMap<String, String> headers = new HashMap<String, String>();
 
+	private String authUser, authPassword;
+	private String proxyUrl, proxyUser, proxyPassword;
+
 	public RESTClient(String userAgent) {
-		initClient(userAgent);
+		this.userAgent = userAgent;
 	}
 
 	//
@@ -78,28 +79,15 @@ public class RESTClient {
 		}
 	}
 
-	public void setProxy(URL proxy, String username, String password) {
-		HttpHost proxyHost = new HttpHost(proxy.getHost(), proxy.getPort(),
-				proxy.getProtocol());
-		defaultHttpClient.getParams().setParameter(DEFAULT_PROXY, proxyHost);
-		if (!isEmpty(username) && !isEmpty(password)) {
-			AuthScope authScope = new AuthScope(proxy.getHost(),
-					proxy.getPort());
-			UsernamePasswordCredentials credentials = new UsernamePasswordCredentials(
-					username, password);
-			// TODO androidHttpClient
-			defaultHttpClient.getCredentialsProvider().setCredentials(
-					authScope, credentials);
-		}
+	public void setProxy(String proxy, String username, String password) {
+		this.proxyUrl = proxy;
+		this.proxyUser = username;
+		this.proxyPassword = password;
 	}
 
 	public void authenticateBasic(String username, String password) {
-		AuthScope authScope = new AuthScope(ANY_HOST, ANY_PORT);
-		UsernamePasswordCredentials credentials = new UsernamePasswordCredentials(
-				username, password);
-		// TODO androidHttpClient
-		defaultHttpClient.getCredentialsProvider().setCredentials(authScope,
-				credentials);
+		this.authUser = username;
+		this.authPassword = password;
 	}
 
 	//
@@ -179,16 +167,15 @@ public class RESTClient {
 		}
 	}
 
-	protected HttpResponse getResponse(HttpUriRequest req) throws HTTPException {
+	//
+
+	private HttpResponse getResponse(HttpUriRequest req) throws HTTPException {
 		for (String name : headers.keySet()) {
 			req.setHeader(name, headers.get(name));
 		}
 		req.setHeader("Accept-Encoding", "gzip,deflate");
 		try {
-			HttpResponse resp;
-			synchronized (SingleClientConnManager.class) {
-				resp = defaultHttpClient.execute(req);
-			}
+			HttpResponse resp = getHttpClientClient().execute(req);
 			int respCode = resp.getStatusLine().getStatusCode();
 			if (respCode >= 400) {
 				consumeResponse(resp);
@@ -200,15 +187,7 @@ public class RESTClient {
 		}
 	}
 
-	protected void consumeResponse(HttpResponse resp) {
-		try {
-			resp.getEntity().consumeContent();
-		} catch (IOException e) {
-			L.d(e);
-		}
-	}
-
-	protected String getResponseBody(HttpResponse resp) throws HTTPException {
+	private String getResponseBody(HttpResponse resp) throws HTTPException {
 		StringBuilder sb = new StringBuilder();
 		HttpEntity entity = resp.getEntity();
 		BufferedReader br = null;
@@ -230,7 +209,7 @@ public class RESTClient {
 		return respStr;
 	}
 
-	protected InputStream getUnpackedInputStream(HttpEntity entity)
+	private InputStream getUnpackedInputStream(HttpEntity entity)
 			throws IOException {
 		InputStream is = entity.getContent();
 		Header contentEncodingHeader = entity.getContentEncoding();
@@ -249,9 +228,17 @@ public class RESTClient {
 		return is;
 	}
 
-	private void initClient(String userAgent) {
-		defaultHttpClient = new DefaultHttpClient();
-		HttpParams params = defaultHttpClient.getParams();
+	private void consumeResponse(HttpResponse resp) {
+		try {
+			resp.getEntity().consumeContent();
+		} catch (IOException e) {
+			L.d(e);
+		}
+	}
+
+	private DefaultHttpClient getHttpClientClient() throws IOException {
+		DefaultHttpClient httpClient = new DefaultHttpClient();
+		HttpParams params = httpClient.getParams();
 		HttpConnectionParams.setConnectionTimeout(params,
 				SOCKET_OPERATION_TIMEOUT);
 		HttpConnectionParams.setSoTimeout(params, SOCKET_OPERATION_TIMEOUT);
@@ -259,9 +246,32 @@ public class RESTClient {
 		if (userAgent != null) {
 			HttpProtocolParams.setUserAgent(params, userAgent);
 		}
+		if (proxyUrl != null) {
+			URL proxy = new URL(proxyUrl);
+			HttpHost proxyHost = new HttpHost(proxy.getHost(), proxy.getPort(),
+					proxy.getProtocol());
+			httpClient.getParams().setParameter(DEFAULT_PROXY, proxyHost);
+			if (!isEmpty(proxyUser) && !isEmpty(proxyPassword)) {
+				AuthScope authScope = new AuthScope(proxy.getHost(),
+						proxy.getPort());
+				UsernamePasswordCredentials credentials = new UsernamePasswordCredentials(
+						proxyUser, proxyPassword);
+				httpClient.getCredentialsProvider().setCredentials(authScope,
+						credentials);
+			}
+		}
+		//
+		if (authUser != null && authPassword != null) {
+			AuthScope authScope = new AuthScope(ANY_HOST, ANY_PORT);
+			UsernamePasswordCredentials credentials = new UsernamePasswordCredentials(
+					authUser, authPassword);
+			httpClient.getCredentialsProvider().setCredentials(authScope,
+					credentials);
+		}
+		return httpClient;
 	}
 
-	protected static final class EntityInputStream extends BufferedInputStream {
+	private static final class EntityInputStream extends BufferedInputStream {
 
 		private final HttpEntity entity;
 
@@ -271,7 +281,7 @@ public class RESTClient {
 		}
 
 		@Override
-		public synchronized void close() throws IOException {
+		public void close() throws IOException {
 			super.close();
 			entity.consumeContent();
 		}

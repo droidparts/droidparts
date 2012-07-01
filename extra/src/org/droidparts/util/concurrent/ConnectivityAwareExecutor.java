@@ -92,6 +92,7 @@ public class ConnectivityAwareExecutor extends ThreadPoolExecutor {
 			default:
 				threadCount = 1;
 			}
+			L.i("Pool size: " + threadCount);
 			setCorePoolSize(threadCount);
 			setMaximumPoolSize(threadCount);
 		} catch (SecurityException e) {
