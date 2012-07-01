@@ -15,13 +15,17 @@
  */
 package org.droidparts.util.io;
 
+import static org.droidparts.contract.Constants.BUFFER_SIZE;
 import static org.droidparts.contract.Constants.UTF8;
 
+import java.io.BufferedReader;
 import java.io.Closeable;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.nio.channels.FileChannel;
 import java.util.HashSet;
@@ -47,6 +51,24 @@ public class IOUtils {
 					L.d(e);
 				}
 			}
+		}
+	}
+
+	public static String readAndCloseInputStream(InputStream is)
+			throws IOException {
+		StringBuilder sb = new StringBuilder();
+		BufferedReader br = null;
+		try {
+			br = new BufferedReader(new InputStreamReader(is, UTF8),
+					BUFFER_SIZE);
+			String line;
+			while ((line = br.readLine()) != null) {
+				sb.append(line);
+				sb.append('\n');
+			}
+			return sb.toString();
+		} finally {
+			silentlyClose(br);
 		}
 	}
 
