@@ -15,14 +15,38 @@
  */
 package org.droidparts.net.http.wrapper;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
 import org.droidparts.net.http.HTTPException;
+import org.droidparts.util.L;
 import org.droidparts.util.io.IOUtils;
 
+import android.content.Context;
+
 public class HttpURLConnectionWrapper extends HttpClientWrapper {
+
+	// ICS+
+	public static void setHttpResponseCacheEnabled(Context ctx, boolean enabled) {
+		File cacheDir = new File(ctx.getCacheDir(), "http");
+		long cacheSize = 10 * 1024 * 1024; // 10 MiB
+		try {
+			Class<?> cls = Class.forName("android.net.http.HttpResponseCache");
+			if (enabled) {
+				cls.getMethod("install", File.class, long.class).invoke(null,
+						cacheDir, cacheSize);
+			} else {
+				Object instance = cls.getMethod("getInstalled").invoke(null);
+				if (instance != null) {
+					cls.getMethod("delete").invoke(instance);
+				}
+			}
+		} catch (Exception e) {
+			L.e(e);
+		}
+	}
 
 	public HttpURLConnectionWrapper(String userAgent) {
 		super(userAgent);

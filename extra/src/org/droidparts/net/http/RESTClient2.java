@@ -21,6 +21,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.content.Context;
 import android.net.Uri;
 
 public class RESTClient2 extends RESTClient {
@@ -29,8 +30,8 @@ public class RESTClient2 extends RESTClient {
 	private static final String APPLICATION_JSON = "application/json";
 	private static final String APPLICATION_FORM_DATA = "application/x-www-form-urlencoded";
 
-	public RESTClient2(String userAgent) {
-		super(userAgent);
+	public RESTClient2(Context ctx, String userAgent) {
+		super(ctx, userAgent);
 	}
 
 	public JSONObject getJSONObject(String uri) throws HTTPException {

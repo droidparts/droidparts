@@ -17,7 +17,14 @@ package org.droidparts.net.http.wrapper;
 
 import java.util.HashMap;
 
+import android.os.Build;
+
 public abstract class HttpClientWrapper {
+
+	public static boolean useHttpURLConnection() {
+		// http://android-developers.blogspot.com/2011/09/androids-http-clients.html
+		return Build.VERSION.SDK_INT >= 10;
+	}
 
 	protected static final int SOCKET_OPERATION_TIMEOUT = 60 * 1000;
 

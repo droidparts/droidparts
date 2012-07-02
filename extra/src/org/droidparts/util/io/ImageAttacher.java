@@ -20,6 +20,7 @@ import static android.view.View.VISIBLE;
 import static org.droidparts.util.io.IOUtils.silentlyClose;
 
 import java.io.BufferedInputStream;
+import java.io.File;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -50,15 +51,16 @@ public class ImageAttacher {
 	private int crossFadeAnimationDuration = 400;
 
 	public ImageAttacher(Context ctx) {
-		this(ctx, Executors.newSingleThreadExecutor(), new RESTClient(null));
+		this(ctx, Executors.newSingleThreadExecutor(),
+				new RESTClient(ctx, null));
 	}
 
 	public ImageAttacher(Context ctx, ExecutorService executorService,
 			RESTClient restClient) {
 		this(
 				new AppUtils(ctx).getExternalCacheDir() != null ? new BitmapCacher(
-						new AppUtils(ctx).getExternalCacheDir()) : null,
-				executorService, restClient);
+						new File(new AppUtils(ctx).getExternalCacheDir(), "img"))
+						: null, executorService, restClient);
 	}
 
 	public ImageAttacher(BitmapCacher bitmapCacher,

@@ -17,6 +17,7 @@ package org.droidparts.net.http;
 
 import static android.text.TextUtils.isEmpty;
 import static org.droidparts.contract.Constants.UTF8;
+import static org.droidparts.net.http.wrapper.HttpClientWrapper.useHttpURLConnection;
 
 import java.io.BufferedInputStream;
 import java.io.InputStream;
@@ -38,10 +39,13 @@ import org.droidparts.net.http.wrapper.HttpClientWrapper;
 import org.droidparts.net.http.wrapper.HttpURLConnectionWrapper;
 import org.droidparts.util.L;
 
+import android.content.Context;
 import android.os.Build;
 import android.util.Pair;
 
 public class RESTClient {
+
+	private final Context ctx;
 
 	private final String userAgent;
 	private final HashMap<String, String> headers = new HashMap<String, String>();
@@ -49,8 +53,18 @@ public class RESTClient {
 	private String authUser, authPassword;
 	private String proxyUrl, proxyUser, proxyPassword;
 
-	public RESTClient(String userAgent) {
+	public RESTClient(Context ctx, String userAgent) {
+		this.ctx = ctx.getApplicationContext();
 		this.userAgent = userAgent;
+		setHttpResponseCacheEnabled(true);
+	}
+
+	public void setHttpResponseCacheEnabled(boolean enabled) {
+		if (Build.VERSION.SDK_INT >= 14) {
+			HttpURLConnectionWrapper.setHttpResponseCacheEnabled(ctx, enabled);
+		} else {
+			L.i("HTTP response cache not supported.");
+		}
 	}
 
 	public void setHeader(String key, String value) {
@@ -78,7 +92,7 @@ public class RESTClient {
 	public String get(String uri) throws HTTPException {
 		L.d("GET on " + uri);
 		String respStr;
-		if (useModern()) {
+		if (useHttpURLConnection()) {
 			HttpURLConnectionWrapper wrapper = getModern();
 			HttpURLConnection conn = wrapper.getConnectedHttpURLConnection(uri,
 					"GET");
@@ -165,13 +179,6 @@ public class RESTClient {
 		} catch (Exception e) {
 			throw new HTTPException(e);
 		}
-	}
-
-	//
-
-	private boolean useModern() {
-		// http://android-developers.blogspot.com/2011/09/androids-http-clients.html
-		return Build.VERSION.SDK_INT >= 10;
 	}
 
 	private DefaultHttpClientWrapper getLegacy() {
