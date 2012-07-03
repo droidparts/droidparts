@@ -17,6 +17,7 @@ package org.droidparts.net.http.wrapper;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
@@ -27,6 +28,11 @@ import org.droidparts.util.io.IOUtils;
 import android.content.Context;
 
 public class HttpURLConnectionWrapper extends HttpClientWrapper {
+
+	public static final String GET = "GET";
+	public static final String PUT = "PUT";
+	public static final String POST = "POST";
+	public static final String DELETE = "DELETE";
 
 	// ICS+
 	public static void setHttpResponseCacheEnabled(Context ctx, boolean enabled) {
@@ -75,7 +81,9 @@ public class HttpURLConnectionWrapper extends HttpClientWrapper {
 			if (userAgent != null) {
 				conn.setRequestProperty("http.agent", userAgent);
 			}
-			conn.setDoOutput(true);
+			if (PUT.equals(requestMethod) || POST.equals(requestMethod)) {
+				conn.setDoOutput(true);
+			}
 			conn.connect();
 			int respCode = conn.getResponseCode();
 			if (respCode >= 400) {
@@ -88,7 +96,9 @@ public class HttpURLConnectionWrapper extends HttpClientWrapper {
 		}
 	}
 
-	public String getResponseBodyAndDisconnect(HttpURLConnection conn)
+	//
+
+	public static String getResponseBodyAndDisconnect(HttpURLConnection conn)
 			throws HTTPException {
 		try {
 			return IOUtils.readAndCloseInputStream(conn.getInputStream());
@@ -96,6 +106,15 @@ public class HttpURLConnectionWrapper extends HttpClientWrapper {
 			throw new HTTPException(e);
 		} finally {
 			conn.disconnect();
+		}
+	}
+
+	public static InputStream getUnpackedInputStream(HttpURLConnection conn)
+			throws HTTPException {
+		try {
+			return conn.getInputStream();
+		} catch (IOException e) {
+			throw new HTTPException(e);
 		}
 	}
 

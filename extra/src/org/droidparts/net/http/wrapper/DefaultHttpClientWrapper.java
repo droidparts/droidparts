@@ -20,9 +20,7 @@ import static org.apache.http.auth.AuthScope.ANY_HOST;
 import static org.apache.http.auth.AuthScope.ANY_PORT;
 import static org.apache.http.conn.params.ConnRoutePNames.DEFAULT_PROXY;
 import static org.droidparts.contract.Constants.BUFFER_SIZE;
-import static org.droidparts.util.io.IOUtils.silentlyClose;
 
-import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
@@ -95,8 +93,6 @@ public class DefaultHttpClientWrapper extends HttpClientWrapper {
 				credentials);
 	}
 
-	//
-
 	public HttpResponse getResponse(HttpUriRequest req) throws HTTPException {
 		for (String name : headers.keySet()) {
 			req.setHeader(name, headers.get(name));
@@ -115,60 +111,48 @@ public class DefaultHttpClientWrapper extends HttpClientWrapper {
 		}
 	}
 
-	public String getResponseBody(HttpResponse resp) throws HTTPException {
-		InputStream is = null;
+	//
+
+	public static String getResponseBody(HttpResponse resp)
+			throws HTTPException {
 		HttpEntity entity = resp.getEntity();
+		InputStream is = getUnpackedInputStream(entity);
 		try {
-			is = getUnpackedInputStream(entity);
 			return IOUtils.readAndCloseInputStream(is);
 		} catch (IOException e) {
-			silentlyClose(is);
 			throw new HTTPException(e);
 		}
 	}
 
-	public InputStream getUnpackedInputStream(HttpEntity entity)
-			throws IOException {
-		InputStream is = entity.getContent();
-		Header contentEncodingHeader = entity.getContentEncoding();
-		L.d(contentEncodingHeader);
-		if (contentEncodingHeader != null) {
-			String contentEncoding = contentEncodingHeader.getValue();
-			if (!isEmpty(contentEncoding)) {
-				contentEncoding = contentEncoding.toLowerCase();
-				if (contentEncoding.contains("gzip")) {
-					return new GZIPInputStream(is);
-				} else if (contentEncoding.contains("deflate")) {
-					return new InflaterInputStream(is);
+	public static InputStream getUnpackedInputStream(HttpEntity entity)
+			throws HTTPException {
+		try {
+			InputStream is = entity.getContent();
+			Header contentEncodingHeader = entity.getContentEncoding();
+			L.d(contentEncodingHeader);
+			if (contentEncodingHeader != null) {
+				String contentEncoding = contentEncodingHeader.getValue();
+				if (!isEmpty(contentEncoding)) {
+					contentEncoding = contentEncoding.toLowerCase();
+					if (contentEncoding.contains("gzip")) {
+						return new GZIPInputStream(is);
+					} else if (contentEncoding.contains("deflate")) {
+						return new InflaterInputStream(is);
+					}
 				}
 			}
+			return is;
+		} catch (Exception e) {
+			throw new HTTPException(e);
 		}
-		return is;
 	}
 
-	public void consumeResponse(HttpResponse resp) {
+	public static void consumeResponse(HttpResponse resp) {
 		try {
 			resp.getEntity().consumeContent();
 		} catch (IOException e) {
 			L.d(e);
 		}
-	}
-
-	public static class EntityInputStream extends BufferedInputStream {
-
-		private final HttpEntity entity;
-
-		public EntityInputStream(InputStream in, HttpEntity entity) {
-			super(in, BUFFER_SIZE);
-			this.entity = entity;
-		}
-
-		@Override
-		public void close() throws IOException {
-			super.close();
-			entity.consumeContent();
-		}
-
 	}
 
 }
