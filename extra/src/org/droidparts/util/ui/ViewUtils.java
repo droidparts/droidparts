@@ -33,12 +33,16 @@ import android.widget.EditText;
 
 public class ViewUtils {
 
-	public static void setVisible(View view, boolean visible) {
+	public static void setVisibleOrInvisible(View view, boolean visible) {
+		view.setVisibility(visible ? VISIBLE : INVISIBLE);
+	}
+
+	public static void setVisibleOrGone(View view, boolean visible) {
 		view.setVisibility(visible ? VISIBLE : GONE);
 	}
 
-	public static void crossFade(final View lowerViewFrom, final View upperViewTo,
-			int durationMillis) {
+	public static void crossFade(final View lowerViewFrom,
+			final View upperViewTo, int durationMillis) {
 		Animation animFrom = new AlphaAnimation(1, 0);
 		Animation animTo = new AlphaAnimation(0, 1);
 		animFrom.setDuration(durationMillis);
@@ -84,5 +88,12 @@ public class ViewUtils {
 		} catch (Exception e) {
 			L.e(e);
 		}
+	}
+
+	//
+
+	@Deprecated
+	public static void setVisible(View view, boolean visible) {
+		setVisibleOrGone(view, visible);
 	}
 }
