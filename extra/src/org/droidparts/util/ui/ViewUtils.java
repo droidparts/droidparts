@@ -33,12 +33,12 @@ import android.widget.EditText;
 
 public class ViewUtils {
 
-	public static void setVisibleOrInvisible(View view, boolean visible) {
-		view.setVisibility(visible ? VISIBLE : INVISIBLE);
+	public static void setInvisible(View view, boolean invisible) {
+		view.setVisibility(invisible ? INVISIBLE : VISIBLE);
 	}
 
-	public static void setVisibleOrGone(View view, boolean visible) {
-		view.setVisibility(visible ? VISIBLE : GONE);
+	public static void setGone(View view, boolean gone) {
+		view.setVisibility(gone ? GONE : VISIBLE);
 	}
 
 	public static void crossFade(final View lowerViewFrom,
@@ -94,6 +94,6 @@ public class ViewUtils {
 
 	@Deprecated
 	public static void setVisible(View view, boolean visible) {
-		setVisibleOrGone(view, visible);
+		setInvisible(view, !visible);
 	}
 }
