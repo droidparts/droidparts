@@ -68,6 +68,13 @@ public class IntentFactory {
 		return intent;
 	}
 
+	public static Intent getSendSMS(String msg) {
+		Intent intent = new Intent(ACTION_VIEW);
+		intent.setType("vnd.android-dir/mms-sms");
+		intent.putExtra("sms_body", msg);
+		return intent;
+	}
+
 	public static Intent getOpenUrl(String webAddress) {
 		Intent intent = new Intent(ACTION_VIEW, Uri.parse(webAddress));
 		return intent;
