@@ -19,6 +19,7 @@ import static android.content.pm.PackageManager.COMPONENT_ENABLED_STATE_DISABLED
 import static android.content.pm.PackageManager.COMPONENT_ENABLED_STATE_ENABLED;
 import static android.content.pm.PackageManager.DONT_KILL_APP;
 import static android.content.pm.PackageManager.GET_META_DATA;
+import static android.provider.Settings.Secure.ANDROID_ID;
 import static org.droidparts.contract.Constants.BUFFER_SIZE;
 import static org.droidparts.util.io.IOUtils.silentlyClose;
 
@@ -35,6 +36,7 @@ import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.os.Build;
 import android.os.Environment;
+import android.provider.Settings.Secure;
 
 public class AppUtils {
 
@@ -42,6 +44,10 @@ public class AppUtils {
 
 	public AppUtils(Context ctx) {
 		this.ctx = ctx;
+	}
+
+	public String getDeviceId() {
+		return Secure.getString(ctx.getContentResolver(), ANDROID_ID);
 	}
 
 	public String getVersionName() {
