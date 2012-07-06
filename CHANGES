@@ -1,0 +1,7 @@
+0.6-WIP:
+    * 'support-actionbarsherlock' renamed to 'modern' (still relies on ActionBarSherlock).
+	* Added 'legacy' for outdated stuff.
+	* Some classes changed their packages.
+
+0.5 /2012-06-03/:
+    * initial release
