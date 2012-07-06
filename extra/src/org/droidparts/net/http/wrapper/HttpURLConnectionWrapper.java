@@ -15,10 +15,16 @@
  */
 package org.droidparts.net.http.wrapper;
 
+import static org.droidparts.util.Strings.isEmpty;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.Authenticator;
 import java.net.HttpURLConnection;
+import java.net.InetSocketAddress;
+import java.net.PasswordAuthentication;
+import java.net.Proxy;
 import java.net.URL;
 
 import org.droidparts.net.http.HTTPException;
@@ -33,6 +39,9 @@ public class HttpURLConnectionWrapper extends HttpClientWrapper {
 	public static final String PUT = "PUT";
 	public static final String POST = "POST";
 	public static final String DELETE = "DELETE";
+
+	private Proxy proxy;
+	private Authenticator auth;
 
 	// ICS+
 	public static void setHttpResponseCacheEnabled(Context ctx, boolean enabled) {
@@ -59,21 +68,38 @@ public class HttpURLConnectionWrapper extends HttpClientWrapper {
 	}
 
 	@Override
-	public void setProxy(String proxy, String username, String password) {
-		// TODO
-
+	protected void setProxy(String protocol, String host, int port,
+			String user, String password) {
+		proxy = new Proxy(Proxy.Type.HTTP, new InetSocketAddress(host, port));
+		if (!isEmpty(user) && !isEmpty(password)) {
+			// FIXME
+			authenticateBasic(user, password);
+		}
 	}
 
 	@Override
-	public void authenticateBasic(String username, String password) {
-		// TODO
+	public void authenticateBasic(final String username, final String password) {
+		auth = new Authenticator() {
+			protected PasswordAuthentication getPasswordAuthentication() {
+				return new PasswordAuthentication(username,
+						password.toCharArray());
+			}
+		};
 	}
 
 	public HttpURLConnection getConnectedHttpURLConnection(String urlStr,
 			String requestMethod) throws HTTPException {
 		try {
 			URL url = new URL(urlStr);
-			HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+			if (auth != null) {
+				Authenticator.setDefault(auth);
+			}
+			HttpURLConnection conn;
+			if (proxy != null) {
+				conn = (HttpURLConnection) url.openConnection(proxy);
+			} else {
+				conn = (HttpURLConnection) url.openConnection();
+			}
 			for (String name : headers.keySet()) {
 				conn.setRequestProperty(name, headers.get(name));
 			}
@@ -93,6 +119,10 @@ public class HttpURLConnectionWrapper extends HttpClientWrapper {
 			return conn;
 		} catch (IOException e) {
 			throw new HTTPException(e);
+		} finally {
+			if (auth != null) {
+				Authenticator.setDefault(null);
+			}
 		}
 	}
 

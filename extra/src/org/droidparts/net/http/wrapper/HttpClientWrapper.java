@@ -15,6 +15,8 @@
  */
 package org.droidparts.net.http.wrapper;
 
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.HashMap;
 
 import android.os.Build;
@@ -40,7 +42,20 @@ public abstract class HttpClientWrapper {
 		this.headers.putAll(headers);
 	}
 
-	public abstract void setProxy(String proxy, String username, String password);
+	public abstract void authenticateBasic(String user, String password);
 
-	public abstract void authenticateBasic(String username, String password);
+	public final void setProxy(String proxy, String username, String password) {
+		URL proxyUrl;
+		try {
+			proxyUrl = new URL(proxy);
+		} catch (MalformedURLException e) {
+			throw new IllegalArgumentException(e);
+		}
+		setProxy(proxyUrl.getProtocol(), proxyUrl.getHost(),
+				proxyUrl.getPort(), username, password);
+	}
+
+	protected abstract void setProxy(String protocol, String host, int port,
+			String user, String password);
+
 }

@@ -23,8 +23,6 @@ import static org.droidparts.contract.Constants.BUFFER_SIZE;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.InflaterInputStream;
 
@@ -46,6 +44,9 @@ import org.droidparts.util.io.IOUtils;
 // For API < 10
 public class DefaultHttpClientWrapper extends HttpClientWrapper {
 
+	// TODO tweak to resemble
+	// http://developer.android.com/reference/android/net/http/AndroidHttpClient.html
+
 	private final DefaultHttpClient httpClient;
 
 	public DefaultHttpClientWrapper(String userAgent) {
@@ -62,26 +63,17 @@ public class DefaultHttpClientWrapper extends HttpClientWrapper {
 	}
 
 	@Override
-	public void setProxy(String proxyUrl, String proxyUser, String proxyPassword) {
-		URL proxy;
-		try {
-			proxy = new URL(proxyUrl);
-		} catch (MalformedURLException e) {
-			throw new IllegalArgumentException(e);
-		}
-		HttpHost proxyHost = new HttpHost(proxy.getHost(), proxy.getPort(),
-				proxy.getProtocol());
+	protected void setProxy(String protocol, String host, int port,
+			String user, String password) {
+		HttpHost proxyHost = new HttpHost(host, port, protocol);
 		httpClient.getParams().setParameter(DEFAULT_PROXY, proxyHost);
-		if (!isEmpty(proxyUser) && !isEmpty(proxyPassword)) {
-			AuthScope authScope = new AuthScope(proxy.getHost(),
-					proxy.getPort());
+		if (!isEmpty(user) && !isEmpty(password)) {
+			AuthScope authScope = new AuthScope(host, port);
 			UsernamePasswordCredentials credentials = new UsernamePasswordCredentials(
-					proxyUser, proxyPassword);
+					user, password);
 			httpClient.getCredentialsProvider().setCredentials(authScope,
 					credentials);
 		}
-		// TODO tweak to resemble
-		// http://developer.android.com/reference/android/net/http/AndroidHttpClient.html
 	}
 
 	@Override
