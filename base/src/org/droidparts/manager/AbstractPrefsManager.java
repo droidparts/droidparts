@@ -55,14 +55,15 @@ public abstract class AbstractPrefsManager {
 
 	private void init(int newVersion) {
 		int oldVersion = prefs.getInt(VERSION, -1);
-		if (oldVersion != -1 && oldVersion != newVersion) {
+		if (oldVersion != newVersion) {
 			onUpgrade(prefs, oldVersion, newVersion);
+			saveInt(VERSION, newVersion);
 		}
 	}
 
 	protected void onUpgrade(SharedPreferences prefs, int oldVersion,
 			int newVersion) {
-		prefs.edit().clear().putInt(VERSION, newVersion).commit();
+		prefs.edit().clear().commit();
 	}
 
 	// shortcuts
