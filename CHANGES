@@ -1,7 +1,11 @@
-0.6-WIP:
+0.6 /2012-07-20/:
     * 'support-actionbarsherlock' renamed to 'modern' (still relies on ActionBarSherlock).
-	* Added 'legacy' for outdated stuff.
-	* Some classes changed their packages.
+    * Added 'legacy' for outdated stuff.
+    * Some classes changed their packages.
+    * ORM is taught to persist arrays. 
+    * Improved ImageAttacher, now with cross fade.
+    * RESTClient uses HttpURLConnection & caching on newer Androids.
+    * Lots of minor improvements & fixes.
 
 0.5 /2012-06-03/:
-    * initial release
+    * Initial release.
