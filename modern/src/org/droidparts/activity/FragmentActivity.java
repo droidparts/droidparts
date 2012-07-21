@@ -15,6 +15,7 @@
  */
 package org.droidparts.activity;
 
+import org.droidparts.R;
 import org.droidparts.contract.Injected;
 import org.droidparts.inject.FragmentsInjector;
 
@@ -22,16 +23,17 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.view.LayoutInflater;
+import android.view.View;
 
 import com.actionbarsherlock.app.SherlockFragmentActivity;
-import com.actionbarsherlock.internal.widget.IcsProgressBar;
 import com.actionbarsherlock.view.MenuItem;
 
 public abstract class FragmentActivity extends SherlockFragmentActivity
 		implements Injected {
 
 	private MenuItem reloadMenuItem;
-	private IcsProgressBar reloadingSpinner;
+	private View loadingIndicator;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -47,7 +49,7 @@ public abstract class FragmentActivity extends SherlockFragmentActivity
 	@Override
 	public void setSupportProgressBarIndeterminateVisibility(boolean visible) {
 		if (reloadMenuItem != null) {
-			reloadMenuItem.setActionView(visible ? reloadingSpinner : null);
+			reloadMenuItem.setActionView(visible ? loadingIndicator : null);
 		} else {
 			super.setSupportProgressBarIndeterminateVisibility(visible);
 		}
@@ -55,9 +57,9 @@ public abstract class FragmentActivity extends SherlockFragmentActivity
 
 	public void setReloadMenuItem(MenuItem menuItem) {
 		this.reloadMenuItem = menuItem;
-		if (menuItem != null && reloadingSpinner == null) {
-			reloadingSpinner = new IcsProgressBar(this);
-			reloadingSpinner.setIndeterminate(true);
+		if (menuItem != null && loadingIndicator == null) {
+			loadingIndicator = LayoutInflater.from(this).inflate(
+					R.layout.view_ab_loading_indicator, null);
 		}
 	}
 
