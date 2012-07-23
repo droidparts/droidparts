@@ -32,11 +32,11 @@ public class ArrayAdapter<T> extends android.widget.ArrayAdapter<T> {
 		this(ctx, android.R.layout.simple_list_item_1, objects);
 	}
 
-	protected ArrayAdapter(Context ctx, int rowResId, List<T> objects) {
+	public ArrayAdapter(Context ctx, int rowResId, List<T> objects) {
 		this(ctx, rowResId, android.R.id.text1, objects);
 	}
 
-	protected ArrayAdapter(Context ctx, int rowResId, int textViewResId,
+	public ArrayAdapter(Context ctx, int rowResId, int textViewResId,
 			List<T> objects) {
 		super(ctx, rowResId, textViewResId, objects);
 		Injector.get().inject(ctx, this);
