@@ -15,7 +15,7 @@
  */
 package org.droidparts.util;
 
-public class Arrays {
+public class Arrays2 {
 
 	public static Integer[] toObject(int[] arr) {
 		Integer[] arr2 = new Integer[arr.length];
@@ -33,7 +33,7 @@ public class Arrays {
 		return arr2;
 	}
 
-	protected Arrays() {
+	protected Arrays2() {
 	}
 
 }
