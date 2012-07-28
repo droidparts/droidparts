@@ -35,7 +35,6 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.Drawable;
-import android.os.Handler;
 import android.util.Pair;
 import android.view.View;
 import android.widget.ImageView;
@@ -45,7 +44,6 @@ public class ImageAttacher {
 	private final BitmapCacher bitmapCacher;
 	private final ExecutorService executorService;
 	private final RESTClient restClient;
-	private final Handler handler;
 
 	private final ConcurrentHashMap<ImageView, Pair<String, View>> data = new ConcurrentHashMap<ImageView, Pair<String, View>>();
 
@@ -69,7 +67,6 @@ public class ImageAttacher {
 		this.bitmapCacher = bitmapCacher;
 		this.executorService = executorService;
 		this.restClient = restClient;
-		handler = new Handler();
 	}
 
 	public void setCrossFadeDuration(int millisec) {
@@ -137,8 +134,7 @@ public class ImageAttacher {
 					Bitmap bm = getCachedOrFetchAndCache(fileUrl);
 					if (bm != null) {
 						bm = processBitmapBeforeAttaching(view, fileUrl, bm);
-						handler.post(new AttachRunnable(placeholderView, view,
-								bm));
+						view.post(new AttachRunnable(placeholderView, view, bm));
 					}
 				}
 			}
