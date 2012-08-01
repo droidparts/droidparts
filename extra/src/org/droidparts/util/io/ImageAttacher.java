@@ -36,6 +36,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.Drawable;
 import android.os.Handler;
+import android.os.Looper;
 import android.util.Pair;
 import android.view.View;
 import android.widget.ImageView;
@@ -69,7 +70,7 @@ public class ImageAttacher {
 		this.bitmapCacher = bitmapCacher;
 		this.executorService = executorService;
 		this.restClient = restClient;
-		handler = new Handler();
+		handler = new Handler(Looper.getMainLooper());
 	}
 
 	public void setCrossFadeDuration(int millisec) {
@@ -141,7 +142,7 @@ public class ImageAttacher {
 								view, bm);
 						boolean success = handler.post(r);
 						if (!success) {
-							handler = new Handler();
+							handler = new Handler(Looper.getMainLooper());
 							success = handler.post(r);
 						}
 					}
