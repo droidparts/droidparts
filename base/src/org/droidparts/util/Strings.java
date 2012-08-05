@@ -15,6 +15,8 @@
  */
 package org.droidparts.util;
 
+import java.util.Collection;
+
 public class Strings {
 
 	public static boolean isNotEmpty(CharSequence str) {
@@ -25,8 +27,13 @@ public class Strings {
 		return str == null || str.length() == 0;
 	}
 
-	public static String join(Object[] arr, String separator,
+	public static <T> String join(Collection<T> coll, String separator,
 			String terminator) {
+		return Strings.join(coll.toArray(new Object[coll.size()]), separator,
+				terminator);
+	}
+
+	public static String join(Object[] arr, String separator, String terminator) {
 		StringBuilder sb = new StringBuilder(arr.length * 2);
 		for (int i = 0; i < arr.length; i++) {
 			sb.append(arr[i]);
