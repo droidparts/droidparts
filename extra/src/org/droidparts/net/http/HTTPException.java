@@ -28,8 +28,8 @@ public class HTTPException extends Exception {
 		super(cause);
 	}
 
-	public HTTPException(int respCode, String respMsg) {
-		super(respMsg);
+	public HTTPException(int respCode, String respBody) {
+		super(respBody);
 		this.respCode = respCode;
 	}
 
@@ -41,16 +41,17 @@ public class HTTPException extends Exception {
 	}
 
 	@Override
-	public String getMessage() {
-		StringBuilder sb = new StringBuilder();
+	public String toString() {
 		if (respCode != -1) {
+			StringBuilder sb = new StringBuilder();
 			sb.append("Response code: ");
 			sb.append(respCode);
-			sb.append(", ");
+			sb.append(", body: ");
+			sb.append(getMessage());
+			return sb.toString();
+		} else {
+			return super.toString();
 		}
-		sb.append("Message: ");
-		sb.append(super.getMessage());
-		return sb.toString();
 	}
 
 }
