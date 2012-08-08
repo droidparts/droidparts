@@ -16,9 +16,9 @@
 package org.droidparts.activity;
 
 import org.droidparts.R;
-import org.droidparts.fragment.Fragment;
 
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 
 public abstract class SingleFragmentActivity<F extends Fragment> extends
