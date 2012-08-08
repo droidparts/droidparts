@@ -26,8 +26,8 @@ public class Text1Tag extends AdapterTag {
 	@InjectView(R.id.text1)
 	public TextView text1;
 
-	public Text1Tag(View parent) {
-		super(parent);
+	public Text1Tag(View view) {
+		super(view);
 	}
 
 }

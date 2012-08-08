@@ -26,8 +26,8 @@ public class IconText2Tag extends Text2Tag {
 	@InjectView(R.id.icon)
 	public ImageView icon;
 
-	public IconText2Tag(View parent) {
-		super(parent);
+	public IconText2Tag(View view) {
+		super(view);
 	}
 
 }

@@ -18,6 +18,10 @@ package org.droidparts.fragment;
 import org.droidparts.inject.FragmentsInjector;
 
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -37,6 +41,17 @@ public class DialogFragment extends SherlockDialogFragment {
 	public View onCreateView(Bundle savedInstanceState,
 			LayoutInflater inflater, ViewGroup container) {
 		return super.onCreateView(inflater, container, savedInstanceState);
+	}
+
+	public void show(FragmentActivity activity) {
+		String tag = getClass().getName();
+		FragmentManager fm = activity.getSupportFragmentManager();
+		FragmentTransaction ft = fm.beginTransaction();
+		Fragment f = fm.findFragmentByTag(tag);
+		if (f != null) {
+			ft.remove(f);
+		}
+		show(ft, tag);
 	}
 
 }
