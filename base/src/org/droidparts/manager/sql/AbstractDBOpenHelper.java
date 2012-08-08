@@ -129,7 +129,7 @@ public abstract class AbstractDBOpenHelper extends SQLiteOpenHelper {
 		EntityField[] dbFields = proc.getModelClassFields();
 		StringBuilder sb = new StringBuilder();
 		sb.append(CREATE_TABLE + proc.getModelClassName() + OPENING_BRACE);
-		sb.append(PK + SEPARATOR);
+		sb.append(PK);
 		for (int i = 0; i < dbFields.length; i++) {
 			EntityField dbField = dbFields[i];
 			if (Column.ID.equals(dbField.columnName)) {
@@ -137,6 +137,7 @@ public abstract class AbstractDBOpenHelper extends SQLiteOpenHelper {
 				continue;
 			}
 			String columnType = getColumnType(dbField.fieldClass);
+			sb.append(SEPARATOR);
 			sb.append(dbField.columnName);
 			sb.append(" ");
 			sb.append(columnType);
@@ -147,9 +148,6 @@ public abstract class AbstractDBOpenHelper extends SQLiteOpenHelper {
 			if (dbField.columnUnique) {
 				sb.append(" ");
 				sb.append(UNIQUE);
-			}
-			if (i < dbFields.length - 1) {
-				sb.append(SEPARATOR);
 			}
 		}
 		sb.append(CLOSING_BRACE);
