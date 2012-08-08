@@ -95,7 +95,8 @@ public class DefaultHttpClientWrapper extends HttpClientWrapper {
 			int respCode = resp.getStatusLine().getStatusCode();
 			if (respCode >= 400) {
 				consumeResponse(resp);
-				throw new HTTPException(respCode);
+				// TODO read response body
+				throw new HTTPException(respCode, null);
 			}
 			return resp;
 		} catch (IOException e) {

@@ -114,7 +114,8 @@ public class HttpURLConnectionWrapper extends HttpClientWrapper {
 			int respCode = conn.getResponseCode();
 			if (respCode >= 400) {
 				conn.disconnect();
-				throw new HTTPException(respCode);
+				// TODO read response body
+				throw new HTTPException(respCode, null);
 			}
 			return conn;
 		} catch (IOException e) {

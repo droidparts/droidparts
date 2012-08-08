@@ -16,49 +16,41 @@
 
 package org.droidparts.net.http;
 
-import static org.droidparts.util.Strings.isEmpty;
-
 import org.apache.http.HttpStatus;
 
 public class HTTPException extends Exception {
 
 	private static final long serialVersionUID = 1L;
 
-	private final int code;
-
-	public HTTPException(int code) {
-		this.code = code;
-	}
+	private int respCode = -1;
 
 	public HTTPException(Throwable cause) {
 		super(cause);
-		code = -1;
 	}
 
-	public HTTPException(String message) {
-		super(message);
-		code = -1;
+	public HTTPException(int respCode, String respMsg) {
+		super(respMsg);
+		this.respCode = respCode;
 	}
 
 	/**
 	 * @see HttpStatus
 	 */
-	public int getCode() {
-		return code;
+	public int getResponseCode() {
+		return respCode;
 	}
 
 	@Override
 	public String getMessage() {
-		String superMsg = super.getMessage();
-		if (isEmpty(superMsg)) {
-			return "HTTP response code: " + code;
-		} else {
-			return superMsg;
+		StringBuilder sb = new StringBuilder();
+		if (respCode != -1) {
+			sb.append("Response code: ");
+			sb.append(respCode);
+			sb.append(", ");
 		}
+		sb.append("Message: ");
+		sb.append(super.getMessage());
+		return sb.toString();
 	}
 
-	@Override
-	public String toString() {
-		return getMessage();
-	}
 }
