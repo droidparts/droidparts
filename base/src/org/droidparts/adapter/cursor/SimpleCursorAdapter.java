@@ -29,11 +29,11 @@ public abstract class SimpleCursorAdapter<Model extends Entity> extends
 
 	public SimpleCursorAdapter(Activity activity,
 			EntityManager<Model> entityManager) {
-		this(activity, entityManager.list(), entityManager);
+		this(activity, entityManager, entityManager.list());
 	}
 
-	public SimpleCursorAdapter(Activity activity, Cursor cursor,
-			EntityManager<Model> entityManager) {
+	public SimpleCursorAdapter(Activity activity,
+			EntityManager<Model> entityManager, Cursor cursor) {
 		super(activity, cursor);
 		this.entityManager = entityManager;
 	}
@@ -72,6 +72,13 @@ public abstract class SimpleCursorAdapter<Model extends Entity> extends
 			requery();
 		}
 		return success;
+	}
+
+	//
+	@Deprecated
+	public SimpleCursorAdapter(Activity activity, Cursor cursor,
+			EntityManager<Model> entityManager) {
+		this(activity, entityManager, cursor);
 	}
 
 }
