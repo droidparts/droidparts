@@ -19,7 +19,7 @@ import static org.droidparts.contract.DB.Column.ID;
 
 import org.droidparts.annotation.sql.Column;
 
-public class Entity extends Model {
+public abstract class Entity extends Model {
 	private static final long serialVersionUID = 1L;
 
 	public Entity() {

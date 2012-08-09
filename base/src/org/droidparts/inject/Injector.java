@@ -28,20 +28,15 @@ import android.view.View;
  */
 public class Injector {
 
-	private static Injector injector;
 	private static Context ctx;
-
 	private final InjectorDelegate delegate;
 
+	static class Holder {
+		static final Injector INJECTOR = new Injector(new InjectorDelegate());
+	}
+
 	public static Injector get() {
-		if (injector == null) {
-			synchronized (Injector.class) {
-				if (injector == null) {
-					injector = new Injector(new InjectorDelegate());
-				}
-			}
-		}
-		return injector;
+		return Holder.INJECTOR;
 	}
 
 	public static Context getApplicationContext() {

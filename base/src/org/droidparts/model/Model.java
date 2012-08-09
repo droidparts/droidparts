@@ -19,7 +19,7 @@ import java.io.Serializable;
 
 import org.droidparts.util.inner.ModelUtils;
 
-public class Model implements Serializable {
+public abstract class Model implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	public Model() {
