@@ -31,7 +31,7 @@ import com.actionbarsherlock.app.ActionBar.TabListener;
 
 public abstract class TabbedFragmentActivity extends FragmentActivity {
 
-	private static final String TAB = "tab";
+	private static final String CURR_TAB = "_curr_tab";
 
 	private final ArrayList<int[]> fragmentsOnTab = new ArrayList<int[]>();
 
@@ -67,13 +67,13 @@ public abstract class TabbedFragmentActivity extends FragmentActivity {
 	@Override
 	protected void onSaveInstanceState(Bundle outState) {
 		super.onSaveInstanceState(outState);
-		outState.putInt(TAB, getCurrentTab());
+		outState.putInt(CURR_TAB, getCurrentTab());
 	}
 
 	@Override
 	protected void onRestoreInstanceState(Bundle savedInstanceState) {
 		super.onRestoreInstanceState(savedInstanceState);
-		setCurrentTab(savedInstanceState.getInt(TAB, 0));
+		setCurrentTab(savedInstanceState.getInt(CURR_TAB, 0));
 	}
 
 	public void addTab(ActionBar.Tab tab, int[] fragmentIds) {

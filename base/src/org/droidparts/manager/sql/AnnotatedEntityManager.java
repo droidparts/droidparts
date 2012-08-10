@@ -35,6 +35,8 @@ import static org.droidparts.reflection.util.TypeHelper.isLong;
 import static org.droidparts.reflection.util.TypeHelper.isShort;
 import static org.droidparts.reflection.util.TypeHelper.isString;
 import static org.droidparts.reflection.util.TypeHelper.isUUID;
+import static org.droidparts.reflection.util.TypeHelper.toObjectArr;
+import static org.droidparts.reflection.util.TypeHelper.toTypeArr;
 
 import java.io.ByteArrayOutputStream;
 import java.lang.reflect.Field;
@@ -280,110 +282,6 @@ public class AnnotatedEntityManager<Model extends Entity> extends
 		AnnotatedEntityManager<Entity> manager = new AnnotatedEntityManager<Entity>(
 				ctx, (Class<? extends Entity>) cls);
 		return manager;
-	}
-
-	//
-
-	private Object[] toObjectArr(Class<?> valueCls, Object value) {
-		// as autoboxing won't work for Arrays.asList(int[] value)
-		Object[] arr;
-		if (valueCls == boolean[].class) {
-			boolean[] tArr = (boolean[]) value;
-			arr = new Object[tArr.length];
-			for (int i = 0; i < arr.length; i++) {
-				arr[i] = tArr[i];
-			}
-		} else if (valueCls == byte[].class) {
-			byte[] tArr = (byte[]) value;
-			arr = new Object[tArr.length];
-			for (int i = 0; i < arr.length; i++) {
-				arr[i] = tArr[i];
-			}
-		} else if (valueCls == double[].class) {
-			Arrays.asList(value);
-			double[] tArr = (double[]) value;
-			arr = new Object[tArr.length];
-			for (int i = 0; i < arr.length; i++) {
-				arr[i] = tArr[i];
-			}
-		} else if (valueCls == float[].class) {
-			float[] tArr = (float[]) value;
-			arr = new Object[tArr.length];
-			for (int i = 0; i < arr.length; i++) {
-				arr[i] = tArr[i];
-			}
-		} else if (valueCls == int[].class) {
-			int[] tArr = (int[]) value;
-			arr = new Object[tArr.length];
-			for (int i = 0; i < arr.length; i++) {
-				arr[i] = tArr[i];
-			}
-		} else if (valueCls == long[].class) {
-			long[] tArr = (long[]) value;
-			arr = new Object[tArr.length];
-			for (int i = 0; i < arr.length; i++) {
-				arr[i] = tArr[i];
-			}
-		} else if (valueCls == short[].class) {
-			short[] tArr = (short[]) value;
-			arr = new Object[tArr.length];
-			for (int i = 0; i < arr.length; i++) {
-				arr[i] = tArr[i];
-			}
-		} else {
-			// XXX
-			arr = (Object[]) value;
-		}
-		return arr;
-	}
-
-	private Object toTypeArr(Class<?> valueCls, String[] arr) {
-		if (valueCls == boolean[].class) {
-			boolean[] tArr = new boolean[arr.length];
-			for (int i = 0; i < arr.length; i++) {
-				tArr[i] = Boolean.valueOf(arr[i]);
-			}
-			return tArr;
-		} else if (valueCls == byte[].class) {
-			byte[] tArr = new byte[arr.length];
-			for (int i = 0; i < arr.length; i++) {
-				tArr[i] = Byte.valueOf(arr[i]);
-			}
-			return tArr;
-		} else if (valueCls == double[].class) {
-			double[] tArr = new double[arr.length];
-			for (int i = 0; i < arr.length; i++) {
-				tArr[i] = Double.valueOf(arr[i]);
-			}
-			return tArr;
-		} else if (valueCls == float[].class) {
-			float[] tArr = new float[arr.length];
-			for (int i = 0; i < arr.length; i++) {
-				tArr[i] = Float.valueOf(arr[i]);
-			}
-			return tArr;
-		} else if (valueCls == int[].class) {
-			int[] tArr = new int[arr.length];
-			for (int i = 0; i < arr.length; i++) {
-				tArr[i] = Integer.valueOf(arr[i]);
-			}
-			return tArr;
-		} else if (valueCls == long[].class) {
-			long[] tArr = new long[arr.length];
-			for (int i = 0; i < arr.length; i++) {
-				tArr[i] = Long.valueOf(arr[i]);
-			}
-			return tArr;
-		} else if (valueCls == short[].class) {
-			short[] tArr = new short[arr.length];
-			for (int i = 0; i < arr.length; i++) {
-				tArr[i] = Short.valueOf(arr[i]);
-			}
-			return tArr;
-		} else {
-			// XXX
-			return arr;
-		}
 	}
 
 }
