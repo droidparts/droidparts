@@ -31,6 +31,8 @@ import com.actionbarsherlock.app.ActionBar.TabListener;
 
 public abstract class TabbedFragmentActivity extends FragmentActivity {
 
+	private static final String TAB = "tab";
+
 	private final ArrayList<int[]> fragmentsOnTab = new ArrayList<int[]>();
 
 	private final HashSet<Integer> manuallyHiddenFragments = new HashSet<Integer>();
@@ -60,6 +62,18 @@ public abstract class TabbedFragmentActivity extends FragmentActivity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		getSupportActionBar().setNavigationMode(NAVIGATION_MODE_TABS);
+	}
+
+	@Override
+	protected void onSaveInstanceState(Bundle outState) {
+		super.onSaveInstanceState(outState);
+		outState.putInt(TAB, getCurrentTab());
+	}
+
+	@Override
+	protected void onRestoreInstanceState(Bundle savedInstanceState) {
+		super.onRestoreInstanceState(savedInstanceState);
+		setCurrentTab(savedInstanceState.getInt(TAB, 0));
 	}
 
 	public void addTab(ActionBar.Tab tab, int[] fragmentIds) {
