@@ -90,7 +90,7 @@ public class JSONSerializer<TypeFrom extends Model> implements
 				Field f = getField(model.getClass(), jsonField.fieldName);
 				try {
 					val = readFromJSON(jsonField.fieldClass,
-							jsonField.fieldClassGenericArgs, model, val);
+							jsonField.fieldGenericArgs, model, val);
 				} catch (Exception e) {
 					throw new JSONException(e.getMessage());
 				}

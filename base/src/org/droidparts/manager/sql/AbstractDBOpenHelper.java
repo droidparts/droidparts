@@ -33,6 +33,7 @@ import static org.droidparts.reflection.util.TypeHelper.isArray;
 import static org.droidparts.reflection.util.TypeHelper.isBitmap;
 import static org.droidparts.reflection.util.TypeHelper.isBoolean;
 import static org.droidparts.reflection.util.TypeHelper.isByteArray;
+import static org.droidparts.reflection.util.TypeHelper.isCollection;
 import static org.droidparts.reflection.util.TypeHelper.isDouble;
 import static org.droidparts.reflection.util.TypeHelper.isEntity;
 import static org.droidparts.reflection.util.TypeHelper.isEnum;
@@ -163,19 +164,14 @@ public abstract class AbstractDBOpenHelper extends SQLiteOpenHelper {
 			return TEXT;
 		} else if (isByteArray(cls) || isBitmap(cls)) {
 			return BLOB;
+		} else if (isArray(cls) || isCollection(cls)) {
+			return TEXT;
 		} else if (isEntity(cls)) {
 			return INTEGER;
-		} else if (isPrimitiveArray(cls)) {
-			return TEXT;
 		} else {
 			// persist any other type as blob
 			return BLOB;
 		}
-	}
-
-	boolean isPrimitiveArray(Class<?> cls) {
-		// TODO
-		return isArray(cls);
 	}
 
 }

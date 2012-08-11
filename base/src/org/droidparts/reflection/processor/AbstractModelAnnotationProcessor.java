@@ -15,15 +15,14 @@
  */
 package org.droidparts.reflection.processor;
 
+import static org.droidparts.reflection.util.TypeHelper.getGenericArgs;
+
 import java.lang.reflect.Field;
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
 import java.util.List;
 
 import org.droidparts.model.Model;
 import org.droidparts.reflection.model.AbstractModelField;
 import org.droidparts.reflection.util.ReflectionUtils;
-import org.droidparts.util.L;
 
 public abstract class AbstractModelAnnotationProcessor<ModelFieldType> {
 
@@ -61,20 +60,6 @@ public abstract class AbstractModelAnnotationProcessor<ModelFieldType> {
 	protected final void fillField(Field source, AbstractModelField target) {
 		target.fieldName = source.getName();
 		target.fieldClass = source.getType();
-		Type genericType = source.getGenericType();
-		if (genericType instanceof ParameterizedType) {
-			Type[] arr = ((ParameterizedType) genericType)
-					.getActualTypeArguments();
-			target.fieldClassGenericArgs = new Class<?>[arr.length];
-			for (int i = 0; i < arr.length; i++) {
-				String[] parts = arr[i].toString().split(" ");
-				String className = parts[parts.length - 1];
-				try {
-					target.fieldClassGenericArgs[i] = Class.forName(className);
-				} catch (ClassNotFoundException e) {
-					L.e(e);
-				}
-			}
-		}
+		target.fieldGenericArgs = getGenericArgs(source);
 	}
 }

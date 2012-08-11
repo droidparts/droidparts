@@ -26,6 +26,7 @@ import static org.droidparts.reflection.util.TypeHelper.isBitmap;
 import static org.droidparts.reflection.util.TypeHelper.isBoolean;
 import static org.droidparts.reflection.util.TypeHelper.isByte;
 import static org.droidparts.reflection.util.TypeHelper.isByteArray;
+import static org.droidparts.reflection.util.TypeHelper.isCollection;
 import static org.droidparts.reflection.util.TypeHelper.isDouble;
 import static org.droidparts.reflection.util.TypeHelper.isEntity;
 import static org.droidparts.reflection.util.TypeHelper.isEnum;
@@ -41,6 +42,7 @@ import static org.droidparts.reflection.util.TypeHelper.toTypeArr;
 import java.io.ByteArrayOutputStream;
 import java.lang.reflect.Field;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.UUID;
 
@@ -223,8 +225,15 @@ public class AnnotatedEntityManager<Model extends Entity> extends
 		} else if (isEntity(valueCls)) {
 			Long id = value != null ? ((Entity) value).id : null;
 			cv.put(key, id);
-		} else if (isArray(valueCls)) {
-			Object[] arr = toObjectArr(valueCls, value);
+		} else if (isArray(valueCls) || isCollection(valueCls)) {
+			Object[] arr;
+			if (isArray(valueCls)) {
+				arr = toObjectArr(valueCls, value);
+			} else {
+				@SuppressWarnings("unchecked")
+				Collection<Object> coll = (Collection<Object>) value;
+				arr = coll.toArray(new Object[coll.size()]);
+			}
 			if (arr != null) {
 				String val = Strings.join(arr, SEP, null);
 				cv.put(key, val);
@@ -268,10 +277,15 @@ public class AnnotatedEntityManager<Model extends Entity> extends
 			Model model = instantiate(fieldCls);
 			model.id = id;
 			return model;
-		} else if (isArray(fieldCls)) {
+		} else if (isArray(fieldCls) || isCollection(fieldCls)) {
 			String str = cursor.getString(columnIndex);
 			String[] parts = str.split("\\" + SEP);
-			return toTypeArr(fieldCls, parts);
+			if (isArray(fieldCls)) {
+				return toTypeArr(fieldCls, parts);
+			} else {
+				// TODO
+				return null;
+			}
 		} else {
 			return subReadFromCursor(cursor, columnIndex, fieldCls);
 		}

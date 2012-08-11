@@ -15,12 +15,15 @@
  */
 package org.droidparts.reflection.util;
 
-import java.util.Arrays;
+import java.lang.reflect.Field;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 import java.util.Collection;
 import java.util.UUID;
 
 import org.droidparts.model.Entity;
 import org.droidparts.model.Model;
+import org.droidparts.util.L;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -72,12 +75,13 @@ public final class TypeHelper {
 		return UUID.class.isAssignableFrom(cls);
 	}
 
-	public static boolean isArray(Class<?> cls) {
-		return cls.isArray();
-	}
-
+	//
 	public static boolean isByteArray(Class<?> cls) {
 		return cls == byte[].class;
+	}
+
+	public static boolean isArray(Class<?> cls) {
+		return cls.isArray();
 	}
 
 	public static boolean isCollection(Class<?> cls) {
@@ -130,7 +134,6 @@ public final class TypeHelper {
 				arr[i] = tArr[i];
 			}
 		} else if (valueCls == double[].class) {
-			Arrays.asList(value);
 			double[] tArr = (double[]) value;
 			arr = new Object[tArr.length];
 			for (int i = 0; i < arr.length; i++) {
@@ -213,6 +216,27 @@ public final class TypeHelper {
 		} else {
 			// XXX
 			return arr;
+		}
+	}
+
+	public static Class<?>[] getGenericArgs(Field field) {
+		Type genericType = field.getGenericType();
+		if (genericType instanceof ParameterizedType) {
+			Type[] typeArr = ((ParameterizedType) genericType)
+					.getActualTypeArguments();
+			Class<?>[] classArr = new Class<?>[typeArr.length];
+			for (int i = 0; i < typeArr.length; i++) {
+				String[] parts = typeArr[i].toString().split(" ");
+				String className = parts[parts.length - 1];
+				try {
+					classArr[i] = Class.forName(className);
+				} catch (ClassNotFoundException e) {
+					L.w(e);
+				}
+			}
+			return classArr;
+		} else {
+			return new Class<?>[0];
 		}
 	}
 
