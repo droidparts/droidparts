@@ -19,6 +19,6 @@ public abstract class AbstractModelField {
 
 	public String fieldName;
 	public Class<?> fieldClass;
-	public Class<?>[] fieldGenericArgs;
+	public Class<?> fieldGenericArg;
 
 }

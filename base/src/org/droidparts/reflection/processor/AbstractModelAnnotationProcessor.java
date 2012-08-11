@@ -15,7 +15,7 @@
  */
 package org.droidparts.reflection.processor;
 
-import static org.droidparts.reflection.util.TypeHelper.getGenericArgs;
+import static org.droidparts.reflection.util.TypeHelper.getFieldGenericArgs;
 
 import java.lang.reflect.Field;
 import java.util.List;
@@ -60,6 +60,9 @@ public abstract class AbstractModelAnnotationProcessor<ModelFieldType> {
 	protected final void fillField(Field source, AbstractModelField target) {
 		target.fieldName = source.getName();
 		target.fieldClass = source.getType();
-		target.fieldGenericArgs = getGenericArgs(source);
+		Class<?>[] genericArgs = getFieldGenericArgs(source);
+		if (genericArgs.length > 0) {
+			target.fieldGenericArg = genericArgs[0];
+		}
 	}
 }

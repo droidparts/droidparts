@@ -93,7 +93,7 @@ public class JSONSerializer<TypeFrom extends Model> implements
 				Field f = getField(model.getClass(), jsonField.fieldName);
 				try {
 					val = readFromJSON(jsonField.fieldClass,
-							jsonField.fieldGenericArgs, model, val);
+							jsonField.fieldGenericArg, model, val);
 				} catch (Exception e) {
 					throw new JSONException(getStackTraceString(e));
 				}
@@ -173,7 +173,7 @@ public class JSONSerializer<TypeFrom extends Model> implements
 
 	@SuppressWarnings("rawtypes")
 	private Object readFromJSON(Class<?> fieldCls,
-			Class<?>[] fieldClassGenericArguments, Object model, Object val)
+			Class<?> fieldClassGenericArg, Object model, Object val)
 			throws Exception {
 		if (isUUID(fieldCls)) {
 			return UUID.fromString((String) val);
@@ -190,7 +190,7 @@ public class JSONSerializer<TypeFrom extends Model> implements
 			Class<?> itemCls;
 			if (isColl) {
 				coll = instantiate(fieldCls);
-				itemCls = fieldClassGenericArguments[0];
+				itemCls = fieldClassGenericArg;
 			} else {
 				itemCls = getArrayType(fieldCls);
 			}

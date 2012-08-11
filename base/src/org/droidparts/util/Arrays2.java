@@ -17,80 +17,24 @@ package org.droidparts.util;
 
 public class Arrays2 {
 
-	public static Boolean[] toObject(boolean[] arr) {
-		Boolean[] arr2 = new Boolean[arr.length];
+	public static byte[] toPrimitive(Byte[] arr) {
+		byte[] arr2 = new byte[arr.length];
 		for (int i = 0; i < arr.length; i++) {
 			arr2[i] = arr[i];
 		}
 		return arr2;
 	}
 
-	public static boolean[] toPrimitive(Boolean[] arr) {
-		boolean[] arr2 = new boolean[arr.length];
+	public static Byte[] toObject(byte[] arr) {
+		Byte[] arr2 = new Byte[arr.length];
 		for (int i = 0; i < arr.length; i++) {
 			arr2[i] = arr[i];
 		}
 		return arr2;
 	}
 
-	public static Double[] toObject(double[] arr) {
-		Double[] arr2 = new Double[arr.length];
-		for (int i = 0; i < arr.length; i++) {
-			arr2[i] = arr[i];
-		}
-		return arr2;
-	}
-
-	public static double[] toPrimitive(Double[] arr) {
-		double[] arr2 = new double[arr.length];
-		for (int i = 0; i < arr.length; i++) {
-			arr2[i] = arr[i];
-		}
-		return arr2;
-	}
-
-	public static Float[] toObject(float[] arr) {
-		Float[] arr2 = new Float[arr.length];
-		for (int i = 0; i < arr.length; i++) {
-			arr2[i] = arr[i];
-		}
-		return arr2;
-	}
-
-	public static float[] toPrimitive(Float[] arr) {
-		float[] arr2 = new float[arr.length];
-		for (int i = 0; i < arr.length; i++) {
-			arr2[i] = arr[i];
-		}
-		return arr2;
-	}
-
-	public static Integer[] toObject(int[] arr) {
-		Integer[] arr2 = new Integer[arr.length];
-		for (int i = 0; i < arr.length; i++) {
-			arr2[i] = arr[i];
-		}
-		return arr2;
-	}
-
-	public static int[] toPrimitive(Integer[] arr) {
-		int[] arr2 = new int[arr.length];
-		for (int i = 0; i < arr.length; i++) {
-			arr2[i] = arr[i];
-		}
-		return arr2;
-	}
-
-	public static Long[] toObject(long[] arr) {
-		Long[] arr2 = new Long[arr.length];
-		for (int i = 0; i < arr.length; i++) {
-			arr2[i] = arr[i];
-		}
-		return arr2;
-	}
-
-	public static long[] toPrimitive(Long[] arr) {
-		long[] arr2 = new long[arr.length];
+	public static short[] toPrimitive(Short[] arr) {
+		short[] arr2 = new short[arr.length];
 		for (int i = 0; i < arr.length; i++) {
 			arr2[i] = arr[i];
 		}
@@ -105,8 +49,96 @@ public class Arrays2 {
 		return arr2;
 	}
 
-	public static short[] toPrimitive(Short[] arr) {
-		short[] arr2 = new short[arr.length];
+	public static int[] toPrimitive(Integer[] arr) {
+		int[] arr2 = new int[arr.length];
+		for (int i = 0; i < arr.length; i++) {
+			arr2[i] = arr[i];
+		}
+		return arr2;
+	}
+
+	public static Integer[] toObject(int[] arr) {
+		Integer[] arr2 = new Integer[arr.length];
+		for (int i = 0; i < arr.length; i++) {
+			arr2[i] = arr[i];
+		}
+		return arr2;
+	}
+
+	public static long[] toPrimitive(Long[] arr) {
+		long[] arr2 = new long[arr.length];
+		for (int i = 0; i < arr.length; i++) {
+			arr2[i] = arr[i];
+		}
+		return arr2;
+	}
+
+	public static Long[] toObject(long[] arr) {
+		Long[] arr2 = new Long[arr.length];
+		for (int i = 0; i < arr.length; i++) {
+			arr2[i] = arr[i];
+		}
+		return arr2;
+	}
+
+	public static float[] toPrimitive(Float[] arr) {
+		float[] arr2 = new float[arr.length];
+		for (int i = 0; i < arr.length; i++) {
+			arr2[i] = arr[i];
+		}
+		return arr2;
+	}
+
+	public static Float[] toObject(float[] arr) {
+		Float[] arr2 = new Float[arr.length];
+		for (int i = 0; i < arr.length; i++) {
+			arr2[i] = arr[i];
+		}
+		return arr2;
+	}
+
+	public static double[] toPrimitive(Double[] arr) {
+		double[] arr2 = new double[arr.length];
+		for (int i = 0; i < arr.length; i++) {
+			arr2[i] = arr[i];
+		}
+		return arr2;
+	}
+
+	public static Double[] toObject(double[] arr) {
+		Double[] arr2 = new Double[arr.length];
+		for (int i = 0; i < arr.length; i++) {
+			arr2[i] = arr[i];
+		}
+		return arr2;
+	}
+
+	public static boolean[] toPrimitive(Boolean[] arr) {
+		boolean[] arr2 = new boolean[arr.length];
+		for (int i = 0; i < arr.length; i++) {
+			arr2[i] = arr[i];
+		}
+		return arr2;
+	}
+
+	public static Boolean[] toObject(boolean[] arr) {
+		Boolean[] arr2 = new Boolean[arr.length];
+		for (int i = 0; i < arr.length; i++) {
+			arr2[i] = arr[i];
+		}
+		return arr2;
+	}
+
+	public static char[] toPrimitive(Character[] arr) {
+		char[] arr2 = new char[arr.length];
+		for (int i = 0; i < arr.length; i++) {
+			arr2[i] = arr[i];
+		}
+		return arr2;
+	}
+
+	public static Character[] toObject(char[] arr) {
+		Character[] arr2 = new Character[arr.length];
 		for (int i = 0; i < arr.length; i++) {
 			arr2[i] = arr[i];
 		}

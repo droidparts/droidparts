@@ -15,6 +15,9 @@
  */
 package org.droidparts.reflection.util;
 
+import static org.droidparts.util.Arrays2.toObject;
+import static org.droidparts.util.Arrays2.toPrimitive;
+
 import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
@@ -23,8 +26,6 @@ import java.util.UUID;
 
 import org.droidparts.model.Entity;
 import org.droidparts.model.Model;
-import org.droidparts.util.Arrays2;
-import org.droidparts.util.L;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -36,33 +37,39 @@ public final class TypeHelper {
 	private TypeHelper() {
 	}
 
-	public static boolean isBoolean(Class<?> cls) {
-		return cls == Boolean.class || cls == boolean.class;
-	}
-
 	public static boolean isByte(Class<?> cls) {
-		return cls == Byte.class || cls == byte.class;
-	}
-
-	public static boolean isDouble(Class<?> cls) {
-		return cls == Double.class || cls == double.class;
-	}
-
-	public static boolean isFloat(Class<?> cls) {
-		return cls == Float.class || cls == float.class;
-	}
-
-	public static boolean isInteger(Class<?> cls) {
-		return cls == Integer.class || cls == int.class;
-	}
-
-	public static boolean isLong(Class<?> cls) {
-		return cls == Long.class || cls == long.class;
+		return (cls == byte.class || cls == Byte.class);
 	}
 
 	public static boolean isShort(Class<?> cls) {
-		return cls == Short.class || cls == short.class;
+		return (cls == short.class || cls == Short.class);
 	}
+
+	public static boolean isInteger(Class<?> cls) {
+		return (cls == int.class || cls == Integer.class);
+	}
+
+	public static boolean isLong(Class<?> cls) {
+		return (cls == long.class || cls == Long.class);
+	}
+
+	public static boolean isFloat(Class<?> cls) {
+		return (cls == float.class || cls == Float.class);
+	}
+
+	public static boolean isDouble(Class<?> cls) {
+		return (cls == double.class || cls == Double.class);
+	}
+
+	public static boolean isBoolean(Class<?> cls) {
+		return (cls == boolean.class || cls == Boolean.class);
+	}
+
+	public static boolean isCharacter(Class<?> cls) {
+		return (cls == char.class || cls == Character.class);
+	}
+
+	//
 
 	public static boolean isString(Class<?> cls) {
 		return cls == String.class;
@@ -77,6 +84,7 @@ public final class TypeHelper {
 	}
 
 	//
+
 	public static boolean isByteArray(Class<?> cls) {
 		return cls == byte[].class;
 	}
@@ -119,97 +127,144 @@ public final class TypeHelper {
 
 	//
 
-	public static Object[] toObjectArr(Object primitiveArr) {
+	public static Object[] toObjectArr(Class<?> arrCls, Object someArr) {
 		// as autoboxing won't work for Arrays.asList(int[] value)
-		Class<?> arrCls = primitiveArr.getClass();
 		Object[] arr;
-		if (arrCls == boolean[].class) {
-			arr = Arrays2.toObject((boolean[]) primitiveArr);
-		} else if (arrCls == double[].class) {
-			arr = Arrays2.toObject((double[]) primitiveArr);
-		} else if (arrCls == float[].class) {
-			arr = Arrays2.toObject((float[]) primitiveArr);
-		} else if (arrCls == int[].class) {
-			arr = Arrays2.toObject((int[]) primitiveArr);
-		} else if (arrCls == long[].class) {
-			arr = Arrays2.toObject((long[]) primitiveArr);
+		if (arrCls == byte[].class) {
+			arr = toObject((byte[]) someArr);
 		} else if (arrCls == short[].class) {
-			arr = Arrays2.toObject((short[]) primitiveArr);
+			arr = toObject((short[]) someArr);
+		} else if (arrCls == int[].class) {
+			arr = toObject((int[]) someArr);
+		} else if (arrCls == long[].class) {
+			arr = toObject((long[]) someArr);
+		} else if (arrCls == float[].class) {
+			arr = toObject((float[]) someArr);
+		} else if (arrCls == double[].class) {
+			arr = toObject((double[]) someArr);
+		} else if (arrCls == boolean[].class) {
+			arr = toObject((boolean[]) someArr);
+		} else if (arrCls == char[].class) {
+			arr = toObject((char[]) someArr);
 		} else {
-			// XXX
-			arr = (Object[]) primitiveArr;
+			// out of primitives
+			arr = (Object[]) someArr;
 		}
 		return arr;
 	}
 
 	public static Object toTypeArr(Class<?> arrCls, String[] arr) {
-		if (arrCls == boolean[].class) {
-			boolean[] tArr = new boolean[arr.length];
+		if (arrCls == byte[].class || arrCls == Byte[].class) {
+			Byte[] tArr = new Byte[arr.length];
 			for (int i = 0; i < arr.length; i++) {
-				tArr[i] = Boolean.valueOf(arr[i]);
+				tArr[i] = Byte.valueOf(arr[i]);
 			}
-			return tArr;
-		} else if (arrCls == double[].class) {
-			double[] tArr = new double[arr.length];
-			for (int i = 0; i < arr.length; i++) {
-				tArr[i] = Double.valueOf(arr[i]);
-			}
-			return tArr;
-		} else if (arrCls == float[].class) {
-			float[] tArr = new float[arr.length];
-			for (int i = 0; i < arr.length; i++) {
-				tArr[i] = Float.valueOf(arr[i]);
-			}
-			return tArr;
-		} else if (arrCls == int[].class) {
-			int[] tArr = new int[arr.length];
-			for (int i = 0; i < arr.length; i++) {
-				tArr[i] = Integer.valueOf(arr[i]);
-			}
-			return tArr;
-		} else if (arrCls == long[].class) {
-			long[] tArr = new long[arr.length];
-			for (int i = 0; i < arr.length; i++) {
-				tArr[i] = Long.valueOf(arr[i]);
-			}
-			return tArr;
-		} else if (arrCls == short[].class) {
-			short[] tArr = new short[arr.length];
+			return (arrCls == byte[].class) ? toPrimitive(tArr) : tArr;
+		} else if (arrCls == short[].class || arrCls == Short[].class) {
+			Short[] tArr = new Short[arr.length];
 			for (int i = 0; i < arr.length; i++) {
 				tArr[i] = Short.valueOf(arr[i]);
 			}
-			return tArr;
-		} else {
-			// XXX
+			return (arrCls == short[].class) ? toPrimitive(tArr) : tArr;
+		} else if (arrCls == int[].class || arrCls == Integer[].class) {
+			Integer[] tArr = new Integer[arr.length];
+			for (int i = 0; i < arr.length; i++) {
+				tArr[i] = Integer.valueOf(arr[i]);
+			}
+			return (arrCls == int[].class) ? toPrimitive(tArr) : tArr;
+		} else if (arrCls == long[].class || arrCls == Long[].class) {
+			Long[] tArr = new Long[arr.length];
+			for (int i = 0; i < arr.length; i++) {
+				tArr[i] = Long.valueOf(arr[i]);
+			}
+			return (arrCls == long[].class) ? toPrimitive(tArr) : tArr;
+		} else if (arrCls == float[].class || arrCls == Float[].class) {
+			Float[] tArr = new Float[arr.length];
+			for (int i = 0; i < arr.length; i++) {
+				tArr[i] = Float.valueOf(arr[i]);
+			}
+			return (arrCls == float[].class) ? toPrimitive(tArr) : tArr;
+		} else if (arrCls == double[].class || arrCls == Double[].class) {
+			Double[] tArr = new Double[arr.length];
+			for (int i = 0; i < arr.length; i++) {
+				tArr[i] = Double.valueOf(arr[i]);
+			}
+			return (arrCls == double[].class) ? toPrimitive(tArr) : tArr;
+		} else if (arrCls == boolean[].class || arrCls == Boolean[].class) {
+			Boolean[] tArr = new Boolean[arr.length];
+			for (int i = 0; i < arr.length; i++) {
+				tArr[i] = Boolean.valueOf(arr[i]);
+			}
+			return (arrCls == boolean[].class) ? toPrimitive(tArr) : tArr;
+		} else if (arrCls == char[].class || arrCls == Character[].class) {
+			Character[] tArr = new Character[arr.length];
+			for (int i = 0; i < arr.length; i++) {
+				tArr[i] = arr[i].charAt(0);
+			}
+			return (arrCls == char[].class) ? toPrimitive(tArr) : tArr;
+		} else if (arrCls == String[].class) {
 			return arr;
+		} else {
+			throw new IllegalArgumentException("Unable to convert to" + arrCls);
 		}
 	}
 
-	public static Class<?>[] getGenericArgs(Field field) {
+	public static Class<?>[] getFieldGenericArgs(Field field) {
 		Type genericType = field.getGenericType();
 		if (genericType instanceof ParameterizedType) {
 			Type[] typeArr = ((ParameterizedType) genericType)
 					.getActualTypeArguments();
-			Class<?>[] classArr = new Class<?>[typeArr.length];
+			Class<?>[] argsArr = new Class<?>[typeArr.length];
 			for (int i = 0; i < typeArr.length; i++) {
-				String[] parts = typeArr[i].toString().split(" ");
-				String className = parts[parts.length - 1];
-				try {
-					classArr[i] = Class.forName(className);
-				} catch (ClassNotFoundException e) {
-					L.w(e);
-				}
+				// class java.lang.String
+				String[] nameParts = typeArr[i].toString().split(" ");
+				String clsName = nameParts[nameParts.length - 1];
+				argsArr[i] = classForName(clsName);
 			}
-			return classArr;
+			return argsArr;
 		} else {
 			return new Class<?>[0];
 		}
 	}
 
-	public static Class<?> getArrayType(Class<?> arrCls) throws Exception {
-		String name = arrCls.getName();
-		name = name.substring(2, name.length() - 1);
-		return Class.forName(name);
+	public static Class<?> getArrayType(Class<?> arrCls) {
+		String clsName = arrCls.getName();
+		if (clsName.length() == 2) {
+			// primitives - [Z
+			clsName = clsName.substring(1);
+			if ("B".equals(clsName)) {
+				return byte.class;
+			} else if ("S".equals(clsName)) {
+				return short.class;
+			} else if ("I".equals(clsName)) {
+				return int.class;
+			} else if ("J".equals(clsName)) {
+				return long.class;
+			} else if ("F".equals(clsName)) {
+				return float.class;
+			} else if ("D".equals(clsName)) {
+				return double.class;
+			} else if ("Z".equals(clsName)) {
+				return boolean.class;
+			} else if ("C".equals(clsName)) {
+				return char.class;
+			} else {
+				throw new IllegalArgumentException("Alien primitive: "
+						+ clsName);
+			}
+		} else {
+			// objects - [Ljava.lang.String;
+			clsName = clsName.substring(2, clsName.length() - 1);
+			return classForName(clsName);
+		}
 	}
 
+	private static Class<?> classForName(String clsName)
+			throws IllegalArgumentException {
+		try {
+			return Class.forName(clsName);
+		} catch (ClassNotFoundException e) {
+			throw new IllegalArgumentException(e);
+		}
+	}
 }
