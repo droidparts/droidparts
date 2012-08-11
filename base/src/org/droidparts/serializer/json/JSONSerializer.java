@@ -15,6 +15,7 @@
  */
 package org.droidparts.serializer.json;
 
+import static android.util.Log.getStackTraceString;
 import static org.droidparts.reflection.util.ReflectionUtils.getField;
 import static org.droidparts.reflection.util.ReflectionUtils.getTypedFieldVal;
 import static org.droidparts.reflection.util.ReflectionUtils.instantiate;
@@ -76,7 +77,7 @@ public class JSONSerializer<TypeFrom extends Model> implements
 				putToJSONObject(obj, jsonField.keyName, jsonField.fieldClass,
 						columnVal);
 			} catch (Exception e) {
-				throw new JSONException(e.getMessage());
+				throw new JSONException(getStackTraceString(e));
 			}
 		}
 		return obj;
@@ -94,12 +95,12 @@ public class JSONSerializer<TypeFrom extends Model> implements
 					val = readFromJSON(jsonField.fieldClass,
 							jsonField.fieldGenericArgs, model, val);
 				} catch (Exception e) {
-					throw new JSONException(e.getMessage());
+					throw new JSONException(getStackTraceString(e));
 				}
 				try {
 					setFieldVal(f, model, val);
 				} catch (IllegalArgumentException e) {
-					L.e("Failed to deserialize '" + jsonField.keyName + "'.");
+					L.w("Failed to deserialize '" + jsonField.keyName + "'.");
 				}
 			}
 		}
