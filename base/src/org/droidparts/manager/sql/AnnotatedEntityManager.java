@@ -230,8 +230,7 @@ public class AnnotatedEntityManager<Model extends Entity> extends
 			if (isArray(valueCls)) {
 				arr = toObjectArr(valueCls, value);
 			} else {
-				@SuppressWarnings("unchecked")
-				Collection<Object> coll = (Collection<Object>) value;
+				Collection<?> coll = (Collection<?>) value;
 				arr = coll.toArray(new Object[coll.size()]);
 			}
 			if (arr != null) {
@@ -283,8 +282,9 @@ public class AnnotatedEntityManager<Model extends Entity> extends
 			if (isArray(fieldCls)) {
 				return toTypeArr(fieldCls, parts);
 			} else {
-				// TODO
-				return null;
+				Collection<?> coll = (Collection<?>) instantiate(fieldCls);
+				// TODO populate
+				return coll;
 			}
 		} else {
 			return subReadFromCursor(cursor, columnIndex, fieldCls);

@@ -23,6 +23,7 @@ import java.util.UUID;
 
 import org.droidparts.model.Entity;
 import org.droidparts.model.Model;
+import org.droidparts.util.Arrays2;
 import org.droidparts.util.L;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -122,47 +123,17 @@ public final class TypeHelper {
 		// as autoboxing won't work for Arrays.asList(int[] value)
 		Object[] arr;
 		if (valueCls == boolean[].class) {
-			boolean[] tArr = (boolean[]) value;
-			arr = new Object[tArr.length];
-			for (int i = 0; i < arr.length; i++) {
-				arr[i] = tArr[i];
-			}
-		} else if (valueCls == byte[].class) {
-			byte[] tArr = (byte[]) value;
-			arr = new Object[tArr.length];
-			for (int i = 0; i < arr.length; i++) {
-				arr[i] = tArr[i];
-			}
+			arr = Arrays2.toObject((boolean[]) value);
 		} else if (valueCls == double[].class) {
-			double[] tArr = (double[]) value;
-			arr = new Object[tArr.length];
-			for (int i = 0; i < arr.length; i++) {
-				arr[i] = tArr[i];
-			}
+			arr = Arrays2.toObject((double[]) value);
 		} else if (valueCls == float[].class) {
-			float[] tArr = (float[]) value;
-			arr = new Object[tArr.length];
-			for (int i = 0; i < arr.length; i++) {
-				arr[i] = tArr[i];
-			}
+			arr = Arrays2.toObject((float[]) value);
 		} else if (valueCls == int[].class) {
-			int[] tArr = (int[]) value;
-			arr = new Object[tArr.length];
-			for (int i = 0; i < arr.length; i++) {
-				arr[i] = tArr[i];
-			}
+			arr = Arrays2.toObject((int[]) value);
 		} else if (valueCls == long[].class) {
-			long[] tArr = (long[]) value;
-			arr = new Object[tArr.length];
-			for (int i = 0; i < arr.length; i++) {
-				arr[i] = tArr[i];
-			}
+			arr = Arrays2.toObject((long[]) value);
 		} else if (valueCls == short[].class) {
-			short[] tArr = (short[]) value;
-			arr = new Object[tArr.length];
-			for (int i = 0; i < arr.length; i++) {
-				arr[i] = tArr[i];
-			}
+			arr = Arrays2.toObject((short[]) value);
 		} else {
 			// XXX
 			arr = (Object[]) value;
@@ -175,12 +146,6 @@ public final class TypeHelper {
 			boolean[] tArr = new boolean[arr.length];
 			for (int i = 0; i < arr.length; i++) {
 				tArr[i] = Boolean.valueOf(arr[i]);
-			}
-			return tArr;
-		} else if (valueCls == byte[].class) {
-			byte[] tArr = new byte[arr.length];
-			for (int i = 0; i < arr.length; i++) {
-				tArr[i] = Byte.valueOf(arr[i]);
 			}
 			return tArr;
 		} else if (valueCls == double[].class) {
