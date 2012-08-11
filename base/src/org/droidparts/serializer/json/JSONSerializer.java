@@ -19,6 +19,7 @@ import static org.droidparts.reflection.util.ReflectionUtils.getField;
 import static org.droidparts.reflection.util.ReflectionUtils.getTypedFieldVal;
 import static org.droidparts.reflection.util.ReflectionUtils.instantiate;
 import static org.droidparts.reflection.util.ReflectionUtils.setFieldVal;
+import static org.droidparts.reflection.util.TypeHelper.getArrayType;
 import static org.droidparts.reflection.util.TypeHelper.isArray;
 import static org.droidparts.reflection.util.TypeHelper.isBoolean;
 import static org.droidparts.reflection.util.TypeHelper.isCollection;
@@ -30,6 +31,7 @@ import static org.droidparts.reflection.util.TypeHelper.isLong;
 import static org.droidparts.reflection.util.TypeHelper.isModel;
 import static org.droidparts.reflection.util.TypeHelper.isString;
 import static org.droidparts.reflection.util.TypeHelper.isUUID;
+import static org.droidparts.reflection.util.TypeHelper.toTypeArr;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -184,20 +186,32 @@ public class JSONSerializer<TypeFrom extends Model> implements
 			JSONArray jArr = (JSONArray) val;
 			Object[] arr = new Object[jArr.length()];
 			Collection<Object> coll = null;
+			Class<?> itemCls;
 			if (isColl) {
 				coll = instantiate(fieldCls);
+				itemCls = fieldClassGenericArguments[0];
+			} else {
+				itemCls = getArrayType(fieldCls);
 			}
-			JSONSerializer serializer = getSerializer(fieldClassGenericArguments[0]);
+			JSONSerializer serializer = getSerializer(itemCls);
 			for (int i = 0; i < jArr.length(); i++) {
-				Object obj = serializer.deserialize((JSONObject) jArr.get(i));
+				Object obj = jArr.get(i);
+				if (obj instanceof JSONObject) {
+					obj = serializer.deserialize((JSONObject) obj);
+				}
 				if (isArr) {
-					arr[i] = obj;
+					arr[i] = String.valueOf(obj);
 				} else {
 					coll.add(obj);
 				}
 			}
 			if (isArr) {
-				return arr;
+				// XXX
+				String[] arr2 = new String[arr.length];
+				for (int i = 0; i < arr.length; i++) {
+					arr2[i] = String.valueOf(arr[i]);
+				}
+				return toTypeArr(fieldCls, arr2);
 			} else {
 				return coll;
 			}

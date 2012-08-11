@@ -119,60 +119,61 @@ public final class TypeHelper {
 
 	//
 
-	public static Object[] toObjectArr(Class<?> valueCls, Object value) {
+	public static Object[] toObjectArr(Object primitiveArr) {
 		// as autoboxing won't work for Arrays.asList(int[] value)
+		Class<?> arrCls = primitiveArr.getClass();
 		Object[] arr;
-		if (valueCls == boolean[].class) {
-			arr = Arrays2.toObject((boolean[]) value);
-		} else if (valueCls == double[].class) {
-			arr = Arrays2.toObject((double[]) value);
-		} else if (valueCls == float[].class) {
-			arr = Arrays2.toObject((float[]) value);
-		} else if (valueCls == int[].class) {
-			arr = Arrays2.toObject((int[]) value);
-		} else if (valueCls == long[].class) {
-			arr = Arrays2.toObject((long[]) value);
-		} else if (valueCls == short[].class) {
-			arr = Arrays2.toObject((short[]) value);
+		if (arrCls == boolean[].class) {
+			arr = Arrays2.toObject((boolean[]) primitiveArr);
+		} else if (arrCls == double[].class) {
+			arr = Arrays2.toObject((double[]) primitiveArr);
+		} else if (arrCls == float[].class) {
+			arr = Arrays2.toObject((float[]) primitiveArr);
+		} else if (arrCls == int[].class) {
+			arr = Arrays2.toObject((int[]) primitiveArr);
+		} else if (arrCls == long[].class) {
+			arr = Arrays2.toObject((long[]) primitiveArr);
+		} else if (arrCls == short[].class) {
+			arr = Arrays2.toObject((short[]) primitiveArr);
 		} else {
 			// XXX
-			arr = (Object[]) value;
+			arr = (Object[]) primitiveArr;
 		}
 		return arr;
 	}
 
-	public static Object toTypeArr(Class<?> valueCls, String[] arr) {
-		if (valueCls == boolean[].class) {
+	public static Object toTypeArr(Class<?> arrCls, String[] arr) {
+		if (arrCls == boolean[].class) {
 			boolean[] tArr = new boolean[arr.length];
 			for (int i = 0; i < arr.length; i++) {
 				tArr[i] = Boolean.valueOf(arr[i]);
 			}
 			return tArr;
-		} else if (valueCls == double[].class) {
+		} else if (arrCls == double[].class) {
 			double[] tArr = new double[arr.length];
 			for (int i = 0; i < arr.length; i++) {
 				tArr[i] = Double.valueOf(arr[i]);
 			}
 			return tArr;
-		} else if (valueCls == float[].class) {
+		} else if (arrCls == float[].class) {
 			float[] tArr = new float[arr.length];
 			for (int i = 0; i < arr.length; i++) {
 				tArr[i] = Float.valueOf(arr[i]);
 			}
 			return tArr;
-		} else if (valueCls == int[].class) {
+		} else if (arrCls == int[].class) {
 			int[] tArr = new int[arr.length];
 			for (int i = 0; i < arr.length; i++) {
 				tArr[i] = Integer.valueOf(arr[i]);
 			}
 			return tArr;
-		} else if (valueCls == long[].class) {
+		} else if (arrCls == long[].class) {
 			long[] tArr = new long[arr.length];
 			for (int i = 0; i < arr.length; i++) {
 				tArr[i] = Long.valueOf(arr[i]);
 			}
 			return tArr;
-		} else if (valueCls == short[].class) {
+		} else if (arrCls == short[].class) {
 			short[] tArr = new short[arr.length];
 			for (int i = 0; i < arr.length; i++) {
 				tArr[i] = Short.valueOf(arr[i]);
@@ -203,6 +204,12 @@ public final class TypeHelper {
 		} else {
 			return new Class<?>[0];
 		}
+	}
+
+	public static Class<?> getArrayType(Class<?> arrCls) throws Exception {
+		String name = arrCls.getName();
+		name = name.substring(2, name.length() - 1);
+		return Class.forName(name);
 	}
 
 }

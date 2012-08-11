@@ -228,7 +228,7 @@ public class AnnotatedEntityManager<Model extends Entity> extends
 		} else if (isArray(valueCls) || isCollection(valueCls)) {
 			Object[] arr;
 			if (isArray(valueCls)) {
-				arr = toObjectArr(valueCls, value);
+				arr = toObjectArr(value);
 			} else {
 				Collection<?> coll = (Collection<?>) value;
 				arr = coll.toArray(new Object[coll.size()]);
