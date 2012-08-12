@@ -38,7 +38,6 @@ public class EntityAnnotationProcessor extends
 
 	private static final String ID_SUFFIX = "_id";
 
-	// TODO find a better place
 	public static String toPKColumnName(String name) {
 		if (!name.endsWith(ID_SUFFIX)) {
 			name += ID_SUFFIX;
@@ -71,7 +70,7 @@ public class EntityAnnotationProcessor extends
 				dbField.columnName = getColumnName(columnAnn, field);
 				dbField.columnNullable = columnAnn.nullable();
 				dbField.columnUnique = columnAnn.unique();
-				dbField.eagerField = columnAnn.eager();
+				dbField.columnEager = columnAnn.eager();
 				list.add(dbField);
 			}
 		}

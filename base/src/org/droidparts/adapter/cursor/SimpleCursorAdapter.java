@@ -46,13 +46,15 @@ public abstract class SimpleCursorAdapter<Model extends Entity> extends
 	public Model read(int position) {
 		long id = getItemId(position);
 		Model item = entityManager.read(id);
-		String[] fieldNames = new String[0];
+		String[] eagerFieldNames = new String[0];
 		if (entityManager instanceof AnnotatedEntityManager) {
 			@SuppressWarnings("rawtypes")
 			AnnotatedEntityManager aem = ((AnnotatedEntityManager) entityManager);
-			fieldNames = aem.getEagerForeignKeyFieldNames();
+			eagerFieldNames = aem.getEagerForeignKeyFieldNames();
 		}
-		entityManager.fillForeignKeys(item, fieldNames);
+		if (eagerFieldNames.length != 0) {
+			entityManager.fillForeignKeys(item, eagerFieldNames);
+		}
 		return item;
 	}
 

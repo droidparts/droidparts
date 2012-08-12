@@ -15,11 +15,11 @@
  */
 package org.droidparts.manager.sql;
 
+import static org.droidparts.reflection.processor.EntityAnnotationProcessor.toPKColumnName;
 import static org.droidparts.reflection.util.ReflectionUtils.getField;
 import static org.droidparts.reflection.util.ReflectionUtils.getTypedFieldVal;
 import static org.droidparts.reflection.util.ReflectionUtils.instantiate;
 import static org.droidparts.reflection.util.ReflectionUtils.instantiateEnum;
-import static org.droidparts.reflection.util.ReflectionUtils.listAnnotatedFields;
 import static org.droidparts.reflection.util.ReflectionUtils.setFieldVal;
 import static org.droidparts.reflection.util.TypeHelper.isArray;
 import static org.droidparts.reflection.util.TypeHelper.isBitmap;
@@ -41,7 +41,6 @@ import static org.droidparts.reflection.util.TypeHelper.toTypeArr;
 
 import java.io.ByteArrayOutputStream;
 import java.lang.reflect.Field;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.UUID;
@@ -108,17 +107,23 @@ public class AnnotatedEntityManager<Model extends Entity> extends
 	}
 
 	@Override
-	public void fillForeignKeys(Model item, String... fieldNames) {
-		HashSet<String> fieldNameSet = new HashSet<String>(
-				Arrays.asList(fieldNames));
-		boolean acceptAny = fieldNameSet.size() == 0;
-		for (Field field : listAnnotatedFields(cls)) {
-			Class<?> fieldType = field.getType();
-			if (isEntity(fieldType)
-					&& (acceptAny || fieldNameSet.contains(field.getName()))) {
-				Entity model = ReflectionUtils.getTypedFieldVal(field, item);
-				if (model != null) {
-					Object obj = getManager(fieldType).read(model.id);
+	public void fillForeignKeys(Model item, String... columnNames) {
+		HashSet<String> columnNameSet = new HashSet<String>(columnNames.length);
+		for (String colName : columnNames) {
+			columnNameSet.add(toPKColumnName(colName));
+		}
+		boolean fillAll = (columnNames.length == 0);
+		for (EntityField entityField : processor.getModelClassFields()) {
+			if (isEntity(entityField.fieldClass)
+					&& (fillAll || columnNameSet
+							.contains(entityField.columnName))) {
+				Field field = ReflectionUtils.getField(cls,
+						entityField.fieldName);
+				Entity foreignEntity = ReflectionUtils.getTypedFieldVal(field,
+						item);
+				if (foreignEntity != null) {
+					Object obj = getManager(entityField.fieldClass).read(
+							foreignEntity.id);
 					setFieldVal(field, item, obj);
 				}
 			}
@@ -150,12 +155,15 @@ public class AnnotatedEntityManager<Model extends Entity> extends
 
 	@Override
 	protected void createOrUpdateForeignKeys(Model item) {
-		for (Field f : listAnnotatedFields(cls)) {
-			Class<?> cls = f.getType();
-			if (isEntity(cls)) {
-				Entity model = ReflectionUtils.getTypedFieldVal(f, item);
-				if (model != null) {
-					getManager(cls).createOrUpdate(model);
+		for (EntityField entityField : processor.getModelClassFields()) {
+			if (isEntity(entityField.fieldClass)) {
+				Field field = ReflectionUtils.getField(cls,
+						entityField.fieldName);
+				Entity foreignEntity = ReflectionUtils.getTypedFieldVal(field,
+						item);
+				if (foreignEntity != null) {
+					getManager(entityField.fieldClass).createOrUpdate(
+							foreignEntity);
 				}
 			}
 		}
@@ -165,7 +173,7 @@ public class AnnotatedEntityManager<Model extends Entity> extends
 		if (eagerForeignKeyFieldNames == null) {
 			HashSet<String> eagerFieldNames = new HashSet<String>();
 			for (EntityField ef : processor.getModelClassFields()) {
-				if (ef.eagerField) {
+				if (ef.columnEager) {
 					eagerFieldNames.add(ef.fieldName);
 				}
 			}
