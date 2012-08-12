@@ -23,6 +23,9 @@ import static org.droidparts.reflection.util.ReflectionUtils.setFieldVal;
 import static org.droidparts.reflection.util.TypeHelper.getArrayType;
 import static org.droidparts.reflection.util.TypeHelper.isArray;
 import static org.droidparts.reflection.util.TypeHelper.isBoolean;
+import static org.droidparts.reflection.util.TypeHelper.isByte;
+import static org.droidparts.reflection.util.TypeHelper.isByteArray;
+import static org.droidparts.reflection.util.TypeHelper.isCharacter;
 import static org.droidparts.reflection.util.TypeHelper.isCollection;
 import static org.droidparts.reflection.util.TypeHelper.isDouble;
 import static org.droidparts.reflection.util.TypeHelper.isEnum;
@@ -30,6 +33,7 @@ import static org.droidparts.reflection.util.TypeHelper.isFloat;
 import static org.droidparts.reflection.util.TypeHelper.isInteger;
 import static org.droidparts.reflection.util.TypeHelper.isLong;
 import static org.droidparts.reflection.util.TypeHelper.isModel;
+import static org.droidparts.reflection.util.TypeHelper.isShort;
 import static org.droidparts.reflection.util.TypeHelper.isString;
 import static org.droidparts.reflection.util.TypeHelper.isUUID;
 import static org.droidparts.reflection.util.TypeHelper.toTypeArr;
@@ -93,7 +97,7 @@ public class JSONSerializer<TypeFrom extends Model> implements
 				Field f = getField(model.getClass(), jsonField.fieldName);
 				try {
 					val = readFromJSON(jsonField.fieldClass,
-							jsonField.fieldGenericArg, model, val);
+							jsonField.fieldGenericArg, val);
 				} catch (Exception e) {
 					throw new JSONException(getStackTraceString(e));
 				}
@@ -126,31 +130,39 @@ public class JSONSerializer<TypeFrom extends Model> implements
 	}
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
-	private void putToJSONObject(JSONObject obj, String key, Class<?> valueCls,
-			Object value) throws Exception {
-		if (isBoolean(valueCls)) {
-			obj.put(key, ((Boolean) value));
-		} else if (isDouble(valueCls)) {
-			obj.put(key, (Double) value);
-		} else if (isFloat(valueCls)) {
-			obj.put(key, (Float) value);
-		} else if (isInteger(valueCls)) {
-			obj.put(key, (Integer) value);
-		} else if (isLong(valueCls)) {
-			obj.put(key, (Long) value);
-		} else if (isString(valueCls)) {
-			obj.put(key, (String) value);
-		} else if (isUUID(valueCls)) {
-			obj.put(key, value.toString());
-		} else if (isEnum(valueCls)) {
-			obj.put(key, value.toString());
-		} else if (isArray(valueCls) || isCollection(valueCls)) {
+	protected void putToJSONObject(JSONObject obj, String key,
+			Class<?> valType, Object val) throws Exception {
+		if (isByte(valType)) {
+			obj.put(key, (Byte) val);
+		} else if (isShort(valType)) {
+			obj.put(key, (Short) val);
+		} else if (isInteger(valType)) {
+			obj.put(key, (Integer) val);
+		} else if (isLong(valType)) {
+			obj.put(key, (Long) val);
+		} else if (isFloat(valType)) {
+			obj.put(key, (Float) val);
+		} else if (isDouble(valType)) {
+			obj.put(key, (Double) val);
+		} else if (isBoolean(valType)) {
+			obj.put(key, (Boolean) val);
+		} else if (isCharacter(valType)) {
+			obj.put(key, (Character) val);
+		} else if (isString(valType)) {
+			obj.put(key, (String) val);
+		} else if (isEnum(valType)) {
+			obj.put(key, val.toString());
+		} else if (isUUID(valType)) {
+			obj.put(key, val.toString());
+		} else if (isByteArray(valType)) {
+			obj.put(key, val);
+		} else if (isArray(valType) || isCollection(valType)) {
 			ArrayList<Object> list = new ArrayList<Object>();
-			if (isArray(valueCls)) {
-				Object[] arr = (Object[]) value;
+			if (isArray(valType)) {
+				Object[] arr = (Object[]) val;
 				list.addAll(Arrays.asList(arr));
-			} else if (isCollection(valueCls)) {
-				Collection<Object> coll = (Collection<Object>) value;
+			} else if (isCollection(valType)) {
+				Collection<Object> coll = (Collection<Object>) val;
 				list.addAll(coll);
 			}
 			JSONArray jarr = new JSONArray();
@@ -162,37 +174,61 @@ public class JSONSerializer<TypeFrom extends Model> implements
 				jarr.put(serializer.serialize((Model) o));
 			}
 			obj.put(key, jarr);
-		} else if (isModel(valueCls)) {
-			JSONObject obj2 = getSerializer(valueCls).serialize(
-					(TypeFrom) value);
+		} else if (isModel(valType)) {
+			JSONObject obj2 = getSerializer(valType).serialize((TypeFrom) val);
 			obj.put(key, obj2);
 		} else {
-			throw new IllegalArgumentException("Unsupported class: " + valueCls);
+			throw new IllegalArgumentException("Unsupported class: " + valType);
 		}
 	}
 
 	@SuppressWarnings("rawtypes")
-	private Object readFromJSON(Class<?> fieldCls,
-			Class<?> fieldClassGenericArg, Object model, Object val)
-			throws Exception {
-		if (isUUID(fieldCls)) {
-			return UUID.fromString((String) val);
-		} else if (isEnum(fieldCls)) {
-			return ReflectionUtils.instantiateEnum(fieldCls, (String) val);
-		} else if (isModel(fieldCls)) {
-			return getSerializer(fieldCls).deserialize((JSONObject) val);
-		} else if (isArray(fieldCls) || isCollection(fieldCls)) {
-			boolean isArr = isArray(fieldCls);
-			boolean isColl = isCollection(fieldCls);
-			JSONArray jArr = (JSONArray) val;
+	protected Object readFromJSON(Class<?> valType, Class<?> valGenericArgType,
+			Object jsonVal) throws Exception {
+		String strVal = String.valueOf(jsonVal);
+		if (isByte(valType)) {
+			return Byte.valueOf(strVal);
+		} else if (isShort(valType)) {
+			return Short.valueOf(strVal);
+		} else if (isInteger(valType)) {
+			return Integer.valueOf(strVal);
+		} else if (isLong(valType)) {
+			return Long.valueOf(strVal);
+		} else if (isFloat(valType)) {
+			return Float.valueOf(strVal);
+		} else if (isDouble(valType)) {
+			return Double.valueOf(strVal);
+		} else if (isBoolean(valType)) {
+			if ("0".equals(strVal) || "false".equalsIgnoreCase(strVal)) {
+				return Boolean.FALSE;
+			} else if ("1".equals(strVal) || "true".equalsIgnoreCase(strVal)) {
+				return Boolean.TRUE;
+			} else {
+				throw new IllegalArgumentException("Unparseable boolean: "
+						+ strVal);
+			}
+		} else if (isCharacter(valType)) {
+			return (strVal.length() == 0) ? ' ' : strVal.charAt(0);
+		} else if (isString(valType)) {
+			return strVal;
+		} else if (isEnum(valType)) {
+			return ReflectionUtils.instantiateEnum(valType, (String) jsonVal);
+		} else if (isUUID(valType)) {
+			return UUID.fromString((String) jsonVal);
+		} else if (isByteArray(valType)) {
+			return jsonVal;
+		} else if (isArray(valType) || isCollection(valType)) {
+			boolean isArr = isArray(valType);
+			boolean isColl = isCollection(valType);
+			JSONArray jArr = (JSONArray) jsonVal;
 			Object[] arr = new Object[jArr.length()];
 			Collection<Object> coll = null;
 			Class<?> itemCls;
 			if (isColl) {
-				coll = instantiate(fieldCls);
-				itemCls = fieldClassGenericArg;
+				coll = instantiate(valType);
+				itemCls = valGenericArgType;
 			} else {
-				itemCls = getArrayType(fieldCls);
+				itemCls = getArrayType(valType);
 			}
 			JSONSerializer serializer = getSerializer(itemCls);
 			for (int i = 0; i < jArr.length(); i++) {
@@ -212,34 +248,15 @@ public class JSONSerializer<TypeFrom extends Model> implements
 				for (int i = 0; i < arr.length; i++) {
 					arr2[i] = String.valueOf(arr[i]);
 				}
-				return toTypeArr(fieldCls, arr2);
+				return toTypeArr(valType, arr2);
 			} else {
 				return coll;
 			}
-		} else if (isString(val.getClass())) {
-			// primitive might arrive as string
-			String strVal = (String) val;
-			if (isBoolean(fieldCls)) {
-				if ("1".equals(strVal)) {
-					return true;
-				} else if ("0".equals(strVal)) {
-					return false;
-				} else {
-					return Boolean.valueOf(strVal);
-				}
-			} else if (isDouble(fieldCls)) {
-				return Double.valueOf(strVal);
-			} else if (isFloat(fieldCls)) {
-				return Float.valueOf(strVal);
-			} else if (isInteger(fieldCls)) {
-				return Integer.valueOf(strVal);
-			} else if (isLong(fieldCls)) {
-				return Long.valueOf(strVal);
-			} else {
-				return strVal;
-			}
+
+		} else if (isModel(valType)) {
+			return getSerializer(valType).deserialize((JSONObject) jsonVal);
 		} else {
-			return val;
+			throw new IllegalArgumentException("Unsupported class: " + valType);
 		}
 	}
 
