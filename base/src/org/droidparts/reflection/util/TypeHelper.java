@@ -199,7 +199,8 @@ public final class TypeHelper {
 		} else if (arrCls == char[].class || arrCls == Character[].class) {
 			Character[] tArr = new Character[arr.length];
 			for (int i = 0; i < arr.length; i++) {
-				tArr[i] = arr[i].charAt(0);
+				String str = arr[i];
+				tArr[i] = (str.length() == 0) ? ' ' : str.charAt(0);
 			}
 			return (arrCls == char[].class) ? toPrimitive(tArr) : tArr;
 		} else if (arrCls == String[].class) {

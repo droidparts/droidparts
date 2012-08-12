@@ -38,6 +38,14 @@ public class EntityAnnotationProcessor extends
 
 	private static final String ID_SUFFIX = "_id";
 
+	// TODO find a better place
+	public static String toPKColumnName(String name) {
+		if (!name.endsWith(ID_SUFFIX)) {
+			name += ID_SUFFIX;
+		}
+		return name;
+	}
+
 	public EntityAnnotationProcessor(Class<? extends Entity> cls) {
 		super(cls);
 	}
@@ -76,8 +84,8 @@ public class EntityAnnotationProcessor extends
 		if (isEmpty(name)) {
 			name = field.getName();
 		}
-		if (isEntity(field.getType()) && !name.endsWith(ID_SUFFIX)) {
-			name += ID_SUFFIX;
+		if (isEntity(field.getType())) {
+			name = toPKColumnName(name);
 		}
 		return name;
 	}
