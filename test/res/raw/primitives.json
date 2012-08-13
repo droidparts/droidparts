@@ -1,0 +1,11 @@
+{
+	"int1": 1,
+	"int2": "2",
+	"float1": 0.5,
+	"float2": "2.5",
+	"boolean1": true,
+	"boolean2": "true",
+	"boolean3": 1,
+	"boolean4": "0",
+	"string1": "str"
+}

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="org.droidparts" >
+
+    <uses-sdk
+        android:minSdkVersion="7"
+        android:targetSdkVersion="14" />
+
+    <instrumentation
+        android:name="android.test.InstrumentationTestRunner"
+        android:targetPackage="org.droidparts" />
+
+    <application android:label="@string/app_name" >
+        <uses-library android:name="android.test.runner" />
+    </application>
+
+</manifest>
