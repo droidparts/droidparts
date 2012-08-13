@@ -36,6 +36,7 @@ import static org.droidparts.reflection.util.TypeHelper.isShort;
 import static org.droidparts.reflection.util.TypeHelper.isString;
 import static org.droidparts.reflection.util.TypeHelper.isUUID;
 import static org.droidparts.reflection.util.TypeHelper.toTypeArr;
+import static org.json.JSONObject.NULL;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -100,19 +101,23 @@ public class JSONSerializer<TypeFrom extends Model> implements
 		JSONModelField[] fields = processor.getModelClassFields();
 		for (JSONModelField jsonField : fields) {
 			if (obj.has(jsonField.keyName)) {
-				Field f = getField(model.getClass(), jsonField.fieldName);
-				try {
-					Object val = obj.get(jsonField.keyName);
-					val = readFromJSON(jsonField.fieldClass,
-							jsonField.fieldGenericArg, val);
-					setFieldVal(f, model, val);
-				} catch (Exception e) {
-					if (jsonField.keyRequired) {
-						throw new JSONException(Log.getStackTraceString(e));
-					} else {
-						L.e("Failed to deserialize '" + jsonField.keyName
-								+ "'.");
-						L.w(e);
+				Object val = obj.get(jsonField.keyName);
+				if (NULL.equals(val)) {
+					L.i("Received NULL '" + jsonField.keyName + "', skipping.");
+				} else {
+					Field f = getField(model.getClass(), jsonField.fieldName);
+					try {
+						val = readFromJSON(jsonField.fieldClass,
+								jsonField.fieldGenericArg, val);
+						setFieldVal(f, model, val);
+					} catch (Exception e) {
+						if (jsonField.keyRequired) {
+							throw new JSONException(Log.getStackTraceString(e));
+						} else {
+							L.e("Failed to deserialize '" + jsonField.keyName
+									+ "'.");
+							L.w(e);
+						}
 					}
 				}
 			} else if (jsonField.keyRequired) {
