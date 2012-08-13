@@ -66,7 +66,6 @@ public class AnnotatedEntityManager<Model extends Entity> extends
 
 	// ASCII RS (record separator), '|' for readability
 	private static final String SEP = "|" + (char) 30;
-	// ASCII US (unit separator) - 31
 
 	@InjectDependency
 	private SQLiteDatabase db;

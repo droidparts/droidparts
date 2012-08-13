@@ -40,6 +40,13 @@ public class JSONTestCase extends AndroidTestCase {
 		assertEquals(5.1f, phones.get(1).version);
 	}
 
+	public void testNestedKeys() throws Exception {
+		assertEquals(0, JSONSerializer.buildNestedKey().length());
+		assertEquals("obj->key", JSONSerializer.buildNestedKey("obj", "key"));
+	}
+
+	//
+
 	private JSONObject getPrimitives() throws Exception {
 		String str = new AppUtils(getContext())
 				.readStringResource(R.raw.primitives);

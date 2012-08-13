@@ -50,6 +50,7 @@ import org.droidparts.reflection.processor.JSONModelAnnotationProcessor;
 import org.droidparts.reflection.util.ReflectionUtils;
 import org.droidparts.serializer.Serializer;
 import org.droidparts.util.L;
+import org.droidparts.util.Strings;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -58,6 +59,13 @@ import android.util.Log;
 
 public class JSONSerializer<TypeFrom extends Model> implements
 		Serializer<TypeFrom, JSONObject> {
+
+	// ASCII GS (group separator), '->' for readability
+	private static final String SEP = "->" + (char) 29;
+
+	public static String buildNestedKey(String... keys) {
+		return Strings.join(keys, SEP, null);
+	}
 
 	private final Class<? extends Model> cls;
 	private final JSONModelAnnotationProcessor processor;
@@ -79,6 +87,9 @@ public class JSONSerializer<TypeFrom extends Model> implements
 		for (JSONModelField jsonField : fields) {
 			Field f = getField(item.getClass(), jsonField.fieldName);
 			Object columnVal = getTypedFieldVal(f, item);
+			if (isNestedKey(jsonField.keyName)) {
+				// TODO walk
+			}
 			try {
 				putToJSONObject(obj, jsonField.keyName, jsonField.fieldClass,
 						columnVal);
@@ -100,6 +111,9 @@ public class JSONSerializer<TypeFrom extends Model> implements
 		TypeFrom model = instantiate(cls);
 		JSONModelField[] fields = processor.getModelClassFields();
 		for (JSONModelField jsonField : fields) {
+			if (isNestedKey(jsonField.keyName)) {
+				// TODO walk
+			}
 			if (obj.has(jsonField.keyName)) {
 				Object val = obj.get(jsonField.keyName);
 				Field f = getField(model.getClass(), jsonField.fieldName);
@@ -287,5 +301,14 @@ public class JSONSerializer<TypeFrom extends Model> implements
 		JSONSerializer serializer = new JSONSerializer(cls);
 		return serializer;
 	}
+
+	private boolean isNestedKey(String key) {
+		return key.contains(SEP);
+	}
+
+	// private boolean gotNonNull(JSONObject obj, String key) throws
+	// JSONException {
+	// return obj.has(key) && !NULL.equals(obj.get(key));
+	// }
 
 }
