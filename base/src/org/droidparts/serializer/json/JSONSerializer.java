@@ -53,6 +53,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.util.Log;
+
 public class JSONSerializer<TypeFrom extends Model> implements
 		Serializer<TypeFrom, JSONObject> {
 
@@ -80,9 +82,13 @@ public class JSONSerializer<TypeFrom extends Model> implements
 				putToJSONObject(obj, jsonField.keyName, jsonField.fieldClass,
 						columnVal);
 			} catch (Exception e) {
-				L.e("Failded to serialize " + processor.getModelClassName()
-						+ "." + jsonField.fieldName);
-				L.w(e);
+				if (jsonField.keyRequired) {
+					throw new JSONException(Log.getStackTraceString(e));
+				} else {
+					L.e("Failded to serialize " + processor.getModelClassName()
+							+ "." + jsonField.fieldName);
+					L.w(e);
+				}
 			}
 		}
 		return obj;
@@ -101,9 +107,17 @@ public class JSONSerializer<TypeFrom extends Model> implements
 							jsonField.fieldGenericArg, val);
 					setFieldVal(f, model, val);
 				} catch (Exception e) {
-					L.e("Failed to deserialize '" + jsonField.keyName + "'.");
-					L.w(e);
+					if (jsonField.keyRequired) {
+						throw new JSONException(Log.getStackTraceString(e));
+					} else {
+						L.e("Failed to deserialize '" + jsonField.keyName
+								+ "'.");
+						L.w(e);
+					}
 				}
+			} else if (jsonField.keyRequired) {
+				throw new JSONException("Required key '" + jsonField.keyName
+						+ "' not present.");
 			}
 		}
 		return model;

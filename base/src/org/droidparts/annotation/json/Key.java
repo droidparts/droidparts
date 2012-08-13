@@ -27,7 +27,6 @@ public @interface Key {
 
 	String name() default "";
 
-	// Class<? extends StringSerializer> serializer() default
-	// StringSerializer.class;
+	boolean required() default false;
 
 }

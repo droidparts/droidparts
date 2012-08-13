@@ -46,11 +46,12 @@ public class JSONModelAnnotationProcessor extends
 	protected JSONModelField[] modelClassFields() {
 		ArrayList<JSONModelField> list = new ArrayList<JSONModelField>();
 		for (Field field : getClassHierarchyFields()) {
-			Key columnAnn = field.getAnnotation(Key.class);
-			if (columnAnn != null) {
+			Key keyAnn = field.getAnnotation(Key.class);
+			if (keyAnn != null) {
 				JSONModelField jsonField = new JSONModelField();
 				fillField(field, jsonField);
-				jsonField.keyName = getKeyName(columnAnn, field);
+				jsonField.keyName = getKeyName(keyAnn, field);
+				jsonField.keyRequired = keyAnn.required();
 				list.add(jsonField);
 			}
 		}
