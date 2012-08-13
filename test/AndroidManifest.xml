@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="org.droidparts" >
+    package="org.droidparts.test" >
 
     <uses-sdk
         android:minSdkVersion="7"
@@ -8,10 +8,11 @@
 
     <instrumentation
         android:name="android.test.InstrumentationTestRunner"
-        android:targetPackage="org.droidparts" />
+        android:targetPackage="org.droidparts.test" />
 
-    <application android:label="@string/app_name" >
+    <application android:label="@string/app_name" android:name=".Application">
         <uses-library android:name="android.test.runner" />
+        <meta-data android:name="droidparts_dependency_provider" android:value=".DependencyProvider"/>
     </application>
 
 </manifest>

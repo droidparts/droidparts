@@ -1,7 +1,7 @@
-package org.droidparts.serializer;
+package org.droidparts.test.serializer;
 
-import org.droidparts.model.Phone;
 import org.droidparts.serializer.json.JSONSerializer;
+import org.droidparts.test.model.Phone;
 
 public class PhoneSerializer extends JSONSerializer<Phone> {
 

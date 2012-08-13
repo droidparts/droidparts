@@ -1,6 +1,7 @@
-package org.droidparts.model;
+package org.droidparts.test.model;
 
 import org.droidparts.annotation.json.Key;
+import org.droidparts.model.Model;
 
 public class Primitives extends Model {
 	private static final long serialVersionUID = 1L;

@@ -1,11 +1,12 @@
-package org.droidparts;
+package org.droidparts.test.testcase;
 
 import java.util.ArrayList;
 
-import org.droidparts.model.Phone;
-import org.droidparts.model.Primitives;
-import org.droidparts.serializer.PhoneSerializer;
+import org.droidparts.R;
 import org.droidparts.serializer.json.JSONSerializer;
+import org.droidparts.test.model.Phone;
+import org.droidparts.test.model.Primitives;
+import org.droidparts.test.serializer.PhoneSerializer;
 import org.droidparts.util.AppUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
