@@ -185,21 +185,7 @@ public class AnnotatedEntityManager<Model extends Entity> extends
 
 	private String[] eagerForeignKeyFieldNames;
 
-	protected void subPutToContentValues(ContentValues cv, String key,
-			Class<?> valueCls, Object value) {
-		// TODO ObjectOutputStream
-		throw new IllegalArgumentException("Need to manually put " + valueCls
-				+ " to ContentValues.");
-	}
-
-	protected Object subReadFromCursor(Cursor cursor, int columnIndex,
-			Class<?> fieldCls) {
-		// TODO ObjectInputStream
-		throw new IllegalArgumentException("Need to manually read " + fieldCls
-				+ " from Cursor.");
-	}
-
-	private void putToContentValues(ContentValues cv, String key,
+	protected void putToContentValues(ContentValues cv, String key,
 			Class<?> valueCls, Object value) {
 		if (value == null) {
 			cv.putNull(key);
@@ -246,11 +232,13 @@ public class AnnotatedEntityManager<Model extends Entity> extends
 				cv.put(key, val);
 			}
 		} else {
-			subPutToContentValues(cv, key, valueCls, value);
+			// TODO ObjectOutputStream
+			throw new IllegalArgumentException("Need to manually put "
+					+ valueCls + " to ContentValues.");
 		}
 	}
 
-	private Object readFromCursor(Cursor cursor, int columnIndex,
+	protected Object readFromCursor(Cursor cursor, int columnIndex,
 			Class<?> fieldCls) {
 		if (cursor.isNull(columnIndex)) {
 			return null;
@@ -295,7 +283,9 @@ public class AnnotatedEntityManager<Model extends Entity> extends
 				return coll;
 			}
 		} else {
-			return subReadFromCursor(cursor, columnIndex, fieldCls);
+			// TODO ObjectInputStream
+			throw new IllegalArgumentException("Need to manually read "
+					+ fieldCls + " from Cursor.");
 		}
 	}
 

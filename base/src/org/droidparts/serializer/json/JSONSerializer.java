@@ -15,7 +15,6 @@
  */
 package org.droidparts.serializer.json;
 
-import static android.util.Log.getStackTraceString;
 import static org.droidparts.reflection.util.ReflectionUtils.getField;
 import static org.droidparts.reflection.util.ReflectionUtils.getTypedFieldVal;
 import static org.droidparts.reflection.util.ReflectionUtils.instantiate;
@@ -81,7 +80,9 @@ public class JSONSerializer<TypeFrom extends Model> implements
 				putToJSONObject(obj, jsonField.keyName, jsonField.fieldClass,
 						columnVal);
 			} catch (Exception e) {
-				throw new JSONException(getStackTraceString(e));
+				L.e("Failded to serialize " + processor.getModelClassName()
+						+ "." + jsonField.fieldName);
+				L.w(e);
 			}
 		}
 		return obj;
@@ -93,18 +94,15 @@ public class JSONSerializer<TypeFrom extends Model> implements
 		JSONModelField[] fields = processor.getModelClassFields();
 		for (JSONModelField jsonField : fields) {
 			if (obj.has(jsonField.keyName)) {
-				Object val = obj.get(jsonField.keyName);
 				Field f = getField(model.getClass(), jsonField.fieldName);
 				try {
+					Object val = obj.get(jsonField.keyName);
 					val = readFromJSON(jsonField.fieldClass,
 							jsonField.fieldGenericArg, val);
-				} catch (Exception e) {
-					throw new JSONException(getStackTraceString(e));
-				}
-				try {
 					setFieldVal(f, model, val);
-				} catch (IllegalArgumentException e) {
-					L.w("Failed to deserialize '" + jsonField.keyName + "'.");
+				} catch (Exception e) {
+					L.e("Failed to deserialize '" + jsonField.keyName + "'.");
+					L.w(e);
 				}
 			}
 		}
@@ -204,8 +202,8 @@ public class JSONSerializer<TypeFrom extends Model> implements
 			} else if ("1".equals(strVal) || "true".equalsIgnoreCase(strVal)) {
 				return Boolean.TRUE;
 			} else {
-				throw new IllegalArgumentException("Unparseable boolean: "
-						+ strVal);
+				throw new IllegalArgumentException("Unparseable boolean: '"
+						+ strVal + "'.");
 			}
 		} else if (isCharacter(valType)) {
 			return (strVal.length() == 0) ? ' ' : strVal.charAt(0);

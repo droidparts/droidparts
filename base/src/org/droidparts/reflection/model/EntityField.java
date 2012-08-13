@@ -24,9 +24,8 @@ public class EntityField extends AbstractModelField {
 
 	@Override
 	public String toString() {
-		return "fieldName: " + fieldName + ", fieldType: " + fieldClass
-				+ ", columnName: " + columnName + ", columnNullable: "
-				+ columnNullable + ", columnUnique: " + columnUnique
-				+ ", columnEager: " + columnEager;
+		return super.toString() + ", columnName: " + columnName
+				+ ", columnNullable: " + columnNullable + ", columnUnique: "
+				+ columnUnique + ", columnEager: " + columnEager;
 	}
 }

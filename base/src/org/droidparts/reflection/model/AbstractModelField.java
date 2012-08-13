@@ -21,4 +21,10 @@ public abstract class AbstractModelField {
 	public Class<?> fieldClass;
 	public Class<?> fieldGenericArg;
 
+	@Override
+	public String toString() {
+		return "fieldName: " + fieldName + ", fieldClass: " + fieldClass
+				+ ", fieldGenericArg: " + fieldGenericArg;
+	}
+
 }

@@ -15,14 +15,13 @@
  */
 package org.droidparts.reflection.model;
 
-
 public class JSONModelField extends AbstractModelField {
 
 	public String keyName;
+	public String keyRequired;
 
 	@Override
 	public String toString() {
-		return "fieldName: " + fieldName + ", fieldClass: " + fieldClass
-				+ ", keyName: " + keyName;
+		return super.toString() + ", keyName: " + keyName;
 	}
 }
