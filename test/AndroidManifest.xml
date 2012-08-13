@@ -3,16 +3,23 @@
     package="org.droidparts.test" >
 
     <uses-sdk
-        android:minSdkVersion="7"
+        android:minSdkVersion="8"
         android:targetSdkVersion="14" />
 
     <instrumentation
         android:name="android.test.InstrumentationTestRunner"
         android:targetPackage="org.droidparts.test" />
 
-    <application android:label="@string/app_name" android:name=".Application">
+    <application
+        android:name=".Application"
+        android:label="droidparts-test" >
         <uses-library android:name="android.test.runner" />
-        <meta-data android:name="droidparts_dependency_provider" android:value=".DependencyProvider"/>
+
+        <meta-data
+            android:name="droidparts_dependency_provider"
+            android:value=".DependencyProvider" />
+
+        <activity android:name=".activity.TestActivity" />
     </application>
 
 </manifest>
