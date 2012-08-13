@@ -102,22 +102,23 @@ public class JSONSerializer<TypeFrom extends Model> implements
 		for (JSONModelField jsonField : fields) {
 			if (obj.has(jsonField.keyName)) {
 				Object val = obj.get(jsonField.keyName);
-				if (NULL.equals(val)) {
-					L.i("Received NULL '" + jsonField.keyName + "', skipping.");
-				} else {
-					Field f = getField(model.getClass(), jsonField.fieldName);
-					try {
-						val = readFromJSON(jsonField.fieldClass,
-								jsonField.fieldGenericArg, val);
+				Field f = getField(model.getClass(), jsonField.fieldName);
+				try {
+					val = readFromJSON(jsonField.fieldClass,
+							jsonField.fieldGenericArg, val);
+					if (!NULL.equals(val)) {
 						setFieldVal(f, model, val);
-					} catch (Exception e) {
-						if (jsonField.keyRequired) {
-							throw new JSONException(Log.getStackTraceString(e));
-						} else {
-							L.e("Failed to deserialize '" + jsonField.keyName
-									+ "'.");
-							L.w(e);
-						}
+					} else {
+						L.i("Received NULL '" + jsonField.keyName
+								+ "', skipping.");
+					}
+				} catch (Exception e) {
+					if (jsonField.keyRequired) {
+						throw new JSONException(Log.getStackTraceString(e));
+					} else {
+						L.e("Failed to deserialize '" + jsonField.keyName
+								+ "'.");
+						L.w(e);
 					}
 				}
 			} else if (jsonField.keyRequired) {
@@ -149,7 +150,9 @@ public class JSONSerializer<TypeFrom extends Model> implements
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	protected void putToJSONObject(JSONObject obj, String key,
 			Class<?> valType, Object val) throws Exception {
-		if (isByte(valType)) {
+		if (val == null) {
+			obj.put(key, NULL);
+		} else if (isByte(valType)) {
 			obj.put(key, (Byte) val);
 		} else if (isShort(valType)) {
 			obj.put(key, (Short) val);
@@ -203,7 +206,9 @@ public class JSONSerializer<TypeFrom extends Model> implements
 	protected Object readFromJSON(Class<?> valType, Class<?> valGenericArgType,
 			Object jsonVal) throws Exception {
 		String strVal = String.valueOf(jsonVal);
-		if (isByte(valType)) {
+		if (NULL.equals(jsonVal)) {
+			return jsonVal;
+		} else if (isByte(valType)) {
 			return Byte.valueOf(strVal);
 		} else if (isShort(valType)) {
 			return Short.valueOf(strVal);
