@@ -1,5 +1,7 @@
 package org.droidparts.test.testcase;
 
+import static org.droidparts.serializer.json.JSONSerializer.SEP;
+
 import java.util.ArrayList;
 
 import org.droidparts.R;
@@ -8,6 +10,7 @@ import org.droidparts.test.model.Phone;
 import org.droidparts.test.model.Primitives;
 import org.droidparts.test.serializer.PhoneSerializer;
 import org.droidparts.util.AppUtils;
+import org.droidparts.util.Strings;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -41,8 +44,8 @@ public class JSONTestCase extends AndroidTestCase {
 	}
 
 	public void testNestedKeys() throws Exception {
-		assertEquals(0, JSONSerializer.buildNestedKey().length());
-		assertEquals("obj->key", JSONSerializer.buildNestedKey("obj", "key"));
+		assertEquals("obj->key",
+				Strings.join(new String[] { "obj", "key" }, SEP, null));
 	}
 
 	//
