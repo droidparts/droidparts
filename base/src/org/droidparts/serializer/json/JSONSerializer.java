@@ -61,7 +61,7 @@ public class JSONSerializer<TypeFrom extends Model> implements
 		Serializer<TypeFrom, JSONObject> {
 
 	// ASCII GS (group separator), '->' for readability
-	public static final String SUB = "->" + (char) 29;
+	public static final String __ = "->" + (char) 29;
 
 	private final Class<? extends Model> cls;
 	private final JSONModelAnnotationProcessor processor;
@@ -328,10 +328,10 @@ public class JSONSerializer<TypeFrom extends Model> implements
 	}
 
 	private Pair<String, String> getNestedKeyParts(String key) {
-		int firstSep = key.indexOf(SUB);
+		int firstSep = key.indexOf(__);
 		if (firstSep != -1) {
 			String subKey = key.substring(0, firstSep);
-			String leftKey = key.substring(firstSep + SUB.length());
+			String leftKey = key.substring(firstSep + __.length());
 			Pair<String, String> pair = Pair.create(subKey, leftKey);
 			return pair;
 		} else {

@@ -1,6 +1,6 @@
 package org.droidparts.test.testcase;
 
-import static org.droidparts.serializer.json.JSONSerializer.SUB;
+import static org.droidparts.serializer.json.JSONSerializer.__;
 import static org.droidparts.util.Strings.join;
 
 import java.util.ArrayList;
@@ -45,8 +45,7 @@ public class JSONTestCase extends AndroidTestCase {
 	}
 
 	public void testNestedKeys() throws Exception {
-		assertEquals("obj->key",
-				join(new String[] { "obj", "key" }, SUB, null));
+		assertEquals("obj->key", join(new String[] { "obj", "key" }, __, null));
 		JSONSerializer<Nested> serializer = new JSONSerializer<Nested>(
 				Nested.class);
 		Nested model = serializer.deserialize(getNested());
