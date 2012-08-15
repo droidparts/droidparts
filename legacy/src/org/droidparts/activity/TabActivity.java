@@ -15,7 +15,7 @@
  */
 package org.droidparts.activity;
 
-import org.droidparts.contract.Injected;
+import org.droidparts.contract.Injectable;
 import org.droidparts.inject.Injector;
 
 import android.content.Intent;
@@ -23,7 +23,7 @@ import android.os.Bundle;
 import android.widget.TabHost.TabSpec;
 
 public abstract class TabActivity extends android.app.TabActivity implements
-		Injected {
+		Injectable {
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {

@@ -15,7 +15,7 @@
  */
 package org.droidparts.contract;
 
-public interface Injected {
+public interface Injectable {
 
 	void onPreInject();
 

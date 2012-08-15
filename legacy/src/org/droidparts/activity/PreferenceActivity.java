@@ -15,13 +15,13 @@
  */
 package org.droidparts.activity;
 
-import org.droidparts.contract.Injected;
+import org.droidparts.contract.Injectable;
 import org.droidparts.inject.Injector;
 
 import android.os.Bundle;
 
 public abstract class PreferenceActivity extends
-		android.preference.PreferenceActivity implements Injected {
+		android.preference.PreferenceActivity implements Injectable {
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {

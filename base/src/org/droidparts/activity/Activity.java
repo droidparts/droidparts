@@ -15,12 +15,12 @@
  */
 package org.droidparts.activity;
 
-import org.droidparts.contract.Injected;
+import org.droidparts.contract.Injectable;
 import org.droidparts.inject.Injector;
 
 import android.os.Bundle;
 
-public class Activity extends android.app.Activity implements Injected {
+public class Activity extends android.app.Activity implements Injectable {
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {

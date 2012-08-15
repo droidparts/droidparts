@@ -15,13 +15,13 @@
  */
 package org.droidparts.activity;
 
-import org.droidparts.contract.Injected;
+import org.droidparts.contract.Injectable;
 import org.droidparts.inject.Injector;
 
 import android.os.Bundle;
 
 public abstract class ListActivity extends android.app.ListActivity implements
-		Injected {
+		Injectable {
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {

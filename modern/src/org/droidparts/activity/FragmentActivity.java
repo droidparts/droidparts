@@ -16,7 +16,7 @@
 package org.droidparts.activity;
 
 import org.droidparts.R;
-import org.droidparts.contract.Injected;
+import org.droidparts.contract.Injectable;
 import org.droidparts.inject.FragmentsInjector;
 
 import android.os.Bundle;
@@ -30,7 +30,7 @@ import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.view.MenuItem;
 
 public abstract class FragmentActivity extends SherlockFragmentActivity
-		implements Injected {
+		implements Injectable {
 
 	private MenuItem reloadMenuItem;
 	private View loadingIndicator;
