@@ -7,10 +7,10 @@ import java.util.ArrayList;
 
 import org.droidparts.R;
 import org.droidparts.serializer.json.JSONSerializer;
+import org.droidparts.test.manager.PhoneSerializer;
 import org.droidparts.test.model.Nested;
 import org.droidparts.test.model.Phone;
 import org.droidparts.test.model.Primitives;
-import org.droidparts.test.serializer.PhoneSerializer;
 import org.droidparts.util.AppUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;

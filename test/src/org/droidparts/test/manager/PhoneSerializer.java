@@ -1,4 +1,4 @@
-package org.droidparts.test.serializer;
+package org.droidparts.test.manager;
 
 import org.droidparts.serializer.json.JSONSerializer;
 import org.droidparts.test.model.Phone;
