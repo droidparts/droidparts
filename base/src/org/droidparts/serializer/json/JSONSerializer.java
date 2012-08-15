@@ -61,7 +61,7 @@ public class JSONSerializer<TypeFrom extends Model> implements
 		Serializer<TypeFrom, JSONObject> {
 
 	// ASCII GS (group separator), '->' for readability
-	public static final String SEP = "->" + (char) 29;
+	public static final String SUB = "->" + (char) 29;
 
 	private final Class<? extends Model> cls;
 	private final JSONModelAnnotationProcessor processor;
@@ -104,21 +104,33 @@ public class JSONSerializer<TypeFrom extends Model> implements
 		return obj;
 	}
 
+	@Override
+	public TypeFrom deserialize(JSONObject obj) throws JSONException {
+		TypeFrom model = instantiate(cls);
+		JSONModelField[] fields = processor.getModelClassFields();
+		for (JSONModelField jsonField : fields) {
+			readFromJSONAndSetFieldVal(model, jsonField, obj, jsonField.keyName);
+		}
+		return model;
+	}
+
 	private void readFromModelAndPutToJSON(TypeFrom item,
 			JSONModelField jsonField, JSONObject obj, String key)
 			throws JSONException {
-		Field f = getField(item.getClass(), jsonField.fieldName);
-		Object columnVal = getTypedFieldVal(f, item);
 		Pair<String, String> keyParts = getNestedKeyParts(key);
 		if (keyParts != null) {
+			String subKey = keyParts.first;
 			JSONObject subObj;
-			if (obj.has(keyParts.first)) {
-				subObj = obj.getJSONObject(keyParts.first);
+			if (gotNonNull(obj, subKey)) {
+				subObj = obj.getJSONObject(subKey);
 			} else {
 				subObj = new JSONObject();
+				obj.put(subKey, subObj);
 			}
 			readFromModelAndPutToJSON(item, jsonField, subObj, keyParts.second);
 		} else {
+			Field f = getField(item.getClass(), jsonField.fieldName);
+			Object columnVal = getTypedFieldVal(f, item);
 			try {
 				putToJSONObject(obj, key, jsonField.fieldClass, columnVal);
 			} catch (Exception e) {
@@ -133,49 +145,36 @@ public class JSONSerializer<TypeFrom extends Model> implements
 		}
 	}
 
-	@Override
-	public TypeFrom deserialize(JSONObject obj) throws JSONException {
-		TypeFrom model = instantiate(cls);
-		JSONModelField[] fields = processor.getModelClassFields();
-		for (JSONModelField jsonField : fields) {
-			readFromJSONAndSetFieldVal(model, jsonField, obj, jsonField.keyName);
-		}
-		return model;
-	}
-
 	private void readFromJSONAndSetFieldVal(TypeFrom model,
 			JSONModelField modelField, JSONObject obj, String key)
 			throws JSONException {
-		if (obj.has(key)) {
-			Pair<String, String> keyParts = getNestedKeyParts(key);
-			if (keyParts != null) {
-				JSONObject subObj = obj.getJSONObject(keyParts.first);
-				if (!NULL.equals(subObj)) {
-					readFromJSONAndSetFieldVal(model, modelField, subObj,
-							keyParts.second);
-				} else {
-					throwIfRequired(modelField);
-				}
+		Pair<String, String> keyParts = getNestedKeyParts(key);
+		if (keyParts != null) {
+			String subKey = keyParts.first;
+			if (gotNonNull(obj, subKey)) {
+				JSONObject subObj = obj.getJSONObject(subKey);
+				readFromJSONAndSetFieldVal(model, modelField, subObj,
+						keyParts.second);
 			} else {
-				Object val = obj.get(key);
-				Field f = getField(model.getClass(), modelField.fieldName);
-				try {
-					val = readFromJSON(modelField.fieldClass,
-							modelField.fieldGenericArg, val);
-					if (!NULL.equals(val)) {
-						setFieldVal(f, model, val);
-					} else {
-						L.i("Received NULL '" + modelField.keyName
-								+ "', skipping.");
-					}
-				} catch (Exception e) {
-					if (modelField.keyRequired) {
-						throw new JSONException(Log.getStackTraceString(e));
-					} else {
-						L.e("Failed to deserialize '" + modelField.keyName
-								+ "'.");
-						L.w(e);
-					}
+				throwIfRequired(modelField);
+			}
+		} else if (obj.has(key)) {
+			Object val = obj.get(key);
+			Field f = getField(model.getClass(), modelField.fieldName);
+			try {
+				val = readFromJSON(modelField.fieldClass,
+						modelField.fieldGenericArg, val);
+				if (!NULL.equals(val)) {
+					setFieldVal(f, model, val);
+				} else {
+					L.i("Received NULL '" + modelField.keyName + "', skipping.");
+				}
+			} catch (Exception e) {
+				if (modelField.keyRequired) {
+					throw new JSONException(Log.getStackTraceString(e));
+				} else {
+					L.e("Failed to deserialize '" + modelField.keyName + "'.");
+					L.w(e);
 				}
 			}
 		} else {
@@ -324,11 +323,15 @@ public class JSONSerializer<TypeFrom extends Model> implements
 		return serializer;
 	}
 
+	private boolean gotNonNull(JSONObject obj, String key) throws JSONException {
+		return obj.has(key) && !NULL.equals(obj.get(key));
+	}
+
 	private Pair<String, String> getNestedKeyParts(String key) {
-		int firstSep = key.indexOf(SEP);
+		int firstSep = key.indexOf(SUB);
 		if (firstSep != -1) {
 			String subKey = key.substring(0, firstSep);
-			String leftKey = key.substring(firstSep + SEP.length());
+			String leftKey = key.substring(firstSep + SUB.length());
 			Pair<String, String> pair = Pair.create(subKey, leftKey);
 			return pair;
 		} else {
