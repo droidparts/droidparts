@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License. 
  */
-package org.droidparts.net.http.wrapper;
+package org.droidparts.http.wrapper;
 
 import static android.text.TextUtils.isEmpty;
 import static org.apache.http.auth.AuthScope.ANY_HOST;
@@ -37,7 +37,7 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.params.HttpConnectionParams;
 import org.apache.http.params.HttpParams;
 import org.apache.http.params.HttpProtocolParams;
-import org.droidparts.net.http.HTTPException;
+import org.droidparts.http.HTTPException;
 import org.droidparts.util.L;
 import org.droidparts.util.io.IOUtils;
 

@@ -13,14 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License. 
  */
-package org.droidparts.manager.json;
+package org.droidparts.manager.sql;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.nio.channels.FileChannel;
-
-import org.droidparts.manager.sql.AbstractDBOpenHelper;
 
 import android.content.Context;
 

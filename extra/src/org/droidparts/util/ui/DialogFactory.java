@@ -15,34 +15,16 @@
  */
 package org.droidparts.util.ui;
 
-import static android.widget.Toast.LENGTH_SHORT;
-
-import org.droidparts.R;
+import org.droidparts.manager.AbstractDialogFactory;
 
 import android.content.Context;
-import android.view.LayoutInflater;
-import android.widget.Toast;
 
-public class DialogFactory {
+@Deprecated
+public class DialogFactory extends AbstractDialogFactory {
 
-	protected final Context ctx;
-	protected final LayoutInflater layoutInflater;
-
+	@Deprecated
 	public DialogFactory(Context ctx) {
-		this.ctx = ctx;
-		layoutInflater = LayoutInflater.from(ctx);
-	}
-
-	public void showErrorToast() {
-		showToast(R.string.error);
-	}
-
-	public void showToast(int msgResId, Object... formatArgs) {
-		showToast(ctx.getString(msgResId, formatArgs));
-	}
-
-	public void showToast(CharSequence msg) {
-		Toast.makeText(ctx, msg, LENGTH_SHORT).show();
+		super(ctx);
 	}
 
 }

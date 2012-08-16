@@ -25,8 +25,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 
-import org.droidparts.util.HashCalc;
 import org.droidparts.util.L;
+import org.droidparts.util.crypto.HashCalc;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;

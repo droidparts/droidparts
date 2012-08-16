@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License. 
  */
-package org.droidparts.net.http;
+package org.droidparts.http;
 
 import java.util.Map;
 

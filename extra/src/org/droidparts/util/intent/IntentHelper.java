@@ -15,8 +15,8 @@
  */
 package org.droidparts.util.intent;
 
+import org.droidparts.manager.AbstractDialogFactory;
 import org.droidparts.util.L;
-import org.droidparts.util.ui.DialogFactory;
 
 import android.content.ActivityNotFoundException;
 import android.content.Context;
@@ -44,7 +44,7 @@ public class IntentHelper {
 			ctx.startActivity(intent);
 		} catch (ActivityNotFoundException e) {
 			L.e(e);
-			new DialogFactory(ctx).showErrorToast();
+			new AbstractDialogFactory(ctx).showErrorToast();
 		}
 	}
 

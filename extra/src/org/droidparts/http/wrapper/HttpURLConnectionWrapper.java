@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License. 
  */
-package org.droidparts.net.http.wrapper;
+package org.droidparts.http.wrapper;
 
 import static org.droidparts.util.Strings.isEmpty;
 
@@ -27,7 +27,7 @@ import java.net.PasswordAuthentication;
 import java.net.Proxy;
 import java.net.URL;
 
-import org.droidparts.net.http.HTTPException;
+import org.droidparts.http.HTTPException;
 import org.droidparts.util.L;
 import org.droidparts.util.io.IOUtils;
 

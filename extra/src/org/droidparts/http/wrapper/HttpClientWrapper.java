@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License. 
  */
-package org.droidparts.net.http.wrapper;
+package org.droidparts.http.wrapper;
 
 import java.net.MalformedURLException;
 import java.net.URL;

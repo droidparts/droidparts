@@ -14,7 +14,7 @@
  * limitations under the License. 
  */
 
-package org.droidparts.net.http;
+package org.droidparts.http;
 
 import org.apache.http.HttpStatus;
 

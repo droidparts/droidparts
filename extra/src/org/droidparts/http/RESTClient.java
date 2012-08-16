@@ -13,12 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License. 
  */
-package org.droidparts.net.http;
+package org.droidparts.http;
 
 import static android.text.TextUtils.isEmpty;
 import static org.droidparts.contract.Constants.UTF8;
-import static org.droidparts.net.http.wrapper.HttpClientWrapper.useHttpURLConnection;
-import static org.droidparts.net.http.wrapper.HttpURLConnectionWrapper.GET;
+import static org.droidparts.http.wrapper.HttpClientWrapper.useHttpURLConnection;
+import static org.droidparts.http.wrapper.HttpURLConnectionWrapper.GET;
 
 import java.io.BufferedInputStream;
 import java.io.UnsupportedEncodingException;
@@ -33,10 +33,10 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpPut;
 import org.apache.http.entity.StringEntity;
-import org.droidparts.net.http.wrapper.ConsumingInputStream;
-import org.droidparts.net.http.wrapper.DefaultHttpClientWrapper;
-import org.droidparts.net.http.wrapper.HttpClientWrapper;
-import org.droidparts.net.http.wrapper.HttpURLConnectionWrapper;
+import org.droidparts.http.wrapper.ConsumingInputStream;
+import org.droidparts.http.wrapper.DefaultHttpClientWrapper;
+import org.droidparts.http.wrapper.HttpClientWrapper;
+import org.droidparts.http.wrapper.HttpURLConnectionWrapper;
 import org.droidparts.util.L;
 
 import android.content.Context;
