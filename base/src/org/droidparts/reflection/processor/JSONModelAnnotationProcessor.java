@@ -51,7 +51,7 @@ public class JSONModelAnnotationProcessor extends
 				JSONModelField jsonField = new JSONModelField();
 				fillField(field, jsonField);
 				jsonField.keyName = getKeyName(keyAnn, field);
-				jsonField.keyRequired = keyAnn.required();
+				jsonField.keyOptional = keyAnn.optional();
 				list.add(jsonField);
 			}
 		}

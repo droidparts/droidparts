@@ -18,11 +18,11 @@ package org.droidparts.reflection.model;
 public class JSONModelField extends AbstractModelField {
 
 	public String keyName;
-	public boolean keyRequired;
+	public boolean keyOptional;
 
 	@Override
 	public String toString() {
-		return super.toString() + ", keyName: " + keyName + ", keyRequired: "
-				+ keyRequired;
+		return super.toString() + ", keyName: " + keyName + ", keyOptional: "
+				+ keyOptional;
 	}
 }

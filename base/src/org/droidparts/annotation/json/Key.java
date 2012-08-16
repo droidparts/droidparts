@@ -27,6 +27,6 @@ public @interface Key {
 
 	String name() default "";
 
-	boolean required() default true;
+	boolean optional() default false;
 
 }

@@ -134,12 +134,12 @@ public class JSONSerializer<TypeFrom extends Model> implements
 			try {
 				putToJSONObject(obj, key, jsonField.fieldClass, columnVal);
 			} catch (Exception e) {
-				if (jsonField.keyRequired) {
-					throw new JSONException(Log.getStackTraceString(e));
-				} else {
+				if (jsonField.keyOptional) {
 					L.e("Failded to serialize " + processor.getModelClassName()
 							+ "." + jsonField.fieldName);
 					L.w(e);
+				} else {
+					throw new JSONException(Log.getStackTraceString(e));
 				}
 			}
 		}
@@ -170,11 +170,11 @@ public class JSONSerializer<TypeFrom extends Model> implements
 					L.i("Received NULL '" + modelField.keyName + "', skipping.");
 				}
 			} catch (Exception e) {
-				if (modelField.keyRequired) {
-					throw new JSONException(Log.getStackTraceString(e));
-				} else {
+				if (modelField.keyOptional) {
 					L.e("Failed to deserialize '" + modelField.keyName + "'.");
 					L.w(e);
+				} else {
+					throw new JSONException(Log.getStackTraceString(e));
 				}
 			}
 		} else {
@@ -341,7 +341,7 @@ public class JSONSerializer<TypeFrom extends Model> implements
 
 	private void throwIfRequired(JSONModelField modelField)
 			throws JSONException {
-		if (modelField.keyRequired) {
+		if (!modelField.keyOptional) {
 			throw new JSONException("Required key '" + modelField.keyName
 					+ "' not present.");
 		}
