@@ -15,7 +15,7 @@
  */
 package org.droidparts.adapter.cursor;
 
-import org.droidparts.manager.sql.AbstractEntityManager;
+import org.droidparts.manager.sql.EntityManager;
 import org.droidparts.model.Entity;
 
 import android.app.Activity;
@@ -27,20 +27,20 @@ public abstract class SimpleCursorAdapter<Model extends Entity> extends
 
 	@Deprecated
 	public SimpleCursorAdapter(Activity activity,
-			AbstractEntityManager<Model> entityManager) {
+			EntityManager<Model> entityManager) {
 		super(activity, entityManager);
 	}
 
 	@Deprecated
 	public SimpleCursorAdapter(Activity activity,
-			AbstractEntityManager<Model> entityManager, Cursor cursor) {
+			EntityManager<Model> entityManager, Cursor cursor) {
 		super(activity, entityManager, cursor);
 	}
 
 	//
 	@Deprecated
 	public SimpleCursorAdapter(Activity activity, Cursor cursor,
-			AbstractEntityManager<Model> entityManager) {
+			EntityManager<Model> entityManager) {
 		this(activity, entityManager, cursor);
 	}
 

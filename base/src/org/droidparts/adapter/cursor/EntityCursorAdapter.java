@@ -15,7 +15,6 @@
  */
 package org.droidparts.adapter.cursor;
 
-import org.droidparts.manager.sql.AbstractEntityManager;
 import org.droidparts.manager.sql.EntityManager;
 
 import android.app.Activity;
@@ -24,15 +23,15 @@ import android.database.Cursor;
 public abstract class EntityCursorAdapter<Entity extends org.droidparts.model.Entity>
 		extends CursorAdapter<Entity> {
 
-	protected final AbstractEntityManager<Entity> entityManager;
+	protected final EntityManager<Entity> entityManager;
 
 	public EntityCursorAdapter(Activity activity,
-			AbstractEntityManager<Entity> entityManager) {
+			EntityManager<Entity> entityManager) {
 		this(activity, entityManager, entityManager.list());
 	}
 
 	public EntityCursorAdapter(Activity activity,
-			AbstractEntityManager<Entity> entityManager, Cursor cursor) {
+			EntityManager<Entity> entityManager, Cursor cursor) {
 		super(activity, cursor);
 		this.entityManager = entityManager;
 	}
@@ -45,12 +44,7 @@ public abstract class EntityCursorAdapter<Entity extends org.droidparts.model.En
 	public Entity read(int position) {
 		long id = getItemId(position);
 		Entity item = entityManager.read(id);
-		String[] eagerFieldNames = new String[0];
-		if (entityManager instanceof EntityManager) {
-			@SuppressWarnings("rawtypes")
-			EntityManager aem = ((EntityManager) entityManager);
-			eagerFieldNames = aem.getEagerForeignKeyFieldNames();
-		}
+		String[] eagerFieldNames = entityManager.getEagerForeignKeyFieldNames();
 		if (eagerFieldNames.length != 0) {
 			entityManager.fillForeignKeys(item, eagerFieldNames);
 		}
