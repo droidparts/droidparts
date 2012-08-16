@@ -1,6 +1,6 @@
 package org.droidparts.test.manager;
 
-import org.droidparts.manager.json.AbstractDBOpenHelper2;
+import org.droidparts.manager.sql.AbstractDBOpenHelper2;
 import org.droidparts.model.Entity;
 import org.droidparts.test.model.Phone;
 
