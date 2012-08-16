@@ -22,8 +22,7 @@ import android.app.Activity;
 import android.database.Cursor;
 import android.view.LayoutInflater;
 
-public abstract class CursorAdapter<Type> extends
-		android.widget.CursorAdapter {
+public abstract class CursorAdapter<Type> extends android.widget.CursorAdapter {
 
 	@InjectSystemService
 	protected LayoutInflater layoutInflater;
@@ -31,11 +30,6 @@ public abstract class CursorAdapter<Type> extends
 	public CursorAdapter(Activity activity, Cursor cursor) {
 		super(activity, cursor);
 		Injector.get().inject(activity, this);
-		activity.startManagingCursor(cursor);
-	}
-
-	public void requery() {
-		getCursor().requery();
 	}
 
 }

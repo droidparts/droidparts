@@ -15,8 +15,8 @@
  */
 package org.droidparts.adapter.cursor;
 
-import org.droidparts.manager.sql.EntityManager;
 import org.droidparts.manager.sql.AbstractEntityManager;
+import org.droidparts.manager.sql.EntityManager;
 
 import android.app.Activity;
 import android.database.Cursor;
@@ -70,7 +70,7 @@ public abstract class EntityCursorAdapter<Entity extends org.droidparts.model.En
 
 	private boolean requeryOnSuccess(boolean success) {
 		if (success) {
-			requery();
+			getCursor().requery();
 		}
 		return success;
 	}
