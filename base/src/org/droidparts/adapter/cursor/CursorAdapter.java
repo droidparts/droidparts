@@ -21,14 +21,14 @@ import org.droidparts.inject.Injector;
 import android.app.Activity;
 import android.database.Cursor;
 import android.view.LayoutInflater;
-import android.widget.CursorAdapter;
 
-public abstract class TypedCursorAdapter<Model> extends CursorAdapter {
+public abstract class CursorAdapter<Type> extends
+		android.widget.CursorAdapter {
 
 	@InjectSystemService
 	protected LayoutInflater layoutInflater;
 
-	public TypedCursorAdapter(Activity activity, Cursor cursor) {
+	public CursorAdapter(Activity activity, Cursor cursor) {
 		super(activity, cursor);
 		Injector.get().inject(activity, this);
 		activity.startManagingCursor(cursor);

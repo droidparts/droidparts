@@ -15,71 +15,32 @@
  */
 package org.droidparts.adapter.cursor;
 
-import org.droidparts.manager.sql.AnnotatedEntityManager;
-import org.droidparts.manager.sql.EntityManager;
+import org.droidparts.manager.sql.AbstractEntityManager;
 import org.droidparts.model.Entity;
 
 import android.app.Activity;
 import android.database.Cursor;
 
+@Deprecated
 public abstract class SimpleCursorAdapter<Model extends Entity> extends
-		TypedCursorAdapter<Model> {
+		EntityCursorAdapter<Model> {
 
-	protected final EntityManager<Model> entityManager;
-
+	@Deprecated
 	public SimpleCursorAdapter(Activity activity,
-			EntityManager<Model> entityManager) {
-		this(activity, entityManager, entityManager.list());
+			AbstractEntityManager<Model> entityManager) {
+		super(activity, entityManager);
 	}
 
+	@Deprecated
 	public SimpleCursorAdapter(Activity activity,
-			EntityManager<Model> entityManager, Cursor cursor) {
-		super(activity, cursor);
-		this.entityManager = entityManager;
-	}
-
-	public boolean create(Model item) {
-		boolean success = entityManager.create(item);
-		return requeryOnSuccess(success);
-	}
-
-	public Model read(int position) {
-		long id = getItemId(position);
-		Model item = entityManager.read(id);
-		String[] eagerFieldNames = new String[0];
-		if (entityManager instanceof AnnotatedEntityManager) {
-			@SuppressWarnings("rawtypes")
-			AnnotatedEntityManager aem = ((AnnotatedEntityManager) entityManager);
-			eagerFieldNames = aem.getEagerForeignKeyFieldNames();
-		}
-		if (eagerFieldNames.length != 0) {
-			entityManager.fillForeignKeys(item, eagerFieldNames);
-		}
-		return item;
-	}
-
-	public boolean update(Model item) {
-		boolean success = entityManager.update(item);
-		return requeryOnSuccess(success);
-	}
-
-	public boolean delete(int position) {
-		long id = getItemId(position);
-		boolean success = entityManager.delete(id);
-		return requeryOnSuccess(success);
-	}
-
-	private boolean requeryOnSuccess(boolean success) {
-		if (success) {
-			requery();
-		}
-		return success;
+			AbstractEntityManager<Model> entityManager, Cursor cursor) {
+		super(activity, entityManager, cursor);
 	}
 
 	//
 	@Deprecated
 	public SimpleCursorAdapter(Activity activity, Cursor cursor,
-			EntityManager<Model> entityManager) {
+			AbstractEntityManager<Model> entityManager) {
 		this(activity, entityManager, cursor);
 	}
 

@@ -15,126 +15,284 @@
  */
 package org.droidparts.manager.sql;
 
-import org.droidparts.contract.DB;
-import org.droidparts.manager.sql.stmt.DeleteBuilder;
-import org.droidparts.manager.sql.stmt.QueryBuilder;
-import org.droidparts.manager.sql.stmt.StatementBuilder;
-import org.droidparts.manager.sql.stmt.UpdateBuilder;
-import org.droidparts.model.Entity;
+import static org.droidparts.reflection.processor.EntityAnnotationProcessor.toPKColumnName;
+import static org.droidparts.reflection.util.ReflectionUtils.getField;
+import static org.droidparts.reflection.util.ReflectionUtils.getTypedFieldVal;
+import static org.droidparts.reflection.util.ReflectionUtils.instantiate;
+import static org.droidparts.reflection.util.ReflectionUtils.instantiateEnum;
+import static org.droidparts.reflection.util.ReflectionUtils.setFieldVal;
+import static org.droidparts.reflection.util.TypeHelper.isArray;
+import static org.droidparts.reflection.util.TypeHelper.isBitmap;
+import static org.droidparts.reflection.util.TypeHelper.isBoolean;
+import static org.droidparts.reflection.util.TypeHelper.isByte;
+import static org.droidparts.reflection.util.TypeHelper.isByteArray;
+import static org.droidparts.reflection.util.TypeHelper.isCollection;
+import static org.droidparts.reflection.util.TypeHelper.isDouble;
+import static org.droidparts.reflection.util.TypeHelper.isEntity;
+import static org.droidparts.reflection.util.TypeHelper.isEnum;
+import static org.droidparts.reflection.util.TypeHelper.isFloat;
+import static org.droidparts.reflection.util.TypeHelper.isInteger;
+import static org.droidparts.reflection.util.TypeHelper.isLong;
+import static org.droidparts.reflection.util.TypeHelper.isShort;
+import static org.droidparts.reflection.util.TypeHelper.isString;
+import static org.droidparts.reflection.util.TypeHelper.isUUID;
+import static org.droidparts.reflection.util.TypeHelper.toObjectArr;
+import static org.droidparts.reflection.util.TypeHelper.toTypeArr;
+
+import java.io.ByteArrayOutputStream;
+import java.lang.reflect.Field;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.UUID;
+
+import org.droidparts.annotation.inject.InjectDependency;
+import org.droidparts.inject.Injector;
+import org.droidparts.reflection.model.EntityField;
+import org.droidparts.reflection.processor.EntityAnnotationProcessor;
+import org.droidparts.reflection.util.ReflectionUtils;
+import org.droidparts.util.Strings;
 
 import android.content.ContentValues;
+import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Bitmap;
+import android.graphics.Bitmap.CompressFormat;
+import android.graphics.BitmapFactory;
 
-public abstract class EntityManager<Model extends Entity> implements DB {
+public class EntityManager<Entity extends org.droidparts.model.Entity> extends
+		AbstractEntityManager<Entity> {
 
-	// CRUD methods
+	// ASCII RS (record separator), '|' for readability
+	private static final String SEP = "|" + (char) 30;
 
-	public Cursor list(String... columns) {
-		return list(null, columns);
+	@InjectDependency
+	private SQLiteDatabase db;
+
+	protected final Context ctx;
+	private final Class<? extends Entity> cls;
+	private final EntityAnnotationProcessor processor;
+
+	public EntityManager(Context ctx, Class<? extends Entity> cls) {
+		Injector.get().inject(ctx, this);
+		this.ctx = ctx.getApplicationContext();
+		this.cls = cls;
+		processor = new EntityAnnotationProcessor(cls);
 	}
 
-	protected Cursor list(String orderBy, String... columns) {
-		if (columns != null && columns.length == 0) {
-			columns = null;
-		}
-		Cursor cursor = getDB().query(getTableName(), columns, null, null,
-				null, null, orderBy);
-		return cursor;
-	}
-
-	public boolean create(Model item) {
-		createOrUpdateForeignKeys(item);
-		ContentValues cv = toContentValues(item);
-		cv.remove(Column.ID);
-		long id = getDB().insert(getTableName(), null, cv);
-		if (id > 0) {
-			item.id = id;
-			return true;
-		} else {
-			return false;
-		}
-	}
-
-	public Model read(long id) {
-		Model item = null;
-		Cursor cursor = getDB().query(getTableName(), null, Column.ID + EQUALS,
-				toArgs(id), null, null, null);
-		if (cursor.moveToFirst()) {
-			item = readFromCursor(cursor);
-		}
-		cursor.close();
-		return item;
-	}
-
-	public boolean update(Model item) {
-		createOrUpdateForeignKeys(item);
-		ContentValues cv = toContentValues(item);
-		cv.remove(Column.ID);
-		int rowCount = getDB().update(getTableName(), cv, Column.ID + EQUALS,
-				toArgs(item.id));
-		return rowCount > 0;
-	}
-
+	@Override
 	public boolean delete(long id) {
-		int rowCount = getDB().delete(getTableName(), Column.ID + EQUALS,
-				toArgs(id));
-		return rowCount > 0;
+		// TODO delete models referencing this one via foreign keys.
+		return super.delete(id);
 	}
 
-	public boolean createOrUpdate(Model item) {
-		boolean success;
-		if (item.id > 0) {
-			success = update(item);
-		} else {
-			success = create(item);
+	@Override
+	public Entity readFromCursor(Cursor cursor) {
+		Entity model = instantiate(cls);
+		EntityField[] fields = processor.getModelClassFields();
+		for (EntityField dbField : fields) {
+			int colIdx = cursor.getColumnIndex(dbField.columnName);
+			if (colIdx >= 0) {
+				Object columnVal = readFromCursor(cursor, colIdx,
+						dbField.fieldClass);
+				if (columnVal != null) {
+					Field f = getField(model.getClass(), dbField.fieldName);
+					setFieldVal(f, model, columnVal);
+				}
+			}
 		}
-		return success;
+		return model;
 	}
 
-	// statement builders
-
-	protected QueryBuilder query() {
-		return new QueryBuilder(getDB(), getTableName());
-	};
-
-	protected UpdateBuilder update() {
-		return new UpdateBuilder(getDB(), getTableName());
-	};
-
-	protected DeleteBuilder delete() {
-		return new DeleteBuilder(getDB(), getTableName());
-	};
-
-	// utility methods
-
-	// TODO deprecate here
-	protected static final String[] toArgs(Object... args) {
-		return StatementBuilder.toArgs(args);
+	@Override
+	public void fillForeignKeys(Entity item, String... columnNames) {
+		HashSet<String> columnNameSet = new HashSet<String>(columnNames.length);
+		for (String colName : columnNames) {
+			columnNameSet.add(toPKColumnName(colName));
+		}
+		boolean fillAll = (columnNames.length == 0);
+		for (EntityField entityField : processor.getModelClassFields()) {
+			if (isEntity(entityField.fieldClass)
+					&& (fillAll || columnNameSet
+							.contains(entityField.columnName))) {
+				Field field = ReflectionUtils.getField(cls,
+						entityField.fieldName);
+				Entity foreignEntity = ReflectionUtils.getTypedFieldVal(field,
+						item);
+				if (foreignEntity != null) {
+					Object obj = getManager(entityField.fieldClass).read(
+							foreignEntity.id);
+					setFieldVal(field, item, obj);
+				}
+			}
+		}
 	}
 
-	// TODO deprecate here
-	protected static String sqlEscapeString(String val) {
-		return StatementBuilder.sqlEscapeString(val);
+	@Override
+	protected SQLiteDatabase getDB() {
+		return db;
 	}
 
-	public abstract Model readFromCursor(Cursor cursor);
+	@Override
+	protected String getTableName() {
+		return processor.getModelClassName();
+	}
 
-	public abstract void fillForeignKeys(Model item, String... fieldNames);
+	@Override
+	protected ContentValues toContentValues(Entity item) {
+		ContentValues cv = new ContentValues();
+		EntityField[] fields = processor.getModelClassFields();
+		for (EntityField dbField : fields) {
+			Field field = getField(item.getClass(), dbField.fieldName);
+			Object columnVal = getTypedFieldVal(field, item);
+			putToContentValues(cv, dbField.columnName, dbField.fieldClass,
+					columnVal);
+		}
+		return cv;
+	}
 
-	protected abstract SQLiteDatabase getDB();
+	@Override
+	protected void createOrUpdateForeignKeys(Entity item) {
+		for (EntityField entityField : processor.getModelClassFields()) {
+			if (isEntity(entityField.fieldClass)) {
+				Field field = ReflectionUtils.getField(cls,
+						entityField.fieldName);
+				Entity foreignEntity = ReflectionUtils.getTypedFieldVal(field,
+						item);
+				if (foreignEntity != null) {
+					getManager(entityField.fieldClass).createOrUpdate(
+							foreignEntity);
+				}
+			}
+		}
+	}
 
-	protected abstract String getTableName();
+	public String[] getEagerForeignKeyFieldNames() {
+		if (eagerForeignKeyFieldNames == null) {
+			HashSet<String> eagerFieldNames = new HashSet<String>();
+			for (EntityField ef : processor.getModelClassFields()) {
+				if (ef.columnEager) {
+					eagerFieldNames.add(ef.fieldName);
+				}
+			}
+			eagerForeignKeyFieldNames = eagerFieldNames
+					.toArray(new String[eagerFieldNames.size()]);
+		}
+		return eagerForeignKeyFieldNames;
+	}
 
-	// boring stuff
+	private String[] eagerForeignKeyFieldNames;
 
-	protected abstract ContentValues toContentValues(Model item);
+	protected void putToContentValues(ContentValues cv, String key,
+			Class<?> valueCls, Object value) {
+		if (value == null) {
+			cv.putNull(key);
+		} else if (isBoolean(valueCls)) {
+			cv.put(key, ((Boolean) value));
+		} else if (isByte(valueCls)) {
+			cv.put(key, (Byte) value);
+		} else if (isByteArray(valueCls)) {
+			cv.put(key, (byte[]) value);
+		} else if (isDouble(valueCls)) {
+			cv.put(key, (Double) value);
+		} else if (isFloat(valueCls)) {
+			cv.put(key, (Float) value);
+		} else if (isInteger(valueCls)) {
+			cv.put(key, (Integer) value);
+		} else if (isLong(valueCls)) {
+			cv.put(key, (Long) value);
+		} else if (isShort(valueCls)) {
+			cv.put(key, (Short) value);
+		} else if (isString(valueCls)) {
+			cv.put(key, (String) value);
+		} else if (isUUID(valueCls)) {
+			cv.put(key, value.toString());
+		} else if (isBitmap(valueCls)) {
+			Bitmap bm = (Bitmap) value;
+			ByteArrayOutputStream baos = new ByteArrayOutputStream();
+			bm.compress(CompressFormat.PNG, 0, baos);
+			cv.put(key, baos.toByteArray());
+		} else if (isEnum(valueCls)) {
+			cv.put(key, value.toString());
+		} else if (isEntity(valueCls)) {
+			Long id = value != null ? ((org.droidparts.model.Entity) value).id
+					: null;
+			cv.put(key, id);
+		} else if (isArray(valueCls) || isCollection(valueCls)) {
+			Object[] arr;
+			if (isArray(valueCls)) {
+				arr = toObjectArr(valueCls, value);
+			} else {
+				Collection<?> coll = (Collection<?>) value;
+				arr = coll.toArray(new Object[coll.size()]);
+			}
+			if (arr != null) {
+				String val = Strings.join(arr, SEP, null);
+				cv.put(key, val);
+			}
+		} else {
+			// TODO ObjectOutputStream
+			throw new IllegalArgumentException("Need to manually put "
+					+ valueCls + " to ContentValues.");
+		}
+	}
 
-	protected abstract void createOrUpdateForeignKeys(Model item);
+	protected Object readFromCursor(Cursor cursor, int columnIndex,
+			Class<?> fieldCls) {
+		if (cursor.isNull(columnIndex)) {
+			return null;
+		} else if (isBoolean(fieldCls)) {
+			return cursor.getInt(columnIndex) == 1;
+		} else if (isByte(fieldCls)) {
+			return Byte.valueOf(cursor.getString(columnIndex));
+		} else if (isByteArray(fieldCls)) {
+			return cursor.getBlob(columnIndex);
+		} else if (isDouble(fieldCls)) {
+			return cursor.getDouble(columnIndex);
+		} else if (isFloat(fieldCls)) {
+			return cursor.getFloat(columnIndex);
+		} else if (isInteger(fieldCls)) {
+			return cursor.getInt(columnIndex);
+		} else if (isLong(fieldCls)) {
+			return cursor.getLong(columnIndex);
+		} else if (isShort(fieldCls)) {
+			return cursor.getShort(columnIndex);
+		} else if (isString(fieldCls)) {
+			return cursor.getString(columnIndex);
+		} else if (isUUID(fieldCls)) {
+			return UUID.fromString(cursor.getString(columnIndex));
+		} else if (isBitmap(fieldCls)) {
+			byte[] arr = cursor.getBlob(columnIndex);
+			return BitmapFactory.decodeByteArray(arr, 0, arr.length);
+		} else if (isEnum(fieldCls)) {
+			return instantiateEnum(fieldCls, cursor.getString(columnIndex));
+		} else if (isEntity(fieldCls)) {
+			long id = cursor.getLong(columnIndex);
+			Entity model = instantiate(fieldCls);
+			model.id = id;
+			return model;
+		} else if (isArray(fieldCls) || isCollection(fieldCls)) {
+			String str = cursor.getString(columnIndex);
+			String[] parts = str.split("\\" + SEP);
+			if (isArray(fieldCls)) {
+				return toTypeArr(fieldCls, parts);
+			} else {
+				Collection<?> coll = (Collection<?>) instantiate(fieldCls);
+				// TODO populate
+				return coll;
+			}
+		} else {
+			// TODO ObjectInputStream
+			throw new IllegalArgumentException("Need to manually read "
+					+ fieldCls + " from Cursor.");
+		}
+	}
 
-	@Deprecated
-	protected final String[] toStrArr(Object... args) {
-		return toArgs(args);
+	private EntityManager<Entity> getManager(Class<?> cls) {
+		@SuppressWarnings("unchecked")
+		EntityManager<Entity> manager = new EntityManager<Entity>(ctx,
+				(Class<? extends Entity>) cls);
+		return manager;
 	}
 
 }
