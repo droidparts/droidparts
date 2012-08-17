@@ -64,13 +64,9 @@ import android.graphics.BitmapFactory;
 public class EntityManager<EntityType extends Entity> extends
 		AbstractEntityManager<EntityType> {
 
-	// TODO improve code
 	public static <EntityType extends Entity> EntityManager<EntityType> getInstance(
-			Context ctx, Class<?> cls) {
-		@SuppressWarnings("unchecked")
-		EntityManager<EntityType> manager = new EntityManager<EntityType>(ctx,
-				(Class<EntityType>) cls);
-		return manager;
+			Context ctx, Class<EntityType> cls) {
+		return new EntityManager<EntityType>(ctx, (Class<EntityType>) cls);
 	}
 
 	// ASCII RS (record separator), '|' for readability
@@ -130,7 +126,8 @@ public class EntityManager<EntityType extends Entity> extends
 				EntityType foreignEntity = ReflectionUtils.getTypedFieldVal(
 						field, item);
 				if (foreignEntity != null) {
-					Object obj = getInstance(ctx, entityField.fieldClass).read(
+					Object obj = getInstance(ctx,
+							castToEntityClass(entityField.fieldClass)).read(
 							foreignEntity.id);
 					setFieldVal(field, item, obj);
 				}
@@ -170,8 +167,8 @@ public class EntityManager<EntityType extends Entity> extends
 				EntityType foreignEntity = ReflectionUtils.getTypedFieldVal(
 						field, item);
 				if (foreignEntity != null) {
-					getInstance(ctx, entityField.fieldClass).createOrUpdate(
-							foreignEntity);
+					getInstance(ctx, castToEntityClass(entityField.fieldClass))
+							.createOrUpdate(foreignEntity);
 				}
 			}
 		}
@@ -295,6 +292,12 @@ public class EntityManager<EntityType extends Entity> extends
 			throw new IllegalArgumentException("Need to manually read "
 					+ fieldCls + " from Cursor.");
 		}
+	}
+
+	private Class<Entity> castToEntityClass(Class<?> cls) {
+		@SuppressWarnings("unchecked")
+		Class<Entity> cls2 = (Class<Entity>) cls;
+		return cls2;
 	}
 
 }
