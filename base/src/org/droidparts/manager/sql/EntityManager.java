@@ -47,6 +47,7 @@ import java.util.UUID;
 
 import org.droidparts.annotation.inject.InjectDependency;
 import org.droidparts.inject.Injector;
+import org.droidparts.model.Entity;
 import org.droidparts.reflection.model.EntityField;
 import org.droidparts.reflection.processor.EntityAnnotationProcessor;
 import org.droidparts.reflection.util.ReflectionUtils;
@@ -60,8 +61,8 @@ import android.graphics.Bitmap;
 import android.graphics.Bitmap.CompressFormat;
 import android.graphics.BitmapFactory;
 
-public class EntityManager<Entity extends org.droidparts.model.Entity> extends
-		AbstractEntityManager<Entity> {
+public class EntityManager<EntityType extends Entity> extends
+		AbstractEntityManager<EntityType> {
 
 	// ASCII RS (record separator), '|' for readability
 	private static final String SEP = "|" + (char) 30;
@@ -70,10 +71,10 @@ public class EntityManager<Entity extends org.droidparts.model.Entity> extends
 	private SQLiteDatabase db;
 
 	protected final Context ctx;
-	private final Class<? extends Entity> cls;
+	private final Class<? extends EntityType> cls;
 	private final EntityAnnotationProcessor processor;
 
-	public EntityManager(Context ctx, Class<? extends Entity> cls) {
+	public EntityManager(Context ctx, Class<? extends EntityType> cls) {
 		Injector.get().inject(ctx, this);
 		this.ctx = ctx.getApplicationContext();
 		this.cls = cls;
@@ -82,13 +83,13 @@ public class EntityManager<Entity extends org.droidparts.model.Entity> extends
 
 	@Override
 	public boolean delete(long id) {
-		// TODO delete models referencing this one via foreign keys.
+		// TODO delete Entities referencing this one via foreign keys.
 		return super.delete(id);
 	}
 
 	@Override
-	public Entity readFromCursor(Cursor cursor) {
-		Entity model = instantiate(cls);
+	public EntityType readFromCursor(Cursor cursor) {
+		EntityType entity = instantiate(cls);
 		EntityField[] fields = processor.getModelClassFields();
 		for (EntityField dbField : fields) {
 			int colIdx = cursor.getColumnIndex(dbField.columnName);
@@ -96,16 +97,16 @@ public class EntityManager<Entity extends org.droidparts.model.Entity> extends
 				Object columnVal = readFromCursor(cursor, colIdx,
 						dbField.fieldClass);
 				if (columnVal != null) {
-					Field f = getField(model.getClass(), dbField.fieldName);
-					setFieldVal(f, model, columnVal);
+					Field f = getField(entity.getClass(), dbField.fieldName);
+					setFieldVal(f, entity, columnVal);
 				}
 			}
 		}
-		return model;
+		return entity;
 	}
 
 	@Override
-	public void fillForeignKeys(Entity item, String... columnNames) {
+	public void fillForeignKeys(EntityType item, String... columnNames) {
 		HashSet<String> columnNameSet = new HashSet<String>(columnNames.length);
 		for (String colName : columnNames) {
 			columnNameSet.add(toPKColumnName(colName));
@@ -117,8 +118,8 @@ public class EntityManager<Entity extends org.droidparts.model.Entity> extends
 							.contains(entityField.columnName))) {
 				Field field = ReflectionUtils.getField(cls,
 						entityField.fieldName);
-				Entity foreignEntity = ReflectionUtils.getTypedFieldVal(field,
-						item);
+				EntityType foreignEntity = ReflectionUtils.getTypedFieldVal(
+						field, item);
 				if (foreignEntity != null) {
 					Object obj = getManager(entityField.fieldClass).read(
 							foreignEntity.id);
@@ -139,7 +140,7 @@ public class EntityManager<Entity extends org.droidparts.model.Entity> extends
 	}
 
 	@Override
-	protected ContentValues toContentValues(Entity item) {
+	protected ContentValues toContentValues(EntityType item) {
 		ContentValues cv = new ContentValues();
 		EntityField[] fields = processor.getModelClassFields();
 		for (EntityField dbField : fields) {
@@ -152,13 +153,13 @@ public class EntityManager<Entity extends org.droidparts.model.Entity> extends
 	}
 
 	@Override
-	protected void createOrUpdateForeignKeys(Entity item) {
+	protected void createOrUpdateForeignKeys(EntityType item) {
 		for (EntityField entityField : processor.getModelClassFields()) {
 			if (isEntity(entityField.fieldClass)) {
 				Field field = ReflectionUtils.getField(cls,
 						entityField.fieldName);
-				Entity foreignEntity = ReflectionUtils.getTypedFieldVal(field,
-						item);
+				EntityType foreignEntity = ReflectionUtils.getTypedFieldVal(
+						field, item);
 				if (foreignEntity != null) {
 					getManager(entityField.fieldClass).createOrUpdate(
 							foreignEntity);
@@ -215,8 +216,7 @@ public class EntityManager<Entity extends org.droidparts.model.Entity> extends
 		} else if (isEnum(valueCls)) {
 			cv.put(key, value.toString());
 		} else if (isEntity(valueCls)) {
-			Long id = value != null ? ((org.droidparts.model.Entity) value).id
-					: null;
+			Long id = value != null ? ((Entity) value).id : null;
 			cv.put(key, id);
 		} else if (isArray(valueCls) || isCollection(valueCls)) {
 			Object[] arr;
@@ -268,9 +268,9 @@ public class EntityManager<Entity extends org.droidparts.model.Entity> extends
 			return instantiateEnum(fieldCls, cursor.getString(columnIndex));
 		} else if (isEntity(fieldCls)) {
 			long id = cursor.getLong(columnIndex);
-			Entity model = instantiate(fieldCls);
-			model.id = id;
-			return model;
+			EntityType entity = instantiate(fieldCls);
+			entity.id = id;
+			return entity;
 		} else if (isArray(fieldCls) || isCollection(fieldCls)) {
 			String str = cursor.getString(columnIndex);
 			String[] parts = str.split("\\" + SEP);
@@ -288,10 +288,10 @@ public class EntityManager<Entity extends org.droidparts.model.Entity> extends
 		}
 	}
 
-	private EntityManager<Entity> getManager(Class<?> cls) {
+	private EntityManager<EntityType> getManager(Class<?> cls) {
 		@SuppressWarnings("unchecked")
-		EntityManager<Entity> manager = new EntityManager<Entity>(ctx,
-				(Class<? extends Entity>) cls);
+		EntityManager<EntityType> manager = new EntityManager<EntityType>(ctx,
+				(Class<? extends EntityType>) cls);
 		return manager;
 	}
 

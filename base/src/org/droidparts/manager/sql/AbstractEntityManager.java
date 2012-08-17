@@ -20,12 +20,13 @@ import org.droidparts.manager.sql.stmt.DeleteBuilder;
 import org.droidparts.manager.sql.stmt.QueryBuilder;
 import org.droidparts.manager.sql.stmt.StatementBuilder;
 import org.droidparts.manager.sql.stmt.UpdateBuilder;
+import org.droidparts.model.Entity;
 
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
-public abstract class AbstractEntityManager<Entity extends org.droidparts.model.Entity>
+public abstract class AbstractEntityManager<EntityType extends Entity>
 		implements DB {
 
 	// CRUD methods
@@ -43,7 +44,7 @@ public abstract class AbstractEntityManager<Entity extends org.droidparts.model.
 		return cursor;
 	}
 
-	public boolean create(Entity item) {
+	public boolean create(EntityType item) {
 		createOrUpdateForeignKeys(item);
 		ContentValues cv = toContentValues(item);
 		cv.remove(Column.ID);
@@ -56,8 +57,8 @@ public abstract class AbstractEntityManager<Entity extends org.droidparts.model.
 		}
 	}
 
-	public Entity read(long id) {
-		Entity item = null;
+	public EntityType read(long id) {
+		EntityType item = null;
 		Cursor cursor = getDB().query(getTableName(), null, Column.ID + EQUALS,
 				toArgs(id), null, null, null);
 		if (cursor.moveToFirst()) {
@@ -67,7 +68,7 @@ public abstract class AbstractEntityManager<Entity extends org.droidparts.model.
 		return item;
 	}
 
-	public boolean update(Entity item) {
+	public boolean update(EntityType item) {
 		createOrUpdateForeignKeys(item);
 		ContentValues cv = toContentValues(item);
 		cv.remove(Column.ID);
@@ -82,7 +83,7 @@ public abstract class AbstractEntityManager<Entity extends org.droidparts.model.
 		return rowCount > 0;
 	}
 
-	public boolean createOrUpdate(Entity item) {
+	public boolean createOrUpdate(EntityType item) {
 		boolean success;
 		if (item.id > 0) {
 			success = update(item);
@@ -118,9 +119,9 @@ public abstract class AbstractEntityManager<Entity extends org.droidparts.model.
 		return StatementBuilder.sqlEscapeString(val);
 	}
 
-	public abstract Entity readFromCursor(Cursor cursor);
+	public abstract EntityType readFromCursor(Cursor cursor);
 
-	public abstract void fillForeignKeys(Entity item, String... fieldNames);
+	public abstract void fillForeignKeys(EntityType item, String... fieldNames);
 
 	protected abstract SQLiteDatabase getDB();
 
@@ -128,9 +129,9 @@ public abstract class AbstractEntityManager<Entity extends org.droidparts.model.
 
 	// boring stuff
 
-	protected abstract ContentValues toContentValues(Entity item);
+	protected abstract ContentValues toContentValues(EntityType item);
 
-	protected abstract void createOrUpdateForeignKeys(Entity item);
+	protected abstract void createOrUpdateForeignKeys(EntityType item);
 
 	@Deprecated
 	protected final String[] toStrArr(Object... args) {

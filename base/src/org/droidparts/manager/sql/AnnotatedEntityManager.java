@@ -15,14 +15,16 @@
  */
 package org.droidparts.manager.sql;
 
+import org.droidparts.model.Entity;
+
 import android.content.Context;
 
 @Deprecated
-public class AnnotatedEntityManager<Entity extends org.droidparts.model.Entity>
-		extends EntityManager<Entity> {
+public class AnnotatedEntityManager<EntityType extends Entity> extends
+		EntityManager<EntityType> {
 
 	@Deprecated
-	public AnnotatedEntityManager(Context ctx, Class<? extends Entity> cls) {
+	public AnnotatedEntityManager(Context ctx, Class<? extends EntityType> cls) {
 		super(ctx, cls);
 	}
 

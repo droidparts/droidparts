@@ -16,34 +16,35 @@
 package org.droidparts.adapter.cursor;
 
 import org.droidparts.manager.sql.EntityManager;
+import org.droidparts.model.Entity;
 
 import android.app.Activity;
 import android.database.Cursor;
 
-public abstract class EntityCursorAdapter<Entity extends org.droidparts.model.Entity>
-		extends CursorAdapter<Entity> {
+public abstract class EntityCursorAdapter<EntityType extends Entity> extends
+		CursorAdapter<EntityType> {
 
-	protected final EntityManager<Entity> entityManager;
+	protected final EntityManager<EntityType> entityManager;
 
 	public EntityCursorAdapter(Activity activity,
-			EntityManager<Entity> entityManager) {
+			EntityManager<EntityType> entityManager) {
 		this(activity, entityManager, entityManager.list());
 	}
 
 	public EntityCursorAdapter(Activity activity,
-			EntityManager<Entity> entityManager, Cursor cursor) {
+			EntityManager<EntityType> entityManager, Cursor cursor) {
 		super(activity, cursor);
 		this.entityManager = entityManager;
 	}
 
-	public boolean create(Entity item) {
+	public boolean create(EntityType item) {
 		boolean success = entityManager.create(item);
 		return requeryOnSuccess(success);
 	}
 
-	public Entity read(int position) {
+	public EntityType read(int position) {
 		long id = getItemId(position);
-		Entity item = entityManager.read(id);
+		EntityType item = entityManager.read(id);
 		String[] eagerFieldNames = entityManager.getEagerForeignKeyFieldNames();
 		if (eagerFieldNames.length != 0) {
 			entityManager.fillForeignKeys(item, eagerFieldNames);
@@ -51,7 +52,7 @@ public abstract class EntityCursorAdapter<Entity extends org.droidparts.model.En
 		return item;
 	}
 
-	public boolean update(Entity item) {
+	public boolean update(EntityType item) {
 		boolean success = entityManager.update(item);
 		return requeryOnSuccess(success);
 	}

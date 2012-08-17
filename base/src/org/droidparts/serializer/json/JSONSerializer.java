@@ -57,8 +57,8 @@ import org.json.JSONObject;
 import android.util.Log;
 import android.util.Pair;
 
-public class JSONSerializer<TypeFrom extends Model> implements
-		Serializer<TypeFrom, JSONObject> {
+public class JSONSerializer<ModelType extends Model> implements
+		Serializer<ModelType, JSONObject> {
 
 	// ASCII GS (group separator), '->' for readability
 	public static final String __ = "->" + (char) 29;
@@ -76,18 +76,18 @@ public class JSONSerializer<TypeFrom extends Model> implements
 		return processor.getModelClassName();
 	}
 
-	public final JSONArray serializeList(Collection<TypeFrom> coll)
+	public final JSONArray serializeList(Collection<ModelType> coll)
 			throws JSONException {
 		JSONArray arr = new JSONArray();
-		for (TypeFrom item : coll) {
+		for (ModelType item : coll) {
 			arr.put(serialize(item));
 		}
 		return arr;
 	}
 
-	public final ArrayList<TypeFrom> deserializeList(JSONArray arr)
+	public final ArrayList<ModelType> deserializeList(JSONArray arr)
 			throws JSONException {
-		ArrayList<TypeFrom> list = new ArrayList<TypeFrom>();
+		ArrayList<ModelType> list = new ArrayList<ModelType>();
 		for (int i = 0; i < arr.length(); i++) {
 			list.add(deserialize(arr.getJSONObject(i)));
 		}
@@ -95,7 +95,7 @@ public class JSONSerializer<TypeFrom extends Model> implements
 	}
 
 	@Override
-	public JSONObject serialize(TypeFrom item) throws JSONException {
+	public JSONObject serialize(ModelType item) throws JSONException {
 		JSONObject obj = new JSONObject();
 		JSONModelField[] fields = processor.getModelClassFields();
 		for (JSONModelField jsonField : fields) {
@@ -105,8 +105,8 @@ public class JSONSerializer<TypeFrom extends Model> implements
 	}
 
 	@Override
-	public TypeFrom deserialize(JSONObject obj) throws JSONException {
-		TypeFrom model = instantiate(cls);
+	public ModelType deserialize(JSONObject obj) throws JSONException {
+		ModelType model = instantiate(cls);
 		JSONModelField[] fields = processor.getModelClassFields();
 		for (JSONModelField jsonField : fields) {
 			readFromJSONAndSetFieldVal(model, jsonField, obj, jsonField.keyName);
@@ -114,7 +114,7 @@ public class JSONSerializer<TypeFrom extends Model> implements
 		return model;
 	}
 
-	private void readFromModelAndPutToJSON(TypeFrom item,
+	private void readFromModelAndPutToJSON(ModelType item,
 			JSONModelField jsonField, JSONObject obj, String key)
 			throws JSONException {
 		Pair<String, String> keyParts = getNestedKeyParts(key);
@@ -145,7 +145,7 @@ public class JSONSerializer<TypeFrom extends Model> implements
 		}
 	}
 
-	private void readFromJSONAndSetFieldVal(TypeFrom model,
+	private void readFromJSONAndSetFieldVal(ModelType model,
 			JSONModelField modelField, JSONObject obj, String key)
 			throws JSONException {
 		Pair<String, String> keyParts = getNestedKeyParts(key);
@@ -230,7 +230,7 @@ public class JSONSerializer<TypeFrom extends Model> implements
 			}
 			obj.put(key, jarr);
 		} else if (isModel(valType)) {
-			JSONObject obj2 = getSerializer(valType).serialize((TypeFrom) val);
+			JSONObject obj2 = getSerializer(valType).serialize((ModelType) val);
 			obj.put(key, obj2);
 		} else {
 			throw new IllegalArgumentException("Unsupported class: " + valType);
