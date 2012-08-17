@@ -40,9 +40,9 @@ public class PreferenceFragmentActivity extends SherlockPreferenceActivity
 	public void onPreInject() {
 	}
 
-	// The whole point of this Activity is that the 'modern fragment-based
-	// PreferenceActivity' is not available on pre-Honeycomb.
-	// Overriding the methods below so that they won't show up as @Deprecated.
+	// This Activity exists for the reason that the 'modern fragment-based
+	// PreferenceActivity' is not available pre-Honeycomb. So un@Depracating
+	// the methods below.
 
 	@Override
 	public PreferenceManager getPreferenceManager() {
