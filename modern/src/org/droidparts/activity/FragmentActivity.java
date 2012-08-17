@@ -35,6 +35,8 @@ public abstract class FragmentActivity extends SherlockFragmentActivity
 	private MenuItem reloadMenuItem;
 	private View loadingIndicator;
 
+	private boolean isLoading;
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -48,6 +50,7 @@ public abstract class FragmentActivity extends SherlockFragmentActivity
 
 	@Override
 	public void setSupportProgressBarIndeterminateVisibility(boolean visible) {
+		isLoading = visible;
 		if (reloadMenuItem != null) {
 			reloadMenuItem.setActionView(visible ? loadingIndicator : null);
 		} else {
@@ -61,6 +64,7 @@ public abstract class FragmentActivity extends SherlockFragmentActivity
 			loadingIndicator = LayoutInflater.from(this).inflate(
 					R.layout.view_ab_loading_indicator, null);
 		}
+		setSupportProgressBarIndeterminateVisibility(isLoading);
 	}
 
 	public void setFragmentVisible(int fragmentId, boolean visible) {
