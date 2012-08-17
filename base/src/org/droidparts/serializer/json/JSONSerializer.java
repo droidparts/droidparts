@@ -232,15 +232,15 @@ public class JSONSerializer<ModelType extends Model> implements
 			}
 			JSONArray jarr = new JSONArray();
 			if (list.size() != 0) {
-				JSONSerializer serializer = getInstance(castToModelClass(list
-						.get(0).getClass()));
+				JSONSerializer serializer = getInstance(dirtyCast(list.get(0)
+						.getClass()));
 				for (Object o : list) {
 					jarr.put(serializer.serialize((Model) o));
 				}
 			}
 			obj.put(key, jarr);
 		} else if (isModel(valType)) {
-			JSONObject obj2 = getInstance(castToModelClass(valType)).serialize(
+			JSONObject obj2 = getInstance(dirtyCast(valType)).serialize(
 					(ModelType) val);
 			obj.put(key, obj2);
 		} else {
@@ -298,7 +298,7 @@ public class JSONSerializer<ModelType extends Model> implements
 			} else {
 				itemCls = getArrayType(valType);
 			}
-			JSONSerializer serializer = getInstance(castToModelClass(itemCls));
+			JSONSerializer serializer = getInstance(dirtyCast(itemCls));
 			for (int i = 0; i < jArr.length(); i++) {
 				Object obj = jArr.get(i);
 				if (obj instanceof JSONObject) {
@@ -322,17 +322,11 @@ public class JSONSerializer<ModelType extends Model> implements
 			}
 
 		} else if (isModel(valType)) {
-			return getInstance(castToModelClass(valType)).deserialize(
+			return getInstance(dirtyCast(valType)).deserialize(
 					(JSONObject) jsonVal);
 		} else {
 			throw new IllegalArgumentException("Unsupported class: " + valType);
 		}
-	}
-
-	private Class<Model> castToModelClass(Class<?> cls) {
-		@SuppressWarnings("unchecked")
-		Class<Model> cls2 = (Class<Model>) cls;
-		return cls2;
 	}
 
 	private Pair<String, String> getNestedKeyParts(String key) {
@@ -345,6 +339,12 @@ public class JSONSerializer<ModelType extends Model> implements
 		} else {
 			return null;
 		}
+	}
+
+	private Class<Model> dirtyCast(Class<?> cls) {
+		@SuppressWarnings("unchecked")
+		Class<Model> cls2 = (Class<Model>) cls;
+		return cls2;
 	}
 
 	private void throwIfRequired(JSONModelField modelField)

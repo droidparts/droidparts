@@ -127,7 +127,7 @@ public class EntityManager<EntityType extends Entity> extends
 						field, item);
 				if (foreignEntity != null) {
 					Object obj = getInstance(ctx,
-							castToEntityClass(entityField.fieldClass)).read(
+							dirtyCast(entityField.fieldClass)).read(
 							foreignEntity.id);
 					setFieldVal(field, item, obj);
 				}
@@ -167,7 +167,7 @@ public class EntityManager<EntityType extends Entity> extends
 				EntityType foreignEntity = ReflectionUtils.getTypedFieldVal(
 						field, item);
 				if (foreignEntity != null) {
-					getInstance(ctx, castToEntityClass(entityField.fieldClass))
+					getInstance(ctx, dirtyCast(entityField.fieldClass))
 							.createOrUpdate(foreignEntity);
 				}
 			}
@@ -294,7 +294,7 @@ public class EntityManager<EntityType extends Entity> extends
 		}
 	}
 
-	private Class<Entity> castToEntityClass(Class<?> cls) {
+	private Class<Entity> dirtyCast(Class<?> cls) {
 		@SuppressWarnings("unchecked")
 		Class<Entity> cls2 = (Class<Entity>) cls;
 		return cls2;

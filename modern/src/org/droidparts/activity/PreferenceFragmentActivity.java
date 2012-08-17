@@ -18,7 +18,11 @@ package org.droidparts.activity;
 import org.droidparts.contract.Injectable;
 import org.droidparts.inject.Injector;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.preference.Preference;
+import android.preference.PreferenceManager;
+import android.preference.PreferenceScreen;
 
 import com.actionbarsherlock.app.SherlockPreferenceActivity;
 
@@ -34,6 +38,46 @@ public class PreferenceFragmentActivity extends SherlockPreferenceActivity
 
 	@Override
 	public void onPreInject() {
+	}
+
+	// The whole point of this Activity is that the 'modern fragment-based
+	// PreferenceActivity' is not available on pre-Honeycomb.
+	// Overriding the methods below so that they won't show up as @Deprecated.
+
+	@Override
+	public PreferenceManager getPreferenceManager() {
+		return super.getPreferenceManager();
+	}
+
+	@Override
+	public void setPreferenceScreen(PreferenceScreen preferenceScreen) {
+		super.setPreferenceScreen(preferenceScreen);
+	}
+
+	@Override
+	public PreferenceScreen getPreferenceScreen() {
+		return super.getPreferenceScreen();
+	}
+
+	@Override
+	public void addPreferencesFromIntent(Intent intent) {
+		super.addPreferencesFromIntent(intent);
+	}
+
+	@Override
+	public void addPreferencesFromResource(int preferencesResId) {
+		super.addPreferencesFromResource(preferencesResId);
+	}
+
+	@Override
+	public boolean onPreferenceTreeClick(PreferenceScreen preferenceScreen,
+			Preference preference) {
+		return super.onPreferenceTreeClick(preferenceScreen, preference);
+	}
+
+	@Override
+	public Preference findPreference(CharSequence key) {
+		return super.findPreference(key);
 	}
 
 }
