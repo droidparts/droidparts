@@ -89,6 +89,7 @@ public class MultiSelectListPreference extends ListPreference {
 
 	@Override
 	protected void onPrepareDialogBuilder(Builder builder) {
+		updateCheckedEntryIndexes();
 		builder.setMultiChoiceItems(getEntries(), checkedEntryIndexes,
 				new OnMultiChoiceClickListener() {
 
@@ -114,21 +115,17 @@ public class MultiSelectListPreference extends ListPreference {
 					.toArray(new CharSequence[checkedVals.size()]));
 			if (callChangeListener(val)) {
 				setValue(val);
-			} else {
-				// to reset for subsequent call
-				updateCheckedEntryIndexes();
 			}
 		}
 	}
 
 	private void updateCheckedEntryIndexes() {
+		CharSequence[] entryVals = getEntryValues();
+		checkedEntryIndexes = new boolean[entryVals.length];
 		String val = getValue();
-		CharSequence[] entries = getEntries();
-		checkedEntryIndexes = new boolean[entries.length];
 		if (val != null) {
 			HashSet<String> checkedEntryVals = new HashSet<String>(
 					Arrays.asList(fromPersistedPreferenceValue(val)));
-			CharSequence[] entryVals = getEntryValues();
 			for (int i = 0; i < entryVals.length; i++) {
 				checkedEntryIndexes[i] = checkedEntryVals
 						.contains(entryVals[i]);
