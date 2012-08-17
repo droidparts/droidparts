@@ -24,7 +24,7 @@ public class AnnotatedEntityManager<EntityType extends Entity> extends
 		EntityManager<EntityType> {
 
 	@Deprecated
-	public AnnotatedEntityManager(Context ctx, Class<? extends EntityType> cls) {
+	public AnnotatedEntityManager(Context ctx, Class<EntityType> cls) {
 		super(ctx, cls);
 	}
 

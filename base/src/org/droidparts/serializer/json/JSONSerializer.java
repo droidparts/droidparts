@@ -63,10 +63,23 @@ public class JSONSerializer<ModelType extends Model> implements
 	// ASCII GS (group separator), '->' for readability
 	public static final String __ = "->" + (char) 29;
 
+	// TODO improve code
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	public static <ModelType extends Model> JSONSerializer<ModelType> getInstance(
+			Class<?> cls) {
+		JSONSerializer serializer = new JSONSerializer(cls);
+		return serializer;
+	}
+
+	public static boolean gotNonNull(JSONObject obj, String key)
+			throws JSONException {
+		return obj.has(key) && !NULL.equals(obj.get(key));
+	}
+
 	private final Class<? extends Model> cls;
 	private final JSONModelAnnotationProcessor processor;
 
-	public JSONSerializer(Class<? extends Model> cls) {
+	public JSONSerializer(Class<ModelType> cls) {
 		this.cls = cls;
 		this.processor = new JSONModelAnnotationProcessor(cls);
 	}
@@ -223,14 +236,14 @@ public class JSONSerializer<ModelType extends Model> implements
 			JSONArray jarr = new JSONArray();
 			JSONSerializer serializer = null;
 			if (list.size() > 1) {
-				serializer = getSerializer(list.get(0).getClass());
+				serializer = getInstance(list.get(0).getClass());
 			}
 			for (Object o : list) {
 				jarr.put(serializer.serialize((Model) o));
 			}
 			obj.put(key, jarr);
 		} else if (isModel(valType)) {
-			JSONObject obj2 = getSerializer(valType).serialize((ModelType) val);
+			JSONObject obj2 = getInstance(valType).serialize((ModelType) val);
 			obj.put(key, obj2);
 		} else {
 			throw new IllegalArgumentException("Unsupported class: " + valType);
@@ -287,7 +300,7 @@ public class JSONSerializer<ModelType extends Model> implements
 			} else {
 				itemCls = getArrayType(valType);
 			}
-			JSONSerializer serializer = getSerializer(itemCls);
+			JSONSerializer serializer = getInstance(itemCls);
 			for (int i = 0; i < jArr.length(); i++) {
 				Object obj = jArr.get(i);
 				if (obj instanceof JSONObject) {
@@ -311,20 +324,10 @@ public class JSONSerializer<ModelType extends Model> implements
 			}
 
 		} else if (isModel(valType)) {
-			return getSerializer(valType).deserialize((JSONObject) jsonVal);
+			return getInstance(valType).deserialize((JSONObject) jsonVal);
 		} else {
 			throw new IllegalArgumentException("Unsupported class: " + valType);
 		}
-	}
-
-	@SuppressWarnings({ "unchecked", "rawtypes" })
-	private JSONSerializer getSerializer(Class<?> cls) {
-		JSONSerializer serializer = new JSONSerializer(cls);
-		return serializer;
-	}
-
-	private boolean gotNonNull(JSONObject obj, String key) throws JSONException {
-		return obj.has(key) && !NULL.equals(obj.get(key));
 	}
 
 	private Pair<String, String> getNestedKeyParts(String key) {

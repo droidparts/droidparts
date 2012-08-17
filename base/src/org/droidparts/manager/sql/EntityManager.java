@@ -64,6 +64,15 @@ import android.graphics.BitmapFactory;
 public class EntityManager<EntityType extends Entity> extends
 		AbstractEntityManager<EntityType> {
 
+	// TODO improve code
+	public static <EntityType extends Entity> EntityManager<EntityType> getInstance(
+			Context ctx, Class<?> cls) {
+		@SuppressWarnings("unchecked")
+		EntityManager<EntityType> manager = new EntityManager<EntityType>(ctx,
+				(Class<EntityType>) cls);
+		return manager;
+	}
+
 	// ASCII RS (record separator), '|' for readability
 	private static final String SEP = "|" + (char) 30;
 
@@ -74,7 +83,7 @@ public class EntityManager<EntityType extends Entity> extends
 	private final Class<? extends EntityType> cls;
 	private final EntityAnnotationProcessor processor;
 
-	public EntityManager(Context ctx, Class<? extends EntityType> cls) {
+	public EntityManager(Context ctx, Class<EntityType> cls) {
 		Injector.get().inject(ctx, this);
 		this.ctx = ctx.getApplicationContext();
 		this.cls = cls;
@@ -121,7 +130,7 @@ public class EntityManager<EntityType extends Entity> extends
 				EntityType foreignEntity = ReflectionUtils.getTypedFieldVal(
 						field, item);
 				if (foreignEntity != null) {
-					Object obj = getManager(entityField.fieldClass).read(
+					Object obj = getInstance(ctx, entityField.fieldClass).read(
 							foreignEntity.id);
 					setFieldVal(field, item, obj);
 				}
@@ -161,7 +170,7 @@ public class EntityManager<EntityType extends Entity> extends
 				EntityType foreignEntity = ReflectionUtils.getTypedFieldVal(
 						field, item);
 				if (foreignEntity != null) {
-					getManager(entityField.fieldClass).createOrUpdate(
+					getInstance(ctx, entityField.fieldClass).createOrUpdate(
 							foreignEntity);
 				}
 			}
@@ -286,13 +295,6 @@ public class EntityManager<EntityType extends Entity> extends
 			throw new IllegalArgumentException("Need to manually read "
 					+ fieldCls + " from Cursor.");
 		}
-	}
-
-	private EntityManager<EntityType> getManager(Class<?> cls) {
-		@SuppressWarnings("unchecked")
-		EntityManager<EntityType> manager = new EntityManager<EntityType>(ctx,
-				(Class<? extends EntityType>) cls);
-		return manager;
 	}
 
 }
