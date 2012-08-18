@@ -23,21 +23,34 @@ import org.droidparts.annotation.inject.InjectView;
 import org.droidparts.util.inner.ResourceUtils;
 
 import android.content.Context;
+import android.preference.PreferenceActivity;
 import android.view.View;
 
-public class ViewInjector {
+public class ViewOrPreferenceInjector {
 
 	static boolean inject(Context ctx, View root, InjectView ann,
 			Object target, Field field) {
-		int viewId = ann.value();
-		if (viewId == 0) {
+		boolean isView = View.class.isAssignableFrom(field.getType());
+		int viewOrPrefId = ann.value();
+		if (viewOrPrefId == 0) {
 			String fieldName = field.getName();
-			viewId = ResourceUtils.getResourceId(ctx, fieldName);
+			if (isView) {
+				viewOrPrefId = ResourceUtils.getResourceId(ctx, fieldName);
+			} else {
+				viewOrPrefId = ResourceUtils.getStringId(ctx, fieldName);
+			}
 		}
-		if (viewId != 0) {
-			View view = root.findViewById(viewId);
+		if (viewOrPrefId != 0) {
+			Object val;
+			if (isView) {
+				val = root.findViewById(viewOrPrefId);
+			} else {
+				// XXX
+				val = ((PreferenceActivity) ctx).findPreference(ctx
+						.getText(viewOrPrefId));
+			}
 			try {
-				setFieldVal(field, target, view);
+				setFieldVal(field, target, val);
 				return true;
 			} catch (IllegalArgumentException e) {
 				// swallow

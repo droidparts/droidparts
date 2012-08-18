@@ -88,7 +88,7 @@ public class InjectorDelegate {
 					(InjectSystemService) ann, target, field);
 		} else if (annType == InjectView.class) {
 			if (root != null) {
-				success = ViewInjector.inject(ctx, root, (InjectView) ann,
+				success = ViewOrPreferenceInjector.inject(ctx, root, (InjectView) ann,
 						target, field);
 			}
 		}
