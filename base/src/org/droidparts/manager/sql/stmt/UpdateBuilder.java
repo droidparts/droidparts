@@ -28,23 +28,8 @@ public class UpdateBuilder extends BaseSelectionBuilder {
 	//
 
 	@Override
-	public UpdateBuilder equals(String column, Object val) {
-		return (UpdateBuilder) super.equals(column, val);
-	}
-
-	@Override
-	public UpdateBuilder notEqual(String column, Object val) {
-		return (UpdateBuilder) super.notEqual(column, val);
-	}
-
-	@Override
-	public UpdateBuilder lessThan(String column, Object val) {
-		return (UpdateBuilder) super.lessThan(column, val);
-	}
-
-	@Override
-	public UpdateBuilder greaterThan(String column, Object val) {
-		return (UpdateBuilder) super.greaterThan(column, val);
+	protected BaseSelectionBuilder where(Where where, String column, Object val) {
+		return (UpdateBuilder) super.where(where, column, val);
 	}
 
 	//

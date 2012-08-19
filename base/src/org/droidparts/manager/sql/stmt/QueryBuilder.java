@@ -15,6 +15,13 @@
  */
 package org.droidparts.manager.sql.stmt;
 
+import static org.droidparts.util.Strings.join;
+
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+
+import org.droidparts.util.Strings;
+
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Pair;
@@ -28,28 +35,14 @@ public class QueryBuilder extends BaseSelectionBuilder {
 	//
 
 	@Override
-	public QueryBuilder equals(String column, Object val) {
-		return (QueryBuilder) super.equals(column, val);
-	}
-
-	@Override
-	public QueryBuilder notEqual(String column, Object val) {
-		return (QueryBuilder) super.notEqual(column, val);
-	}
-
-	@Override
-	public QueryBuilder lessThan(String column, Object val) {
-		return (QueryBuilder) super.lessThan(column, val);
-	}
-
-	@Override
-	public QueryBuilder greaterThan(String column, Object val) {
-		return (QueryBuilder) super.greaterThan(column, val);
+	protected BaseSelectionBuilder where(Where where, String column, Object val) {
+		return (QueryBuilder) super.where(where, column, val);
 	}
 
 	private String[] columns = null;
 	private boolean distinct = false;
 	private String[] groupBy = null;
+	private final LinkedHashMap<String, Boolean> orderBy = new LinkedHashMap<String, Boolean>();
 	private int limit = -1;
 
 	public QueryBuilder columns(String... columns) {
@@ -72,13 +65,8 @@ public class QueryBuilder extends BaseSelectionBuilder {
 		return this;
 	}
 
-	public QueryBuilder orderByAsc(String column) {
-		// TODO
-		return this;
-	}
-
-	public QueryBuilder orderByDesc(String column) {
-		// TODO
+	public QueryBuilder orderBy(String column, boolean ascending) {
+		orderBy.put(column, ascending);
 		return this;
 	}
 
@@ -88,9 +76,22 @@ public class QueryBuilder extends BaseSelectionBuilder {
 
 	public Cursor execute() {
 		Pair<String, String[]> selection = buildSelection();
+		String groupByStr = null;
+		if (groupBy != null && groupBy.length > 0) {
+			groupByStr = Strings.join(groupBy, ", ", null);
+		}
+		String havingStr = null;
 		// TODO
+		String orderByStr = null;
+		if (orderBy.size() > 0) {
+			ArrayList<String> list = new ArrayList<String>();
+			for (String key : orderBy.keySet()) {
+				list.add(key + (orderBy.get(key) ? ASC : DESC));
+			}
+			orderByStr = join(list, ", ", null);
+		}
+		String limitStr = (limit > 0) ? String.valueOf(limit) : null;
 		return db.query(distinct, tableName, columns, selection.first,
-				selection.second, null, null, null, null);
+				selection.second, groupByStr, havingStr, orderByStr, limitStr);
 	}
-
 }

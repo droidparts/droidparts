@@ -27,23 +27,8 @@ public class DeleteBuilder extends BaseSelectionBuilder {
 	//
 
 	@Override
-	public DeleteBuilder equals(String column, Object val) {
-		return (DeleteBuilder) super.equals(column, val);
-	}
-
-	@Override
-	public DeleteBuilder notEqual(String column, Object val) {
-		return (DeleteBuilder) super.notEqual(column, val);
-	}
-
-	@Override
-	public DeleteBuilder lessThan(String column, Object val) {
-		return (DeleteBuilder) super.lessThan(column, val);
-	}
-
-	@Override
-	public DeleteBuilder greaterThan(String column, Object val) {
-		return (DeleteBuilder) super.greaterThan(column, val);
+	protected BaseSelectionBuilder where(Where where, String column, Object val) {
+		return (DeleteBuilder) super.where(where, column, val);
 	}
 
 	public int execute() {

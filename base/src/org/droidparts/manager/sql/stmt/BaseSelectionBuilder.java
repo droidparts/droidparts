@@ -25,6 +25,19 @@ import android.util.Pair;
 
 public abstract class BaseSelectionBuilder implements DB {
 
+	public static enum Where {
+
+		EQUALS(DB.EQUALS), NOT_EQUAL(DB.NOT_EQUAL), LESS(DB.LESS), GREATER(
+				DB.GREATER);
+
+		public String str;
+
+		Where(String str) {
+			this.str = str;
+		}
+
+	}
+
 	protected final SQLiteDatabase db;
 	protected final String tableName;
 
@@ -37,23 +50,8 @@ public abstract class BaseSelectionBuilder implements DB {
 
 	private final ArrayList<Pair<String, Pair<String, Object>>> selection = new ArrayList<Pair<String, Pair<String, Object>>>();
 
-	protected BaseSelectionBuilder equals(String column, Object val) {
-		selection.add(Pair.create(EQUALS, Pair.create(column, val)));
-		return this;
-	}
-
-	protected BaseSelectionBuilder notEqual(String column, Object val) {
-		selection.add(Pair.create(NOT_EQUAL, Pair.create(column, val)));
-		return this;
-	}
-
-	protected BaseSelectionBuilder lessThan(String column, Object val) {
-		selection.add(Pair.create(LESS, Pair.create(column, val)));
-		return this;
-	}
-
-	protected BaseSelectionBuilder greaterThan(String column, Object val) {
-		selection.add(Pair.create(GREATER, Pair.create(column, val)));
+	protected BaseSelectionBuilder where(Where where, String column, Object val) {
+		selection.add(Pair.create(where.str, Pair.create(column, val)));
 		return this;
 	}
 
