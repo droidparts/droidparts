@@ -27,7 +27,7 @@ public class DeleteBuilder extends BaseSelectionBuilder {
 	//
 
 	@Override
-	protected BaseSelectionBuilder where(Where where, String column, Object val) {
+	public BaseSelectionBuilder where(Where where, String column, Object val) {
 		return (DeleteBuilder) super.where(where, column, val);
 	}
 

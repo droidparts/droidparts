@@ -26,17 +26,17 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Pair;
 
-public class QueryBuilder extends BaseSelectionBuilder {
+public class SelectBuilder extends BaseSelectionBuilder {
 
-	public QueryBuilder(SQLiteDatabase db, String tableName) {
+	public SelectBuilder(SQLiteDatabase db, String tableName) {
 		super(db, tableName);
 	}
 
 	//
 
 	@Override
-	protected BaseSelectionBuilder where(Where where, String column, Object val) {
-		return (QueryBuilder) super.where(where, column, val);
+	public BaseSelectionBuilder where(Where where, String column, Object val) {
+		return (SelectBuilder) super.where(where, column, val);
 	}
 
 	private String[] columns = null;
@@ -45,32 +45,32 @@ public class QueryBuilder extends BaseSelectionBuilder {
 	private final LinkedHashMap<String, Boolean> orderBy = new LinkedHashMap<String, Boolean>();
 	private int limit = -1;
 
-	public QueryBuilder columns(String... columns) {
+	public SelectBuilder columns(String... columns) {
 		this.columns = columns;
 		return this;
 	}
 
-	public QueryBuilder distinct(boolean distinct) {
+	public SelectBuilder distinct(boolean distinct) {
 		this.distinct = distinct;
 		return this;
 	}
 
-	public QueryBuilder groupBy(String... columns) {
+	public SelectBuilder groupBy(String... columns) {
 		this.groupBy = columns;
 		return this;
 	}
 
-	public QueryBuilder having() {
+	public SelectBuilder having() {
 		// TODO
 		return this;
 	}
 
-	public QueryBuilder orderBy(String column, boolean ascending) {
+	public SelectBuilder orderBy(String column, boolean ascending) {
 		orderBy.put(column, ascending);
 		return this;
 	}
 
-	public QueryBuilder limit(int limit) {
+	public SelectBuilder limit(int limit) {
 		return this;
 	}
 

@@ -20,7 +20,7 @@ import java.util.Collection;
 import org.droidparts.contract.DB;
 import org.droidparts.manager.sql.stmt.BaseSelectionBuilder;
 import org.droidparts.manager.sql.stmt.DeleteBuilder;
-import org.droidparts.manager.sql.stmt.QueryBuilder;
+import org.droidparts.manager.sql.stmt.SelectBuilder;
 import org.droidparts.manager.sql.stmt.UpdateBuilder;
 import org.droidparts.model.Entity;
 
@@ -159,8 +159,8 @@ public abstract class AbstractEntityManager<EntityType extends Entity>
 
 	// statement builders
 
-	protected QueryBuilder query() {
-		return new QueryBuilder(getDB(), getTableName());
+	protected SelectBuilder select() {
+		return new SelectBuilder(getDB(), getTableName());
 	};
 
 	protected UpdateBuilder update() {

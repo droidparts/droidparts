@@ -28,7 +28,7 @@ public class UpdateBuilder extends BaseSelectionBuilder {
 	//
 
 	@Override
-	protected BaseSelectionBuilder where(Where where, String column, Object val) {
+	public BaseSelectionBuilder where(Where where, String column, Object val) {
 		return (UpdateBuilder) super.where(where, column, val);
 	}
 
