@@ -86,10 +86,10 @@ public class JSONSerializer<ModelType extends Model> implements
 		return processor.getModelClassName();
 	}
 
-	public final JSONArray serializeList(Collection<ModelType> coll)
+	public final JSONArray serializeList(Collection<ModelType> items)
 			throws JSONException {
 		JSONArray arr = new JSONArray();
-		for (ModelType item : coll) {
+		for (ModelType item : items) {
 			arr.put(serialize(item));
 		}
 		return arr;
@@ -241,7 +241,7 @@ public class JSONSerializer<ModelType extends Model> implements
 			obj.put(key, jarr);
 		} else if (isModel(valType)) {
 			JSONObject obj2 = getInstance(dirtyCast(valType)).serialize(
-					(ModelType) val);
+					(Model) val);
 			obj.put(key, obj2);
 		} else {
 			throw new IllegalArgumentException("Unsupported class: " + valType);

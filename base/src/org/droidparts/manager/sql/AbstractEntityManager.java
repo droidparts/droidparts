@@ -15,6 +15,8 @@
  */
 package org.droidparts.manager.sql;
 
+import java.util.Collection;
+
 import org.droidparts.contract.DB;
 import org.droidparts.manager.sql.stmt.BaseSelectionBuilder;
 import org.droidparts.manager.sql.stmt.DeleteBuilder;
@@ -91,6 +93,68 @@ public abstract class AbstractEntityManager<EntityType extends Entity>
 			success = create(item);
 		}
 		return success;
+	}
+
+	//
+
+	public boolean create(Collection<EntityType> items) {
+		int count = 0;
+		getDB().beginTransaction();
+		try {
+			for (EntityType item : items) {
+				boolean success = create(item);
+				if (success) {
+					count++;
+				}
+			}
+			boolean success = (count == items.size());
+			if (success) {
+				getDB().setTransactionSuccessful();
+			}
+			return success;
+		} finally {
+			getDB().endTransaction();
+		}
+	}
+
+	public boolean update(Collection<EntityType> items) {
+		int count = 0;
+		getDB().beginTransaction();
+		try {
+			for (EntityType item : items) {
+				boolean success = update(item);
+				if (success) {
+					count++;
+				}
+			}
+			boolean success = (count == items.size());
+			if (success) {
+				getDB().setTransactionSuccessful();
+			}
+			return success;
+		} finally {
+			getDB().endTransaction();
+		}
+	}
+
+	public boolean delete(Collection<EntityType> items) {
+		int count = 0;
+		getDB().beginTransaction();
+		try {
+			for (EntityType item : items) {
+				boolean success = delete(item.id);
+				if (success) {
+					count++;
+				}
+			}
+			boolean success = (count == items.size());
+			if (success) {
+				getDB().setTransactionSuccessful();
+			}
+			return success;
+		} finally {
+			getDB().endTransaction();
+		}
 	}
 
 	// statement builders
