@@ -6,11 +6,11 @@ import org.droidparts.activity.Activity;
 import org.droidparts.annotation.inject.InjectBundleExtra;
 import org.droidparts.annotation.inject.InjectDependency;
 import org.droidparts.annotation.inject.InjectView;
+import org.droidparts.manager.AbstractDialogFactory;
 import org.droidparts.sample.R;
 import org.droidparts.sample.json.EntrySerializer;
 import org.droidparts.sample.model.Entry;
 import org.droidparts.util.L;
-import org.droidparts.util.ui.DialogFactory;
 import org.json.JSONArray;
 import org.json.JSONException;
 
@@ -38,7 +38,7 @@ public class EntryListAsJSONActivity extends Activity implements
 	@InjectDependency
 	private EntrySerializer entrySerializer;
 	@InjectDependency
-	private DialogFactory dialogFactory;
+	private AbstractDialogFactory dialogFactory;
 
 	@InjectBundleExtra(EXTRA_ARR_STR)
 	private ArrayList<Entry> entries;

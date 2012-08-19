@@ -25,7 +25,7 @@ public class DBOpenHelper extends
 
 	@Override
 	public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-		dropAllTables(db);
+		dropAll(db, true, true);
 		onCreate(db);
 	}
 
