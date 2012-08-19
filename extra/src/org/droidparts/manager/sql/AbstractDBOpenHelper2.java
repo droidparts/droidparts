@@ -16,37 +16,42 @@
 package org.droidparts.manager.sql;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.nio.channels.FileChannel;
+
+import org.droidparts.util.L;
+import org.droidparts.util.io.IOUtils;
 
 import android.content.Context;
 
 public abstract class AbstractDBOpenHelper2 extends AbstractDBOpenHelper {
 
-	private final String DB_PATH;
+	private final String dbFilePath;
 
 	public AbstractDBOpenHelper2(Context ctx, String name, int version) {
 		super(ctx, name, version);
-		DB_PATH = (name != null) ? "/data/data/" + ctx.getPackageName()
+		dbFilePath = (name != null) ? "/data/data/" + ctx.getPackageName()
 				+ "/databases/" + name : null;
 	}
 
 	public void copyDBTo(File fileOrDirTo) throws Exception {
-		if (DB_PATH == null) {
+		if (dbFilePath == null) {
 			throw new IllegalStateException("Copy in-memory db? No way!");
 		}
-		// TODO improve code
-		File fileFrom = new File(DB_PATH);
-		File fileTo = fileOrDirTo.isDirectory() ? new File(fileOrDirTo,
-				DB_PATH.substring(DB_PATH.lastIndexOf('/', DB_PATH.length())))
-				: fileOrDirTo;
+		File fileFrom = new File(dbFilePath);
 		if (fileFrom.exists()) {
-			FileChannel src = new FileInputStream(fileFrom).getChannel();
-			FileChannel dst = new FileOutputStream(fileTo).getChannel();
-			dst.transferFrom(src, 0, src.size());
-			src.close();
-			dst.close();
+			File fileTo;
+			if (fileOrDirTo.isDirectory()) {
+				String dbFileName = dbFilePath.substring(dbFilePath
+						.lastIndexOf('/', dbFilePath.length()));
+				fileTo = new File(fileOrDirTo, dbFileName);
+			} else {
+				fileTo = fileOrDirTo;
+			}
+			if (fileTo.exists()) {
+				fileTo.delete();
+			}
+			IOUtils.copy(fileFrom, fileTo);
+		} else {
+			L.e("No DB file at " + dbFilePath);
 		}
 	}
 
