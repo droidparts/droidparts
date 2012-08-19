@@ -16,13 +16,39 @@
 package org.droidparts.manager.sql.stmt;
 
 import android.database.sqlite.SQLiteDatabase;
+import android.util.Pair;
 
-public class DeleteBuilder extends StatementBuilder {
+public class DeleteBuilder extends BaseSelectionBuilder {
 
 	public DeleteBuilder(SQLiteDatabase db, String tableName) {
 		super(db, tableName);
 	}
 
-	// TODO
+	//
+
+	@Override
+	public DeleteBuilder equals(String column, Object val) {
+		return (DeleteBuilder) super.equals(column, val);
+	}
+
+	@Override
+	public DeleteBuilder notEqual(String column, Object val) {
+		return (DeleteBuilder) super.notEqual(column, val);
+	}
+
+	@Override
+	public DeleteBuilder lessThan(String column, Object val) {
+		return (DeleteBuilder) super.lessThan(column, val);
+	}
+
+	@Override
+	public DeleteBuilder greaterThan(String column, Object val) {
+		return (DeleteBuilder) super.greaterThan(column, val);
+	}
+
+	public int execute() {
+		Pair<String, String[]> selection = buildSelection();
+		return db.delete(tableName, selection.first, selection.second);
+	}
 
 }

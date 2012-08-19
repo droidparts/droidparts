@@ -15,14 +15,49 @@
  */
 package org.droidparts.manager.sql.stmt;
 
+import android.content.ContentValues;
 import android.database.sqlite.SQLiteDatabase;
+import android.util.Pair;
 
-public class UpdateBuilder extends StatementBuilder {
+public class UpdateBuilder extends BaseSelectionBuilder {
 
 	public UpdateBuilder(SQLiteDatabase db, String tableName) {
 		super(db, tableName);
 	}
 
-	// TODO
+	//
 
+	@Override
+	public UpdateBuilder equals(String column, Object val) {
+		return (UpdateBuilder) super.equals(column, val);
+	}
+
+	@Override
+	public UpdateBuilder notEqual(String column, Object val) {
+		return (UpdateBuilder) super.notEqual(column, val);
+	}
+
+	@Override
+	public UpdateBuilder lessThan(String column, Object val) {
+		return (UpdateBuilder) super.lessThan(column, val);
+	}
+
+	@Override
+	public UpdateBuilder greaterThan(String column, Object val) {
+		return (UpdateBuilder) super.greaterThan(column, val);
+	}
+
+	//
+	private ContentValues contentValues = null;
+
+	public UpdateBuilder contentValues(ContentValues contentValues) {
+		this.contentValues = contentValues;
+		return this;
+	}
+
+	public int execute() {
+		Pair<String, String[]> selection = buildSelection();
+		return db.update(tableName, contentValues, selection.first,
+				selection.second);
+	}
 }
