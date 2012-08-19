@@ -18,7 +18,7 @@ package org.droidparts.manager.sql;
 import java.util.Collection;
 
 import org.droidparts.contract.DB;
-import org.droidparts.manager.sql.stmt.BaseSelectionBuilder;
+import org.droidparts.manager.sql.stmt.BaseBuilder;
 import org.droidparts.manager.sql.stmt.DeleteBuilder;
 import org.droidparts.manager.sql.stmt.SelectBuilder;
 import org.droidparts.manager.sql.stmt.UpdateBuilder;
@@ -175,16 +175,12 @@ public abstract class AbstractEntityManager<EntityType extends Entity>
 
 	// TODO deprecate here
 	protected static final String[] toArgs(Object... args) {
-		String[] arr = new String[args.length];
-		for (int i = 0; i < args.length; i++) {
-			arr[i] = BaseSelectionBuilder.toArg(args[i]);
-		}
-		return arr;
+		return BaseBuilder.toArgs(args);
 	}
 
 	// TODO deprecate here
 	protected static String sqlEscapeString(String val) {
-		return BaseSelectionBuilder.sqlEscapeString(val);
+		return BaseBuilder.sqlEscapeString(val);
 	}
 
 	public abstract EntityType readFromCursor(Cursor cursor);

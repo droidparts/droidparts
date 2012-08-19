@@ -18,7 +18,7 @@ package org.droidparts.manager.sql.stmt;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Pair;
 
-public class DeleteBuilder extends BaseSelectionBuilder {
+public class DeleteBuilder extends BaseBuilder {
 
 	public DeleteBuilder(SQLiteDatabase db, String tableName) {
 		super(db, tableName);
@@ -27,12 +27,17 @@ public class DeleteBuilder extends BaseSelectionBuilder {
 	//
 
 	@Override
-	public BaseSelectionBuilder where(Where where, String column, Object val) {
-		return (DeleteBuilder) super.where(where, column, val);
+	public DeleteBuilder where(String selection, Object... selectionArgs) {
+		return (DeleteBuilder) super.where(selection, selectionArgs);
+	}
+
+	@Override
+	public DeleteBuilder where(Where where) {
+		return (DeleteBuilder) super.where(where);
 	}
 
 	public int execute() {
-		Pair<String, String[]> selection = buildSelection();
+		Pair<String, String[]> selection = getSelection();
 		return db.delete(tableName, selection.first, selection.second);
 	}
 

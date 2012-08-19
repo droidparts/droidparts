@@ -26,7 +26,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Pair;
 
-public class SelectBuilder extends BaseSelectionBuilder {
+public class SelectBuilder extends BaseBuilder {
 
 	public SelectBuilder(SQLiteDatabase db, String tableName) {
 		super(db, tableName);
@@ -35,8 +35,13 @@ public class SelectBuilder extends BaseSelectionBuilder {
 	//
 
 	@Override
-	public BaseSelectionBuilder where(Where where, String column, Object val) {
-		return (SelectBuilder) super.where(where, column, val);
+	public SelectBuilder where(String selection, Object... selectionArgs) {
+		return (SelectBuilder) super.where(selection, selectionArgs);
+	}
+
+	@Override
+	public SelectBuilder where(Where where) {
+		return (SelectBuilder) super.where(where);
 	}
 
 	private String[] columns = null;
@@ -75,7 +80,7 @@ public class SelectBuilder extends BaseSelectionBuilder {
 	}
 
 	public Cursor execute() {
-		Pair<String, String[]> selection = buildSelection();
+		Pair<String, String[]> selection = getSelection();
 		String groupByStr = null;
 		if (groupBy != null && groupBy.length > 0) {
 			groupByStr = Strings.join(groupBy, ", ", null);

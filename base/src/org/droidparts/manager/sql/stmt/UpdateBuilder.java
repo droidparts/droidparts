@@ -19,7 +19,7 @@ import android.content.ContentValues;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Pair;
 
-public class UpdateBuilder extends BaseSelectionBuilder {
+public class UpdateBuilder extends BaseBuilder {
 
 	public UpdateBuilder(SQLiteDatabase db, String tableName) {
 		super(db, tableName);
@@ -28,8 +28,13 @@ public class UpdateBuilder extends BaseSelectionBuilder {
 	//
 
 	@Override
-	public BaseSelectionBuilder where(Where where, String column, Object val) {
-		return (UpdateBuilder) super.where(where, column, val);
+	public UpdateBuilder where(String selection, Object... selectionArgs) {
+		return (UpdateBuilder) super.where(selection, selectionArgs);
+	}
+
+	@Override
+	public UpdateBuilder where(Where where) {
+		return (UpdateBuilder) super.where(where);
 	}
 
 	//
@@ -41,7 +46,7 @@ public class UpdateBuilder extends BaseSelectionBuilder {
 	}
 
 	public int execute() {
-		Pair<String, String[]> selection = buildSelection();
+		Pair<String, String[]> selection = getSelection();
 		return db.update(tableName, contentValues, selection.first,
 				selection.second);
 	}

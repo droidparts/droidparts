@@ -19,39 +19,27 @@ import java.util.ArrayList;
 
 import org.droidparts.contract.DB;
 
-import android.database.DatabaseUtils;
-import android.database.sqlite.SQLiteDatabase;
 import android.util.Pair;
 
-public abstract class BaseSelectionBuilder implements DB {
+public class Where implements DB {
 
-	public static enum Where {
+	public static enum Operator {
 
 		EQUALS(DB.EQUALS), NOT_EQUAL(DB.NOT_EQUAL), LESS(DB.LESS), GREATER(
 				DB.GREATER);
 
 		public String str;
 
-		Where(String str) {
+		Operator(String str) {
 			this.str = str;
 		}
 
 	}
 
-	protected final SQLiteDatabase db;
-	protected final String tableName;
+	private final ArrayList<Pair<String, Pair<Operator, Object>>> selection = new ArrayList<Pair<String, Pair<Operator, Object>>>();
 
-	public BaseSelectionBuilder(SQLiteDatabase db, String tableName) {
-		this.db = db;
-		this.tableName = tableName;
-	}
-
-	//
-
-	private final ArrayList<Pair<String, Pair<String, Object>>> selection = new ArrayList<Pair<String, Pair<String, Object>>>();
-
-	protected BaseSelectionBuilder where(Where where, String column, Object val) {
-		selection.add(Pair.create(where.str, Pair.create(column, val)));
+	protected Where where(String column, Operator operator, Object val) {
+		selection.add(Pair.create(column, Pair.create(operator, val)));
 		return this;
 	}
 
@@ -59,10 +47,10 @@ public abstract class BaseSelectionBuilder implements DB {
 		StringBuilder whereBuilder = new StringBuilder();
 		ArrayList<String> whereArgs = new ArrayList<String>();
 		for (int i = 0; i < selection.size(); i++) {
-			Pair<String, Pair<String, Object>> p = selection.get(i);
-			String query = p.first;
-			String columnName = p.second.first;
-			String columnVal = toArg(p.second.second);
+			Pair<String, Pair<Operator, Object>> p = selection.get(i);
+			String columnName = p.first;
+			String query = p.second.first.str;
+			String columnVal = BaseBuilder.toArg(p.second.second);
 			if (i > 0) {
 				whereBuilder.append(AND);
 			}
@@ -72,22 +60,6 @@ public abstract class BaseSelectionBuilder implements DB {
 		String where = whereBuilder.toString();
 		String[] whereArgsArr = whereArgs.toArray(new String[whereArgs.size()]);
 		return Pair.create(where, whereArgsArr);
-	}
-
-	//
-	public static String toArg(Object arg) {
-		if (arg == null) {
-			arg = "NULL";
-		} else if (arg instanceof Boolean) {
-			arg = ((Boolean) arg) ? 1 : 0;
-		}
-		return String.valueOf(arg);
-	}
-
-	public static String sqlEscapeString(String val) {
-		val = DatabaseUtils.sqlEscapeString(val);
-		val = val.substring(1, val.length() - 1);
-		return val;
 	}
 
 }
