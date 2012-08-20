@@ -28,13 +28,8 @@ public class UpdateBuilder extends BaseBuilder {
 	//
 
 	@Override
-	public UpdateBuilder where(String selection, Object... selectionArgs) {
-		return (UpdateBuilder) super.where(selection, selectionArgs);
-	}
-
-	@Override
-	public UpdateBuilder where(Where where) {
-		return (UpdateBuilder) super.where(where);
+	public UpdateBuilder where(String column, WhereVerb whereVerb, Object val) {
+		return (UpdateBuilder) super.where(column, whereVerb, val);
 	}
 
 	//
@@ -46,7 +41,7 @@ public class UpdateBuilder extends BaseBuilder {
 	}
 
 	public int execute() {
-		Pair<String, String[]> selection = getSelection();
+		Pair<String, String[]> selection = buildSelection();
 		return db.update(tableName, contentValues, selection.first,
 				selection.second);
 	}

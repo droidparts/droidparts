@@ -20,8 +20,6 @@ import static org.droidparts.util.Strings.join;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 
-import org.droidparts.util.Strings;
-
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Pair;
@@ -35,18 +33,14 @@ public class SelectBuilder extends BaseBuilder {
 	//
 
 	@Override
-	public SelectBuilder where(String selection, Object... selectionArgs) {
-		return (SelectBuilder) super.where(selection, selectionArgs);
-	}
-
-	@Override
-	public SelectBuilder where(Where where) {
-		return (SelectBuilder) super.where(where);
+	public SelectBuilder where(String column, WhereVerb whereVerb, Object val) {
+		return (SelectBuilder) super.where(column, whereVerb, val);
 	}
 
 	private String[] columns = null;
 	private boolean distinct = false;
 	private String[] groupBy = null;
+	private String having = null;
 	private final LinkedHashMap<String, Boolean> orderBy = new LinkedHashMap<String, Boolean>();
 	private int limit = -1;
 
@@ -55,8 +49,8 @@ public class SelectBuilder extends BaseBuilder {
 		return this;
 	}
 
-	public SelectBuilder distinct(boolean distinct) {
-		this.distinct = distinct;
+	public SelectBuilder distinct() {
+		this.distinct = true;
 		return this;
 	}
 
@@ -65,8 +59,8 @@ public class SelectBuilder extends BaseBuilder {
 		return this;
 	}
 
-	public SelectBuilder having() {
-		// TODO
+	public SelectBuilder having(String having) {
+		this.having = having;
 		return this;
 	}
 
@@ -80,13 +74,11 @@ public class SelectBuilder extends BaseBuilder {
 	}
 
 	public Cursor execute() {
-		Pair<String, String[]> selection = getSelection();
+		Pair<String, String[]> selection = buildSelection();
 		String groupByStr = null;
 		if (groupBy != null && groupBy.length > 0) {
-			groupByStr = Strings.join(groupBy, ", ", null);
+			groupByStr = join(groupBy, ", ", null);
 		}
-		String havingStr = null;
-		// TODO
 		String orderByStr = null;
 		if (orderBy.size() > 0) {
 			ArrayList<String> list = new ArrayList<String>();
@@ -97,6 +89,6 @@ public class SelectBuilder extends BaseBuilder {
 		}
 		String limitStr = (limit > 0) ? String.valueOf(limit) : null;
 		return db.query(distinct, tableName, columns, selection.first,
-				selection.second, groupByStr, havingStr, orderByStr, limitStr);
+				selection.second, groupByStr, having, orderByStr, limitStr);
 	}
 }

@@ -15,25 +15,17 @@
  */
 package org.droidparts.manager.sql.stmt;
 
-import android.database.sqlite.SQLiteDatabase;
-import android.util.Pair;
+import org.droidparts.contract.DB;
 
-public class DeleteBuilder extends BaseBuilder {
+public enum WhereVerb {
 
-	public DeleteBuilder(SQLiteDatabase db, String tableName) {
-		super(db, tableName);
-	}
+	EQUALS(DB.EQUALS), NOT_EQUAL(DB.NOT_EQUAL), LESS(DB.LESS), GREATER(
+			DB.GREATER);
 
-	//
+	public String str;
 
-	@Override
-	public DeleteBuilder where(String column, WhereVerb whereVerb, Object val) {
-		return (DeleteBuilder) super.where(column, whereVerb, val);
-	}
-
-	public int execute() {
-		Pair<String, String[]> selection = buildSelection();
-		return db.delete(tableName, selection.first, selection.second);
+	WhereVerb(String str) {
+		this.str = str;
 	}
 
 }

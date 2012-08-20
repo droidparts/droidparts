@@ -171,25 +171,29 @@ public abstract class AbstractEntityManager<EntityType extends Entity>
 		return new DeleteBuilder(getDB(), getTableName());
 	};
 
-	// utility methods
+	//
 
-	// TODO deprecate here
-	protected static final String[] toArgs(Object... args) {
-		return BaseBuilder.toArgs(args);
-	}
+	protected abstract SQLiteDatabase getDB();
 
-	// TODO deprecate here
-	protected static String sqlEscapeString(String val) {
-		return BaseBuilder.sqlEscapeString(val);
-	}
+	protected abstract String getTableName();
 
 	public abstract EntityType readFromCursor(Cursor cursor);
 
 	public abstract void fillForeignKeys(EntityType item, String... fieldNames);
 
-	protected abstract SQLiteDatabase getDB();
+	// utility methods
 
-	protected abstract String getTableName();
+	protected static final String[] toArgs(Object... args) {
+		String[] arr = new String[args.length];
+		for (int i = 0; i < args.length; i++) {
+			arr[i] = BaseBuilder.toArg(args[i]);
+		}
+		return arr;
+	}
+
+	protected static String sqlEscapeString(String val) {
+		return BaseBuilder.sqlEscapeString(val);
+	}
 
 	// boring stuff
 

@@ -15,6 +15,8 @@
  */
 package org.droidparts.manager.sql.stmt;
 
+import java.util.ArrayList;
+
 import org.droidparts.contract.DB;
 
 import android.database.DatabaseUtils;
@@ -33,38 +35,33 @@ public abstract class BaseBuilder implements DB {
 
 	//
 
-	private String seleciton;
-	private String[] selectionArgs;
-	private Where where;
+	private final ArrayList<Pair<String, Pair<WhereVerb, Object>>> selection = new ArrayList<Pair<String, Pair<WhereVerb, Object>>>();
 
-	protected BaseBuilder where(String selection,
-			Object... selectionArgs) {
-		this.seleciton = selection;
-		this.selectionArgs = toArgs(selectionArgs);
+	protected BaseBuilder where(String column, WhereVerb whereVerb, Object val) {
+		selection.add(Pair.create(column, Pair.create(whereVerb, val)));
 		return this;
 	}
 
-	protected BaseBuilder where(Where where) {
-		this.where = where;
-		return this;
-	}
-
-	protected Pair<String, String[]> getSelection() {
-		if (where != null) {
-			return where.buildSelection();
-		} else {
-			return Pair.create(seleciton, selectionArgs);
+	protected Pair<String, String[]> buildSelection() {
+		StringBuilder whereBuilder = new StringBuilder();
+		ArrayList<String> whereArgs = new ArrayList<String>();
+		for (int i = 0; i < selection.size(); i++) {
+			Pair<String, Pair<WhereVerb, Object>> p = selection.get(i);
+			String columnName = p.first;
+			String query = p.second.first.str;
+			String columnVal = BaseBuilder.toArg(p.second.second);
+			if (i > 0) {
+				whereBuilder.append(AND);
+			}
+			whereBuilder.append(query).append(columnName);
+			whereArgs.add(columnVal);
 		}
+		String where = whereBuilder.toString();
+		String[] whereArgsArr = whereArgs.toArray(new String[whereArgs.size()]);
+		return Pair.create(where, whereArgsArr);
 	}
 
 	//
-	public static final String[] toArgs(Object... args) {
-		String[] arr = new String[args.length];
-		for (int i = 0; i < args.length; i++) {
-			arr[i] = toArg(args[i]);
-		}
-		return arr;
-	}
 
 	public static String toArg(Object arg) {
 		if (arg == null) {
