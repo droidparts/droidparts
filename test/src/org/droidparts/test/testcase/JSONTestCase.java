@@ -23,6 +23,8 @@ public class JSONTestCase extends AndroidTestCase {
 		JSONSerializer<Primitives> serializer = new JSONSerializer<Primitives>(
 				Primitives.class);
 		Primitives primitives = serializer.deserialize(getPrimitives());
+		assertNotNull(primitives.arr);
+		//
 		JSONObject obj = serializer.serialize(primitives);
 		//
 		assertEquals(1, obj.getInt("int1"));
@@ -34,11 +36,13 @@ public class JSONTestCase extends AndroidTestCase {
 		assertEquals(true, obj.getBoolean("boolean3"));
 		assertEquals(false, obj.getBoolean("boolean4"));
 		assertEquals("str", obj.getString("string1"));
+		assertEquals(2, obj.getJSONArray("string_array").length());
+		assertEquals("two", obj.getJSONArray("string_array").getString(1));
 	}
 
 	public void testPhones() throws Exception {
 		PhoneSerializer serializer = new PhoneSerializer();
-		ArrayList<Phone> phones = serializer.deserializeList(getPhones());
+		ArrayList<Phone> phones = serializer.deserialize(getPhones());
 		assertEquals(2, phones.size());
 		assertEquals("Galaxy Nexus", phones.get(0).name);
 		assertEquals(5.1f, phones.get(1).version);

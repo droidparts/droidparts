@@ -25,4 +25,7 @@ public class Primitives extends Model {
 	@Key
 	public String string1;
 
+	@Key(name = "string_array")
+	public String[] arr;
+
 }

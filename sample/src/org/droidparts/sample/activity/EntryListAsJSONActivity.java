@@ -67,7 +67,7 @@ public class EntryListAsJSONActivity extends Activity implements
 	private void init() {
 		String msg;
 		try {
-			JSONArray arr = entrySerializer.serializeList(entries);
+			JSONArray arr = entrySerializer.serialize(entries);
 			msg = arr.toString();
 		} catch (JSONException e) {
 			L.e(e);

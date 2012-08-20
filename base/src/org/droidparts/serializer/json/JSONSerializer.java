@@ -86,7 +86,7 @@ public class JSONSerializer<ModelType extends Model> implements
 		return processor.getModelClassName();
 	}
 
-	public final JSONArray serializeList(Collection<ModelType> items)
+	public final JSONArray serialize(Collection<ModelType> items)
 			throws JSONException {
 		JSONArray arr = new JSONArray();
 		for (ModelType item : items) {
@@ -95,7 +95,7 @@ public class JSONSerializer<ModelType extends Model> implements
 		return arr;
 	}
 
-	public final ArrayList<ModelType> deserializeList(JSONArray arr)
+	public final ArrayList<ModelType> deserialize(JSONArray arr)
 			throws JSONException {
 		ArrayList<ModelType> list = new ArrayList<ModelType>();
 		for (int i = 0; i < arr.length(); i++) {
@@ -232,10 +232,14 @@ public class JSONSerializer<ModelType extends Model> implements
 			}
 			JSONArray jarr = new JSONArray();
 			if (list.size() != 0) {
-				JSONSerializer serializer = getInstance(dirtyCast(list.get(0)
-						.getClass()));
-				for (Object o : list) {
-					jarr.put(serializer.serialize((Model) o));
+				Class<?> itemCls = list.get(0).getClass();
+				if (isModel(itemCls)) {
+					JSONSerializer serializer = getInstance(dirtyCast(itemCls));
+					serializer.serialize(list);
+				} else {
+					for (Object o : list) {
+						jarr.put(o);
+					}
 				}
 			}
 			obj.put(key, jarr);
@@ -353,6 +357,20 @@ public class JSONSerializer<ModelType extends Model> implements
 			throw new JSONException("Required key '" + modelField.keyName
 					+ "' not present.");
 		}
+	}
+
+	//
+
+	@Deprecated
+	public final JSONArray serializeList(Collection<ModelType> items)
+			throws JSONException {
+		return serialize(items);
+	}
+
+	@Deprecated
+	public final ArrayList<ModelType> deserializeList(JSONArray arr)
+			throws JSONException {
+		return deserialize(arr);
 	}
 
 }

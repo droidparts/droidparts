@@ -7,5 +7,6 @@
 	"boolean2": "true",
 	"boolean3": 1,
 	"boolean4": "0",
-	"string1": "str"
+	"string1": "str",
+	"string_array": ["one", "two"]
 }
