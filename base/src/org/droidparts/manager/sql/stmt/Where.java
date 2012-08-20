@@ -17,14 +17,16 @@ package org.droidparts.manager.sql.stmt;
 
 import org.droidparts.contract.DB;
 
-public enum WhereVerb {
+public enum Where {
 
-	EQUALS(DB.EQUALS), NOT_EQUAL(DB.NOT_EQUAL), LESS(DB.LESS), GREATER(
-			DB.GREATER);
+	EQUAL(DB.EQUAL), NOT_EQUAL(DB.NOT_EQUAL), LESS(DB.LESS), LESS_OR_EQUAL(
+			DB.LESS_OR_EQUAL), GREATER(DB.GREATER), GREATER_OR_EQUAL(
+			DB.GREATER_OR_EQUAL), NULL(DB.NULL), NOT_NULL(DB.NOT_NULL), IN(
+			DB.IN), NOT_IN(DB.NOT_IN), LIKE(DB.LIKE);
 
 	public String str;
 
-	WhereVerb(String str) {
+	Where(String str) {
 		this.str = str;
 	}
 

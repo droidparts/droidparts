@@ -27,8 +27,8 @@ public class DeleteBuilder extends BaseBuilder {
 	//
 
 	@Override
-	public DeleteBuilder where(String column, WhereVerb whereVerb, Object val) {
-		return (DeleteBuilder) super.where(column, whereVerb, val);
+	public DeleteBuilder where(String column, Where operator, Object val) {
+		return (DeleteBuilder) super.where(column, operator, val);
 	}
 
 	public int execute() {

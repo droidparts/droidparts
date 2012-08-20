@@ -61,7 +61,7 @@ public abstract class AbstractEntityManager<EntityType extends Entity>
 
 	public EntityType read(long id) {
 		EntityType item = null;
-		Cursor cursor = getDB().query(getTableName(), null, Column.ID + EQUALS,
+		Cursor cursor = getDB().query(getTableName(), null, Column.ID + EQUAL,
 				toArgs(id), null, null, null);
 		if (cursor.moveToFirst()) {
 			item = readFromCursor(cursor);
@@ -74,13 +74,13 @@ public abstract class AbstractEntityManager<EntityType extends Entity>
 		createOrUpdateForeignKeys(item);
 		ContentValues cv = toContentValues(item);
 		cv.remove(Column.ID);
-		int rowCount = getDB().update(getTableName(), cv, Column.ID + EQUALS,
+		int rowCount = getDB().update(getTableName(), cv, Column.ID + EQUAL,
 				toArgs(item.id));
 		return rowCount > 0;
 	}
 
 	public boolean delete(long id) {
-		int rowCount = getDB().delete(getTableName(), Column.ID + EQUALS,
+		int rowCount = getDB().delete(getTableName(), Column.ID + EQUAL,
 				toArgs(id));
 		return rowCount > 0;
 	}

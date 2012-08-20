@@ -28,8 +28,8 @@ public class UpdateBuilder extends BaseBuilder {
 	//
 
 	@Override
-	public UpdateBuilder where(String column, WhereVerb whereVerb, Object val) {
-		return (UpdateBuilder) super.where(column, whereVerb, val);
+	public UpdateBuilder where(String column, Where operator, Object val) {
+		return (UpdateBuilder) super.where(column, operator, val);
 	}
 
 	//

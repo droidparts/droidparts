@@ -35,10 +35,10 @@ public abstract class BaseBuilder implements DB {
 
 	//
 
-	private final ArrayList<Pair<String, Pair<WhereVerb, Object>>> selection = new ArrayList<Pair<String, Pair<WhereVerb, Object>>>();
+	private final ArrayList<Pair<String, Pair<Where, Object>>> selection = new ArrayList<Pair<String, Pair<Where, Object>>>();
 
-	protected BaseBuilder where(String column, WhereVerb whereVerb, Object val) {
-		selection.add(Pair.create(column, Pair.create(whereVerb, val)));
+	protected BaseBuilder where(String column, Where operator, Object val) {
+		selection.add(Pair.create(column, Pair.create(operator, val)));
 		return this;
 	}
 
@@ -46,14 +46,14 @@ public abstract class BaseBuilder implements DB {
 		StringBuilder whereBuilder = new StringBuilder();
 		ArrayList<String> whereArgs = new ArrayList<String>();
 		for (int i = 0; i < selection.size(); i++) {
-			Pair<String, Pair<WhereVerb, Object>> p = selection.get(i);
+			Pair<String, Pair<Where, Object>> p = selection.get(i);
 			String columnName = p.first;
-			String query = p.second.first.str;
+			String operator = p.second.first.str;
 			String columnVal = BaseBuilder.toArg(p.second.second);
 			if (i > 0) {
 				whereBuilder.append(AND);
 			}
-			whereBuilder.append(query).append(columnName);
+			whereBuilder.append(operator).append(columnName);
 			whereArgs.add(columnVal);
 		}
 		String where = whereBuilder.toString();

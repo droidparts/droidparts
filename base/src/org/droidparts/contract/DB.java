@@ -30,19 +30,22 @@ public interface DB {
 	}
 
 	// sql chunks
-	String EQUALS = " = ?";
+	String EQUAL = " == ?";
 	String NOT_EQUAL = " != ?";
-	String GREATER = " > ?";
 	String LESS = " < ?";
-	// http://code.google.com/p/android/issues/detail?id=3153
-	String LIKE_START = " LIKE '%s%%'";
-	String LIKE_MIDDLE = " LIKE '%%%s%%'";
+	String LESS_OR_EQUAL = " <= ?";
+	String GREATER = " > ?";
+	String GREATER_OR_EQUAL = " >= ?";
+	String NULL = " IS NULL";
+	String NOT_NULL = " IS NOT NULL";
+	String IN = " IN";
+	String NOT_IN = " NOT IN";
+	String LIKE = " LIKE";
+
 	String AND = " AND ";
 	String OR = " OR ";
 	String ASC = " ASC";
 	String DESC = " DESC";
-	String IS_NULL = " IS NULL";
-	String IS_NOT_NULL = " IS NOT NULL";
 
 	public interface DDL {
 		String CREATE_TABLE = "CREATE TABLE ";
@@ -64,5 +67,14 @@ public interface DB {
 		String NOT_NULL = "NOT NULL";
 		String UNIQUE = "UNIQUE";
 	}
+
+	//
+	@Deprecated
+	String EQUALS = EQUAL;
+	// http://code.google.com/p/android/issues/detail?id=3153
+	@Deprecated
+	String LIKE_START = " LIKE '%s%%'";
+	@Deprecated
+	String LIKE_MIDDLE = " LIKE '%%%s%%'";
 
 }

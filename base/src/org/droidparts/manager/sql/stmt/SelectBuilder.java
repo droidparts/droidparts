@@ -33,8 +33,8 @@ public class SelectBuilder extends BaseBuilder {
 	//
 
 	@Override
-	public SelectBuilder where(String column, WhereVerb whereVerb, Object val) {
-		return (SelectBuilder) super.where(column, whereVerb, val);
+	public SelectBuilder where(String column, Where operator, Object val) {
+		return (SelectBuilder) super.where(column, operator, val);
 	}
 
 	private String[] columns = null;
