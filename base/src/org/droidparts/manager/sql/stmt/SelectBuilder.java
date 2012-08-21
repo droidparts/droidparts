@@ -18,13 +18,16 @@ package org.droidparts.manager.sql.stmt;
 import static org.droidparts.util.Strings.join;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.LinkedHashMap;
+
+import org.droidparts.util.L;
 
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Pair;
 
-public class SelectBuilder extends BaseBuilder {
+public class SelectBuilder extends StatementBuilder {
 
 	public SelectBuilder(SQLiteDatabase db, String tableName) {
 		super(db, tableName);
@@ -88,6 +91,12 @@ public class SelectBuilder extends BaseBuilder {
 			orderByStr = join(list, ", ", null);
 		}
 		String limitStr = (limit > 0) ? String.valueOf(limit) : null;
+		L.d("Distinct: '" + distinct + "', tableName: '" + tableName
+				+ "', columns: '" + Arrays.toString(columns)
+				+ "', selection: '" + selection.first + "', selectionArgs: '"
+				+ Arrays.toString(selection.second) + "', groupBy: '"
+				+ groupByStr + "', having: '" + having + "', orderBy: '"
+				+ orderByStr + "', limit: '" + limitStr + "'.");
 		return db.query(distinct, tableName, columns, selection.first,
 				selection.second, groupByStr, having, orderByStr, limitStr);
 	}

@@ -23,12 +23,12 @@ import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Pair;
 
-public abstract class BaseBuilder implements DB {
+public abstract class StatementBuilder implements DB {
 
 	protected final SQLiteDatabase db;
 	protected final String tableName;
 
-	public BaseBuilder(SQLiteDatabase db, String tableName) {
+	public StatementBuilder(SQLiteDatabase db, String tableName) {
 		this.db = db;
 		this.tableName = tableName;
 	}
@@ -37,7 +37,7 @@ public abstract class BaseBuilder implements DB {
 
 	private final ArrayList<Pair<String, Pair<Where, Object>>> selection = new ArrayList<Pair<String, Pair<Where, Object>>>();
 
-	protected BaseBuilder where(String column, Where operator, Object val) {
+	protected StatementBuilder where(String column, Where operator, Object val) {
 		selection.add(Pair.create(column, Pair.create(operator, val)));
 		return this;
 	}
@@ -49,11 +49,11 @@ public abstract class BaseBuilder implements DB {
 			Pair<String, Pair<Where, Object>> p = selection.get(i);
 			String columnName = p.first;
 			String operator = p.second.first.str;
-			String columnVal = BaseBuilder.toArg(p.second.second);
+			String columnVal = StatementBuilder.toArg(p.second.second);
 			if (i > 0) {
 				whereBuilder.append(AND);
 			}
-			whereBuilder.append(operator).append(columnName);
+			whereBuilder.append(columnName).append(operator);
 			whereArgs.add(columnVal);
 		}
 		String where = whereBuilder.toString();

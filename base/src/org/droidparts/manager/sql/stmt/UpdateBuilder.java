@@ -15,11 +15,15 @@
  */
 package org.droidparts.manager.sql.stmt;
 
+import java.util.Arrays;
+
+import org.droidparts.util.L;
+
 import android.content.ContentValues;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Pair;
 
-public class UpdateBuilder extends BaseBuilder {
+public class UpdateBuilder extends StatementBuilder {
 
 	public UpdateBuilder(SQLiteDatabase db, String tableName) {
 		super(db, tableName);
@@ -42,6 +46,9 @@ public class UpdateBuilder extends BaseBuilder {
 
 	public int execute() {
 		Pair<String, String[]> selection = buildSelection();
+		L.d("TableName: '" + tableName + ", contentValues: '" + contentValues
+				+ "', selection: '" + selection.first + "', selectionArgs: '"
+				+ Arrays.toString(selection.second) + "'.");
 		return db.update(tableName, contentValues, selection.first,
 				selection.second);
 	}
