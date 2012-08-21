@@ -17,7 +17,7 @@ package org.droidparts.manager.sql.stmt;
 
 import org.droidparts.contract.SQL;
 
-public enum Where {
+public enum Is {
 
 	EQUAL(SQL.EQUAL), NOT_EQUAL(SQL.NOT_EQUAL), LESS(SQL.LESS), LESS_OR_EQUAL(
 			SQL.LESS_OR_EQUAL), GREATER(SQL.GREATER), GREATER_OR_EQUAL(
@@ -26,7 +26,7 @@ public enum Where {
 
 	public String str;
 
-	Where(String str) {
+	Is(String str) {
 		this.str = str;
 	}
 

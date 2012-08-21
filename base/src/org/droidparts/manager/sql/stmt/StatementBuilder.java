@@ -35,9 +35,9 @@ public abstract class StatementBuilder {
 
 	//
 
-	private final ArrayList<Pair<String, Pair<Where, Object>>> selection = new ArrayList<Pair<String, Pair<Where, Object>>>();
+	private final ArrayList<Pair<String, Pair<Is, Object>>> selection = new ArrayList<Pair<String, Pair<Is, Object>>>();
 
-	protected StatementBuilder where(String column, Where operator, Object val) {
+	protected StatementBuilder where(String column, Is operator, Object val) {
 		selection.add(Pair.create(column, Pair.create(operator, val)));
 		return this;
 	}
@@ -46,7 +46,7 @@ public abstract class StatementBuilder {
 		StringBuilder whereBuilder = new StringBuilder();
 		ArrayList<String> whereArgs = new ArrayList<String>();
 		for (int i = 0; i < selection.size(); i++) {
-			Pair<String, Pair<Where, Object>> p = selection.get(i);
+			Pair<String, Pair<Is, Object>> p = selection.get(i);
 			String columnName = p.first;
 			String operator = p.second.first.str;
 			String columnVal = StatementBuilder.toArg(p.second.second);
