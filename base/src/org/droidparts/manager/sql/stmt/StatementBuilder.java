@@ -17,13 +17,13 @@ package org.droidparts.manager.sql.stmt;
 
 import java.util.ArrayList;
 
-import org.droidparts.contract.DB;
+import org.droidparts.contract.SQL;
 
 import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Pair;
 
-public abstract class StatementBuilder implements DB {
+public abstract class StatementBuilder {
 
 	protected final SQLiteDatabase db;
 	protected final String tableName;
@@ -51,7 +51,7 @@ public abstract class StatementBuilder implements DB {
 			String operator = p.second.first.str;
 			String columnVal = StatementBuilder.toArg(p.second.second);
 			if (i > 0) {
-				whereBuilder.append(AND);
+				whereBuilder.append(SQL.AND);
 			}
 			whereBuilder.append(columnName).append(operator);
 			whereArgs.add(columnVal);

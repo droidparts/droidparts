@@ -18,9 +18,10 @@ package org.droidparts.manager.sql;
 import java.util.Collection;
 
 import org.droidparts.contract.DB;
-import org.droidparts.manager.sql.stmt.StatementBuilder;
+import org.droidparts.contract.SQL;
 import org.droidparts.manager.sql.stmt.DeleteBuilder;
 import org.droidparts.manager.sql.stmt.SelectBuilder;
+import org.droidparts.manager.sql.stmt.StatementBuilder;
 import org.droidparts.manager.sql.stmt.UpdateBuilder;
 import org.droidparts.model.Entity;
 
@@ -28,8 +29,7 @@ import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
-public abstract class AbstractEntityManager<EntityType extends Entity>
-		implements DB {
+public abstract class AbstractEntityManager<EntityType extends Entity> {
 
 	// CRUD methods
 
@@ -49,7 +49,7 @@ public abstract class AbstractEntityManager<EntityType extends Entity>
 	public boolean create(EntityType item) {
 		createOrUpdateForeignKeys(item);
 		ContentValues cv = toContentValues(item);
-		cv.remove(Column.ID);
+		cv.remove(DB.Column.ID);
 		long id = getDB().insert(getTableName(), null, cv);
 		if (id > 0) {
 			item.id = id;
@@ -61,8 +61,8 @@ public abstract class AbstractEntityManager<EntityType extends Entity>
 
 	public EntityType read(long id) {
 		EntityType item = null;
-		Cursor cursor = getDB().query(getTableName(), null, Column.ID + EQUAL,
-				toArgs(id), null, null, null);
+		Cursor cursor = getDB().query(getTableName(), null,
+				DB.Column.ID + SQL.EQUAL, toArgs(id), null, null, null);
 		if (cursor.moveToFirst()) {
 			item = readFromCursor(cursor);
 		}
@@ -73,14 +73,14 @@ public abstract class AbstractEntityManager<EntityType extends Entity>
 	public boolean update(EntityType item) {
 		createOrUpdateForeignKeys(item);
 		ContentValues cv = toContentValues(item);
-		cv.remove(Column.ID);
-		int rowCount = getDB().update(getTableName(), cv, Column.ID + EQUAL,
-				toArgs(item.id));
+		cv.remove(DB.Column.ID);
+		int rowCount = getDB().update(getTableName(), cv,
+				DB.Column.ID + SQL.EQUAL, toArgs(item.id));
 		return rowCount > 0;
 	}
 
 	public boolean delete(long id) {
-		int rowCount = getDB().delete(getTableName(), Column.ID + EQUAL,
+		int rowCount = getDB().delete(getTableName(), DB.Column.ID + SQL.EQUAL,
 				toArgs(id));
 		return rowCount > 0;
 	}
