@@ -23,7 +23,7 @@ import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Pair;
 
-public abstract class StatementBuilder {
+public abstract class StatementBuilder implements SQL {
 
 	protected final SQLiteDatabase db;
 	protected final String tableName;
@@ -51,7 +51,7 @@ public abstract class StatementBuilder {
 			String operator = p.second.first.str;
 			String columnVal = StatementBuilder.toArg(p.second.second);
 			if (i > 0) {
-				whereBuilder.append(SQL.AND);
+				whereBuilder.append(AND);
 			}
 			whereBuilder.append(columnName).append(operator);
 			whereArgs.add(columnVal);

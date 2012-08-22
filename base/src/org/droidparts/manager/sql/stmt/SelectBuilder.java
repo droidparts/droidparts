@@ -21,7 +21,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedHashMap;
 
-import org.droidparts.contract.SQL;
 import org.droidparts.util.L;
 
 import android.database.Cursor;
@@ -87,7 +86,7 @@ public class SelectBuilder extends StatementBuilder {
 		if (orderBy.size() > 0) {
 			ArrayList<String> list = new ArrayList<String>();
 			for (String key : orderBy.keySet()) {
-				list.add(key + (orderBy.get(key) ? SQL.ASC : SQL.DESC));
+				list.add(key + (orderBy.get(key) ? ASC : DESC));
 			}
 			orderByStr = join(list, ", ", null);
 		}

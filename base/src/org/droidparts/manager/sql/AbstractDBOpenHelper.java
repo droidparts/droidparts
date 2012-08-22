@@ -15,20 +15,6 @@
  */
 package org.droidparts.manager.sql;
 
-import static org.droidparts.contract.SQL.DDL.BLOB;
-import static org.droidparts.contract.SQL.DDL.CLOSING_BRACE;
-import static org.droidparts.contract.SQL.DDL.CREATE_INDEX;
-import static org.droidparts.contract.SQL.DDL.CREATE_TABLE;
-import static org.droidparts.contract.SQL.DDL.CREATE_UNIQUE_INDEX;
-import static org.droidparts.contract.SQL.DDL.INTEGER;
-import static org.droidparts.contract.SQL.DDL.NOT_NULL;
-import static org.droidparts.contract.SQL.DDL.ON;
-import static org.droidparts.contract.SQL.DDL.OPENING_BRACE;
-import static org.droidparts.contract.SQL.DDL.PK;
-import static org.droidparts.contract.SQL.DDL.REAL;
-import static org.droidparts.contract.SQL.DDL.SEPARATOR;
-import static org.droidparts.contract.SQL.DDL.TEXT;
-import static org.droidparts.contract.SQL.DDL.UNIQUE;
 import static org.droidparts.reflection.util.TypeHelper.isArray;
 import static org.droidparts.reflection.util.TypeHelper.isBitmap;
 import static org.droidparts.reflection.util.TypeHelper.isBoolean;
@@ -47,6 +33,7 @@ import static org.droidparts.util.Strings.join;
 import java.util.ArrayList;
 
 import org.droidparts.contract.DB.Column;
+import org.droidparts.contract.SQL;
 import org.droidparts.model.Entity;
 import org.droidparts.reflection.model.EntityField;
 import org.droidparts.reflection.processor.EntityAnnotationProcessor;
@@ -56,7 +43,8 @@ import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
-public abstract class AbstractDBOpenHelper extends SQLiteOpenHelper {
+public abstract class AbstractDBOpenHelper extends SQLiteOpenHelper implements
+		SQL.DDL {
 
 	public AbstractDBOpenHelper(Context ctx, String name, int version) {
 		super(ctx.getApplicationContext(), name, null, version);

@@ -29,7 +29,8 @@ import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
-public abstract class AbstractEntityManager<EntityType extends Entity> {
+public abstract class AbstractEntityManager<EntityType extends Entity>
+		implements SQL {
 
 	// CRUD methods
 
@@ -62,7 +63,7 @@ public abstract class AbstractEntityManager<EntityType extends Entity> {
 	public EntityType read(long id) {
 		EntityType item = null;
 		Cursor cursor = getDB().query(getTableName(), null,
-				DB.Column.ID + SQL.EQUAL, toArgs(id), null, null, null);
+				DB.Column.ID + EQUAL, toArgs(id), null, null, null);
 		if (cursor.moveToFirst()) {
 			item = readFromCursor(cursor);
 		}
@@ -74,13 +75,13 @@ public abstract class AbstractEntityManager<EntityType extends Entity> {
 		createOrUpdateForeignKeys(item);
 		ContentValues cv = toContentValues(item);
 		cv.remove(DB.Column.ID);
-		int rowCount = getDB().update(getTableName(), cv,
-				DB.Column.ID + SQL.EQUAL, toArgs(item.id));
+		int rowCount = getDB().update(getTableName(), cv, DB.Column.ID + EQUAL,
+				toArgs(item.id));
 		return rowCount > 0;
 	}
 
 	public boolean delete(long id) {
-		int rowCount = getDB().delete(getTableName(), DB.Column.ID + SQL.EQUAL,
+		int rowCount = getDB().delete(getTableName(), DB.Column.ID + EQUAL,
 				toArgs(id));
 		return rowCount > 0;
 	}
