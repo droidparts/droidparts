@@ -202,9 +202,4 @@ public abstract class AbstractEntityManager<EntityType extends Entity>
 
 	protected abstract void createOrUpdateForeignKeys(EntityType item);
 
-	@Deprecated
-	protected final String[] toStrArr(Object... args) {
-		return toArgs(args);
-	}
-
 }

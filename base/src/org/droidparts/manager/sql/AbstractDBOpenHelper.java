@@ -107,11 +107,6 @@ public abstract class AbstractDBOpenHelper extends SQLiteOpenHelper implements
 		execQueries(db, queries);
 	}
 
-	@Deprecated
-	protected void dropAllTables(SQLiteDatabase db) {
-		dropAll(db, true, false);
-	}
-
 	protected abstract Class<? extends Entity>[] getModelClasses();
 
 	private String getSQLCreate(EntityAnnotationProcessor proc) {

@@ -36,14 +36,6 @@ public interface SQL {
 	String ASC = " ASC";
 	String DESC = " DESC";
 
-	@Deprecated
-	String EQUALS = EQUAL;
-	// http://code.google.com/p/android/issues/detail?id=3153
-	@Deprecated
-	String LIKE_START = " LIKE '%s%%'";
-	@Deprecated
-	String LIKE_MIDDLE = " LIKE '%%%s%%'";
-
 	public interface DDL {
 		String CREATE_TABLE = "CREATE TABLE ";
 

@@ -359,18 +359,4 @@ public class JSONSerializer<ModelType extends Model> implements
 		}
 	}
 
-	//
-
-	@Deprecated
-	public final JSONArray serializeList(Collection<ModelType> items)
-			throws JSONException {
-		return serialize(items);
-	}
-
-	@Deprecated
-	public final ArrayList<ModelType> deserializeList(JSONArray arr)
-			throws JSONException {
-		return deserialize(arr);
-	}
-
 }

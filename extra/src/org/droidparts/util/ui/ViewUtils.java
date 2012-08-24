@@ -90,10 +90,4 @@ public class ViewUtils {
 		}
 	}
 
-	//
-
-	@Deprecated
-	public static void setVisible(View view, boolean visible) {
-		setInvisible(view, !visible);
-	}
 }

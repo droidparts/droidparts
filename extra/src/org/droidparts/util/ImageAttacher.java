@@ -27,14 +27,12 @@ import java.util.concurrent.Executors;
 
 import org.droidparts.http.HTTPException;
 import org.droidparts.http.RESTClient;
-import org.droidparts.util.L;
 import org.droidparts.util.io.BitmapCacher;
 import org.droidparts.util.ui.ViewUtils;
 
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.drawable.Drawable;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Pair;
@@ -173,18 +171,6 @@ public class ImageAttacher {
 			}
 		}
 
-	}
-
-	//
-
-	@Deprecated
-	public void setImage(View view, String fileUrl) {
-		attachImage((ImageView) view, fileUrl);
-	}
-
-	@Deprecated
-	public void setImage(View view, String fileUrl, Drawable defaultImg) {
-		attachImage((ImageView) view, fileUrl);
 	}
 
 }
