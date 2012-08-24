@@ -17,9 +17,7 @@ package org.droidparts.contract;
 
 public interface Constants {
 
-	String TAG = "DroidParts";
 	String UTF8 = "utf-8";
-
 	int BUFFER_SIZE = 8 * 1024;
 
 	static interface ManifestMeta {

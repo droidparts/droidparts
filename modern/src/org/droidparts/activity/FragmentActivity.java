@@ -16,7 +16,7 @@
 package org.droidparts.activity;
 
 import org.droidparts.R;
-import org.droidparts.contract.Injectable;
+import org.droidparts.inject.Injectable;
 import org.droidparts.inject.FragmentsInjector;
 
 import android.os.Bundle;

@@ -17,7 +17,6 @@ package org.droidparts.util;
 
 import static android.content.pm.ApplicationInfo.FLAG_DEBUGGABLE;
 import static android.content.pm.PackageManager.GET_META_DATA;
-import static org.droidparts.contract.Constants.TAG;
 
 import org.droidparts.contract.Constants.ManifestMeta;
 import org.droidparts.inject.Injector;
@@ -29,6 +28,8 @@ import android.os.Bundle;
 import android.util.Log;
 
 public class L {
+
+	private static final String TAG = "DroidParts";
 
 	private static final int VERBOSE = Log.VERBOSE;
 	private static final int DEBUG = Log.DEBUG;
