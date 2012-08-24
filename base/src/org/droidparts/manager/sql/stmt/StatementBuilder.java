@@ -48,13 +48,20 @@ public abstract class StatementBuilder implements SQL {
 		for (int i = 0; i < selection.size(); i++) {
 			Pair<String, Pair<Is, Object>> p = selection.get(i);
 			String columnName = p.first;
-			String operator = p.second.first.str;
+			Is operator = p.second.first;
 			String columnVal = StatementBuilder.toArg(p.second.second);
 			if (i > 0) {
 				whereBuilder.append(AND);
 			}
-			whereBuilder.append(columnName).append(operator);
-			whereArgs.add(columnVal);
+			whereBuilder.append(columnName).append(operator.str);
+			switch (operator) {
+			case NULL:
+			case NOT_NULL:
+				break;
+			default:
+				whereArgs.add(columnVal);
+				break;
+			}
 		}
 		String where = whereBuilder.toString();
 		String[] whereArgsArr = whereArgs.toArray(new String[whereArgs.size()]);

@@ -160,23 +160,19 @@ public abstract class AbstractEntityManager<EntityType extends Entity>
 
 	// statement builders
 
-	protected SelectBuilder select() {
+	public SelectBuilder select() {
 		return new SelectBuilder(getDB(), getTableName());
 	};
 
-	protected UpdateBuilder update() {
+	public UpdateBuilder update() {
 		return new UpdateBuilder(getDB(), getTableName());
 	};
 
-	protected DeleteBuilder delete() {
+	public DeleteBuilder delete() {
 		return new DeleteBuilder(getDB(), getTableName());
 	};
 
 	//
-
-	protected abstract SQLiteDatabase getDB();
-
-	protected abstract String getTableName();
 
 	public abstract EntityType readFromCursor(Cursor cursor);
 
@@ -184,7 +180,7 @@ public abstract class AbstractEntityManager<EntityType extends Entity>
 
 	// utility methods
 
-	protected static final String[] toArgs(Object... args) {
+	public static final String[] toArgs(Object... args) {
 		String[] arr = new String[args.length];
 		for (int i = 0; i < args.length; i++) {
 			arr[i] = StatementBuilder.toArg(args[i]);
@@ -192,9 +188,13 @@ public abstract class AbstractEntityManager<EntityType extends Entity>
 		return arr;
 	}
 
-	protected static String sqlEscapeString(String val) {
+	public static String sqlEscapeString(String val) {
 		return StatementBuilder.sqlEscapeString(val);
 	}
+
+	protected abstract SQLiteDatabase getDB();
+
+	protected abstract String getTableName();
 
 	// boring stuff
 
