@@ -1,3 +1,12 @@
+0.7 /2012-07-24/:
+    * Some classes relocated & changed names.
+    * JSONObject Keys can be marked optional, false by default.
+    * Inject Preferences with @InjectView.
+    * Working select(), update(), delete() methods in EntityManager.
+    * Lots of DB & JSON fixes & improvements.
+    * Arrays2 helper.
+    * Unit tests.
+
 0.6 /2012-07-20/:
     * 'support-actionbarsherlock' renamed to 'modern' (still relies on ActionBarSherlock).
     * Added 'legacy' for outdated stuff.

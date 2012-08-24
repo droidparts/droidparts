@@ -4,4 +4,4 @@ http://droidparts.org
 
 Deprecation Policy
 ------------------
-@deprecated is kept for one version.
+@Deprecated is kept for one version.
