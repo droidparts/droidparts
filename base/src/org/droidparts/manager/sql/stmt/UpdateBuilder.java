@@ -32,8 +32,9 @@ public class UpdateBuilder extends StatementBuilder {
 	//
 
 	@Override
-	public UpdateBuilder where(String column, Is operator, Object... values) {
-		return (UpdateBuilder) super.where(column, operator, values);
+	public UpdateBuilder where(String columnName, Is operator,
+			Object... columnValue) {
+		return (UpdateBuilder) super.where(columnName, operator, columnValue);
 	}
 
 	//

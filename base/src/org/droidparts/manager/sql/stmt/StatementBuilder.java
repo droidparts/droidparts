@@ -37,9 +37,10 @@ public abstract class StatementBuilder implements SQL {
 
 	private final ArrayList<Pair<String, Pair<Is, Object[]>>> selection = new ArrayList<Pair<String, Pair<Is, Object[]>>>();
 
-	protected StatementBuilder where(String column, Is operator,
-			Object... values) {
-		selection.add(Pair.create(column, Pair.create(operator, values)));
+	protected StatementBuilder where(String columnName, Is operator,
+			Object... columnValue) {
+		selection.add(Pair.create(columnName,
+				Pair.create(operator, columnValue)));
 		return this;
 	}
 

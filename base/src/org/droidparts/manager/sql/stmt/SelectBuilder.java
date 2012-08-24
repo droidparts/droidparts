@@ -36,8 +36,9 @@ public class SelectBuilder extends StatementBuilder {
 	//
 
 	@Override
-	public SelectBuilder where(String column, Is operator, Object... values) {
-		return (SelectBuilder) super.where(column, operator, values);
+	public SelectBuilder where(String columnName, Is operator,
+			Object... columnValue) {
+		return (SelectBuilder) super.where(columnName, operator, columnValue);
 	}
 
 	private String[] columns = null;

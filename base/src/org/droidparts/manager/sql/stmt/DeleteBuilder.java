@@ -31,8 +31,9 @@ public class DeleteBuilder extends StatementBuilder {
 	//
 
 	@Override
-	public DeleteBuilder where(String column, Is operator, Object... values) {
-		return (DeleteBuilder) super.where(column, operator, values);
+	public DeleteBuilder where(String columnName, Is operator,
+			Object... columnValue) {
+		return (DeleteBuilder) super.where(columnName, operator, columnValue);
 	}
 
 	public int execute() {
