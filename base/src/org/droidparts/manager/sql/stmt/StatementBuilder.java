@@ -35,10 +35,11 @@ public abstract class StatementBuilder implements SQL {
 
 	//
 
-	private final ArrayList<Pair<String, Pair<Is, Object>>> selection = new ArrayList<Pair<String, Pair<Is, Object>>>();
+	private final ArrayList<Pair<String, Pair<Is, Object[]>>> selection = new ArrayList<Pair<String, Pair<Is, Object[]>>>();
 
-	protected StatementBuilder where(String column, Is operator, Object val) {
-		selection.add(Pair.create(column, Pair.create(operator, val)));
+	protected StatementBuilder where(String column, Is operator,
+			Object... values) {
+		selection.add(Pair.create(column, Pair.create(operator, values)));
 		return this;
 	}
 
@@ -46,10 +47,10 @@ public abstract class StatementBuilder implements SQL {
 		StringBuilder whereBuilder = new StringBuilder();
 		ArrayList<String> whereArgs = new ArrayList<String>();
 		for (int i = 0; i < selection.size(); i++) {
-			Pair<String, Pair<Is, Object>> p = selection.get(i);
+			Pair<String, Pair<Is, Object[]>> p = selection.get(i);
 			String columnName = p.first;
 			Is operator = p.second.first;
-			String columnVal = StatementBuilder.toArg(p.second.second);
+			Object[] columnValues = p.second.second;
 			if (i > 0) {
 				whereBuilder.append(AND);
 			}
@@ -59,6 +60,7 @@ public abstract class StatementBuilder implements SQL {
 			case NOT_NULL:
 				break;
 			default:
+				String columnVal = toArg(columnValues[0]);
 				whereArgs.add(columnVal);
 				break;
 			}

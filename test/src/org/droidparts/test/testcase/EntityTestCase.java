@@ -62,14 +62,14 @@ public class EntityTestCase extends AndroidTestCase {
 		assertEquals(1, cursor.getCount());
 		cursor.close();
 
-		cursor = mngr.select().where("two", Is.NOT_NULL, null).execute();
+		cursor = mngr.select().where("two", Is.NOT_NULL).execute();
 		assertEquals(1, cursor.getCount());
 		cursor.moveToFirst();
 		TwoStrings str11 = mngr.readFromCursor(cursor);
 		assertEquals(str1.one, str11.one);
 		cursor.close();
 
-		cursor = mngr.select().where("two", Is.NULL, null).execute();
+		cursor = mngr.select().where("two", Is.NULL).execute();
 		assertEquals(1, cursor.getCount());
 		cursor.moveToFirst();
 		TwoStrings str21 = mngr.readFromCursor(cursor);
