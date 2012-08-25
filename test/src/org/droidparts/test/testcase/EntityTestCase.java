@@ -1,5 +1,7 @@
 package org.droidparts.test.testcase;
 
+import java.util.ArrayList;
+
 import org.droidparts.contract.DB;
 import org.droidparts.manager.sql.EntityManager;
 import org.droidparts.manager.sql.stmt.Is;
@@ -13,10 +15,13 @@ import android.test.AndroidTestCase;
 public class EntityTestCase extends AndroidTestCase {
 
 	private PhoneManager phoneManager;
+	private EntityManager<TwoStrings> twoStringsManager;
 
 	@Override
 	protected void setUp() throws Exception {
 		phoneManager = new PhoneManager(getContext());
+		twoStringsManager = EntityManager.getInstance(getContext(),
+				TwoStrings.class);
 	}
 
 	public void testCRUD() throws Exception {
@@ -37,44 +42,76 @@ public class EntityTestCase extends AndroidTestCase {
 	}
 
 	public void testUniqueAndNull() throws Exception {
-		EntityManager<TwoStrings> mngr = EntityManager.getInstance(
-				getContext(), TwoStrings.class);
 		TwoStrings str1 = new TwoStrings();
 		str1.one = "one1";
 		str1.two = "two1";
-		boolean created = mngr.create(str1);
+		boolean created = twoStringsManager.create(str1);
 		assertTrue(created);
 
 		TwoStrings str2 = new TwoStrings();
-		created = mngr.create(str2);
+		created = twoStringsManager.create(str2);
 		assertFalse(created);
 
 		str2.one = str1.one;
-		created = mngr.create(str2);
+		created = twoStringsManager.create(str2);
 		assertFalse(created);
 
 		str2.one = str1.one + "x";
-		created = mngr.create(str2);
+		created = twoStringsManager.create(str2);
 		assertTrue(created);
 
-		Cursor cursor = mngr.select().where(DB.Column.ID, Is.EQUAL, str1.id)
-				.execute();
+		Cursor cursor = twoStringsManager.select()
+				.where(DB.Column.ID, Is.EQUAL, str1.id).execute();
 		assertEquals(1, cursor.getCount());
 		cursor.close();
 
-		cursor = mngr.select().where("two", Is.NOT_NULL).execute();
+		cursor = twoStringsManager.select().where("two", Is.NOT_NULL).execute();
 		assertEquals(1, cursor.getCount());
 		cursor.moveToFirst();
-		TwoStrings str11 = mngr.readFromCursor(cursor);
+		TwoStrings str11 = twoStringsManager.readFromCursor(cursor);
 		assertEquals(str1.one, str11.one);
 		cursor.close();
 
-		cursor = mngr.select().where("two", Is.NULL).execute();
+		cursor = twoStringsManager.select().where("two", Is.NULL).execute();
 		assertEquals(1, cursor.getCount());
 		cursor.moveToFirst();
-		TwoStrings str21 = mngr.readFromCursor(cursor);
+		TwoStrings str21 = twoStringsManager.readFromCursor(cursor);
 		assertEquals(str2.one, str21.one);
 		cursor.close();
+		//
+		deleteAllTwoStrings();
+	}
+
+	public void testInAndLike() throws Exception {
+		ArrayList<TwoStrings> list = new ArrayList<TwoStrings>();
+		for (String str : new String[] { "pc", "mac", "phone" }) {
+			TwoStrings ts = new TwoStrings();
+			ts.one = str;
+			list.add(ts);
+		}
+		boolean success = twoStringsManager.create(list);
+		assertTrue(success);
+		//
+		Cursor c = twoStringsManager.select().where(DB.Column.ID, Is.IN, 1, 2)
+				.execute();
+		assertEquals(2, c.getCount());
+		c.close();
+		//
+		c = twoStringsManager.select().where(DB.Column.ID, Is.NOT_IN, 1, 2)
+				.execute();
+		assertEquals(1, c.getCount());
+		c.close();
+		//
+		c = twoStringsManager.select().where("one", Is.LIKE, "%%hon%%")
+				.execute();
+		assertEquals(1, c.getCount());
+		c.close();
+		//
+		deleteAllTwoStrings();
+	}
+
+	private void deleteAllTwoStrings() {
+		twoStringsManager.delete().execute();
 	}
 
 }

@@ -15,6 +15,8 @@
  */
 package org.droidparts.manager.sql.stmt;
 
+import static org.droidparts.util.Strings.join;
+
 import java.util.ArrayList;
 
 import org.droidparts.contract.SQL;
@@ -60,8 +62,15 @@ public abstract class StatementBuilder implements SQL {
 			case NULL:
 			case NOT_NULL:
 				break;
+			case IN:
+			case NOT_IN:
+				whereBuilder.append("(");
+				whereBuilder.append(join(toSQLEscapedArgs(columnValues), ", ",
+						null));
+				whereBuilder.append(")");
+				break;
 			default:
-				String columnVal = toArg(columnValues[0]);
+				String columnVal = toArgs(columnValues)[0];
 				whereArgs.add(columnVal);
 				break;
 			}
@@ -73,19 +82,32 @@ public abstract class StatementBuilder implements SQL {
 
 	//
 
-	public static String toArg(Object arg) {
-		if (arg == null) {
-			arg = "NULL";
-		} else if (arg instanceof Boolean) {
-			arg = ((Boolean) arg) ? 1 : 0;
+	public static String[] toArgs(Object... args) {
+		String[] arr = new String[args.length];
+		for (int i = 0; i < args.length; i++) {
+			Object arg = args[i];
+			if (arg == null) {
+				arg = "NULL";
+			} else if (arg instanceof Boolean) {
+				arg = ((Boolean) arg) ? 1 : 0;
+			}
+			arr[i] = String.valueOf(arg);
 		}
-		return String.valueOf(arg);
+		return arr;
 	}
 
 	public static String sqlEscapeString(String val) {
 		val = DatabaseUtils.sqlEscapeString(val);
 		val = val.substring(1, val.length() - 1);
 		return val;
+	}
+
+	private static String[] toSQLEscapedArgs(Object... args) {
+		String[] vals = toArgs(args);
+		for (int j = 0; j < vals.length; j++) {
+			vals[j] = sqlEscapeString(vals[j]);
+		}
+		return vals;
 	}
 
 }

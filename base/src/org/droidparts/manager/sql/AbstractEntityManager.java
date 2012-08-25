@@ -181,11 +181,7 @@ public abstract class AbstractEntityManager<EntityType extends Entity>
 	// utility methods
 
 	public static final String[] toArgs(Object... args) {
-		String[] arr = new String[args.length];
-		for (int i = 0; i < args.length; i++) {
-			arr[i] = StatementBuilder.toArg(args[i]);
-		}
-		return arr;
+		return StatementBuilder.toArgs(args);
 	}
 
 	public static String sqlEscapeString(String val) {

@@ -23,13 +23,13 @@ public interface SQL {
 	String LESS_OR_EQUAL = " <= ?";
 	String GREATER = " > ?";
 	String GREATER_OR_EQUAL = " >= ?";
+	String LIKE = " LIKE ?";
 
 	String NULL = " IS NULL";
 	String NOT_NULL = " IS NOT NULL";
 
-	String IN = " IN";
-	String NOT_IN = " NOT IN";
-	String LIKE = " LIKE";
+	String IN = " IN ";
+	String NOT_IN = " NOT IN ";
 
 	String AND = " AND ";
 	String OR = " OR ";
