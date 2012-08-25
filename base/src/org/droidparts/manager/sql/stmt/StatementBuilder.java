@@ -15,13 +15,12 @@
  */
 package org.droidparts.manager.sql.stmt;
 
-import static org.droidparts.util.Strings.join;
+import static java.util.Arrays.asList;
 
 import java.util.ArrayList;
 
 import org.droidparts.contract.SQL;
 
-import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Pair;
 
@@ -65,9 +64,9 @@ public abstract class StatementBuilder implements SQL {
 			case IN:
 			case NOT_IN:
 				whereBuilder.append("(");
-				whereBuilder.append(sqlEscapeString(join(toArgs(columnValues),
-						", ", null)));
+				whereBuilder.append(makePlaceholders(columnValues.length));
 				whereBuilder.append(")");
+				whereArgs.addAll(asList(toArgs(columnValues)));
 				break;
 			default:
 				String columnVal = toArgs(columnValues)[0];
@@ -86,20 +85,28 @@ public abstract class StatementBuilder implements SQL {
 		String[] arr = new String[args.length];
 		for (int i = 0; i < args.length; i++) {
 			Object arg = args[i];
+			String argStr;
 			if (arg == null) {
-				arg = "NULL";
+				argStr = "NULL";
 			} else if (arg instanceof Boolean) {
-				arg = ((Boolean) arg) ? 1 : 0;
+				argStr = ((Boolean) arg) ? "1" : "0";
+			} else {
+				argStr = arg.toString();
 			}
-			arr[i] = String.valueOf(arg);
+			arr[i] = argStr;
 		}
 		return arr;
 	}
 
-	public static String sqlEscapeString(String val) {
-		val = DatabaseUtils.sqlEscapeString(val);
-		val = val.substring(1, val.length() - 1);
-		return val;
+	private String makePlaceholders(int count) {
+		StringBuilder sb = new StringBuilder();
+		for (int i = 0; i < count; i++) {
+			if (i != 0) {
+				sb.append(", ");
+			}
+			sb.append("?");
+		}
+		return sb.toString();
 	}
 
 }

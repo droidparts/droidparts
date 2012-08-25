@@ -27,6 +27,7 @@ import org.droidparts.model.Entity;
 
 import android.content.ContentValues;
 import android.database.Cursor;
+import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteDatabase;
 
 public abstract class AbstractEntityManager<EntityType extends Entity>
@@ -185,7 +186,7 @@ public abstract class AbstractEntityManager<EntityType extends Entity>
 	}
 
 	public static String sqlEscapeString(String val) {
-		return StatementBuilder.sqlEscapeString(val);
+		return DatabaseUtils.sqlEscapeString(val);
 	}
 
 	protected abstract SQLiteDatabase getDB();
