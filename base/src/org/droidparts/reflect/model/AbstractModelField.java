@@ -13,24 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License. 
  */
-package org.droidparts;
+package org.droidparts.reflect.model;
 
-import org.droidparts.inject.Injector;
+public abstract class AbstractModelField {
 
-public class Application extends android.app.Application {
-
-	@Override
-	public void onCreate() {
-		super.onCreate();
-		Injector inj = Injector.get();
-		inj.setUp(this);
-		inj.inject(this, this);
-	}
+	public String fieldName;
+	public Class<?> fieldClass;
+	public Class<?> fieldGenericArg;
 
 	@Override
-	public void onTerminate() {
-		// XXX doesn't get called
-		Injector.get().tearDown();
+	public String toString() {
+		return "fieldName: " + fieldName + ", fieldClass: " + fieldClass
+				+ ", fieldGenericArg: " + fieldGenericArg;
 	}
 
 }

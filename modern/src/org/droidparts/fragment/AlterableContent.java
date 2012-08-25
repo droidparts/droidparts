@@ -13,24 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License. 
  */
-package org.droidparts;
+package org.droidparts.fragment;
 
-import org.droidparts.inject.Injector;
+public interface AlterableContent<T> {
 
-public class Application extends android.app.Application {
-
-	@Override
-	public void onCreate() {
-		super.onCreate();
-		Injector inj = Injector.get();
-		inj.setUp(this);
-		inj.inject(this, this);
-	}
-
-	@Override
-	public void onTerminate() {
-		// XXX doesn't get called
-		Injector.get().tearDown();
-	}
+	public void setContent(T content);
 
 }

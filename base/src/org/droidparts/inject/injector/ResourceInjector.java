@@ -15,11 +15,11 @@
  */
 package org.droidparts.inject.injector;
 
-import static org.droidparts.reflection.util.ReflectionUtils.setFieldVal;
-import static org.droidparts.reflection.util.TypeHelper.isArray;
-import static org.droidparts.reflection.util.TypeHelper.isDrawable;
-import static org.droidparts.reflection.util.TypeHelper.isInteger;
-import static org.droidparts.reflection.util.TypeHelper.isString;
+import static org.droidparts.reflect.util.ReflectionUtils.setFieldVal;
+import static org.droidparts.reflect.util.TypeHelper.isArray;
+import static org.droidparts.reflect.util.TypeHelper.isDrawable;
+import static org.droidparts.reflect.util.TypeHelper.isInteger;
+import static org.droidparts.reflect.util.TypeHelper.isString;
 
 import java.lang.reflect.Field;
 

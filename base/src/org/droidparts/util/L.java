@@ -152,7 +152,7 @@ public class L {
 	private static int _logLevel;
 	private static String _tag;
 
-	private L() {
+	protected L() {
 	}
 
 }

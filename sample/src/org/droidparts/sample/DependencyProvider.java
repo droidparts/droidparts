@@ -1,9 +1,9 @@
 package org.droidparts.sample;
 
 import org.droidparts.inject.AbstractDependencyProvider;
-import org.droidparts.manager.AbstractDialogFactory;
 import org.droidparts.sample.db.DBOpenHelper;
 import org.droidparts.sample.json.EntrySerializer;
+import org.droidparts.util.ui.AbstractDialogFactory;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;

@@ -1,6 +1,6 @@
 package org.droidparts.sample.db;
 
-import org.droidparts.manager.sql.EntityManager;
+import org.droidparts.persist.sql.EntityManager;
 import org.droidparts.sample.model.Entry;
 
 import android.content.Context;

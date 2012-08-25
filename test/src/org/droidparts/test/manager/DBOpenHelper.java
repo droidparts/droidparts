@@ -1,7 +1,7 @@
 package org.droidparts.test.manager;
 
-import org.droidparts.manager.sql.AbstractDBOpenHelper2;
 import org.droidparts.model.Entity;
+import org.droidparts.persist.sql.AbstractDBOpenHelper2;
 import org.droidparts.test.model.Phone;
 import org.droidparts.test.model.TwoStrings;
 

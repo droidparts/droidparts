@@ -3,8 +3,8 @@ package org.droidparts.test.testcase;
 import java.util.ArrayList;
 
 import org.droidparts.contract.DB;
-import org.droidparts.manager.sql.EntityManager;
-import org.droidparts.manager.sql.stmt.Is;
+import org.droidparts.persist.sql.EntityManager;
+import org.droidparts.persist.sql.stmt.Is;
 import org.droidparts.test.manager.PhoneManager;
 import org.droidparts.test.model.Phone;
 import org.droidparts.test.model.TwoStrings;

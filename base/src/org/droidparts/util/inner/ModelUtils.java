@@ -19,14 +19,10 @@ import java.lang.reflect.Field;
 import java.util.List;
 
 import org.droidparts.model.Model;
-import org.droidparts.reflection.util.ReflectionUtils;
+import org.droidparts.reflect.util.ReflectionUtils;
 import org.droidparts.util.L;
 
 public class ModelUtils {
-
-	private ModelUtils() {
-
-	}
 
 	public static boolean equals(Model model, Object other) {
 		if (other == null) {
@@ -80,6 +76,9 @@ public class ModelUtils {
 		}
 		sb.append("]");
 		return sb.toString();
+	}
+
+	protected ModelUtils() {
 	}
 
 }

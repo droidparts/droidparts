@@ -16,7 +16,7 @@
 package org.droidparts.inject.injector;
 
 import static android.content.pm.PackageManager.GET_META_DATA;
-import static org.droidparts.reflection.util.ReflectionUtils.setFieldVal;
+import static org.droidparts.reflect.util.ReflectionUtils.setFieldVal;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;

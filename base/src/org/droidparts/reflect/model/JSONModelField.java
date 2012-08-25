@@ -13,24 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License. 
  */
-package org.droidparts;
+package org.droidparts.reflect.model;
 
-import org.droidparts.inject.Injector;
+public class JSONModelField extends AbstractModelField {
 
-public class Application extends android.app.Application {
-
-	@Override
-	public void onCreate() {
-		super.onCreate();
-		Injector inj = Injector.get();
-		inj.setUp(this);
-		inj.inject(this, this);
-	}
+	public String keyName;
+	public boolean keyOptional;
 
 	@Override
-	public void onTerminate() {
-		// XXX doesn't get called
-		Injector.get().tearDown();
+	public String toString() {
+		return super.toString() + ", keyName: " + keyName + ", keyOptional: "
+				+ keyOptional;
 	}
-
 }

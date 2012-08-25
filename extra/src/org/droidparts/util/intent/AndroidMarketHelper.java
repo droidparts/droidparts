@@ -18,8 +18,8 @@ package org.droidparts.util.intent;
 import static android.content.Intent.ACTION_VIEW;
 
 import org.droidparts.R;
-import org.droidparts.manager.AbstractDialogFactory;
 import org.droidparts.util.L;
+import org.droidparts.util.ui.AbstractDialogFactory;
 
 import android.content.ActivityNotFoundException;
 import android.content.Context;

@@ -1,12 +1,12 @@
 package org.droidparts.test.testcase;
 
-import static org.droidparts.serializer.json.JSONSerializer.__;
+import static org.droidparts.persist.json.JSONSerializer.__;
 import static org.droidparts.util.Strings.join;
 
 import java.util.ArrayList;
 
 import org.droidparts.R;
-import org.droidparts.serializer.json.JSONSerializer;
+import org.droidparts.persist.json.JSONSerializer;
 import org.droidparts.test.manager.PhoneSerializer;
 import org.droidparts.test.model.Nested;
 import org.droidparts.test.model.Phone;

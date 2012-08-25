@@ -13,24 +13,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License. 
  */
-package org.droidparts;
+package org.droidparts.persist.sql.stmt;
 
-import org.droidparts.inject.Injector;
+import org.droidparts.contract.SQL;
 
-public class Application extends android.app.Application {
+public enum Is {
 
-	@Override
-	public void onCreate() {
-		super.onCreate();
-		Injector inj = Injector.get();
-		inj.setUp(this);
-		inj.inject(this, this);
-	}
+	EQUAL(SQL.EQUAL), NOT_EQUAL(SQL.NOT_EQUAL), LESS(SQL.LESS), LESS_OR_EQUAL(
+			SQL.LESS_OR_EQUAL), GREATER(SQL.GREATER), GREATER_OR_EQUAL(
+			SQL.GREATER_OR_EQUAL), LIKE(SQL.LIKE), NULL(SQL.NULL), NOT_NULL(
+			SQL.NOT_NULL), IN(SQL.IN), NOT_IN(SQL.NOT_IN);
 
-	@Override
-	public void onTerminate() {
-		// XXX doesn't get called
-		Injector.get().tearDown();
+	public String str;
+
+	Is(String str) {
+		this.str = str;
 	}
 
 }

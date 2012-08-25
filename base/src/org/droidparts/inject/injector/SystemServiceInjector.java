@@ -15,7 +15,7 @@
  */
 package org.droidparts.inject.injector;
 
-import static org.droidparts.reflection.util.ReflectionUtils.setFieldVal;
+import static org.droidparts.reflect.util.ReflectionUtils.setFieldVal;
 import static org.droidparts.util.Strings.isEmpty;
 
 import java.lang.reflect.Field;

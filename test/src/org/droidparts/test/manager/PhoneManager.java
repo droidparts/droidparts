@@ -1,6 +1,6 @@
 package org.droidparts.test.manager;
 
-import org.droidparts.manager.sql.EntityManager;
+import org.droidparts.persist.sql.EntityManager;
 import org.droidparts.test.model.Phone;
 
 import android.content.Context;

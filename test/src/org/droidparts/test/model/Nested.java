@@ -1,6 +1,6 @@
 package org.droidparts.test.model;
 
-import static org.droidparts.serializer.json.JSONSerializer.__;
+import static org.droidparts.persist.json.JSONSerializer.__;
 
 import org.droidparts.annotation.json.Key;
 import org.droidparts.model.Model;

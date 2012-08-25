@@ -13,24 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License. 
  */
-package org.droidparts;
+package org.droidparts.persist;
 
-import org.droidparts.inject.Injector;
+public interface Serializer<TypeFrom, TypeTo> {
 
-public class Application extends android.app.Application {
+	public abstract String getModelClassName();
 
-	@Override
-	public void onCreate() {
-		super.onCreate();
-		Injector inj = Injector.get();
-		inj.setUp(this);
-		inj.inject(this, this);
-	}
+	public abstract TypeTo serialize(TypeFrom item) throws Exception;
 
-	@Override
-	public void onTerminate() {
-		// XXX doesn't get called
-		Injector.get().tearDown();
-	}
+	public abstract TypeFrom deserialize(TypeTo obj) throws Exception;
 
 }

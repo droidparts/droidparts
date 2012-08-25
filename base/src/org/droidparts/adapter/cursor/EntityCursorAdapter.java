@@ -15,8 +15,8 @@
  */
 package org.droidparts.adapter.cursor;
 
-import org.droidparts.manager.sql.EntityManager;
 import org.droidparts.model.Entity;
+import org.droidparts.persist.sql.EntityManager;
 
 import android.app.Activity;
 import android.database.Cursor;

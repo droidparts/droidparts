@@ -32,4 +32,7 @@ public class ResourceUtils {
 				ctx.getPackageName());
 	}
 
+	protected ResourceUtils() {
+	}
+
 }

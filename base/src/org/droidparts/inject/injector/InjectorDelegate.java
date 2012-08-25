@@ -15,7 +15,7 @@
  */
 package org.droidparts.inject.injector;
 
-import static org.droidparts.reflection.util.ReflectionUtils.listAnnotatedFields;
+import static org.droidparts.reflect.util.ReflectionUtils.listAnnotatedFields;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
