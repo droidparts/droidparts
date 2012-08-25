@@ -15,19 +15,19 @@
  */
 package org.droidparts.manager.sql;
 
+import static org.droidparts.util.DatabaseUtils2.toWhereArgs;
+
 import java.util.Collection;
 
 import org.droidparts.contract.DB;
 import org.droidparts.contract.SQL;
 import org.droidparts.manager.sql.stmt.DeleteBuilder;
 import org.droidparts.manager.sql.stmt.SelectBuilder;
-import org.droidparts.manager.sql.stmt.StatementBuilder;
 import org.droidparts.manager.sql.stmt.UpdateBuilder;
 import org.droidparts.model.Entity;
 
 import android.content.ContentValues;
 import android.database.Cursor;
-import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteDatabase;
 
 public abstract class AbstractEntityManager<EntityType extends Entity>
@@ -64,7 +64,7 @@ public abstract class AbstractEntityManager<EntityType extends Entity>
 	public EntityType read(long id) {
 		EntityType item = null;
 		Cursor cursor = getDB().query(getTableName(), null,
-				DB.Column.ID + EQUAL, toArgs(id), null, null, null);
+				DB.Column.ID + EQUAL, toWhereArgs(id), null, null, null);
 		if (cursor.moveToFirst()) {
 			item = readFromCursor(cursor);
 		}
@@ -77,13 +77,13 @@ public abstract class AbstractEntityManager<EntityType extends Entity>
 		ContentValues cv = toContentValues(item);
 		cv.remove(DB.Column.ID);
 		int rowCount = getDB().update(getTableName(), cv, DB.Column.ID + EQUAL,
-				toArgs(item.id));
+				toWhereArgs(item.id));
 		return rowCount > 0;
 	}
 
 	public boolean delete(long id) {
 		int rowCount = getDB().delete(getTableName(), DB.Column.ID + EQUAL,
-				toArgs(id));
+				toWhereArgs(id));
 		return rowCount > 0;
 	}
 
@@ -178,16 +178,6 @@ public abstract class AbstractEntityManager<EntityType extends Entity>
 	public abstract EntityType readFromCursor(Cursor cursor);
 
 	public abstract void fillForeignKeys(EntityType item, String... fieldNames);
-
-	// utility methods
-
-	public static final String[] toArgs(Object... args) {
-		return StatementBuilder.toArgs(args);
-	}
-
-	public static String sqlEscapeString(String val) {
-		return DatabaseUtils.sqlEscapeString(val);
-	}
 
 	protected abstract SQLiteDatabase getDB();
 

@@ -16,6 +16,8 @@
 package org.droidparts.manager.sql.stmt;
 
 import static java.util.Arrays.asList;
+import static org.droidparts.util.DatabaseUtils2.buildPlaceholders;
+import static org.droidparts.util.DatabaseUtils2.toWhereArgs;
 
 import java.util.ArrayList;
 
@@ -64,12 +66,12 @@ public abstract class StatementBuilder implements SQL {
 			case IN:
 			case NOT_IN:
 				whereBuilder.append("(");
-				whereBuilder.append(makePlaceholders(columnValues.length));
+				whereBuilder.append(buildPlaceholders(columnValues.length));
 				whereBuilder.append(")");
-				whereArgs.addAll(asList(toArgs(columnValues)));
+				whereArgs.addAll(asList(toWhereArgs(columnValues)));
 				break;
 			default:
-				String columnVal = toArgs(columnValues)[0];
+				String columnVal = toWhereArgs(columnValues)[0];
 				whereArgs.add(columnVal);
 				break;
 			}
@@ -77,36 +79,6 @@ public abstract class StatementBuilder implements SQL {
 		String where = whereBuilder.toString();
 		String[] whereArgsArr = whereArgs.toArray(new String[whereArgs.size()]);
 		return Pair.create(where, whereArgsArr);
-	}
-
-	//
-
-	public static String[] toArgs(Object... args) {
-		String[] arr = new String[args.length];
-		for (int i = 0; i < args.length; i++) {
-			Object arg = args[i];
-			String argStr;
-			if (arg == null) {
-				argStr = "NULL";
-			} else if (arg instanceof Boolean) {
-				argStr = ((Boolean) arg) ? "1" : "0";
-			} else {
-				argStr = arg.toString();
-			}
-			arr[i] = argStr;
-		}
-		return arr;
-	}
-
-	private String makePlaceholders(int count) {
-		StringBuilder sb = new StringBuilder();
-		for (int i = 0; i < count; i++) {
-			if (i != 0) {
-				sb.append(", ");
-			}
-			sb.append("?");
-		}
-		return sb.toString();
 	}
 
 }
