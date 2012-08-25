@@ -65,8 +65,8 @@ public abstract class StatementBuilder implements SQL {
 			case IN:
 			case NOT_IN:
 				whereBuilder.append("(");
-				whereBuilder.append(join(toSQLEscapedArgs(columnValues), ", ",
-						null));
+				whereBuilder.append(sqlEscapeString(join(toArgs(columnValues),
+						", ", null)));
 				whereBuilder.append(")");
 				break;
 			default:
@@ -100,14 +100,6 @@ public abstract class StatementBuilder implements SQL {
 		val = DatabaseUtils.sqlEscapeString(val);
 		val = val.substring(1, val.length() - 1);
 		return val;
-	}
-
-	private static String[] toSQLEscapedArgs(Object... args) {
-		String[] vals = toArgs(args);
-		for (int j = 0; j < vals.length; j++) {
-			vals[j] = sqlEscapeString(vals[j]);
-		}
-		return vals;
 	}
 
 }
