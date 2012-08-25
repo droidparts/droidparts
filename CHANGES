@@ -1,3 +1,8 @@
+0.7.1 /2012-08-25/:
+    * Package name changes. Again.
+    * Working LIKE, (NOT) IN in StatementBuilder.
+    * DatabaseUtils2 class, toArgs => toWhereArgs.
+
 0.7 /2012-08-24/:
     * Some classes relocated & changed names.
     * JSONObject Keys can be marked optional, false by default.
