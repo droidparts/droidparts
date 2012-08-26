@@ -69,15 +69,17 @@ public class DependencyInjector {
 			if (method != null) {
 				Object val = null;
 				try {
-					val = method.invoke(dependencyProvider);
-				} catch (Exception e) {
-					try {
+					int paramCount = method.getGenericParameterTypes().length;
+					if (paramCount == 0) {
+						val = method.invoke(dependencyProvider);
+					} else {
 						val = method.invoke(dependencyProvider, ctx);
-					} catch (Exception ex) {
-						L.e("No dependency provided for "
-								+ field.getType().getCanonicalName());
-						return false;
 					}
+				} catch (Exception e) {
+					L.d(e);
+					L.e("No dependency provided for "
+							+ field.getType().getCanonicalName());
+					return false;
 				}
 				try {
 					setFieldVal(field, target, val);
