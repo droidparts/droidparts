@@ -21,6 +21,11 @@ public abstract class IntentService extends android.app.IntentService {
 
 	public IntentService(String name) {
 		super(name);
+	}
+
+	@Override
+	public void onCreate() {
+		super.onCreate();
 		Injector.get().inject(this);
 	}
 }
