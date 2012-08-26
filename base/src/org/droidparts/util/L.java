@@ -60,7 +60,7 @@ public class L {
 	}
 
 	public static void wtf(Object obj) {
-		log(ASSERT, "WTF: " + obj);
+		log(ASSERT, obj);
 	}
 
 	public static void wtf() {
