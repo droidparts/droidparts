@@ -20,19 +20,14 @@ import org.droidparts.inject.injector.InjectorDelegate;
 
 public class FragmentsInjector extends Injector {
 
-	public static FragmentsInjector get() {
-		if (injector == null) {
-			synchronized (Injector.class) {
-				if (injector == null) {
-					injector = new FragmentsInjector(
-							new FragmentsInjectorDelegate());
-				}
-			}
-		}
-		return injector;
+	static class Holder {
+		static final FragmentsInjector INJECTOR = new FragmentsInjector(
+				new FragmentsInjectorDelegate());
 	}
 
-	private static FragmentsInjector injector;
+	public static FragmentsInjector get() {
+		return Holder.INJECTOR;
+	}
 
 	protected FragmentsInjector(InjectorDelegate delegate) {
 		super(delegate);

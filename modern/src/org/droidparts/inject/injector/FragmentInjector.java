@@ -19,11 +19,11 @@ import static org.droidparts.reflect.util.ReflectionUtils.setFieldVal;
 
 import java.lang.reflect.Field;
 
-import org.droidparts.activity.FragmentActivity;
 import org.droidparts.annotation.inject.InjectFragment;
 import org.droidparts.util.inner.ResourceUtils;
 
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
 
 public class FragmentInjector {
 

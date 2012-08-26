@@ -19,13 +19,13 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.util.HashSet;
 
-import org.droidparts.activity.FragmentActivity;
 import org.droidparts.annotation.inject.InjectFragment;
 import org.droidparts.annotation.inject.InjectParentActivity;
 
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
 import android.view.View;
 
 public class FragmentsInjectorDelegate extends InjectorDelegate {
@@ -37,20 +37,11 @@ public class FragmentsInjectorDelegate extends InjectorDelegate {
 		if (!success) {
 			Class<? extends Annotation> annType = ann.annotationType();
 			if (annType == InjectFragment.class) {
-				boolean isFragmentActivity = FragmentActivity.class
-						.isAssignableFrom(target.getClass());
-				if (isFragmentActivity) {
-					success = FragmentInjector.inject(
-							(FragmentActivity) target, (InjectFragment) ann,
-							field);
-				}
+				success = FragmentInjector.inject((FragmentActivity) target,
+						(InjectFragment) ann, field);
 			} else if (annType == InjectParentActivity.class) {
-				boolean isFragment = Fragment.class.isAssignableFrom(target
-						.getClass());
-				if (isFragment) {
-					success = ParentActivityInjector.inject((Fragment) target,
-							field);
-				}
+				success = ParentActivityInjector.inject((Fragment) target,
+						field);
 			}
 		}
 		return success;
