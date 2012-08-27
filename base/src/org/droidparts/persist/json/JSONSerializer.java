@@ -221,6 +221,10 @@ public class JSONSerializer<ModelType extends Model> implements
 			obj.put(key, val.toString());
 		} else if (isByteArray(valType)) {
 			obj.put(key, val);
+		} else if (isModel(valType)) {
+			JSONObject obj2 = getInstance(dirtyCast(valType)).serialize(
+					(Model) val);
+			obj.put(key, obj2);
 		} else if (isArray(valType) || isCollection(valType)) {
 			ArrayList<Object> list = new ArrayList<Object>();
 			if (isArray(valType)) {
@@ -230,23 +234,19 @@ public class JSONSerializer<ModelType extends Model> implements
 				Collection<Object> coll = (Collection<Object>) val;
 				list.addAll(coll);
 			}
-			JSONArray jarr = new JSONArray();
+			JSONArray jArr = new JSONArray();
 			if (list.size() > 0) {
 				Class<?> itemCls = list.get(0).getClass();
 				if (isModel(itemCls)) {
 					JSONSerializer serializer = getInstance(dirtyCast(itemCls));
-					jarr = serializer.serialize(list);
+					jArr = serializer.serialize(list);
 				} else {
 					for (Object o : list) {
-						jarr.put(o);
+						jArr.put(o);
 					}
 				}
 			}
-			obj.put(key, jarr);
-		} else if (isModel(valType)) {
-			JSONObject obj2 = getInstance(dirtyCast(valType)).serialize(
-					(Model) val);
-			obj.put(key, obj2);
+			obj.put(key, jArr);
 		} else {
 			throw new IllegalArgumentException("Unsupported class: " + valType);
 		}
@@ -289,6 +289,9 @@ public class JSONSerializer<ModelType extends Model> implements
 			return UUID.fromString((String) jsonVal);
 		} else if (isByteArray(valType)) {
 			return jsonVal;
+		} else if (isModel(valType)) {
+			return getInstance(dirtyCast(valType)).deserialize(
+					(JSONObject) jsonVal);
 		} else if (isArray(valType) || isCollection(valType)) {
 			JSONArray jArr = (JSONArray) jsonVal;
 			boolean isArr = isArray(valType);
@@ -318,17 +321,10 @@ public class JSONSerializer<ModelType extends Model> implements
 				}
 			}
 			if (isArr) {
-				String[] arr2 = new String[arr.length];
-				for (int i = 0; i < arr.length; i++) {
-					arr2[i] = arr[i].toString();
-				}
-				return toTypeArr(valType, arr2);
+				return toTypeArr(valType, arr);
 			} else {
 				return coll;
 			}
-		} else if (isModel(valType)) {
-			return getInstance(dirtyCast(valType)).deserialize(
-					(JSONObject) jsonVal);
 		} else {
 			throw new IllegalArgumentException("Unsupported class: " + valType);
 		}

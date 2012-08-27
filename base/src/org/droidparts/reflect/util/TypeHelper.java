@@ -150,6 +150,14 @@ public class TypeHelper {
 		return arr;
 	}
 
+	public static Object toTypeArr(Class<?> arrCls, Object[] arr) {
+		String[] arr2 = new String[arr.length];
+		for (int i = 0; i < arr.length; i++) {
+			arr2[i] = arr[i].toString();
+		}
+		return toTypeArr(arrCls, arr2);
+	}
+
 	public static Object toTypeArr(Class<?> arrCls, String[] arr) {
 		if (arrCls == byte[].class || arrCls == Byte[].class) {
 			Byte[] tArr = new Byte[arr.length];
