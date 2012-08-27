@@ -231,11 +231,11 @@ public class JSONSerializer<ModelType extends Model> implements
 				list.addAll(coll);
 			}
 			JSONArray jarr = new JSONArray();
-			if (list.size() != 0) {
+			if (list.size() > 0) {
 				Class<?> itemCls = list.get(0).getClass();
 				if (isModel(itemCls)) {
 					JSONSerializer serializer = getInstance(dirtyCast(itemCls));
-					serializer.serialize(list);
+					jarr = serializer.serialize(list);
 				} else {
 					for (Object o : list) {
 						jarr.put(o);
@@ -290,41 +290,42 @@ public class JSONSerializer<ModelType extends Model> implements
 		} else if (isByteArray(valType)) {
 			return jsonVal;
 		} else if (isArray(valType) || isCollection(valType)) {
-			boolean isArr = isArray(valType);
-			boolean isColl = isCollection(valType);
 			JSONArray jArr = (JSONArray) jsonVal;
-			Object[] arr = new Object[jArr.length()];
+			boolean isArr = isArray(valType);
+			Object[] arr = null;
 			Collection<Object> coll = null;
 			Class<?> itemCls;
-			if (isColl) {
+			if (isArr) {
+				arr = new Object[jArr.length()];
+				itemCls = getArrayType(valType);
+			} else {
 				coll = instantiate(valType);
 				itemCls = valGenericArgType;
-			} else {
-				itemCls = getArrayType(valType);
 			}
-			JSONSerializer serializer = getInstance(dirtyCast(itemCls));
+			JSONSerializer serializer = null;
+			if (isModel(itemCls)) {
+				serializer = getInstance(dirtyCast(itemCls));
+			}
 			for (int i = 0; i < jArr.length(); i++) {
 				Object obj = jArr.get(i);
-				if (obj instanceof JSONObject) {
+				if (serializer != null) {
 					obj = serializer.deserialize((JSONObject) obj);
 				}
 				if (isArr) {
-					arr[i] = String.valueOf(obj);
+					arr[i] = obj;
 				} else {
 					coll.add(obj);
 				}
 			}
 			if (isArr) {
-				// XXX
 				String[] arr2 = new String[arr.length];
 				for (int i = 0; i < arr.length; i++) {
-					arr2[i] = String.valueOf(arr[i]);
+					arr2[i] = arr[i].toString();
 				}
 				return toTypeArr(valType, arr2);
 			} else {
 				return coll;
 			}
-
 		} else if (isModel(valType)) {
 			return getInstance(dirtyCast(valType)).deserialize(
 					(JSONObject) jsonVal);
