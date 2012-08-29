@@ -34,7 +34,7 @@ import org.droidparts.util.L;
 
 public class IOUtils {
 
-	public static String encode(String str) {
+	public static String urlEncode(String str) {
 		try {
 			return java.net.URLEncoder.encode(str, UTF8);
 		} catch (UnsupportedEncodingException e) {
@@ -103,4 +103,10 @@ public class IOUtils {
 
 	}
 
+	//
+
+	@Deprecated
+	public static String encode(String str) {
+		return urlEncode(str);
+	}
 }
