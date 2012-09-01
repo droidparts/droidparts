@@ -19,7 +19,9 @@ import org.droidparts.model.Entity;
 import org.droidparts.persist.sql.EntityManager;
 
 import android.app.Activity;
+import android.content.Context;
 import android.database.Cursor;
+import android.view.View;
 
 public abstract class EntityCursorAdapter<EntityType extends Entity> extends
 		CursorAdapter<EntityType> {
@@ -36,6 +38,13 @@ public abstract class EntityCursorAdapter<EntityType extends Entity> extends
 		super(activity, cursor);
 		this.entityManager = entityManager;
 	}
+
+	@Override
+	public void bindView(View view, Context context, Cursor cursor) {
+		bindView(view, context, entityManager.readFromCursor(cursor));
+	}
+
+	public abstract void bindView(View view, Context context, EntityType item);
 
 	public boolean create(EntityType item) {
 		boolean success = entityManager.create(item);
