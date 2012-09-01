@@ -15,14 +15,14 @@
  */
 package org.droidparts.reflect.processor;
 
-import static org.droidparts.reflect.util.TypeHelper.getFieldGenericArgs;
+import static org.droidparts.reflect.util.ReflectionUtils.getFieldGenericArgs;
+import static org.droidparts.reflect.util.ReflectionUtils.listAnnotatedFields;
 
 import java.lang.reflect.Field;
 import java.util.List;
 
 import org.droidparts.model.Model;
 import org.droidparts.reflect.model.AbstractModelField;
-import org.droidparts.reflect.util.ReflectionUtils;
 
 public abstract class AbstractModelAnnotationProcessor<ModelFieldType> {
 
@@ -54,7 +54,7 @@ public abstract class AbstractModelAnnotationProcessor<ModelFieldType> {
 	protected abstract ModelFieldType[] modelClassFields();
 
 	protected final List<Field> getClassHierarchyFields() {
-		return ReflectionUtils.listAnnotatedFields(cls);
+		return listAnnotatedFields(cls);
 	}
 
 	protected final void fillField(Field source, AbstractModelField target) {

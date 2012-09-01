@@ -16,6 +16,7 @@
 package org.droidparts.persist.sql.stmt;
 
 import static java.util.Arrays.asList;
+import static org.droidparts.reflect.util.ReflectionUtils.varArgsHack;
 import static org.droidparts.util.DatabaseUtils2.buildPlaceholders;
 import static org.droidparts.util.DatabaseUtils2.toWhereArgs;
 
@@ -42,6 +43,7 @@ public abstract class StatementBuilder implements SQL {
 
 	protected StatementBuilder where(String columnName, Is operator,
 			Object... columnValue) {
+		columnValue = varArgsHack(columnValue);
 		selection.add(Pair.create(columnName,
 				Pair.create(operator, columnValue)));
 		return this;

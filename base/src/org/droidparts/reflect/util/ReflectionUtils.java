@@ -15,7 +15,12 @@
  */
 package org.droidparts.reflect.util;
 
+import static org.droidparts.reflect.util.TypeHelper.isArray;
+import static org.droidparts.reflect.util.TypeHelper.toObjectArr;
+
 import java.lang.reflect.Field;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -34,12 +39,12 @@ public class ReflectionUtils {
 
 	}
 
-	public static <Type> Type getTypedFieldVal(Field field, Object obj)
+	public static <FieldType> FieldType getTypedFieldVal(Field field, Object obj)
 			throws IllegalArgumentException {
 		try {
 			field.setAccessible(true);
 			@SuppressWarnings("unchecked")
-			Type val = (Type) field.get(obj);
+			FieldType val = (FieldType) field.get(obj);
 			return val;
 		} catch (Exception e) {
 			throw new IllegalArgumentException(e);
@@ -65,11 +70,20 @@ public class ReflectionUtils {
 		}
 	}
 
-	public static <Type> Type instantiate(Class<?> cls)
+	public static Class<?> classForName(String clsName)
+			throws IllegalArgumentException {
+		try {
+			return Class.forName(clsName);
+		} catch (ClassNotFoundException e) {
+			throw new IllegalArgumentException(e);
+		}
+	}
+
+	public static <InstanceType> InstanceType instantiate(Class<?> cls)
 			throws IllegalArgumentException {
 		try {
 			@SuppressWarnings("unchecked")
-			Type instance = (Type) cls.newInstance();
+			InstanceType instance = (InstanceType) cls.newInstance();
 			return instance;
 		} catch (Exception e) {
 			throw new IllegalArgumentException(e);
@@ -105,6 +119,69 @@ public class ReflectionUtils {
 			}
 		}
 		return fields;
+	}
+
+	public static Class<?> getArrayType(Class<?> arrCls) {
+		String clsName = arrCls.getName();
+		if (clsName.length() == 2) {
+			// primitives - [Z
+			clsName = clsName.substring(1);
+			if ("B".equals(clsName)) {
+				return byte.class;
+			} else if ("S".equals(clsName)) {
+				return short.class;
+			} else if ("I".equals(clsName)) {
+				return int.class;
+			} else if ("J".equals(clsName)) {
+				return long.class;
+			} else if ("F".equals(clsName)) {
+				return float.class;
+			} else if ("D".equals(clsName)) {
+				return double.class;
+			} else if ("Z".equals(clsName)) {
+				return boolean.class;
+			} else if ("C".equals(clsName)) {
+				return char.class;
+			} else {
+				throw new IllegalArgumentException("Alien primitive: "
+						+ clsName);
+			}
+		} else {
+			// objects - [Ljava.lang.String;
+			clsName = clsName.substring(2, clsName.length() - 1);
+			return classForName(clsName);
+		}
+	}
+
+	public static Class<?>[] getFieldGenericArgs(Field field) {
+		Type genericType = field.getGenericType();
+		if (genericType instanceof ParameterizedType) {
+			Type[] typeArr = ((ParameterizedType) genericType)
+					.getActualTypeArguments();
+			Class<?>[] argsArr = new Class<?>[typeArr.length];
+			for (int i = 0; i < typeArr.length; i++) {
+				// class java.lang.String
+				String[] nameParts = typeArr[i].toString().split(" ");
+				String clsName = nameParts[nameParts.length - 1];
+				argsArr[i] = classForName(clsName);
+			}
+			return argsArr;
+		} else {
+			return new Class<?>[0];
+		}
+	}
+
+	public static Object[] varArgsHack(Object[] varArgs) {
+		if (varArgs != null && varArgs.length == 1) {
+			Object firstArg = varArgs[0];
+			if (firstArg != null) {
+				Class<?> firstArgCls = firstArg.getClass();
+				if (isArray(firstArgCls)) {
+					varArgs = toObjectArr(getArrayType(firstArgCls), firstArg);
+				}
+			}
+		}
+		return varArgs;
 	}
 
 	protected ReflectionUtils() {

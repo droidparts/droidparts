@@ -18,9 +18,6 @@ package org.droidparts.reflect.util;
 import static org.droidparts.util.Arrays2.toObject;
 import static org.droidparts.util.Arrays2.toPrimitive;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
 import java.util.Collection;
 import java.util.UUID;
 
@@ -124,24 +121,25 @@ public class TypeHelper {
 
 	//
 
-	public static Object[] toObjectArr(Class<?> arrCls, Object someArr) {
+	public static Object[] toObjectArr(Class<?> arrOrArgCls, Object someArr) {
 		// as autoboxing won't work for Arrays.asList(int[] value)
 		Object[] arr;
-		if (arrCls == byte[].class) {
+		if (arrOrArgCls == byte.class || arrOrArgCls == byte[].class) {
 			arr = toObject((byte[]) someArr);
-		} else if (arrCls == short[].class) {
+		} else if (arrOrArgCls == short.class || arrOrArgCls == short[].class) {
 			arr = toObject((short[]) someArr);
-		} else if (arrCls == int[].class) {
+		} else if (arrOrArgCls == int.class || arrOrArgCls == int[].class) {
 			arr = toObject((int[]) someArr);
-		} else if (arrCls == long[].class) {
+		} else if (arrOrArgCls == long.class || arrOrArgCls == long[].class) {
 			arr = toObject((long[]) someArr);
-		} else if (arrCls == float[].class) {
+		} else if (arrOrArgCls == float.class || arrOrArgCls == float[].class) {
 			arr = toObject((float[]) someArr);
-		} else if (arrCls == double[].class) {
+		} else if (arrOrArgCls == double.class || arrOrArgCls == double[].class) {
 			arr = toObject((double[]) someArr);
-		} else if (arrCls == boolean[].class) {
+		} else if (arrOrArgCls == boolean.class
+				|| arrOrArgCls == boolean[].class) {
 			arr = toObject((boolean[]) someArr);
-		} else if (arrCls == char[].class) {
+		} else if (arrOrArgCls == char.class || arrOrArgCls == char[].class) {
 			arr = toObject((char[]) someArr);
 		} else {
 			// out of primitives
@@ -212,65 +210,6 @@ public class TypeHelper {
 			return arr;
 		} else {
 			throw new IllegalArgumentException("Unable to convert to" + arrCls);
-		}
-	}
-
-	public static Class<?>[] getFieldGenericArgs(Field field) {
-		Type genericType = field.getGenericType();
-		if (genericType instanceof ParameterizedType) {
-			Type[] typeArr = ((ParameterizedType) genericType)
-					.getActualTypeArguments();
-			Class<?>[] argsArr = new Class<?>[typeArr.length];
-			for (int i = 0; i < typeArr.length; i++) {
-				// class java.lang.String
-				String[] nameParts = typeArr[i].toString().split(" ");
-				String clsName = nameParts[nameParts.length - 1];
-				argsArr[i] = classForName(clsName);
-			}
-			return argsArr;
-		} else {
-			return new Class<?>[0];
-		}
-	}
-
-	public static Class<?> getArrayType(Class<?> arrCls) {
-		String clsName = arrCls.getName();
-		if (clsName.length() == 2) {
-			// primitives - [Z
-			clsName = clsName.substring(1);
-			if ("B".equals(clsName)) {
-				return byte.class;
-			} else if ("S".equals(clsName)) {
-				return short.class;
-			} else if ("I".equals(clsName)) {
-				return int.class;
-			} else if ("J".equals(clsName)) {
-				return long.class;
-			} else if ("F".equals(clsName)) {
-				return float.class;
-			} else if ("D".equals(clsName)) {
-				return double.class;
-			} else if ("Z".equals(clsName)) {
-				return boolean.class;
-			} else if ("C".equals(clsName)) {
-				return char.class;
-			} else {
-				throw new IllegalArgumentException("Alien primitive: "
-						+ clsName);
-			}
-		} else {
-			// objects - [Ljava.lang.String;
-			clsName = clsName.substring(2, clsName.length() - 1);
-			return classForName(clsName);
-		}
-	}
-
-	private static Class<?> classForName(String clsName)
-			throws IllegalArgumentException {
-		try {
-			return Class.forName(clsName);
-		} catch (ClassNotFoundException e) {
-			throw new IllegalArgumentException(e);
 		}
 	}
 

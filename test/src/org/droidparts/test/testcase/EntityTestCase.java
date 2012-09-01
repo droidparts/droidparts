@@ -97,7 +97,8 @@ public class EntityTestCase extends AndroidTestCase {
 		assertEquals(2, c.getCount());
 		c.close();
 		//
-		c = twoStringsManager.select().where(DB.Column.ID, Is.NOT_IN, 1, 2)
+		int[] arr = new int[] { 1, 2 };
+		c = twoStringsManager.select().where(DB.Column.ID, Is.NOT_IN, arr)
 				.execute();
 		assertEquals(1, c.getCount());
 		c.close();

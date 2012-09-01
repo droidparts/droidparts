@@ -15,11 +15,12 @@
  */
 package org.droidparts.persist.json;
 
+import static org.droidparts.reflect.util.ReflectionUtils.getArrayType;
 import static org.droidparts.reflect.util.ReflectionUtils.getField;
 import static org.droidparts.reflect.util.ReflectionUtils.getTypedFieldVal;
 import static org.droidparts.reflect.util.ReflectionUtils.instantiate;
+import static org.droidparts.reflect.util.ReflectionUtils.instantiateEnum;
 import static org.droidparts.reflect.util.ReflectionUtils.setFieldVal;
-import static org.droidparts.reflect.util.TypeHelper.getArrayType;
 import static org.droidparts.reflect.util.TypeHelper.isArray;
 import static org.droidparts.reflect.util.TypeHelper.isBoolean;
 import static org.droidparts.reflect.util.TypeHelper.isByte;
@@ -48,7 +49,6 @@ import org.droidparts.model.Model;
 import org.droidparts.persist.Serializer;
 import org.droidparts.reflect.model.JSONModelField;
 import org.droidparts.reflect.processor.JSONModelAnnotationProcessor;
-import org.droidparts.reflect.util.ReflectionUtils;
 import org.droidparts.util.L;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -284,7 +284,7 @@ public class JSONSerializer<ModelType extends Model> implements
 		} else if (isString(valType)) {
 			return strVal;
 		} else if (isEnum(valType)) {
-			return ReflectionUtils.instantiateEnum(valType, (String) jsonVal);
+			return instantiateEnum(valType, (String) jsonVal);
 		} else if (isUUID(valType)) {
 			return UUID.fromString((String) jsonVal);
 		} else if (isByteArray(valType)) {
