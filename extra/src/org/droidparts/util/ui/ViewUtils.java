@@ -25,6 +25,8 @@ import java.lang.reflect.Method;
 import org.droidparts.adapter.ui.AnimationListenerAdapter;
 import org.droidparts.util.L;
 
+import android.os.Handler;
+import android.os.Looper;
 import android.view.View;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
@@ -61,6 +63,16 @@ public class ViewUtils {
 		});
 		lowerViewFrom.startAnimation(animFrom);
 		upperViewTo.startAnimation(animTo);
+	}
+
+	public static void showKeyboardDelayed(final View view) {
+		new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
+
+			@Override
+			public void run() {
+				setKeyboardVisible(view, true);
+			}
+		}, 200);
 	}
 
 	public static void setKeyboardVisible(View view, boolean visible) {
