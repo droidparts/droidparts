@@ -145,9 +145,8 @@ public class JSONSerializer<ModelType extends Model> implements
 				putToJSONObject(obj, key, jsonField.fieldClass, columnVal);
 			} catch (Exception e) {
 				if (jsonField.keyOptional) {
-					L.e("Failded to serialize " + processor.getModelClassName()
-							+ "." + jsonField.fieldName);
-					L.w(e);
+					L.w("Failded to serialize " + processor.getModelClassName()
+							+ "." + jsonField.fieldName + ": " + e.getMessage());
 				} else {
 					throw new JSONException(Log.getStackTraceString(e));
 				}
@@ -181,8 +180,8 @@ public class JSONSerializer<ModelType extends Model> implements
 				}
 			} catch (Exception e) {
 				if (modelField.keyOptional) {
-					L.e("Failed to deserialize '" + modelField.keyName + "'.");
-					L.w(e);
+					L.w("Failed to deserialize '" + modelField.keyName + "': "
+							+ e.getMessage());
 				} else {
 					throw new JSONException(Log.getStackTraceString(e));
 				}
