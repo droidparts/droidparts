@@ -27,8 +27,7 @@ public class EntryListAdapter extends EntityCursorAdapter<Entry> {
 	}
 
 	@Override
-	public void bindView(View view, Context context, Cursor cursor) {
-		Entry item = read(cursor.getPosition());
+	public void bindView(Context context, View view, Entry item) {
 		Text2Tag tag = (Text2Tag) view.getTag();
 		tag.text1.setText(item.name);
 		tag.text2.setText(String.valueOf(item.created));

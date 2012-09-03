@@ -41,10 +41,10 @@ public abstract class EntityCursorAdapter<EntityType extends Entity> extends
 
 	@Override
 	public void bindView(View view, Context context, Cursor cursor) {
-		bindView(view, context, entityManager.readFromCursor(cursor));
+		bindView(context, view, entityManager.readFromCursor(cursor));
 	}
 
-	public abstract void bindView(View view, Context context, EntityType item);
+	public abstract void bindView(Context context, View view, EntityType item);
 
 	public boolean create(EntityType item) {
 		boolean success = entityManager.create(item);
