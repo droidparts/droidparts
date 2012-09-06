@@ -22,12 +22,12 @@ import java.util.ArrayList;
 
 import org.droidparts.annotation.json.Key;
 import org.droidparts.model.Model;
-import org.droidparts.reflect.model.JSONModelField;
+import org.droidparts.reflect.model.ModelField;
 
-public class JSONModelAnnotationProcessor extends
-		AbstractModelAnnotationProcessor<JSONModelField> {
+public class ModelAnnotationProcessor extends
+		AbstractAnnotationProcessor<ModelField> {
 
-	public JSONModelAnnotationProcessor(Class<? extends Model> cls) {
+	public ModelAnnotationProcessor(Class<? extends Model> cls) {
 		super(cls);
 	}
 
@@ -43,19 +43,19 @@ public class JSONModelAnnotationProcessor extends
 	}
 
 	@Override
-	protected JSONModelField[] modelClassFields() {
-		ArrayList<JSONModelField> list = new ArrayList<JSONModelField>();
+	protected ModelField[] modelClassFields() {
+		ArrayList<ModelField> list = new ArrayList<ModelField>();
 		for (Field field : getClassHierarchyFields()) {
 			Key keyAnn = field.getAnnotation(Key.class);
 			if (keyAnn != null) {
-				JSONModelField jsonField = new JSONModelField();
+				ModelField jsonField = new ModelField();
 				fillField(field, jsonField);
 				jsonField.keyName = getKeyName(keyAnn, field);
 				jsonField.keyOptional = keyAnn.optional();
 				list.add(jsonField);
 			}
 		}
-		return list.toArray(new JSONModelField[list.size()]);
+		return list.toArray(new ModelField[list.size()]);
 	}
 
 	private String getKeyName(Key ann, Field field) {

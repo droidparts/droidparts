@@ -22,16 +22,16 @@ import java.lang.reflect.Field;
 import java.util.List;
 
 import org.droidparts.model.Model;
-import org.droidparts.reflect.model.AbstractModelField;
+import org.droidparts.reflect.model.AbstractField;
 
-public abstract class AbstractModelAnnotationProcessor<ModelFieldType> {
+public abstract class AbstractAnnotationProcessor<ModelFieldType> {
 
 	protected final Class<? extends Model> cls;
 
 	private String modelClassName;
 	private ModelFieldType[] modelClassFields;
 
-	public AbstractModelAnnotationProcessor(Class<? extends Model> cls) {
+	public AbstractAnnotationProcessor(Class<? extends Model> cls) {
 		this.cls = cls;
 	}
 
@@ -57,7 +57,7 @@ public abstract class AbstractModelAnnotationProcessor<ModelFieldType> {
 		return listAnnotatedFields(cls);
 	}
 
-	protected final void fillField(Field source, AbstractModelField target) {
+	protected final void fillField(Field source, AbstractField target) {
 		target.fieldName = source.getName();
 		target.fieldClass = source.getType();
 		Class<?>[] genericArgs = getFieldGenericArgs(source);

@@ -87,12 +87,6 @@ public class EntityManager<EntityType extends Entity> extends
 	}
 
 	@Override
-	public boolean delete(long id) {
-		// TODO delete Entities referencing this one via foreign keys.
-		return super.delete(id);
-	}
-
-	@Override
 	public EntityType readFromCursor(Cursor cursor) {
 		EntityType entity = instantiate(cls);
 		EntityField[] fields = processor.getModelClassFields();

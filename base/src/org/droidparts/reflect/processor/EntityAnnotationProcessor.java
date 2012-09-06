@@ -34,7 +34,7 @@ import org.droidparts.reflect.model.EntityField;
 import org.droidparts.util.L;
 
 public class EntityAnnotationProcessor extends
-		AbstractModelAnnotationProcessor<EntityField> {
+		AbstractAnnotationProcessor<EntityField> {
 
 	private static final String ID_SUFFIX = "_id";
 

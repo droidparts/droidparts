@@ -13,14 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License. 
  */
-package org.droidparts.persist;
+package org.droidparts.reflect.model;
 
-public interface Serializer<TypeFrom, TypeTo> {
+public class ModelField extends AbstractField {
 
-	public abstract String getModelClassName();
+	public String keyName;
+	public boolean keyOptional;
 
-	public abstract TypeTo serialize(TypeFrom item) throws Exception;
-
-	public abstract TypeFrom deserialize(TypeTo obj) throws Exception;
-
+	@Override
+	public String toString() {
+		return super.toString() + ", keyName: " + keyName + ", keyOptional: "
+				+ keyOptional;
+	}
 }

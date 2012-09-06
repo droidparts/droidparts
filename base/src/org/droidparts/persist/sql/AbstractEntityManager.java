@@ -97,54 +97,39 @@ public abstract class AbstractEntityManager<EntityType extends Entity>
 		return success;
 	}
 
-	//
+	// mass CUD
 
 	public boolean create(Collection<EntityType> items) {
-		int count = 0;
-		getDB().beginTransaction();
-		try {
-			for (EntityType item : items) {
-				boolean success = create(item);
-				if (success) {
-					count++;
-				}
-			}
-			boolean success = (count == items.size());
-			if (success) {
-				getDB().setTransactionSuccessful();
-			}
-			return success;
-		} finally {
-			getDB().endTransaction();
-		}
+		return cud(items, 1);
 	}
 
 	public boolean update(Collection<EntityType> items) {
-		int count = 0;
-		getDB().beginTransaction();
-		try {
-			for (EntityType item : items) {
-				boolean success = update(item);
-				if (success) {
-					count++;
-				}
-			}
-			boolean success = (count == items.size());
-			if (success) {
-				getDB().setTransactionSuccessful();
-			}
-			return success;
-		} finally {
-			getDB().endTransaction();
-		}
+		return cud(items, 2);
 	}
 
 	public boolean delete(Collection<EntityType> items) {
+		return cud(items, 3);
+	}
+
+	private boolean cud(Collection<EntityType> items, int operation) {
 		int count = 0;
 		getDB().beginTransaction();
 		try {
 			for (EntityType item : items) {
-				boolean success = delete(item.id);
+				boolean success;
+				switch (operation) {
+				case 1:
+					success = create(item);
+					break;
+				case 2:
+					success = update(item);
+					break;
+				case 3:
+					success = delete(item.id);
+					break;
+				default:
+					throw new IllegalArgumentException();
+				}
 				if (success) {
 					count++;
 				}

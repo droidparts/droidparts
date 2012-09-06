@@ -46,9 +46,8 @@ import java.util.Collection;
 import java.util.UUID;
 
 import org.droidparts.model.Model;
-import org.droidparts.persist.Serializer;
-import org.droidparts.reflect.model.JSONModelField;
-import org.droidparts.reflect.processor.JSONModelAnnotationProcessor;
+import org.droidparts.reflect.model.ModelField;
+import org.droidparts.reflect.processor.ModelAnnotationProcessor;
 import org.droidparts.util.L;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -57,8 +56,7 @@ import org.json.JSONObject;
 import android.util.Log;
 import android.util.Pair;
 
-public class JSONSerializer<ModelType extends Model> implements
-		Serializer<ModelType, JSONObject> {
+public class JSONSerializer<ModelType extends Model> {
 
 	// ASCII GS (group separator), '->' for readability
 	public static final String __ = "->" + (char) 29;
@@ -74,16 +72,11 @@ public class JSONSerializer<ModelType extends Model> implements
 	}
 
 	private final Class<? extends Model> cls;
-	private final JSONModelAnnotationProcessor processor;
+	private final ModelAnnotationProcessor processor;
 
 	public JSONSerializer(Class<ModelType> cls) {
 		this.cls = cls;
-		this.processor = new JSONModelAnnotationProcessor(cls);
-	}
-
-	@Override
-	public String getModelClassName() {
-		return processor.getModelClassName();
+		this.processor = new ModelAnnotationProcessor(cls);
 	}
 
 	public final JSONArray serialize(Collection<ModelType> items)
@@ -104,28 +97,26 @@ public class JSONSerializer<ModelType extends Model> implements
 		return list;
 	}
 
-	@Override
 	public JSONObject serialize(ModelType item) throws JSONException {
 		JSONObject obj = new JSONObject();
-		JSONModelField[] fields = processor.getModelClassFields();
-		for (JSONModelField jsonField : fields) {
+		ModelField[] fields = processor.getModelClassFields();
+		for (ModelField jsonField : fields) {
 			readFromModelAndPutToJSON(item, jsonField, obj, jsonField.keyName);
 		}
 		return obj;
 	}
 
-	@Override
 	public ModelType deserialize(JSONObject obj) throws JSONException {
 		ModelType model = instantiate(cls);
-		JSONModelField[] fields = processor.getModelClassFields();
-		for (JSONModelField jsonField : fields) {
+		ModelField[] fields = processor.getModelClassFields();
+		for (ModelField jsonField : fields) {
 			readFromJSONAndSetFieldVal(model, jsonField, obj, jsonField.keyName);
 		}
 		return model;
 	}
 
 	private void readFromModelAndPutToJSON(ModelType item,
-			JSONModelField jsonField, JSONObject obj, String key)
+			ModelField jsonField, JSONObject obj, String key)
 			throws JSONException {
 		Pair<String, String> keyParts = getNestedKeyParts(key);
 		if (keyParts != null) {
@@ -155,7 +146,7 @@ public class JSONSerializer<ModelType extends Model> implements
 	}
 
 	private void readFromJSONAndSetFieldVal(ModelType model,
-			JSONModelField modelField, JSONObject obj, String key)
+			ModelField modelField, JSONObject obj, String key)
 			throws JSONException {
 		Pair<String, String> keyParts = getNestedKeyParts(key);
 		if (keyParts != null) {
@@ -347,7 +338,7 @@ public class JSONSerializer<ModelType extends Model> implements
 		return cls2;
 	}
 
-	private void throwIfRequired(JSONModelField modelField)
+	private void throwIfRequired(ModelField modelField)
 			throws JSONException {
 		if (!modelField.keyOptional) {
 			throw new JSONException("Required key '" + modelField.keyName

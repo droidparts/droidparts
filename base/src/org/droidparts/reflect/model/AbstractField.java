@@ -15,7 +15,7 @@
  */
 package org.droidparts.reflect.model;
 
-public abstract class AbstractModelField {
+public abstract class AbstractField {
 
 	public String fieldName;
 	public Class<?> fieldClass;
