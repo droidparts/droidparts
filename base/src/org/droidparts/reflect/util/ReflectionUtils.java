@@ -122,32 +122,25 @@ public class ReflectionUtils {
 	}
 
 	public static Class<?> getArrayType(Class<?> arrCls) {
-		String clsName = arrCls.getName();
-		if (clsName.length() == 2) {
-			// primitives - [Z
-			clsName = clsName.substring(1);
-			if ("B".equals(clsName)) {
-				return byte.class;
-			} else if ("S".equals(clsName)) {
-				return short.class;
-			} else if ("I".equals(clsName)) {
-				return int.class;
-			} else if ("J".equals(clsName)) {
-				return long.class;
-			} else if ("F".equals(clsName)) {
-				return float.class;
-			} else if ("D".equals(clsName)) {
-				return double.class;
-			} else if ("Z".equals(clsName)) {
-				return boolean.class;
-			} else if ("C".equals(clsName)) {
-				return char.class;
-			} else {
-				throw new IllegalArgumentException("Alien primitive: "
-						+ clsName);
-			}
+		if (arrCls == byte[].class) {
+			return byte.class;
+		} else if (arrCls == short[].class) {
+			return short.class;
+		} else if (arrCls == int[].class) {
+			return int.class;
+		} else if (arrCls == long[].class) {
+			return long.class;
+		} else if (arrCls == float[].class) {
+			return float.class;
+		} else if (arrCls == double[].class) {
+			return double.class;
+		} else if (arrCls == boolean[].class) {
+			return boolean.class;
+		} else if (arrCls == char[].class) {
+			return char.class;
 		} else {
 			// objects - [Ljava.lang.String;
+			String clsName = arrCls.getName();
 			clsName = clsName.substring(2, clsName.length() - 1);
 			return classForName(clsName);
 		}
@@ -177,7 +170,7 @@ public class ReflectionUtils {
 			if (firstArg != null) {
 				Class<?> firstArgCls = firstArg.getClass();
 				if (isArray(firstArgCls)) {
-					varArgs = toObjectArr(getArrayType(firstArgCls), firstArg);
+					varArgs = toObjectArr(firstArg);
 				}
 			}
 		}

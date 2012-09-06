@@ -65,7 +65,7 @@ public class ViewUtils {
 		upperViewTo.startAnimation(animTo);
 	}
 
-	public static void showKeyboardDelayed(final View view) {
+	public static void showKeyboard(final View view) {
 		new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
 
 			@Override

@@ -21,11 +21,11 @@ import android.widget.Spinner;
 
 public class StringSpinnerAdapter extends SpinnerAdapter<String> {
 
-	protected StringSpinnerAdapter(Spinner spinner, int stringArrResId) {
+	public StringSpinnerAdapter(Spinner spinner, int stringArrResId) {
 		this(spinner, getArr(spinner, stringArrResId));
 	}
 
-	protected StringSpinnerAdapter(Spinner spinner, String[] arr) {
+	public StringSpinnerAdapter(Spinner spinner, String[] arr) {
 		super(spinner, Arrays.asList(arr));
 	}
 

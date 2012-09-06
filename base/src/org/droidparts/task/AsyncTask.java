@@ -94,8 +94,4 @@ public abstract class AsyncTask<Params, Progress, Result> extends
 		}
 	}
 
-	public Context getContext() {
-		return ctx;
-	}
-
 }

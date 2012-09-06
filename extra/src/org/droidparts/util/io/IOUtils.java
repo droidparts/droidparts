@@ -44,12 +44,10 @@ public class IOUtils {
 
 	public static void silentlyClose(Closeable... closeables) {
 		for (Closeable cl : closeables) {
-			if (cl != null) {
-				try {
-					cl.close();
-				} catch (Exception e) {
-					L.d(e);
-				}
+			try {
+				cl.close();
+			} catch (Exception e) {
+				L.d(e);
 			}
 		}
 	}

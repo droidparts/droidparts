@@ -18,12 +18,14 @@ package org.droidparts.loader;
 import org.droidparts.task.AsyncTask;
 import org.droidparts.util.L;
 
+import android.content.Context;
+
 public class AsyncTaskLoaderAdapter<Result> extends AsyncTaskLoader<Result> {
 
 	private final AsyncTask<?, ?, Result> task;
 
-	public AsyncTaskLoaderAdapter(AsyncTask<?, ?, Result> task) {
-		super(task.getContext());
+	public AsyncTaskLoaderAdapter(Context ctx, AsyncTask<?, ?, Result> task) {
+		super(ctx);
 		this.task = task;
 	}
 

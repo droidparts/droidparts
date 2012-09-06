@@ -121,25 +121,25 @@ public class TypeHelper {
 
 	//
 
-	public static Object[] toObjectArr(Class<?> arrOrArgCls, Object someArr) {
+	public static Object[] toObjectArr(Object someArr) {
 		// as autoboxing won't work for Arrays.asList(int[] value)
+		Class<?> arrCls = someArr.getClass();
 		Object[] arr;
-		if (arrOrArgCls == byte.class || arrOrArgCls == byte[].class) {
+		if (arrCls == byte[].class) {
 			arr = toObject((byte[]) someArr);
-		} else if (arrOrArgCls == short.class || arrOrArgCls == short[].class) {
+		} else if (arrCls == short[].class) {
 			arr = toObject((short[]) someArr);
-		} else if (arrOrArgCls == int.class || arrOrArgCls == int[].class) {
+		} else if (arrCls == int[].class) {
 			arr = toObject((int[]) someArr);
-		} else if (arrOrArgCls == long.class || arrOrArgCls == long[].class) {
+		} else if (arrCls == long[].class) {
 			arr = toObject((long[]) someArr);
-		} else if (arrOrArgCls == float.class || arrOrArgCls == float[].class) {
+		} else if (arrCls == float[].class) {
 			arr = toObject((float[]) someArr);
-		} else if (arrOrArgCls == double.class || arrOrArgCls == double[].class) {
+		} else if (arrCls == double[].class) {
 			arr = toObject((double[]) someArr);
-		} else if (arrOrArgCls == boolean.class
-				|| arrOrArgCls == boolean[].class) {
+		} else if (arrCls == boolean[].class) {
 			arr = toObject((boolean[]) someArr);
-		} else if (arrOrArgCls == char.class || arrOrArgCls == char[].class) {
+		} else if (arrCls == char[].class) {
 			arr = toObject((char[]) someArr);
 		} else {
 			// out of primitives
