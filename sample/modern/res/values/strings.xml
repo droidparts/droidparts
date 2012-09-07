@@ -1,0 +1,15 @@
+<resources>
+
+    <string name="app_name">DroidPartsGram</string>
+    
+    <string name="refresh">Refresh</string>
+    <string name="settings">Settings</string>
+    
+    <string name="show_detail">Show Detail</string>
+    
+    <string-array name="pref_show_detail_names">
+        <item>Filter</item>        
+        <item>Tags</item>        
+    </string-array>
+
+</resources>

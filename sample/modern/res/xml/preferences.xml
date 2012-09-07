@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
+
+    <org.droidparts.preference.MultiSelectListPreference
+        android:defaultValue="@string/pref_show_detail_default"
+        android:dialogTitle="@string/show_detail"
+        android:entries="@array/pref_show_detail_names"
+        android:entryValues="@array/pref_show_detail_values"
+        android:key="@string/pref_show_detail"
+        android:title="@string/show_detail" />
+
+</PreferenceScreen>

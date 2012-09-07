@@ -1,0 +1,42 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="org.droidparts.gram"
+    android:versionCode="201209070"
+    android:versionName="1.0" >
+
+    <uses-sdk
+        android:minSdkVersion="7"
+        android:targetSdkVersion="15" />
+
+    <uses-permission android:name="android.permission.INTERNET" />
+
+    <application
+        android:name=".Application"
+        android:icon="@drawable/ic_launcher"
+        android:label="@string/app_name"
+        android:theme="@style/Theme.Sherlock.Light.DarkActionBar" >
+        <meta-data
+            android:name="droidparts_dependency_provider"
+            android:value=".DependencyProvider" />
+        <meta-data
+            android:name="droidparts_log_level"
+            android:value="warn" />
+
+        <activity
+            android:name=".activity.MainActivity"
+            android:icon="@drawable/ic_launcher"
+            android:label="@string/app_name" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        
+        <activity
+            android:name=".activity.SettingsActivity"
+            android:label="@string/settings" />
+
+        <service android:name=".service.ImageIntentService" />
+    </application>
+
+</manifest>

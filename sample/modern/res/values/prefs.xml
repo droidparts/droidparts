@@ -1,0 +1,14 @@
+<resources xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <string name="pref_show_detail">show_detail</string>
+    <string name="pref_show_detail_default">filter|tags</string>
+    
+    <string name="pref_filter">filter</string>
+    <string name="pref_tags">tags</string>
+
+    <string-array name="pref_show_detail_values">
+        <item>@string/pref_filter</item>
+        <item>@string/pref_tags</item>
+    </string-array>
+
+</resources>

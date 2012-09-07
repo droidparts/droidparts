@@ -1,0 +1,5 @@
+<resources>
+
+    <dimen name="thumbnail_size">80dp</dimen>
+
+</resources>
