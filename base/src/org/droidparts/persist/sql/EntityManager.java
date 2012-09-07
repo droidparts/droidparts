@@ -273,13 +273,15 @@ public class EntityManager<EntityType extends Entity> extends
 			return entity;
 		} else if (isArray(fieldCls) || isCollection(fieldCls)) {
 			String str = cursor.getString(columnIndex);
-			String[] parts = str.split("\\" + SEP);
+			String[] parts = (str.length() > 0) ? str.split("\\" + SEP)
+					: new String[0];
 			if (isArray(fieldCls)) {
 				return toTypeArr(fieldCls, parts);
 			} else {
 				Collection<?> coll = (Collection<?>) instantiate(fieldCls);
 				// TODO populate
-				return coll;
+				throw new UnsupportedOperationException("Not yet.");
+				// return coll;
 			}
 		} else {
 			// TODO ObjectInputStream
