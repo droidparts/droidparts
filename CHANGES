@@ -1,3 +1,8 @@
+0.7.5 /2012-09-07/:
+    * DroidPartsGram - a sample fragment-based app utilizing Instagram's API
+    * EntityCursorAdapter gets a custom bindView(...)
+    * Tweaks & fixes.
+
 0.7.1 /2012-08-25/:
     * Package name changes. Again.
     * Working LIKE, (NOT) IN in StatementBuilder.
