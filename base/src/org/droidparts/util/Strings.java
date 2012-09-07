@@ -29,7 +29,7 @@ public class Strings {
 
 	public static <T> String join(Collection<T> coll, String separator,
 			String terminator) {
-		return Strings.join(coll.toArray(new Object[coll.size()]), separator,
+		return join(coll.toArray(new Object[coll.size()]), separator,
 				terminator);
 	}
 
@@ -39,7 +39,7 @@ public class Strings {
 			sb.append(arr[i]);
 			if (i < arr.length - 1) {
 				sb.append(separator);
-			} else if (terminator != null) {
+			} else if (terminator != null && arr.length > 0) {
 				sb.append(terminator);
 			}
 		}
