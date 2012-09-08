@@ -17,7 +17,7 @@ package org.droidparts.contract;
 
 public interface SQL {
 
-	String EQUAL = " == ?";
+	String EQUAL = " = ?";
 	String NOT_EQUAL = " != ?";
 	String LESS = " < ?";
 	String LESS_OR_EQUAL = " <= ?";

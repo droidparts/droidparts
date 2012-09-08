@@ -92,7 +92,7 @@ public class SelectBuilder extends StatementBuilder {
 			orderByStr = join(list, ", ", null);
 		}
 		String limitStr = (limit > 0) ? String.valueOf(limit) : null;
-		L.d("Distinct: '" + distinct + "', tableName: '" + tableName
+		L.d("SELECT on table '" + tableName + ", distinct: '" + distinct
 				+ "', columns: '" + Arrays.toString(columns)
 				+ "', selection: '" + selection.first + "', selectionArgs: '"
 				+ Arrays.toString(selection.second) + "', groupBy: '"

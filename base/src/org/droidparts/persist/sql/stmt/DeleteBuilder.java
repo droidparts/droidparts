@@ -38,9 +38,9 @@ public class DeleteBuilder extends StatementBuilder {
 
 	public int execute() {
 		Pair<String, String[]> selection = buildSelection();
-		L.d("TableName: '" + tableName + "', selection: '" + selection.first
-				+ "', selectionArgs: '" + Arrays.toString(selection.second)
-				+ "'.");
+		L.d("DELETE on table '" + tableName + "', selection: '"
+				+ selection.first + "', selectionArgs: '"
+				+ Arrays.toString(selection.second) + "'.");
 		return db.delete(tableName, selection.first, selection.second);
 	}
 

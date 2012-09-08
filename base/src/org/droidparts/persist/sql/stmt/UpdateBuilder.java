@@ -47,9 +47,10 @@ public class UpdateBuilder extends StatementBuilder {
 
 	public int execute() {
 		Pair<String, String[]> selection = buildSelection();
-		L.d("TableName: '" + tableName + ", contentValues: '" + contentValues
-				+ "', selection: '" + selection.first + "', selectionArgs: '"
-				+ Arrays.toString(selection.second) + "'.");
+		L.d("UPDATE on table '" + tableName + ", contentValues: '"
+				+ contentValues + "', selection: '" + selection.first
+				+ "', selectionArgs: '" + Arrays.toString(selection.second)
+				+ "'.");
 		return db.update(tableName, contentValues, selection.first,
 				selection.second);
 	}
