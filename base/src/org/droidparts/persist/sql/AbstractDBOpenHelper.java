@@ -57,11 +57,23 @@ public abstract class AbstractDBOpenHelper extends SQLiteOpenHelper implements
 			String query = getSQLCreate(new EntityAnnotationProcessor(cls));
 			queries.add(query);
 		}
+		onOpen(db);
 		execQueries(db, queries);
 		onCreateExtra(db);
 	}
 
+	@Override
+	public final void onOpen(SQLiteDatabase db) {
+		if (!db.isReadOnly()) {
+			db.execSQL("PRAGMA foreign_keys = ON;");
+		}
+		onOpenExtra(db);
+	}
+
 	protected void onCreateExtra(SQLiteDatabase db) {
+	}
+
+	protected void onOpenExtra(SQLiteDatabase db) {
 	}
 
 	public static void execQueries(SQLiteDatabase db, ArrayList<String> queries) {
@@ -110,19 +122,18 @@ public abstract class AbstractDBOpenHelper extends SQLiteOpenHelper implements
 	protected abstract Class<? extends Entity>[] getModelClasses();
 
 	private String getSQLCreate(EntityAnnotationProcessor proc) {
-		EntityField[] dbFields = proc.getModelClassFields();
 		StringBuilder sb = new StringBuilder();
 		sb.append(CREATE_TABLE + proc.getModelClassName() + OPENING_BRACE);
 		sb.append(PK);
-		for (int i = 0; i < dbFields.length; i++) {
-			EntityField dbField = dbFields[i];
+		StringBuilder fkSb = new StringBuilder();
+		for (EntityField dbField : proc.getModelClassFields()) {
 			if (Column.ID.equals(dbField.columnName)) {
 				// already got it
 				continue;
 			}
+			sb.append(SEPARATOR);
 			String columnType = getColumnType(dbField.fieldType,
 					dbField.fieldArrOrCollType);
-			sb.append(SEPARATOR);
 			sb.append(dbField.columnName);
 			sb.append(" ");
 			sb.append(columnType);
@@ -134,7 +145,12 @@ public abstract class AbstractDBOpenHelper extends SQLiteOpenHelper implements
 				sb.append(" ");
 				sb.append(UNIQUE);
 			}
+			if (isEntity(dbField.fieldType)) {
+				fkSb.append(SEPARATOR);
+				appendForeignKeyDef(dbField, fkSb);
+			}
 		}
+		sb.append(fkSb);
 		sb.append(CLOSING_BRACE);
 		return sb.toString();
 	}
@@ -158,11 +174,24 @@ public abstract class AbstractDBOpenHelper extends SQLiteOpenHelper implements
 				return TEXT;
 			}
 		} else if (isEntity(fieldType)) {
+			// TODO foreign key
 			return INTEGER;
 		} else {
 			// persist any other type as blob
 			// TODO sure?
 			return BLOB;
 		}
+	}
+
+	private void appendForeignKeyDef(EntityField dbField, StringBuilder sb) {
+		@SuppressWarnings("unchecked")
+		Class<? extends Entity> entityType = (Class<? extends Entity>) dbField.fieldType;
+		String foreignTableName = new EntityAnnotationProcessor(entityType)
+				.getModelClassName();
+		sb.append("FOREIGN KEY(");
+		sb.append(dbField.columnName);
+		sb.append(") REFERENCES ");
+		sb.append(foreignTableName);
+		sb.append("(").append(Column.ID).append(") ON DELETE CASCADE");
 	}
 }

@@ -16,6 +16,9 @@
 package org.droidparts.util;
 
 import static org.droidparts.util.Strings.isNotEmpty;
+
+import org.droidparts.contract.SQL;
+
 import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteDatabase;
 
@@ -42,7 +45,7 @@ public class DatabaseUtils2 extends DatabaseUtils {
 		StringBuilder sb = new StringBuilder();
 		for (int i = 0; i < count; i++) {
 			if (i != 0) {
-				sb.append(", ");
+				sb.append(SQL.DDL.SEPARATOR);
 			}
 			sb.append("?");
 		}
