@@ -15,6 +15,7 @@
  */
 package org.droidparts.persist.sql.stmt;
 
+import static org.droidparts.util.DatabaseUtils2.getRowCount;
 import static org.droidparts.util.Strings.join;
 
 import java.util.ArrayList;
@@ -100,5 +101,12 @@ public class SelectBuilder extends StatementBuilder {
 				+ orderByStr + "', limit: '" + limitStr + "'.");
 		return db.query(distinct, tableName, columns, selection.first,
 				selection.second, groupByStr, having, orderByStr, limitStr);
+	}
+
+	public int count() {
+		Pair<String, String[]> selection = buildSelection();
+		int count = getRowCount(db, tableName, selection.first,
+				selection.second);
+		return count;
 	}
 }

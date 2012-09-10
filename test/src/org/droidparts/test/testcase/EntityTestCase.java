@@ -92,14 +92,13 @@ public class EntityTestCase extends AndroidTestCase {
 		boolean success = twoStringsManager.create(list);
 		assertTrue(success);
 		//
-		Cursor c = twoStringsManager.select().where(DB.Column.ID, Is.IN, 1, 2)
-				.execute();
-		assertEquals(2, c.getCount());
-		c.close();
+		int count = twoStringsManager.select().where(DB.Column.ID, Is.IN, 1, 2)
+				.count();
+		assertEquals(2, count);
 		//
 		int[] arr = new int[] { 1, 2 };
-		c = twoStringsManager.select().where(DB.Column.ID, Is.NOT_IN, arr)
-				.execute();
+		Cursor c = twoStringsManager.select()
+				.where(DB.Column.ID, Is.NOT_IN, arr).execute();
 		assertEquals(1, c.getCount());
 		c.close();
 		//

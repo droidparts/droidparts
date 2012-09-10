@@ -15,7 +15,9 @@
  */
 package org.droidparts.util;
 
+import static org.droidparts.util.Strings.isNotEmpty;
 import android.database.DatabaseUtils;
+import android.database.sqlite.SQLiteDatabase;
 
 public class DatabaseUtils2 extends DatabaseUtils {
 
@@ -47,4 +49,13 @@ public class DatabaseUtils2 extends DatabaseUtils {
 		return sb.toString();
 	}
 
+	public static int getRowCount(SQLiteDatabase db, String tableName,
+			String selection, String[] selectionArgs) {
+		StringBuilder sb = new StringBuilder();
+		sb.append("SELECT count(*) FROM ").append(tableName);
+		if (isNotEmpty(selection)) {
+			sb.append(" WHERE ").append(selection);
+		}
+		return (int) longForQuery(db, sb.toString(), selectionArgs);
+	}
 }
