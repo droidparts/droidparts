@@ -15,7 +15,6 @@
  */
 package org.droidparts.persist.json;
 
-import static org.droidparts.reflect.util.ReflectionUtils.getArrayType;
 import static org.droidparts.reflect.util.ReflectionUtils.getField;
 import static org.droidparts.reflect.util.ReflectionUtils.getTypedFieldVal;
 import static org.droidparts.reflect.util.ReflectionUtils.instantiate;
@@ -133,7 +132,7 @@ public class JSONSerializer<ModelType extends Model> {
 			Field f = getField(item.getClass(), jsonField.fieldName);
 			Object columnVal = getTypedFieldVal(f, item);
 			try {
-				putToJSONObject(obj, key, jsonField.fieldClass, columnVal);
+				putToJSONObject(obj, key, jsonField.fieldType, columnVal);
 			} catch (Exception e) {
 				if (jsonField.keyOptional) {
 					L.w("Failded to serialize " + processor.getModelClassName()
@@ -162,8 +161,8 @@ public class JSONSerializer<ModelType extends Model> {
 			Object val = obj.get(key);
 			Field f = getField(model.getClass(), modelField.fieldName);
 			try {
-				val = readFromJSON(modelField.fieldClass,
-						modelField.fieldGenericArg, val);
+				val = readFromJSON(modelField.fieldType,
+						modelField.fieldArrOrCollType, val);
 				if (!NULL.equals(val)) {
 					setFieldVal(f, model, val);
 				} else {
@@ -243,7 +242,7 @@ public class JSONSerializer<ModelType extends Model> {
 	}
 
 	@SuppressWarnings("rawtypes")
-	protected Object readFromJSON(Class<?> valType, Class<?> valGenericArgType,
+	protected Object readFromJSON(Class<?> valType, Class<?> valArrOrCollType,
 			Object jsonVal) throws Exception {
 		String strVal = String.valueOf(jsonVal);
 		if (NULL.equals(jsonVal)) {
@@ -287,17 +286,14 @@ public class JSONSerializer<ModelType extends Model> {
 			boolean isArr = isArray(valType);
 			Object[] arr = null;
 			Collection<Object> coll = null;
-			Class<?> itemCls;
 			if (isArr) {
 				arr = new Object[jArr.length()];
-				itemCls = getArrayType(valType);
 			} else {
 				coll = instantiate(valType);
-				itemCls = valGenericArgType;
 			}
 			JSONSerializer serializer = null;
-			if (isModel(itemCls)) {
-				serializer = getInstance(dirtyCast(itemCls));
+			if (isModel(valArrOrCollType)) {
+				serializer = getInstance(dirtyCast(valArrOrCollType));
 			}
 			for (int i = 0; i < jArr.length(); i++) {
 				Object obj = jArr.get(i);
@@ -338,8 +334,7 @@ public class JSONSerializer<ModelType extends Model> {
 		return cls2;
 	}
 
-	private void throwIfRequired(ModelField modelField)
-			throws JSONException {
+	private void throwIfRequired(ModelField modelField) throws JSONException {
 		if (!modelField.keyOptional) {
 			throw new JSONException("Required key '" + modelField.keyName
 					+ "' not present.");

@@ -15,8 +15,11 @@
  */
 package org.droidparts.reflect.processor;
 
+import static org.droidparts.reflect.util.ReflectionUtils.getArrayType;
 import static org.droidparts.reflect.util.ReflectionUtils.getFieldGenericArgs;
 import static org.droidparts.reflect.util.ReflectionUtils.listAnnotatedFields;
+import static org.droidparts.reflect.util.TypeHelper.isArray;
+import static org.droidparts.reflect.util.TypeHelper.isCollection;
 
 import java.lang.reflect.Field;
 import java.util.List;
@@ -59,10 +62,13 @@ public abstract class AbstractAnnotationProcessor<ModelFieldType> {
 
 	protected final void fillField(Field source, AbstractField target) {
 		target.fieldName = source.getName();
-		target.fieldClass = source.getType();
-		Class<?>[] genericArgs = getFieldGenericArgs(source);
-		if (genericArgs.length > 0) {
-			target.fieldGenericArg = genericArgs[0];
+		target.fieldType = source.getType();
+		if (isArray(target.fieldType)) {
+			target.fieldArrOrCollType = getArrayType(target.fieldType);
+		} else if (isCollection(target.fieldType)) {
+			Class<?>[] genericArgs = getFieldGenericArgs(source);
+			target.fieldArrOrCollType = (genericArgs.length > 0) ? genericArgs[0]
+					: Object.class;
 		}
 	}
 }

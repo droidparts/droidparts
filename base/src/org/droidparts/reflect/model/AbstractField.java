@@ -18,13 +18,13 @@ package org.droidparts.reflect.model;
 public abstract class AbstractField {
 
 	public String fieldName;
-	public Class<?> fieldClass;
-	public Class<?> fieldGenericArg;
+	public Class<?> fieldType;
+	public Class<?> fieldArrOrCollType;
 
 	@Override
 	public String toString() {
-		return "fieldName: " + fieldName + ", fieldClass: " + fieldClass
-				+ ", fieldGenericArg: " + fieldGenericArg;
+		return "fieldName: " + fieldName + ", fieldType: " + fieldType
+				+ ", fieldArrOrCollType: " + fieldArrOrCollType;
 	}
 
 }

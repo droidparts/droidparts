@@ -94,7 +94,7 @@ public class EntityManager<EntityType extends Entity> extends
 			int colIdx = cursor.getColumnIndex(dbField.columnName);
 			if (colIdx >= 0) {
 				Object columnVal = readFromCursor(cursor, colIdx,
-						dbField.fieldClass);
+						dbField.fieldType);
 				if (columnVal != null) {
 					Field f = getField(entity.getClass(), dbField.fieldName);
 					setFieldVal(f, entity, columnVal);
@@ -112,7 +112,7 @@ public class EntityManager<EntityType extends Entity> extends
 		}
 		boolean fillAll = (columnNames.length == 0);
 		for (EntityField entityField : processor.getModelClassFields()) {
-			if (isEntity(entityField.fieldClass)
+			if (isEntity(entityField.fieldType)
 					&& (fillAll || columnNameSet
 							.contains(entityField.columnName))) {
 				Field field = ReflectionUtils.getField(cls,
@@ -121,7 +121,7 @@ public class EntityManager<EntityType extends Entity> extends
 						field, item);
 				if (foreignEntity != null) {
 					Object obj = getInstance(ctx,
-							dirtyCast(entityField.fieldClass)).read(
+							dirtyCast(entityField.fieldType)).read(
 							foreignEntity.id);
 					setFieldVal(field, item, obj);
 				}
@@ -146,7 +146,7 @@ public class EntityManager<EntityType extends Entity> extends
 		for (EntityField dbField : fields) {
 			Field field = getField(item.getClass(), dbField.fieldName);
 			Object columnVal = getTypedFieldVal(field, item);
-			putToContentValues(cv, dbField.columnName, dbField.fieldClass,
+			putToContentValues(cv, dbField.columnName, dbField.fieldType,
 					columnVal);
 		}
 		return cv;
@@ -155,13 +155,13 @@ public class EntityManager<EntityType extends Entity> extends
 	@Override
 	protected void createOrUpdateForeignKeys(EntityType item) {
 		for (EntityField entityField : processor.getModelClassFields()) {
-			if (isEntity(entityField.fieldClass)) {
+			if (isEntity(entityField.fieldType)) {
 				Field field = ReflectionUtils.getField(cls,
 						entityField.fieldName);
 				EntityType foreignEntity = ReflectionUtils.getTypedFieldVal(
 						field, item);
 				if (foreignEntity != null) {
-					getInstance(ctx, dirtyCast(entityField.fieldClass))
+					getInstance(ctx, dirtyCast(entityField.fieldType))
 							.createOrUpdate(foreignEntity);
 				}
 			}

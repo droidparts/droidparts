@@ -92,10 +92,11 @@ public class EntityAnnotationProcessor extends
 	private void sanitizeFields(ArrayList<EntityField> fields) {
 		for (EntityField field : fields) {
 			if (field.columnNullable) {
-				Class<?> cls = field.fieldClass;
-				if (isBoolean(cls) || isByte(cls) || isFloat(cls)
-						|| isInteger(cls) || isLong(cls) || isShort(cls)) {
-					L.e(field.fieldClass.getSimpleName() + " can't be null.");
+				Class<?> fieldType = field.fieldType;
+				if (isBoolean(fieldType) || isByte(fieldType)
+						|| isFloat(fieldType) || isInteger(fieldType)
+						|| isLong(fieldType) || isShort(fieldType)) {
+					L.e(fieldType.getSimpleName() + " can't be null.");
 					field.columnNullable = false;
 				}
 			}

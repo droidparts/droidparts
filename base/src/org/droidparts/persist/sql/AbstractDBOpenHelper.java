@@ -120,7 +120,8 @@ public abstract class AbstractDBOpenHelper extends SQLiteOpenHelper implements
 				// already got it
 				continue;
 			}
-			String columnType = getColumnType(dbField.fieldClass);
+			String columnType = getColumnType(dbField.fieldType,
+					dbField.fieldArrOrCollType);
 			sb.append(SEPARATOR);
 			sb.append(dbField.columnName);
 			sb.append(" ");
@@ -138,23 +139,30 @@ public abstract class AbstractDBOpenHelper extends SQLiteOpenHelper implements
 		return sb.toString();
 	}
 
-	private String getColumnType(Class<?> cls) {
-		if (isBoolean(cls) || isInteger(cls) || isLong(cls)) {
+	private String getColumnType(Class<?> fieldType, Class<?> fieldArrOrCollType) {
+		if (isBoolean(fieldType) || isInteger(fieldType) || isLong(fieldType)) {
 			return INTEGER;
-		} else if (isFloat(cls) || isDouble(cls)) {
+		} else if (isFloat(fieldType) || isDouble(fieldType)) {
 			return REAL;
-		} else if (isString(cls) || isUUID(cls) || isEnum(cls)) {
+		} else if (isString(fieldType) || isUUID(fieldType)
+				|| isEnum(fieldType)) {
 			return TEXT;
-		} else if (isByteArray(cls) || isBitmap(cls)) {
+		} else if (isByteArray(fieldType) || isBitmap(fieldType)) {
 			return BLOB;
-		} else if (isArray(cls) || isCollection(cls)) {
-			return TEXT;
-		} else if (isEntity(cls)) {
+		} else if (isArray(fieldType) || isCollection(fieldType)) {
+			String arrOrCollColumnType = getColumnType(fieldArrOrCollType, null);
+			if (BLOB.equals(arrOrCollColumnType)) {
+				// TODO sure?
+				return BLOB;
+			} else {
+				return TEXT;
+			}
+		} else if (isEntity(fieldType)) {
 			return INTEGER;
 		} else {
 			// persist any other type as blob
+			// TODO sure?
 			return BLOB;
 		}
 	}
-
 }
