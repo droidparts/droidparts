@@ -33,13 +33,16 @@ public class ModelAnnotationProcessor extends
 
 	@Override
 	protected String modelClassName() {
+		String name = null;
 		org.droidparts.annotation.json.Object ann = cls
 				.getAnnotation(org.droidparts.annotation.json.Object.class);
 		if (ann != null) {
-			return ann.value();
-		} else {
-			return cls.getSimpleName();
+			name = ann.name();
 		}
+		if (isEmpty(name)) {
+			name = cls.getSimpleName();
+		}
+		return name;
 	}
 
 	@Override

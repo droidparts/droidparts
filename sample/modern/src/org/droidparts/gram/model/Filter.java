@@ -20,7 +20,7 @@ import org.droidparts.annotation.sql.Table;
 import org.droidparts.gram.contract.DB;
 import org.droidparts.model.Entity;
 
-@Table(DB.Table.FILTERS)
+@Table(name = DB.Table.FILTERS)
 public class Filter extends Entity {
 	private static final long serialVersionUID = 1L;
 

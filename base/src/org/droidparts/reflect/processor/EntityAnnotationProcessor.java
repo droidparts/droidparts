@@ -51,12 +51,15 @@ public class EntityAnnotationProcessor extends
 
 	@Override
 	protected String modelClassName() {
+		String name = null;
 		Table ann = cls.getAnnotation(Table.class);
 		if (ann != null) {
-			return ann.value();
-		} else {
-			return cls.getSimpleName();
+			name = ann.name();
 		}
+		if (isEmpty(name)) {
+			name = cls.getSimpleName();
+		}
+		return name;
 	}
 
 	@Override

@@ -23,7 +23,7 @@ import org.droidparts.annotation.sql.Table;
 import org.droidparts.gram.contract.DB;
 import org.droidparts.model.Entity;
 
-@Table(DB.Table.IMAGES)
+@Table(name = DB.Table.IMAGES)
 public class Image extends Entity {
 	private static final long serialVersionUID = 1L;
 

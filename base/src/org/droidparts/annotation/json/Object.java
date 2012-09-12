@@ -25,6 +25,6 @@ import java.lang.annotation.Target;
 @Target(TYPE)
 public @interface Object {
 
-	String value();
+	String name() default "";
 
 }
