@@ -106,10 +106,6 @@ public class EntityTestCase extends AndroidTestCase {
 		deleteAllAlbums();
 	}
 
-	private void deleteAllAlbums() {
-		albumManager.delete().execute();
-	}
-
 	public void testForeignKeys() {
 		Album album = new Album("Diamond", 2007);
 		albumManager.create(album);
@@ -125,5 +121,27 @@ public class EntityTestCase extends AndroidTestCase {
 						.count());
 		albumManager.delete(album.id);
 		assertEquals(0, trackManager.select().count());
+	}
+
+	public void testOffsetLimit() {
+		int count = 100;
+		int offset = 10;
+		int limit = 20;
+		ArrayList<Album> albums = new ArrayList<Album>();
+		for (int i = 0; i < count; i++) {
+			albums.add(new Album("A " + i, i));
+		}
+		albumManager.create(albums);
+		assertEquals(count, albumManager.select().count());
+		assertEquals(limit, albumManager.select().limit(limit).count());
+		assertEquals(limit, albumManager.select().offset(offset).limit(limit)
+				.count());
+		assertEquals(count - offset, albumManager.select().offset(offset)
+				.count());
+		deleteAllAlbums();
+	}
+
+	private void deleteAllAlbums() {
+		albumManager.delete().execute();
 	}
 }

@@ -46,8 +46,9 @@ public class SelectBuilder extends StatementBuilder {
 	private boolean distinct = false;
 	private String[] groupBy = null;
 	private String having = null;
+	private int offset = 0;
+	private int limit = 0;
 	private final LinkedHashMap<String, Boolean> orderBy = new LinkedHashMap<String, Boolean>();
-	private int limit = -1;
 
 	public SelectBuilder columns(String... columns) {
 		this.columns = columns;
@@ -69,12 +70,18 @@ public class SelectBuilder extends StatementBuilder {
 		return this;
 	}
 
-	public SelectBuilder orderBy(String column, boolean ascending) {
-		orderBy.put(column, ascending);
+	public SelectBuilder offset(int offset) {
+		this.offset = offset;
 		return this;
 	}
 
 	public SelectBuilder limit(int limit) {
+		this.limit = limit;
+		return this;
+	}
+
+	public SelectBuilder orderBy(String column, boolean ascending) {
+		orderBy.put(column, ascending);
 		return this;
 	}
 
@@ -92,7 +99,19 @@ public class SelectBuilder extends StatementBuilder {
 			}
 			orderByStr = join(list, ", ", null);
 		}
-		String limitStr = (limit > 0) ? String.valueOf(limit) : null;
+		String limitStr = null;
+		if (offset > 0) {
+			limitStr = offset + DDL.SEPARATOR;
+		}
+		if (limit > 0) {
+			if (limitStr == null) {
+				limitStr = String.valueOf(limit);
+			} else {
+				limitStr += limit;
+			}
+		} else if (limitStr != null) {
+			limitStr += Long.MAX_VALUE;
+		}
 		L.d("SELECT on table '" + tableName + ", distinct: '" + distinct
 				+ "', columns: '" + Arrays.toString(columns)
 				+ "', selection: '" + selection.first + "', selectionArgs: '"
@@ -104,9 +123,25 @@ public class SelectBuilder extends StatementBuilder {
 	}
 
 	public int count() {
-		Pair<String, String[]> selection = buildSelection();
-		int count = getRowCount(db, tableName, selection.first,
-				selection.second);
+		boolean simpleCountWouldDo = !distinct && groupBy == null
+				&& having == null && offset == 0 && limit == 0;
+		int count;
+		if (simpleCountWouldDo) {
+			Pair<String, String[]> selection = buildSelection();
+			count = getRowCount(db, tableName, selection.first,
+					selection.second);
+		} else {
+			// TODO find a better way
+			Cursor c = null;
+			try {
+				c = execute();
+				count = c.getCount();
+			} finally {
+				if (c != null) {
+					c.close();
+				}
+			}
+		}
 		return count;
 	}
 }
