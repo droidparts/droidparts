@@ -1,9 +1,9 @@
-package org.droidparts.test.manager;
+package org.droidparts.test.persist;
 
 import org.droidparts.model.Entity;
 import org.droidparts.persist.sql.AbstractDBOpenHelper2;
-import org.droidparts.test.model.Phone;
-import org.droidparts.test.model.TwoStrings;
+import org.droidparts.test.model.Album;
+import org.droidparts.test.model.Track;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
@@ -17,7 +17,7 @@ public class DBOpenHelper extends AbstractDBOpenHelper2 {
 	@Override
 	@SuppressWarnings("unchecked")
 	protected Class<? extends Entity>[] getModelClasses() {
-		return new Class[] { Phone.class, TwoStrings.class };
+		return new Class[] { Album.class, Track.class };
 	}
 
 	@Override

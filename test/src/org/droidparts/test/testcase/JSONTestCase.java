@@ -7,10 +7,10 @@ import java.util.ArrayList;
 
 import org.droidparts.R;
 import org.droidparts.persist.json.JSONSerializer;
-import org.droidparts.test.manager.PhoneSerializer;
+import org.droidparts.test.model.Album;
 import org.droidparts.test.model.Nested;
-import org.droidparts.test.model.Phone;
 import org.droidparts.test.model.Primitives;
+import org.droidparts.test.persist.json.AlbumSerializer;
 import org.droidparts.util.AppUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -40,12 +40,12 @@ public class JSONTestCase extends AndroidTestCase {
 		assertEquals("two", obj.getJSONArray("string_array").getString(1));
 	}
 
-	public void testPhones() throws Exception {
-		PhoneSerializer serializer = new PhoneSerializer();
-		ArrayList<Phone> phones = serializer.deserialize(getPhones());
-		assertEquals(2, phones.size());
-		assertEquals("Galaxy Nexus", phones.get(0).name);
-		assertEquals(5.1f, phones.get(1).version);
+	public void testAlbums() throws Exception {
+		AlbumSerializer serializer = new AlbumSerializer();
+		ArrayList<Album> albums = serializer.deserialize(getAlbums());
+		assertEquals(2, albums.size());
+		assertEquals("Diamond", albums.get(0).name);
+		assertEquals(2009, albums.get(1).year);
 	}
 
 	public void testNestedKeys() throws Exception {
@@ -71,9 +71,9 @@ public class JSONTestCase extends AndroidTestCase {
 		return new JSONObject(str);
 	}
 
-	private JSONArray getPhones() throws Exception {
+	private JSONArray getAlbums() throws Exception {
 		String str = new AppUtils(getContext())
-				.readStringResource(R.raw.phones);
+				.readStringResource(R.raw.albums);
 		return new JSONArray(str);
 	}
 

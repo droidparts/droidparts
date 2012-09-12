@@ -1,15 +1,17 @@
 package org.droidparts.test.model;
 
 import org.droidparts.annotation.sql.Column;
+import org.droidparts.annotation.sql.Table;
 import org.droidparts.model.Entity;
 
-public class TwoStrings extends Entity {
+@Table(name = "tracks")
+public class Track extends Entity {
 	private static final long serialVersionUID = 1L;
 
-	@Column(unique = true)
-	public String one;
+	@Column
+	public Album album;
 
-	@Column(nullable = true)
-	public String two;
+	@Column
+	public String name;
 
 }
