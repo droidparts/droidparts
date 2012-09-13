@@ -86,12 +86,31 @@ public class SelectBuilder extends StatementBuilder {
 	}
 
 	public Cursor execute() {
-		Pair<String, String[]> selection = buildSelection();
-		String groupByStr = null;
+		buildArgs();
+		logArgs("SELECT");
+		return db.query(distinct, tableName, columns, selection.first,
+				selection.second, groupByStr, having, orderByStr, limitStr);
+	}
+
+	public int count() {
+		buildArgs();
+		logArgs("COUNT");
+		return getRowCount(db, distinct, tableName, columns, selection.first,
+				selection.second, groupByStr, having, orderByStr, limitStr);
+	}
+
+	private Pair<String, String[]> selection;
+	private String groupByStr;
+	private String orderByStr;
+	private String limitStr;
+
+	private void buildArgs() {
+		selection = buildSelection();
+		groupByStr = null;
 		if (groupBy != null && groupBy.length > 0) {
 			groupByStr = join(groupBy, ", ", null);
 		}
-		String orderByStr = null;
+		orderByStr = null;
 		if (orderBy.size() > 0) {
 			ArrayList<String> list = new ArrayList<String>();
 			for (String key : orderBy.keySet()) {
@@ -99,7 +118,7 @@ public class SelectBuilder extends StatementBuilder {
 			}
 			orderByStr = join(list, ", ", null);
 		}
-		String limitStr = null;
+		limitStr = null;
 		if (offset > 0) {
 			limitStr = offset + DDL.SEPARATOR;
 		}
@@ -112,36 +131,14 @@ public class SelectBuilder extends StatementBuilder {
 		} else if (limitStr != null) {
 			limitStr += Long.MAX_VALUE;
 		}
-		L.d("SELECT on table '" + tableName + ", distinct: '" + distinct
+	}
+
+	private void logArgs(String prefix) {
+		L.d(prefix + " on table '" + tableName + ", distinct: '" + distinct
 				+ "', columns: '" + Arrays.toString(columns)
 				+ "', selection: '" + selection.first + "', selectionArgs: '"
 				+ Arrays.toString(selection.second) + "', groupBy: '"
 				+ groupByStr + "', having: '" + having + "', orderBy: '"
 				+ orderByStr + "', limit: '" + limitStr + "'.");
-		return db.query(distinct, tableName, columns, selection.first,
-				selection.second, groupByStr, having, orderByStr, limitStr);
-	}
-
-	public int count() {
-		boolean simpleCountWouldDo = !distinct && groupBy == null
-				&& having == null && offset == 0 && limit == 0;
-		int count;
-		if (simpleCountWouldDo) {
-			Pair<String, String[]> selection = buildSelection();
-			count = getRowCount(db, tableName, selection.first,
-					selection.second);
-		} else {
-			// TODO find a better way
-			Cursor c = null;
-			try {
-				c = execute();
-				count = c.getCount();
-			} finally {
-				if (c != null) {
-					c.close();
-				}
-			}
-		}
-		return count;
 	}
 }

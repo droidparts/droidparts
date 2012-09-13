@@ -19,6 +19,7 @@ import static org.droidparts.util.Strings.isNotEmpty;
 
 import org.droidparts.contract.SQL;
 
+import android.database.Cursor;
 import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteDatabase;
 
@@ -52,13 +53,35 @@ public class DatabaseUtils2 extends DatabaseUtils {
 		return sb.toString();
 	}
 
-	public static int getRowCount(SQLiteDatabase db, String tableName,
-			String selection, String[] selectionArgs) {
-		StringBuilder sb = new StringBuilder();
-		sb.append("SELECT count(*) FROM ").append(tableName);
-		if (isNotEmpty(selection)) {
-			sb.append(" WHERE ").append(selection);
+	public static int getRowCount(SQLiteDatabase db, boolean distinct,
+			String table, String[] columns, String selection,
+			String[] selectionArgs, String groupBy, String having,
+			String orderBy, String limit) {
+		// TODO optimize
+		boolean simpleCountWouldDo = !distinct && groupBy == null
+				&& having == null && limit == null;
+		int count;
+		if (simpleCountWouldDo) {
+			StringBuilder sb = new StringBuilder();
+			sb.append("SELECT count(*) FROM ").append(table);
+			if (isNotEmpty(selection)) {
+				sb.append(" WHERE ").append(selection);
+			}
+			count = (int) longForQuery(db, sb.toString(), selectionArgs);
+		} else {
+			// String sql = SQLiteQueryBuilder.buildQueryString(distinct, table,
+			// columns, selection, groupBy, having, orderBy, limit);
+			Cursor c = null;
+			try {
+				c = db.query(distinct, table, columns, selection,
+						selectionArgs, groupBy, having, orderBy, limit);
+				count = c.getCount();
+			} finally {
+				if (c != null) {
+					c.close();
+				}
+			}
 		}
-		return (int) longForQuery(db, sb.toString(), selectionArgs);
+		return count;
 	}
 }
