@@ -1,6 +1,12 @@
+0.7.6 /2012-09-12/:
+    * @Table & @Object now use 'name' attribute.
+    * Correct Foreign Keys support with 'ON DELETE CASCADE'.
+    * SelectBuilder: fixed limit(), added offset() & count().
+    * Unit tests & minor improvements.
+
 0.7.5 /2012-09-07/:
-    * DroidPartsGram - a sample fragment-based app utilizing Instagram's API
-    * EntityCursorAdapter gets a custom bindView(...)
+    * DroidPartsGram - a sample fragment-based app utilizing Instagram's API.
+    * EntityCursorAdapter gets a custom bindView(...).
     * Tweaks & fixes.
 
 0.7.1 /2012-08-25/:
