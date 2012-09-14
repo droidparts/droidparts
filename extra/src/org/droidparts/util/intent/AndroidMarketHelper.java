@@ -17,7 +17,6 @@ package org.droidparts.util.intent;
 
 import static android.content.Intent.ACTION_VIEW;
 
-import org.droidparts.R;
 import org.droidparts.util.L;
 import org.droidparts.util.ui.AbstractDialogFactory;
 
@@ -52,7 +51,7 @@ public class AndroidMarketHelper {
 			ctx.startActivity(intent);
 		} catch (ActivityNotFoundException e) {
 			L.e(e);
-			new AbstractDialogFactory(ctx).showToast(R.string.error_no_android_market);
+			new AbstractDialogFactory(ctx).showErrorToast();
 		}
 	}
 
