@@ -167,7 +167,7 @@ public class ImageAttacher {
 			imageView.setImageBitmap(bitmap);
 			if (placeholderView != null) {
 				ViewUtils.crossFade(placeholderView, imageView,
-						crossFadeAnimationDuration);
+						crossFadeAnimationDuration, null);
 			}
 		}
 

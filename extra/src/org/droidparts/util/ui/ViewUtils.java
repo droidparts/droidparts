@@ -44,21 +44,20 @@ public class ViewUtils {
 	}
 
 	public static void crossFade(final View lowerViewFrom,
-			final View upperViewTo, int durationMillis) {
+			final View upperViewTo, int durationMillis,
+			final Runnable onAnimationEnd) {
 		Animation animFrom = new AlphaAnimation(1, 0);
 		Animation animTo = new AlphaAnimation(0, 1);
 		animFrom.setDuration(durationMillis);
 		animTo.setDuration(durationMillis);
-		animFrom.setAnimationListener(new AnimationListenerAdapter() {
-			@Override
-			public void onAnimationEnd(Animation animation) {
-				lowerViewFrom.setVisibility(INVISIBLE);
-			}
-		});
 		animTo.setAnimationListener(new AnimationListenerAdapter() {
 			@Override
 			public void onAnimationEnd(Animation animation) {
 				upperViewTo.setVisibility(VISIBLE);
+				lowerViewFrom.setVisibility(INVISIBLE);
+				if (onAnimationEnd != null) {
+					new Thread(onAnimationEnd).start();
+				}
 			}
 		});
 		lowerViewFrom.startAnimation(animFrom);
