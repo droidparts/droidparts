@@ -21,7 +21,6 @@ import static org.apache.http.auth.AuthScope.ANY_PORT;
 import static org.apache.http.conn.params.ConnRoutePNames.DEFAULT_PROXY;
 import static org.droidparts.contract.Constants.BUFFER_SIZE;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.InflaterInputStream;
@@ -99,7 +98,7 @@ public class DefaultHttpClientWrapper extends HttpClientWrapper {
 				throw new HTTPException(respCode, null);
 			}
 			return resp;
-		} catch (IOException e) {
+		} catch (Exception e) {
 			throw new HTTPException(e);
 		}
 	}
@@ -112,7 +111,7 @@ public class DefaultHttpClientWrapper extends HttpClientWrapper {
 		InputStream is = getUnpackedInputStream(entity);
 		try {
 			return IOUtils.readAndCloseInputStream(is);
-		} catch (IOException e) {
+		} catch (Exception e) {
 			throw new HTTPException(e);
 		}
 	}
@@ -143,7 +142,7 @@ public class DefaultHttpClientWrapper extends HttpClientWrapper {
 	public static void consumeResponse(HttpResponse resp) {
 		try {
 			resp.getEntity().consumeContent();
-		} catch (IOException e) {
+		} catch (Exception e) {
 			L.d(e);
 		}
 	}

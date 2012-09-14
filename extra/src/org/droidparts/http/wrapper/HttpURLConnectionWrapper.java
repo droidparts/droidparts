@@ -18,7 +18,6 @@ package org.droidparts.http.wrapper;
 import static org.droidparts.util.Strings.isEmpty;
 
 import java.io.File;
-import java.io.IOException;
 import java.io.InputStream;
 import java.net.Authenticator;
 import java.net.HttpURLConnection;
@@ -118,7 +117,7 @@ public class HttpURLConnectionWrapper extends HttpClientWrapper {
 				throw new HTTPException(respCode, null);
 			}
 			return conn;
-		} catch (IOException e) {
+		} catch (Exception e) {
 			throw new HTTPException(e);
 		} finally {
 			if (auth != null) {
@@ -133,7 +132,7 @@ public class HttpURLConnectionWrapper extends HttpClientWrapper {
 			throws HTTPException {
 		try {
 			return IOUtils.readAndCloseInputStream(conn.getInputStream());
-		} catch (IOException e) {
+		} catch (Exception e) {
 			throw new HTTPException(e);
 		} finally {
 			conn.disconnect();
@@ -144,7 +143,7 @@ public class HttpURLConnectionWrapper extends HttpClientWrapper {
 			throws HTTPException {
 		try {
 			return conn.getInputStream();
-		} catch (IOException e) {
+		} catch (Exception e) {
 			throw new HTTPException(e);
 		}
 	}
