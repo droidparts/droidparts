@@ -28,8 +28,6 @@ public class DeleteBuilder extends StatementBuilder {
 		super(db, tableName);
 	}
 
-	//
-
 	@Override
 	public DeleteBuilder where(String columnName, Is operator,
 			Object... columnValue) {

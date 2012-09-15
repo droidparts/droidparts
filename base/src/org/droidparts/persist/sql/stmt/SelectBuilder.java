@@ -30,11 +30,17 @@ import android.util.Pair;
 
 public class SelectBuilder extends StatementBuilder {
 
+	private String[] columns = null;
+	private boolean distinct = false;
+	private String[] groupBy = null;
+	private String having = null;
+	private int offset = 0;
+	private int limit = 0;
+	private final LinkedHashMap<String, Boolean> orderBy = new LinkedHashMap<String, Boolean>();
+
 	public SelectBuilder(SQLiteDatabase db, String tableName) {
 		super(db, tableName);
 	}
-
-	//
 
 	@Override
 	public SelectBuilder where(String columnName, Is operator,
@@ -46,14 +52,6 @@ public class SelectBuilder extends StatementBuilder {
 	public SelectBuilder where(String selection, Object... selectionArgs) {
 		return (SelectBuilder) super.where(selection, selectionArgs);
 	}
-
-	private String[] columns = null;
-	private boolean distinct = false;
-	private String[] groupBy = null;
-	private String having = null;
-	private int offset = 0;
-	private int limit = 0;
-	private final LinkedHashMap<String, Boolean> orderBy = new LinkedHashMap<String, Boolean>();
 
 	public SelectBuilder columns(String... columns) {
 		this.columns = columns;

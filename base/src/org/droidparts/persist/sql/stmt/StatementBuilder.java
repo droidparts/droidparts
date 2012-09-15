@@ -41,8 +41,6 @@ public abstract class StatementBuilder implements SQL {
 		this.tableName = tableName;
 	}
 
-	//
-
 	protected StatementBuilder where(String columnName, Is operator,
 			Object... columnValue) {
 		selection = null;

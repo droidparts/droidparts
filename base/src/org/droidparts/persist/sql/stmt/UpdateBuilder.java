@@ -25,11 +25,11 @@ import android.util.Pair;
 
 public class UpdateBuilder extends StatementBuilder {
 
+	private ContentValues contentValues = null;
+
 	public UpdateBuilder(SQLiteDatabase db, String tableName) {
 		super(db, tableName);
 	}
-
-	//
 
 	@Override
 	public UpdateBuilder where(String columnName, Is operator,
@@ -42,10 +42,7 @@ public class UpdateBuilder extends StatementBuilder {
 		return (UpdateBuilder) super.where(selection, selectionArgs);
 	}
 
-	//
-	private ContentValues contentValues = null;
-
-	public UpdateBuilder contentValues(ContentValues contentValues) {
+	public UpdateBuilder setContent(ContentValues contentValues) {
 		this.contentValues = contentValues;
 		return this;
 	}
