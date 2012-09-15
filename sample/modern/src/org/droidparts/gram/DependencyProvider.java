@@ -19,9 +19,9 @@ import org.droidparts.gram.persist.DBOpenHelper;
 import org.droidparts.gram.persist.ImageEntityManager;
 import org.droidparts.gram.persist.PrefsManager;
 import org.droidparts.inject.AbstractDependencyProvider;
+import org.droidparts.persist.sql.AbstractDBOpenHelper;
 
 import android.content.Context;
-import android.database.sqlite.SQLiteDatabase;
 
 public class DependencyProvider extends AbstractDependencyProvider {
 
@@ -35,8 +35,8 @@ public class DependencyProvider extends AbstractDependencyProvider {
 	}
 
 	@Override
-	public SQLiteDatabase getDB() {
-		return dbOpenHelper.getWritableDatabase();
+	public AbstractDBOpenHelper getDBOpenHelper() {
+		return dbOpenHelper;
 	}
 
 	public PrefsManager getPrefsManager(Context ctx) {

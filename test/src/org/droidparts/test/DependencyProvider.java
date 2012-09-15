@@ -1,10 +1,10 @@
 package org.droidparts.test;
 
 import org.droidparts.inject.AbstractDependencyProvider;
+import org.droidparts.persist.sql.AbstractDBOpenHelper;
 import org.droidparts.test.persist.DBOpenHelper;
 
 import android.content.Context;
-import android.database.sqlite.SQLiteDatabase;
 
 public class DependencyProvider extends AbstractDependencyProvider {
 
@@ -16,8 +16,8 @@ public class DependencyProvider extends AbstractDependencyProvider {
 	}
 
 	@Override
-	public SQLiteDatabase getDB() {
-		return dbOpenHelper.getWritableDatabase();
+	public AbstractDBOpenHelper getDBOpenHelper() {
+		return dbOpenHelper;
 	}
 
 }
