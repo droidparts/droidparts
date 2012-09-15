@@ -101,10 +101,4 @@ public class IOUtils {
 
 	}
 
-	//
-
-	@Deprecated
-	public static String encode(String str) {
-		return urlEncode(str);
-	}
 }
