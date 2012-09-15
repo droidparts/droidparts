@@ -37,6 +37,11 @@ public class UpdateBuilder extends StatementBuilder {
 		return (UpdateBuilder) super.where(columnName, operator, columnValue);
 	}
 
+	@Override
+	public UpdateBuilder where(String selection, Object... selectionArgs) {
+		return (UpdateBuilder) super.where(selection, selectionArgs);
+	}
+
 	//
 	private ContentValues contentValues = null;
 
@@ -46,7 +51,7 @@ public class UpdateBuilder extends StatementBuilder {
 	}
 
 	public int execute() {
-		Pair<String, String[]> selection = buildSelection();
+		Pair<String, String[]> selection = getSelection();
 		L.d("UPDATE on table '" + tableName + ", contentValues: '"
 				+ contentValues + "', selection: '" + selection.first
 				+ "', selectionArgs: '" + Arrays.toString(selection.second)

@@ -42,6 +42,11 @@ public class SelectBuilder extends StatementBuilder {
 		return (SelectBuilder) super.where(columnName, operator, columnValue);
 	}
 
+	@Override
+	public SelectBuilder where(String selection, Object... selectionArgs) {
+		return (SelectBuilder) super.where(selection, selectionArgs);
+	}
+
 	private String[] columns = null;
 	private boolean distinct = false;
 	private String[] groupBy = null;
@@ -105,7 +110,7 @@ public class SelectBuilder extends StatementBuilder {
 	private String limitStr;
 
 	private void buildArgs() {
-		selection = buildSelection();
+		selection = getSelection();
 		groupByStr = null;
 		if (groupBy != null && groupBy.length > 0) {
 			groupByStr = join(groupBy, ", ", null);

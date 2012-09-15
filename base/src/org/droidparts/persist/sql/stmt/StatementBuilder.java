@@ -32,6 +32,10 @@ public abstract class StatementBuilder implements SQL {
 	protected final SQLiteDatabase db;
 	protected final String tableName;
 
+	private String selection;
+	private String[] selectionArgs;
+	private final ArrayList<Pair<String, Pair<Is, Object[]>>> whereList = new ArrayList<Pair<String, Pair<Is, Object[]>>>();
+
 	public StatementBuilder(SQLiteDatabase db, String tableName) {
 		this.db = db;
 		this.tableName = tableName;
@@ -39,48 +43,60 @@ public abstract class StatementBuilder implements SQL {
 
 	//
 
-	private final ArrayList<Pair<String, Pair<Is, Object[]>>> selection = new ArrayList<Pair<String, Pair<Is, Object[]>>>();
-
 	protected StatementBuilder where(String columnName, Is operator,
 			Object... columnValue) {
+		selection = null;
 		columnValue = varArgsHack(columnValue);
-		selection.add(Pair.create(columnName,
+		whereList.add(Pair.create(columnName,
 				Pair.create(operator, columnValue)));
 		return this;
 	}
 
-	protected Pair<String, String[]> buildSelection() {
-		StringBuilder whereBuilder = new StringBuilder();
-		ArrayList<String> whereArgs = new ArrayList<String>();
-		for (int i = 0; i < selection.size(); i++) {
-			Pair<String, Pair<Is, Object[]>> p = selection.get(i);
+	protected StatementBuilder where(String selection, Object... selectionArgs) {
+		this.selection = selection;
+		this.selectionArgs = toWhereArgs(selectionArgs);
+		return this;
+	}
+
+	protected Pair<String, String[]> getSelection() {
+		if (selection == null) {
+			buildSelection();
+		}
+		return Pair.create(selection, selectionArgs);
+	}
+
+	private void buildSelection() {
+		StringBuilder selectionBuilder = new StringBuilder();
+		ArrayList<String> selectionArgsBuilder = new ArrayList<String>();
+		for (int i = 0; i < whereList.size(); i++) {
+			Pair<String, Pair<Is, Object[]>> p = whereList.get(i);
 			String columnName = p.first;
 			Is operator = p.second.first;
 			Object[] columnValues = p.second.second;
 			if (i > 0) {
-				whereBuilder.append(AND);
+				selectionBuilder.append(AND);
 			}
-			whereBuilder.append(columnName).append(operator.str);
+			selectionBuilder.append(columnName).append(operator.str);
 			switch (operator) {
 			case NULL:
 			case NOT_NULL:
 				break;
 			case IN:
 			case NOT_IN:
-				whereBuilder.append("(");
-				whereBuilder.append(buildPlaceholders(columnValues.length));
-				whereBuilder.append(")");
-				whereArgs.addAll(asList(toWhereArgs(columnValues)));
+				selectionBuilder.append("(");
+				selectionBuilder.append(buildPlaceholders(columnValues.length));
+				selectionBuilder.append(")");
+				selectionArgsBuilder.addAll(asList(toWhereArgs(columnValues)));
 				break;
 			default:
 				String columnVal = toWhereArgs(columnValues)[0];
-				whereArgs.add(columnVal);
+				selectionArgsBuilder.add(columnVal);
 				break;
 			}
 		}
-		String where = whereBuilder.toString();
-		String[] whereArgsArr = whereArgs.toArray(new String[whereArgs.size()]);
-		return Pair.create(where, whereArgsArr);
+		selection = selectionBuilder.toString();
+		selectionArgs = selectionArgsBuilder
+				.toArray(new String[selectionArgsBuilder.size()]);
 	}
 
 }

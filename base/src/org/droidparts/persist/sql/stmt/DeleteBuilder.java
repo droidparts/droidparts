@@ -36,8 +36,13 @@ public class DeleteBuilder extends StatementBuilder {
 		return (DeleteBuilder) super.where(columnName, operator, columnValue);
 	}
 
+	@Override
+	public DeleteBuilder where(String selection, Object... selectionArgs) {
+		return (DeleteBuilder) super.where(selection, selectionArgs);
+	}
+
 	public int execute() {
-		Pair<String, String[]> selection = buildSelection();
+		Pair<String, String[]> selection = getSelection();
 		L.d("DELETE on table '" + tableName + "', selection: '"
 				+ selection.first + "', selectionArgs: '"
 				+ Arrays.toString(selection.second) + "'.");

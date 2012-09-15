@@ -141,6 +141,16 @@ public class EntityTestCase extends AndroidTestCase {
 		deleteAllAlbums();
 	}
 
+	public void testWhere() {
+		Album album = new Album("A", 1);
+		albumManager.create(album);
+		assertEquals(1, albumManager.select().where("_id = ?", album.id)
+				.count());
+		assertEquals(1, albumManager.select().where("_id = " + album.id)
+				.count());
+		deleteAllAlbums();
+	}
+
 	private void deleteAllAlbums() {
 		albumManager.delete().execute();
 	}
