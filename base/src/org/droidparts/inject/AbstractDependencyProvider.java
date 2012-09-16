@@ -15,6 +15,8 @@
  */
 package org.droidparts.inject;
 
+import org.droidparts.persist.sql.AbstractDBOpenHelper;
+
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 
@@ -26,6 +28,10 @@ public abstract class AbstractDependencyProvider {
 		this.ctx = ctx.getApplicationContext();
 	}
 
-	public abstract SQLiteDatabase getDB();
+	public final SQLiteDatabase getDB() {
+		return getDBOpenHelper().getWritableDatabase();
+	}
+
+	public abstract AbstractDBOpenHelper getDBOpenHelper();
 
 }

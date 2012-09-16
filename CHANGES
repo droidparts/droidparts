@@ -1,3 +1,12 @@
+0.7.7 /2012-09-15/:
+    * Optimized SelectBuilder's count().
+    * Renamed UpdateBuilder method contentValues() to setContent().
+    * Extra where() method in StatementBuilder for raw queries.
+    * Fixed jumping ActionBar loading indicator.
+    * Added optional Runnable for cross fade.
+    * Fixed RESTClient crashes at unchecked exceptions.
+    * Replaced ProGuard config file with a DroidParts-specific one.
+
 0.7.6 /2012-09-12/:
     * @Table & @Object now use 'name' attribute.
     * Correct Foreign Keys support with 'ON DELETE CASCADE'.
