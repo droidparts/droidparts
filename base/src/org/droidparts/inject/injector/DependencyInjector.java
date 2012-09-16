@@ -64,32 +64,41 @@ public class DependencyInjector {
 
 	static boolean inject(Context ctx, Object target, Field field) {
 		init(ctx);
-		if (dependencyProvider != null) {
-			Method method = methodRegistry.get(field.getType());
-			if (method != null) {
-				Object val = null;
-				try {
-					int paramCount = method.getGenericParameterTypes().length;
-					if (paramCount == 0) {
-						val = method.invoke(dependencyProvider);
-					} else {
-						val = method.invoke(dependencyProvider, ctx);
-					}
-				} catch (Exception e) {
-					L.d(e);
-					L.e("No dependency provided for "
-							+ field.getType().getCanonicalName());
-					return false;
-				}
-				try {
-					setFieldVal(field, target, val);
-					return true;
-				} catch (IllegalArgumentException e) {
-					// swallow
-				}
+		Object val = getDependency(ctx, field.getType());
+		if (val != null) {
+			try {
+				setFieldVal(field, target, val);
+				return true;
+			} catch (IllegalArgumentException e) {
+				// swallow
 			}
 		}
 		return false;
+	}
+
+	@SuppressWarnings("unchecked")
+	public static <T> T getDependency(Context ctx, Class<T> cls) {
+		init(ctx);
+		if (dependencyProvider != null) {
+			Method method = methodRegistry.get(cls);
+			if (method != null) {
+				T val = null;
+				try {
+					int paramCount = method.getGenericParameterTypes().length;
+					if (paramCount == 0) {
+						val = (T) method.invoke(dependencyProvider);
+					} else {
+						val = (T) method.invoke(dependencyProvider, ctx);
+					}
+					return val;
+				} catch (Exception e) {
+					L.d(e);
+					L.e("No valid dependency method for "
+							+ cls.getCanonicalName());
+				}
+			}
+		}
+		return null;
 	}
 
 	private static AbstractDependencyProvider getDependencyProvider(Context ctx) {

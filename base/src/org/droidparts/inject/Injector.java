@@ -15,6 +15,7 @@
  */
 package org.droidparts.inject;
 
+import org.droidparts.inject.injector.DependencyInjector;
 import org.droidparts.inject.injector.InjectorDelegate;
 
 import android.app.Activity;
@@ -44,7 +45,7 @@ public class Injector {
 	}
 
 	public void setUp(Context ctx) {
-		init(ctx);
+		setContext(ctx);
 		InjectorDelegate.setUp(Injector.ctx);
 	}
 
@@ -53,26 +54,31 @@ public class Injector {
 		ctx = null;
 	}
 
+	public <T> T getDependency(Context ctx, Class<T> cls) {
+		setContext(ctx);
+		return DependencyInjector.getDependency(ctx, cls);
+	}
+
 	public void inject(Activity act) {
-		init(act);
+		setContext(act);
 		// XXX
 		View root = act.findViewById(android.R.id.content).getRootView();
 		delegate.inject(act, root, act);
 	}
 
 	public void inject(Service serv) {
-		init(serv);
+		setContext(serv);
 		delegate.inject(serv, null, serv);
 	}
 
 	public void inject(Context ctx, Object target) {
-		init(ctx);
+		setContext(ctx);
 		delegate.inject(ctx, null, target);
 	}
 
 	public void inject(View view, Object target) {
 		Context ctx = view.getContext();
-		init(ctx);
+		setContext(ctx);
 		delegate.inject(ctx, view, target);
 	}
 
@@ -88,7 +94,7 @@ public class Injector {
 		this.delegate = delegate;
 	}
 
-	private void init(Context ctx) {
+	private static void setContext(Context ctx) {
 		if (Injector.ctx == null) {
 			Injector.ctx = ctx.getApplicationContext();
 		}
