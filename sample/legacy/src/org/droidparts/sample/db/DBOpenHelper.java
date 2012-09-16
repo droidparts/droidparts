@@ -17,7 +17,7 @@ public class DBOpenHelper extends AbstractDBOpenHelper {
 	}
 
 	@Override
-	protected Class<? extends Entity>[] getModelClasses() {
+	protected Class<? extends Entity>[] getEntityClasses() {
 		@SuppressWarnings("unchecked")
 		Class<? extends Entity>[] arr = new Class[] { Entry.class };
 		return arr;

@@ -16,7 +16,7 @@ public class DBOpenHelper extends AbstractDBOpenHelper2 {
 
 	@Override
 	@SuppressWarnings("unchecked")
-	protected Class<? extends Entity>[] getModelClasses() {
+	protected Class<? extends Entity>[] getEntityClasses() {
 		return new Class[] { Album.class, Track.class };
 	}
 
