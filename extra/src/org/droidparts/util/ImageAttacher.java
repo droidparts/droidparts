@@ -15,9 +15,8 @@
  */
 package org.droidparts.util;
 
-import static android.view.View.INVISIBLE;
-import static android.view.View.VISIBLE;
 import static org.droidparts.util.io.IOUtils.silentlyClose;
+import static org.droidparts.util.ui.ViewUtils.setInvisible;
 
 import java.io.BufferedInputStream;
 import java.io.File;
@@ -81,8 +80,8 @@ public class ImageAttacher {
 
 	public void attachImageCrossFaded(View placeholderView,
 			ImageView imageView, String imgUrl) {
-		placeholderView.setVisibility(VISIBLE);
-		imageView.setVisibility(INVISIBLE);
+		setInvisible(placeholderView, false);
+		setInvisible(imageView, true);
 		addAndExecute(imageView,
 				new Pair<String, View>(imgUrl, placeholderView));
 	}
@@ -166,8 +165,13 @@ public class ImageAttacher {
 		public void run() {
 			imageView.setImageBitmap(bitmap);
 			if (placeholderView != null) {
-				ViewUtils.crossFade(placeholderView, imageView,
-						crossFadeAnimationDuration, null);
+				if (crossFadeAnimationDuration > 0) {
+					ViewUtils.crossFade(placeholderView, imageView,
+							crossFadeAnimationDuration, null);
+				} else {
+					setInvisible(imageView, false);
+					setInvisible(placeholderView, true);
+				}
 			}
 		}
 

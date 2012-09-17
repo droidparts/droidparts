@@ -53,8 +53,8 @@ public class ViewUtils {
 		animTo.setAnimationListener(new AnimationListenerAdapter() {
 			@Override
 			public void onAnimationEnd(Animation animation) {
-				upperViewTo.setVisibility(VISIBLE);
-				lowerViewFrom.setVisibility(INVISIBLE);
+				setInvisible(upperViewTo, false);
+				setInvisible(lowerViewFrom, true);
 				if (onAnimationEnd != null) {
 					new Thread(onAnimationEnd).start();
 				}
