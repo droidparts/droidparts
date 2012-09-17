@@ -19,8 +19,16 @@ public class EntityTestCase extends AndroidTestCase {
 
 	@Override
 	protected void setUp() throws Exception {
-		albumManager = new AlbumManager(getContext());
-		trackManager = new TrackManager(getContext());
+		if (albumManager == null) {
+			albumManager = new AlbumManager(getContext());
+			trackManager = new TrackManager(getContext());
+		}
+	}
+
+	@Override
+	protected void tearDown() throws Exception {
+		albumManager.delete().execute();
+		trackManager.delete().execute();
 	}
 
 	public void testCRUD() throws Exception {
@@ -77,8 +85,6 @@ public class EntityTestCase extends AndroidTestCase {
 		Album album21 = albumManager.readFromCursor(cursor);
 		assertEquals(album2.name, album21.name);
 		cursor.close();
-		//
-		deleteAllAlbums();
 	}
 
 	public void testInAndLike() throws Exception {
@@ -102,8 +108,6 @@ public class EntityTestCase extends AndroidTestCase {
 		//
 		count = albumManager.select().where("name", Is.LIKE, "%%hon%%").count();
 		assertEquals(1, count);
-		//
-		deleteAllAlbums();
 	}
 
 	public void testForeignKeys() {
@@ -123,6 +127,26 @@ public class EntityTestCase extends AndroidTestCase {
 		assertEquals(0, trackManager.select().count());
 	}
 
+	public void testUniqueAndNullable() {
+		Album album = new Album();
+		assertFalse(albumManager.create(album));
+		album.name = "name";
+		assertTrue(albumManager.create(album));
+		assertFalse(albumManager.create(album));
+		//
+		Track track = new Track();
+		track.name = "tr";
+		assertFalse(trackManager.create(track));
+		track.album = album;
+		assertTrue(trackManager.create(track));
+		//
+		Album album2 = new Album();
+		album2.name = "name2";
+		track.nullableAlbum = album2;
+		assertTrue(trackManager.update(track));
+		assertFalse(track.nullableAlbum.id == 0);
+	}
+
 	public void testOffsetLimit() {
 		int count = 100;
 		int offset = 10;
@@ -138,7 +162,6 @@ public class EntityTestCase extends AndroidTestCase {
 				.count());
 		assertEquals(count - offset, albumManager.select().offset(offset)
 				.count());
-		deleteAllAlbums();
 	}
 
 	public void testWhere() {
@@ -148,10 +171,6 @@ public class EntityTestCase extends AndroidTestCase {
 				.count());
 		assertEquals(1, albumManager.select().where("_id = " + album.id)
 				.count());
-		deleteAllAlbums();
 	}
 
-	private void deleteAllAlbums() {
-		albumManager.delete().execute();
-	}
 }

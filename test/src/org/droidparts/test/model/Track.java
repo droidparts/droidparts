@@ -9,9 +9,12 @@ public class Track extends Entity {
 	private static final long serialVersionUID = 1L;
 
 	@Column
-	public Album album;
+	public String name;
 
 	@Column
-	public String name;
+	public Album album;
+
+	@Column(nullable = true)
+	public Album nullableAlbum;
 
 }
