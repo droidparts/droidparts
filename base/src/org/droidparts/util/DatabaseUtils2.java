@@ -15,6 +15,7 @@
  */
 package org.droidparts.util;
 
+import static java.util.Arrays.asList;
 import static org.droidparts.reflect.util.TypeHelper.isArray;
 import static org.droidparts.reflect.util.TypeHelper.isBitmap;
 import static org.droidparts.reflect.util.TypeHelper.isBoolean;
@@ -31,6 +32,7 @@ import static org.droidparts.reflect.util.TypeHelper.isUUID;
 import static org.droidparts.util.Strings.join;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 
 import org.droidparts.contract.DB.Column;
 import org.droidparts.contract.SQL;
@@ -38,6 +40,7 @@ import org.droidparts.model.Entity;
 import org.droidparts.reflect.model.EntityField;
 import org.droidparts.reflect.processor.EntityAnnotationProcessor;
 
+import android.database.Cursor;
 import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteQueryBuilder;
@@ -113,21 +116,32 @@ public final class DatabaseUtils2 implements SQL.DDL {
 
 	//
 
-	public static void dropAll(SQLiteDatabase db, boolean tables,
-			boolean indexes, Class<? extends Entity>[] entityClasses) {
+	public static void dropTables(SQLiteDatabase db,
+			String... optionalTableNames) {
 		ArrayList<String> queries = new ArrayList<String>();
-		for (Class<? extends Entity> cls : entityClasses) {
-			String tableName = new EntityAnnotationProcessor(cls)
-					.getModelClassName();
-			if (tables) {
-				queries.add("DROP TABLE IF EXISTS " + tableName + ";");
+		HashSet<String> tableNames = new HashSet<String>();
+		//
+		if (optionalTableNames.length == 0) {
+			Cursor c = db.rawQuery(
+					"SELECT name FROM sqlite_master WHERE type='table'", null);
+			while (c.moveToNext()) {
+				tableNames.add(c.getString(0));
 			}
-			if (indexes) {
-				// TODO
-				// SELECT name FROM sqlite_master WHERE type='index'
-				// if (index.startsWith("idx_" + tableName)
-				// queries.add("DROP INDEX IF EXISTS " + indexName + ";");
+			c.close();
+		} else {
+			tableNames.addAll(asList(optionalTableNames));
+		}
+		for (String tableName : tableNames) {
+			queries.add("DROP TABLE IF EXISTS " + tableName + ";");
+		}
+		//
+		if (optionalTableNames.length == 0) {
+			Cursor c = db.rawQuery(
+					"SELECT name FROM sqlite_master WHERE type='index'", null);
+			while (c.moveToNext()) {
+				queries.add("DROP INDEX IF EXISTS " + c.getString(0) + ";");
 			}
+			c.close();
 		}
 		execQueries(db, queries);
 	}

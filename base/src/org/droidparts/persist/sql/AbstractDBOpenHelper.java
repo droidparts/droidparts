@@ -52,8 +52,8 @@ public abstract class AbstractDBOpenHelper extends SQLiteOpenHelper implements
 		DatabaseUtils2.createIndex(db, table, unique, columns);
 	}
 
-	protected void dropAll(SQLiteDatabase db, boolean tables, boolean indexes) {
-		DatabaseUtils2.dropAll(db, tables, indexes, getEntityClasses());
+	protected void dropTables(SQLiteDatabase db, String... optionalTableNames) {
+		DatabaseUtils2.dropTables(db, optionalTableNames);
 	}
 
 	//
@@ -78,6 +78,12 @@ public abstract class AbstractDBOpenHelper extends SQLiteOpenHelper implements
 			db.execSQL("PRAGMA foreign_keys = ON;");
 		}
 		onOpenExtra(db);
+	}
+
+	//
+	@Deprecated
+	protected void dropAll(SQLiteDatabase db, boolean tables, boolean indexes) {
+		dropTables(db);
 	}
 
 }
