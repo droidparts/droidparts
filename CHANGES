@@ -1,3 +1,8 @@
+0.7.8 /2012-09-17/:
+    * Changed AbstractDependencyProvider to require DBOpenHelper instead of SQLiteDatabase.
+    * AbstractDBOpenHelper: getModelClasses() => getEntityClasses().
+    * Added getDependency() method to Injector.
+
 0.7.7 /2012-09-15/:
     * Optimized SelectBuilder's count().
     * Renamed UpdateBuilder method contentValues() to setContent().

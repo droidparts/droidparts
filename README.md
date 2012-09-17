@@ -1,12 +1,11 @@
-Overview
---------
-
-**DroidParts** is a carefully crafted Android developer library that includes:
+DroidParts
+----------
+is a carefully crafted Android framework that includes:
 * *DI* - dependency injection for Views, resources, etc.
 * *SQLite* object-relational mapping.
 * *JSON* (de)serialization.
 * Improved *AsyncTasks* with Exceptions, progress & result reporting.
-* Better *logger* (log any object, no need for tag).
+* Better *logger* (log any object without a tag).
 * *RESTClient* for GETting, PUTting, POSTing, DELETing & InputStream-getting, also speaks JSON.
 * *ImageAttacher* to asynchronously attach images to ImageViews, cross fade support.
 * Numerous *Utils*.
@@ -14,15 +13,13 @@ Overview
 
 Getting Started
 ---------------
-
-User Guide is WIP & will be available at http://droidparts.org.
-Please use a couple of demo apps under /sample as an example.
+User Guide is available at http://droidparts.org.
+Please check out a couple of sample apps under /sample.
 
 Contributing
 ------------
-
 * Pull Requests are preferred over Issues.
-* Ask questions at http://stackoverflow.com/tags/droidparts.
+* Please use http://stackoverflow.com/tags/droidparts for questions.
 
 
  [1]: https://github.com/JakeWharton/ActionBarSherlock
