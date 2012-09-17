@@ -44,7 +44,7 @@ public class DBOpenHelper extends AbstractDBOpenHelper {
 
 	@Override
 	public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-		dropAll(db, true, true);
+		dropTables(db);
 		onCreate(db);
 	}
 

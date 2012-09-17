@@ -120,7 +120,6 @@ public final class DatabaseUtils2 implements SQL.DDL {
 			String... optionalTableNames) {
 		ArrayList<String> queries = new ArrayList<String>();
 		HashSet<String> tableNames = new HashSet<String>();
-		//
 		if (optionalTableNames.length == 0) {
 			Cursor c = db.rawQuery(
 					"SELECT name FROM sqlite_master WHERE type='table'", null);
@@ -133,15 +132,6 @@ public final class DatabaseUtils2 implements SQL.DDL {
 		}
 		for (String tableName : tableNames) {
 			queries.add("DROP TABLE IF EXISTS " + tableName + ";");
-		}
-		//
-		if (optionalTableNames.length == 0) {
-			Cursor c = db.rawQuery(
-					"SELECT name FROM sqlite_master WHERE type='index'", null);
-			while (c.moveToNext()) {
-				queries.add("DROP INDEX IF EXISTS " + c.getString(0) + ";");
-			}
-			c.close();
 		}
 		execQueries(db, queries);
 	}
