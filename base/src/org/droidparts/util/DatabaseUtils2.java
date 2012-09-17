@@ -114,8 +114,6 @@ public final class DatabaseUtils2 implements SQL.DDL {
 		db.execSQL(sb.toString());
 	}
 
-	//
-
 	public static void dropTables(SQLiteDatabase db,
 			String... optionalTableNames) {
 		ArrayList<String> queries = new ArrayList<String>();
@@ -135,6 +133,8 @@ public final class DatabaseUtils2 implements SQL.DDL {
 		}
 		execQueries(db, queries);
 	}
+
+	//
 
 	public static String getSQLCreate(String tableName, EntityField[] fields) {
 		StringBuilder sb = new StringBuilder();
