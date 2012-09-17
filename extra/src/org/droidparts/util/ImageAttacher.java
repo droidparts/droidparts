@@ -24,7 +24,6 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import org.droidparts.http.HTTPException;
 import org.droidparts.http.RESTClient;
 import org.droidparts.util.io.BitmapCacher;
 import org.droidparts.util.ui.ViewUtils;
@@ -86,12 +85,20 @@ public class ImageAttacher {
 				new Pair<String, View>(imgUrl, placeholderView));
 	}
 
+	protected Bitmap onSuccess(ImageView imageView, String url, Bitmap bm) {
+		return bm;
+	}
+
+	protected void onFailure(ImageView imageView, String url, Exception e) {
+		L.e(e);
+	}
+
 	private void addAndExecute(ImageView view, Pair<String, View> pair) {
 		data.put(view, pair);
 		executorService.execute(fetchAndAttachRunnable);
 	}
 
-	public Bitmap getCachedOrFetchAndCache(String fileUrl) {
+	public Bitmap getCachedOrFetchAndCache(String fileUrl) throws Exception {
 
 		Bitmap bm = null;
 		if (bitmapCacher != null) {
@@ -104,8 +111,6 @@ public class ImageAttacher {
 				bis = new BufferedInputStream(
 						restClient.getInputStream(fileUrl).second);
 				bm = BitmapFactory.decodeStream(bis);
-			} catch (HTTPException e) {
-				L.e(e);
 			} finally {
 				silentlyClose(bis);
 			}
@@ -117,26 +122,26 @@ public class ImageAttacher {
 		return bm;
 	}
 
-	protected Bitmap processBitmapBeforeAttaching(ImageView imageView,
-			String url, Bitmap bm) {
-		return bm;
-	}
-
 	private final Runnable fetchAndAttachRunnable = new Runnable() {
 
 		@Override
 		public void run() {
-			for (ImageView view : data.keySet()) {
-				Pair<String, View> pair = data.get(view);
+			for (ImageView imageView : data.keySet()) {
+				Pair<String, View> pair = data.get(imageView);
 				if (pair != null) {
 					String fileUrl = pair.first;
 					View placeholderView = pair.second;
-					data.remove(view);
-					Bitmap bm = getCachedOrFetchAndCache(fileUrl);
+					data.remove(imageView);
+					Bitmap bm = null;
+					try {
+						bm = getCachedOrFetchAndCache(fileUrl);
+					} catch (Exception e) {
+						onFailure(imageView, fileUrl, e);
+					}
 					if (bm != null) {
-						bm = processBitmapBeforeAttaching(view, fileUrl, bm);
+						bm = onSuccess(imageView, fileUrl, bm);
 						AttachRunnable r = new AttachRunnable(placeholderView,
-								view, bm);
+								imageView, bm);
 						boolean success = handler.post(r);
 						if (!success) {
 							handler = new Handler(Looper.getMainLooper());
