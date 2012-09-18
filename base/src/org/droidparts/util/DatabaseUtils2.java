@@ -17,9 +17,9 @@ package org.droidparts.util;
 
 import static java.util.Arrays.asList;
 import static org.droidparts.reflect.util.TypeHelper.isArray;
-import static org.droidparts.reflect.util.TypeHelper.isBitmap;
 import static org.droidparts.reflect.util.TypeHelper.isBoolean;
-import static org.droidparts.reflect.util.TypeHelper.isByteArray;
+import static org.droidparts.reflect.util.TypeHelper.isByte;
+import static org.droidparts.reflect.util.TypeHelper.isCharacter;
 import static org.droidparts.reflect.util.TypeHelper.isCollection;
 import static org.droidparts.reflect.util.TypeHelper.isDate;
 import static org.droidparts.reflect.util.TypeHelper.isDouble;
@@ -28,6 +28,7 @@ import static org.droidparts.reflect.util.TypeHelper.isEnum;
 import static org.droidparts.reflect.util.TypeHelper.isFloat;
 import static org.droidparts.reflect.util.TypeHelper.isInteger;
 import static org.droidparts.reflect.util.TypeHelper.isLong;
+import static org.droidparts.reflect.util.TypeHelper.isShort;
 import static org.droidparts.reflect.util.TypeHelper.isString;
 import static org.droidparts.reflect.util.TypeHelper.isUUID;
 import static org.droidparts.util.Strings.join;
@@ -173,32 +174,41 @@ public final class DatabaseUtils2 implements SQL.DDL {
 
 	private static String getColumnType(Class<?> fieldType,
 			Class<?> fieldArrOrCollType) {
-		if (isBoolean(fieldType) || isInteger(fieldType) || isLong(fieldType)) {
+		if (isByte(fieldType)) {
 			return INTEGER;
-		} else if (isFloat(fieldType) || isDouble(fieldType)) {
+		} else if (isShort(fieldType)) {
+			return INTEGER;
+		} else if (isInteger(fieldType)) {
+			return INTEGER;
+		} else if (isLong(fieldType)) {
+			return INTEGER;
+		} else if (isFloat(fieldType)) {
 			return REAL;
-		} else if (isString(fieldType) || isEnum(fieldType)
-				|| isUUID(fieldType)) {
+		} else if (isDouble(fieldType)) {
+			return REAL;
+		} else if (isBoolean(fieldType)) {
+			return INTEGER;
+		} else if (isCharacter(fieldType)) {
+			return INTEGER;
+		} else if (isString(fieldType)) {
 			return TEXT;
-		} else if (isByteArray(fieldType) || isBitmap(fieldType)) {
-			return BLOB;
+		} else if (isEnum(fieldType)) {
+			return TEXT;
+		} else if (isUUID(fieldType)) {
+			return TEXT;
 		} else if (isDate(fieldType)) {
 			return INTEGER;
 		} else if (isArray(fieldType) || isCollection(fieldType)) {
 			String arrOrCollColumnType = getColumnType(fieldArrOrCollType, null);
-			if (BLOB.equals(arrOrCollColumnType)) {
-				// TODO sure?
-				return BLOB;
-			} else {
+			if (!BLOB.equals(arrOrCollColumnType)) {
 				return TEXT;
 			}
 		} else if (isEntity(fieldType)) {
 			return INTEGER;
-		} else {
-			// persist any other type as blob
-			// TODO sure?
-			return BLOB;
 		}
+		// persist any other type as blob
+		// TODO sure?
+		return BLOB;
 	}
 
 	private static void appendForeignKeyDef(EntityField dbField,
