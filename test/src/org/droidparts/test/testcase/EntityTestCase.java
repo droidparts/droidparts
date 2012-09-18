@@ -107,12 +107,11 @@ public class EntityTestCase extends AndroidTestCase {
 	public void testEnum() {
 		Primitives pri = new Primitives();
 		pri.en = En.HI;
-		// FIXME
-		// pri.enArr = new En[] { En.HI, En.THERE };
+		pri.enArr = new En[] { En.HI, En.THERE };
 		primitivesManager.create(pri);
 		pri = primitivesManager.read(pri.id);
 		assertEquals(En.HI, pri.en);
-		// assertEquals(2, pri.enArr.length);
+		assertEquals(En.THERE, pri.enArr[1]);
 	}
 
 	public void testArraysAndCollections() {

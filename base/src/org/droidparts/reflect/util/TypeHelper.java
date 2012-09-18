@@ -19,6 +19,7 @@ import static org.droidparts.reflect.util.ReflectionUtils.instantiateEnum;
 import static org.droidparts.util.Arrays2.toObject;
 import static org.droidparts.util.Arrays2.toPrimitive;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
@@ -201,9 +202,14 @@ public class TypeHelper {
 		} else if (isString(arrValType)) {
 			return arr;
 		} else if (isEnum(arrValType)) {
-			@SuppressWarnings("rawtypes")
-			ArrayList<Enum> list = toTypeColl(Enum.class, arr);
-			return list.toArray(new Enum[list.size()]);
+			@SuppressWarnings({ "rawtypes", "unchecked" })
+			ArrayList<? extends Enum> list = (ArrayList<? extends Enum>) toTypeColl(
+					arrValType, arr);
+			Object enumArr = Array.newInstance(arrValType, list.size());
+			for (int i = 0; i < list.size(); i++) {
+				Array.set(enumArr, i, list.get(i));
+			}
+			return enumArr;
 		} else if (isUUID(arrValType)) {
 			ArrayList<UUID> list = toTypeColl(UUID.class, arr);
 			return list.toArray(new UUID[list.size()]);
