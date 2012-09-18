@@ -1,3 +1,10 @@
+0.7.9 /2012-09-18/:
+    * AbstractDBOpenHelper: dropAll() => dropTables() with optional table names.
+    * ImageAttacher: processBitmapBeforeAttaching() => onSuccess(), added onFailure().
+    * Improved SQLException handling in EntityManager.
+    * Fixed Collections persistence.
+    * Added java.util.Date persistence.
+
 0.7.8 /2012-09-17/:
     * Changed AbstractDependencyProvider to require DBOpenHelper instead of SQLiteDatabase.
     * AbstractDBOpenHelper: getModelClasses() => getEntityClasses().
