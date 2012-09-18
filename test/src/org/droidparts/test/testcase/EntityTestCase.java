@@ -4,30 +4,39 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 
-import org.droidparts.contract.DB;
 import org.droidparts.persist.sql.EntityManager;
 import org.droidparts.persist.sql.stmt.Is;
 import org.droidparts.test.model.Album;
+import org.droidparts.test.model.AlbumToTag;
 import org.droidparts.test.model.Primitives;
 import org.droidparts.test.model.Primitives.En;
+import org.droidparts.test.model.Tag;
 import org.droidparts.test.model.Track;
+import org.droidparts.test.persist.DB;
 import org.droidparts.test.persist.sql.AlbumManager;
 import org.droidparts.test.persist.sql.TrackManager;
 
 import android.database.Cursor;
 import android.test.AndroidTestCase;
 
-public class EntityTestCase extends AndroidTestCase {
+public class EntityTestCase extends AndroidTestCase implements DB {
 
 	private EntityManager<Primitives> primitivesManager;
+	private EntityManager<Tag> tagManager;
 	private AlbumManager albumManager;
 	private TrackManager trackManager;
+
+	private static final String[] TRACK_NAMES = new String[] { "Diamond",
+			"Beautiful", "Stay" };
+	private static final String[] TAG_NAMES = new String[] { "DroiParts", "is",
+			"pretty", "awesome", "!" };
 
 	@Override
 	protected void setUp() throws Exception {
 		if (primitivesManager == null) {
 			primitivesManager = EntityManager.getInstance(getContext(),
 					Primitives.class);
+			tagManager = EntityManager.getInstance(getContext(), Tag.class);
 			albumManager = new AlbumManager(getContext());
 			trackManager = new TrackManager(getContext());
 		}
@@ -35,6 +44,8 @@ public class EntityTestCase extends AndroidTestCase {
 
 	@Override
 	protected void tearDown() throws Exception {
+		primitivesManager.delete().execute();
+		tagManager.delete().execute();
 		albumManager.delete().execute();
 		trackManager.delete().execute();
 	}
@@ -75,19 +86,19 @@ public class EntityTestCase extends AndroidTestCase {
 		created = albumManager.create(album2);
 		assertTrue(created);
 
-		int count = albumManager.select()
-				.where(DB.Column.ID, Is.EQUAL, album1.id).count();
+		int count = albumManager.select().where(Column.ID, Is.EQUAL, album1.id)
+				.count();
 		assertEquals(1, count);
 
-		Cursor cursor = albumManager.select().where("comment", Is.NOT_NULL)
-				.execute();
+		Cursor cursor = albumManager.select()
+				.where(Column.COMMENT, Is.NOT_NULL).execute();
 		assertEquals(1, cursor.getCount());
 		cursor.moveToFirst();
 		Album album11 = albumManager.readFromCursor(cursor);
 		assertEquals(album1.name, album11.name);
 		cursor.close();
 
-		cursor = albumManager.select().where("comment", Is.NULL).execute();
+		cursor = albumManager.select().where(Column.COMMENT, Is.NULL).execute();
 		assertEquals(1, cursor.getCount());
 		cursor.moveToFirst();
 		Album album21 = albumManager.readFromCursor(cursor);
@@ -139,32 +150,30 @@ public class EntityTestCase extends AndroidTestCase {
 		boolean success = albumManager.create(list);
 		assertTrue(success);
 		//
-		int count = albumManager.select().where(DB.Column.ID, Is.IN, 1, 2)
-				.count();
+		int count = albumManager.select().where(Column.ID, Is.IN, 1, 2).count();
 		assertEquals(2, count);
 		//
 		int[] arr = new int[] { 1, 2 };
-		count = albumManager.select().where(DB.Column.ID, Is.NOT_IN, arr)
-				.count();
+		count = albumManager.select().where(Column.ID, Is.NOT_IN, arr).count();
 		assertEquals(1, count);
 		//
-		count = albumManager.select().where("name", Is.LIKE, "%%hon%%").count();
+		count = albumManager.select().where(Column.NAME, Is.LIKE, "%%hon%%")
+				.count();
 		assertEquals(1, count);
 	}
 
 	public void testForeignKeys() {
 		Album album = new Album("Diamond", 2007);
 		albumManager.create(album);
-		String[] tracks = new String[] { "Diamond", "Beautiful", "Stay" };
-		for (String name : tracks) {
+		for (String name : TRACK_NAMES) {
 			Track track = new Track();
 			track.album = album;
 			track.name = name;
 			trackManager.create(track);
 		}
 		assertEquals(3,
-				trackManager.select().where("album_id", Is.EQUAL, album.id)
-						.count());
+				trackManager.select()
+						.where(Column.ALBUM_ID, Is.EQUAL, album.id).count());
 		albumManager.delete(album.id);
 		assertEquals(0, trackManager.select().count());
 	}
@@ -220,6 +229,28 @@ public class EntityTestCase extends AndroidTestCase {
 				.count());
 		assertEquals(1, albumManager.select().where("_id = " + album.id)
 				.count());
+	}
+
+	public void testM2M() {
+		EntityManager<AlbumToTag> albumToTagManager = EntityManager
+				.getInstance(getContext(), AlbumToTag.class);
+		Album album = new Album("A", 1);
+		albumManager.create(album);
+		ArrayList<Tag> tags = new ArrayList<Tag>();
+		for (String name : TAG_NAMES) {
+			tags.add(new Tag(name));
+		}
+		albumManager.addTags(album.id, tags);
+		//
+		assertEquals(TAG_NAMES.length, albumToTagManager.select().count());
+		tags = albumManager.getTags(album.id);
+		assertEquals(TAG_NAMES.length, tags.size());
+		//
+		tagManager.delete(tags);
+		tags = albumManager.getTags(album.id);
+		assertEquals(0, albumToTagManager.select().count());
+		assertEquals(0, tags.size());
+		//
 	}
 
 }
