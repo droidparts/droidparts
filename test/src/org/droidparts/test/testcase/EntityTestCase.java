@@ -145,6 +145,13 @@ public class EntityTestCase extends AndroidTestCase {
 		track.nullableAlbum = album2;
 		assertTrue(trackManager.update(track));
 		assertFalse(track.nullableAlbum.id == 0);
+		//
+		album.name = null;
+		assertFalse(albumManager.update(album));
+		//
+		track.nullableAlbum = null;
+		assertTrue(trackManager.update(track));
+		assertNull(trackManager.read(track.id).nullableAlbum);
 	}
 
 	public void testOffsetLimit() {

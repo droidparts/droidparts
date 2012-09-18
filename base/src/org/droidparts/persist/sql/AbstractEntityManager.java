@@ -25,9 +25,11 @@ import org.droidparts.model.Entity;
 import org.droidparts.persist.sql.stmt.DeleteBuilder;
 import org.droidparts.persist.sql.stmt.SelectBuilder;
 import org.droidparts.persist.sql.stmt.UpdateBuilder;
+import org.droidparts.util.L;
 
 import android.content.ContentValues;
 import android.database.Cursor;
+import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 
 public abstract class AbstractEntityManager<EntityType extends Entity>
@@ -52,7 +54,12 @@ public abstract class AbstractEntityManager<EntityType extends Entity>
 		createOrUpdateForeignKeys(item);
 		ContentValues cv = toContentValues(item);
 		cv.remove(DB.Column.ID);
-		long id = getDB().insert(getTableName(), null, cv);
+		long id = 0;
+		try {
+			id = getDB().insertOrThrow(getTableName(), null, cv);
+		} catch (SQLException e) {
+			log(e);
+		}
 		if (id > 0) {
 			item.id = id;
 			return true;
@@ -76,14 +83,24 @@ public abstract class AbstractEntityManager<EntityType extends Entity>
 		createOrUpdateForeignKeys(item);
 		ContentValues cv = toContentValues(item);
 		cv.remove(DB.Column.ID);
-		int rowCount = getDB().update(getTableName(), cv, DB.Column.ID + EQUAL,
-				toWhereArgs(item.id));
+		int rowCount = 0;
+		try {
+			rowCount = getDB().update(getTableName(), cv, DB.Column.ID + EQUAL,
+					toWhereArgs(item.id));
+		} catch (SQLException e) {
+			log(e);
+		}
 		return rowCount > 0;
 	}
 
 	public boolean delete(long id) {
-		int rowCount = getDB().delete(getTableName(), DB.Column.ID + EQUAL,
-				toWhereArgs(id));
+		int rowCount = 0;
+		try {
+			rowCount = getDB().delete(getTableName(), DB.Column.ID + EQUAL,
+					toWhereArgs(id));
+		} catch (SQLException e) {
+			log(e);
+		}
 		return rowCount > 0;
 	}
 
@@ -173,5 +190,10 @@ public abstract class AbstractEntityManager<EntityType extends Entity>
 	protected abstract ContentValues toContentValues(EntityType item);
 
 	protected abstract void createOrUpdateForeignKeys(EntityType item);
+
+	protected void log(SQLException e) {
+		L.d(e);
+		L.e(e.getMessage());
+	}
 
 }
