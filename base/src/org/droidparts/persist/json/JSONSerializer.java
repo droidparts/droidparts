@@ -25,6 +25,7 @@ import static org.droidparts.reflect.util.TypeHelper.isByte;
 import static org.droidparts.reflect.util.TypeHelper.isByteArray;
 import static org.droidparts.reflect.util.TypeHelper.isCharacter;
 import static org.droidparts.reflect.util.TypeHelper.isCollection;
+import static org.droidparts.reflect.util.TypeHelper.isDate;
 import static org.droidparts.reflect.util.TypeHelper.isDouble;
 import static org.droidparts.reflect.util.TypeHelper.isEnum;
 import static org.droidparts.reflect.util.TypeHelper.isFloat;
@@ -42,6 +43,7 @@ import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Date;
 
 import org.droidparts.model.Model;
 import org.droidparts.reflect.model.ModelField;
@@ -207,6 +209,8 @@ public class JSONSerializer<ModelType extends Model> {
 			obj.put(key, val.toString());
 		} else if (isUUID(valType)) {
 			obj.put(key, val.toString());
+		} else if (isDate(valType)) {
+			obj.put(key, ((Date) val).getTime());
 		} else if (isByteArray(valType)) {
 			obj.put(key, val);
 		} else if (isModel(valType)) {
@@ -247,13 +251,8 @@ public class JSONSerializer<ModelType extends Model> {
 		if (NULL.equals(jsonVal)) {
 			return jsonVal;
 		} else if (isBoolean(valType)) {
-			if ("0".equals(strVal) || "false".equalsIgnoreCase(strVal)) {
-				return Boolean.FALSE;
-			} else if ("1".equals(strVal) || "true".equalsIgnoreCase(strVal)) {
-				return Boolean.TRUE;
-			} else {
-				throw new IllegalArgumentException("Unparseable boolean: '"
-						+ strVal + "'.");
+			if ("1".equals(strVal)) {
+				strVal = "true";
 			}
 		}
 

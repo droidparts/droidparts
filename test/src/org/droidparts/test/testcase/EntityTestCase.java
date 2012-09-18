@@ -2,6 +2,7 @@ package org.droidparts.test.testcase;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 
 import org.droidparts.contract.DB;
 import org.droidparts.persist.sql.EntityManager;
@@ -24,7 +25,7 @@ public class EntityTestCase extends AndroidTestCase {
 
 	@Override
 	protected void setUp() throws Exception {
-		if (albumManager == null) {
+		if (primitivesManager == null) {
 			primitivesManager = EntityManager.getInstance(getContext(),
 					Primitives.class);
 			albumManager = new AlbumManager(getContext());
@@ -92,6 +93,15 @@ public class EntityTestCase extends AndroidTestCase {
 		Album album21 = albumManager.readFromCursor(cursor);
 		assertEquals(album2.name, album21.name);
 		cursor.close();
+	}
+
+	public void testDate() {
+		long now = System.currentTimeMillis();
+		Primitives pri = new Primitives();
+		pri.date = new Date(now);
+		assertTrue(primitivesManager.create(pri));
+		pri = primitivesManager.read(pri.id);
+		assertEquals(now, pri.date.getTime());
 	}
 
 	public void testEnum() {

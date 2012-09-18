@@ -27,6 +27,7 @@ import static org.droidparts.reflect.util.TypeHelper.isBoolean;
 import static org.droidparts.reflect.util.TypeHelper.isByte;
 import static org.droidparts.reflect.util.TypeHelper.isByteArray;
 import static org.droidparts.reflect.util.TypeHelper.isCollection;
+import static org.droidparts.reflect.util.TypeHelper.isDate;
 import static org.droidparts.reflect.util.TypeHelper.isDouble;
 import static org.droidparts.reflect.util.TypeHelper.isEntity;
 import static org.droidparts.reflect.util.TypeHelper.isEnum;
@@ -43,6 +44,7 @@ import static org.droidparts.reflect.util.TypeHelper.toTypeColl;
 import java.io.ByteArrayOutputStream;
 import java.lang.reflect.Field;
 import java.util.Collection;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.UUID;
 
@@ -209,6 +211,8 @@ public class EntityManager<EntityType extends Entity> extends
 			cv.put(key, (String) value);
 		} else if (isUUID(valueCls)) {
 			cv.put(key, value.toString());
+		} else if (isDate(valueCls)) {
+			cv.put(key, ((Date) value).getTime());
 		} else if (isBitmap(valueCls)) {
 			Bitmap bm = (Bitmap) value;
 			ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -262,6 +266,8 @@ public class EntityManager<EntityType extends Entity> extends
 			return cursor.getString(columnIndex);
 		} else if (isUUID(fieldCls)) {
 			return UUID.fromString(cursor.getString(columnIndex));
+		} else if (isDate(fieldCls)) {
+			return new Date(cursor.getLong(columnIndex));
 		} else if (isBitmap(fieldCls)) {
 			byte[] arr = cursor.getBlob(columnIndex);
 			return BitmapFactory.decodeByteArray(arr, 0, arr.length);

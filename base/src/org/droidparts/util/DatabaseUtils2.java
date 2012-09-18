@@ -21,6 +21,7 @@ import static org.droidparts.reflect.util.TypeHelper.isBitmap;
 import static org.droidparts.reflect.util.TypeHelper.isBoolean;
 import static org.droidparts.reflect.util.TypeHelper.isByteArray;
 import static org.droidparts.reflect.util.TypeHelper.isCollection;
+import static org.droidparts.reflect.util.TypeHelper.isDate;
 import static org.droidparts.reflect.util.TypeHelper.isDouble;
 import static org.droidparts.reflect.util.TypeHelper.isEntity;
 import static org.droidparts.reflect.util.TypeHelper.isEnum;
@@ -181,6 +182,8 @@ public final class DatabaseUtils2 implements SQL.DDL {
 			return TEXT;
 		} else if (isByteArray(fieldType) || isBitmap(fieldType)) {
 			return BLOB;
+		} else if (isDate(fieldType)) {
+			return INTEGER;
 		} else if (isArray(fieldType) || isCollection(fieldType)) {
 			String arrOrCollColumnType = getColumnType(fieldArrOrCollType, null);
 			if (BLOB.equals(arrOrCollColumnType)) {

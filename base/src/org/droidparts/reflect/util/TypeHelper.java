@@ -21,6 +21,7 @@ import static org.droidparts.util.Arrays2.toPrimitive;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
 import java.util.UUID;
 
 import org.droidparts.model.Entity;
@@ -79,6 +80,10 @@ public class TypeHelper {
 		return UUID.class.isAssignableFrom(cls);
 	}
 
+	public static boolean isDate(Class<?> cls) {
+		return Date.class.isAssignableFrom(cls);
+	}
+
 	//
 
 	public static boolean isByteArray(Class<?> cls) {
@@ -102,6 +107,8 @@ public class TypeHelper {
 	public static boolean isDrawable(Class<?> cls) {
 		return Drawable.class.isAssignableFrom(cls);
 	}
+
+	//
 
 	public static boolean isJsonObject(Class<?> cls) {
 		return JSONObject.class.isAssignableFrom(cls);
@@ -200,6 +207,9 @@ public class TypeHelper {
 		} else if (isUUID(arrValType)) {
 			ArrayList<UUID> list = toTypeColl(UUID.class, arr);
 			return list.toArray(new UUID[list.size()]);
+		} else if (isDate(arrValType)) {
+			ArrayList<Date> list = toTypeColl(Date.class, arr);
+			return list.toArray(new Date[list.size()]);
 		} else {
 			throw new IllegalArgumentException("Unable to convert to"
 					+ arrValType);
@@ -244,6 +254,8 @@ public class TypeHelper {
 			return instantiateEnum(cls, str);
 		} else if (isUUID(cls)) {
 			return UUID.fromString(str);
+		} else if (isDate(cls)) {
+			return new Date(Long.valueOf(str));
 		} else {
 			return null;
 		}

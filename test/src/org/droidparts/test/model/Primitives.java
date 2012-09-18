@@ -1,6 +1,7 @@
 package org.droidparts.test.model;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashSet;
 
 import org.droidparts.annotation.json.Key;
@@ -29,6 +30,14 @@ public class Primitives extends Entity {
 	@Key
 	public String string1;
 
+	@Column(nullable = true)
+	public En en;
+	@Column(nullable = true)
+	public En[] enArr;
+
+	@Column(nullable = true)
+	public Date date;
+
 	@Key(name = "string_array")
 	@Column(nullable = true)
 	public String[] strArr;
@@ -38,11 +47,6 @@ public class Primitives extends Entity {
 	public ArrayList<String> strList = new ArrayList<String>();
 	@Column(nullable = true)
 	public HashSet<Double> doubleSet = new HashSet<Double>();
-
-	@Column(nullable = true)
-	public En en;
-	@Column(nullable = true)
-	public En[] enArr;
 
 	public static enum En {
 		HI, THERE,
