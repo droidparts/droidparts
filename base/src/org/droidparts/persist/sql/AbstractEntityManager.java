@@ -58,7 +58,8 @@ public abstract class AbstractEntityManager<EntityType extends Entity>
 		try {
 			id = getDB().insertOrThrow(getTableName(), null, cv);
 		} catch (SQLException e) {
-			log(e);
+			L.e(e.getMessage());
+			L.d(e);
 		}
 		if (id > 0) {
 			item.id = id;
@@ -88,7 +89,8 @@ public abstract class AbstractEntityManager<EntityType extends Entity>
 			rowCount = getDB().update(getTableName(), cv, DB.Column.ID + EQUAL,
 					toWhereArgs(item.id));
 		} catch (SQLException e) {
-			log(e);
+			L.e(e.getMessage());
+			L.d(e);
 		}
 		return rowCount > 0;
 	}
@@ -99,7 +101,8 @@ public abstract class AbstractEntityManager<EntityType extends Entity>
 			rowCount = getDB().delete(getTableName(), DB.Column.ID + EQUAL,
 					toWhereArgs(id));
 		} catch (SQLException e) {
-			log(e);
+			L.e(e.getMessage());
+			L.d(e);
 		}
 		return rowCount > 0;
 	}
@@ -190,10 +193,5 @@ public abstract class AbstractEntityManager<EntityType extends Entity>
 	protected abstract ContentValues toContentValues(EntityType item);
 
 	protected abstract void createOrUpdateForeignKeys(EntityType item);
-
-	protected void log(SQLException e) {
-		L.d(e);
-		L.e(e.getMessage());
-	}
 
 }
