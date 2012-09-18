@@ -23,7 +23,7 @@ public class JSONTestCase extends AndroidTestCase {
 		JSONSerializer<Primitives> serializer = new JSONSerializer<Primitives>(
 				Primitives.class);
 		Primitives primitives = serializer.deserialize(getPrimitives());
-		assertNotNull(primitives.arr);
+		assertNotNull(primitives.strArr);
 		//
 		JSONObject obj = serializer.serialize(primitives);
 		//

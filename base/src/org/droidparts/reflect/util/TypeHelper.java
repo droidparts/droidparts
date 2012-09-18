@@ -15,9 +15,11 @@
  */
 package org.droidparts.reflect.util;
 
+import static org.droidparts.reflect.util.ReflectionUtils.instantiateEnum;
 import static org.droidparts.util.Arrays2.toObject;
 import static org.droidparts.util.Arrays2.toPrimitive;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.UUID;
 
@@ -158,58 +160,84 @@ public class TypeHelper {
 
 	public static Object toTypeArr(Class<?> arrCls, String[] arr) {
 		if (arrCls == byte[].class || arrCls == Byte[].class) {
-			Byte[] tArr = new Byte[arr.length];
-			for (int i = 0; i < arr.length; i++) {
-				tArr[i] = Byte.valueOf(arr[i]);
-			}
+			ArrayList<Byte> list = toTypeColl(Byte.class, arr);
+			Byte[] tArr = list.toArray(new Byte[list.size()]);
 			return (arrCls == byte[].class) ? toPrimitive(tArr) : tArr;
 		} else if (arrCls == short[].class || arrCls == Short[].class) {
-			Short[] tArr = new Short[arr.length];
-			for (int i = 0; i < arr.length; i++) {
-				tArr[i] = Short.valueOf(arr[i]);
-			}
+			ArrayList<Short> list = toTypeColl(Short.class, arr);
+			Short[] tArr = list.toArray(new Short[list.size()]);
 			return (arrCls == short[].class) ? toPrimitive(tArr) : tArr;
 		} else if (arrCls == int[].class || arrCls == Integer[].class) {
-			Integer[] tArr = new Integer[arr.length];
-			for (int i = 0; i < arr.length; i++) {
-				tArr[i] = Integer.valueOf(arr[i]);
-			}
+			ArrayList<Integer> list = toTypeColl(Integer.class, arr);
+			Integer[] tArr = list.toArray(new Integer[list.size()]);
 			return (arrCls == int[].class) ? toPrimitive(tArr) : tArr;
 		} else if (arrCls == long[].class || arrCls == Long[].class) {
-			Long[] tArr = new Long[arr.length];
-			for (int i = 0; i < arr.length; i++) {
-				tArr[i] = Long.valueOf(arr[i]);
-			}
+			ArrayList<Long> list = toTypeColl(Long.class, arr);
+			Long[] tArr = list.toArray(new Long[list.size()]);
 			return (arrCls == long[].class) ? toPrimitive(tArr) : tArr;
 		} else if (arrCls == float[].class || arrCls == Float[].class) {
-			Float[] tArr = new Float[arr.length];
-			for (int i = 0; i < arr.length; i++) {
-				tArr[i] = Float.valueOf(arr[i]);
-			}
+			ArrayList<Float> list = toTypeColl(Float.class, arr);
+			Float[] tArr = list.toArray(new Float[list.size()]);
 			return (arrCls == float[].class) ? toPrimitive(tArr) : tArr;
 		} else if (arrCls == double[].class || arrCls == Double[].class) {
-			Double[] tArr = new Double[arr.length];
-			for (int i = 0; i < arr.length; i++) {
-				tArr[i] = Double.valueOf(arr[i]);
-			}
+			ArrayList<Double> list = toTypeColl(Double.class, arr);
+			Double[] tArr = list.toArray(new Double[list.size()]);
 			return (arrCls == double[].class) ? toPrimitive(tArr) : tArr;
 		} else if (arrCls == boolean[].class || arrCls == Boolean[].class) {
-			Boolean[] tArr = new Boolean[arr.length];
-			for (int i = 0; i < arr.length; i++) {
-				tArr[i] = Boolean.valueOf(arr[i]);
-			}
+			ArrayList<Boolean> list = toTypeColl(Boolean.class, arr);
+			Boolean[] tArr = list.toArray(new Boolean[list.size()]);
 			return (arrCls == boolean[].class) ? toPrimitive(tArr) : tArr;
 		} else if (arrCls == char[].class || arrCls == Character[].class) {
-			Character[] tArr = new Character[arr.length];
-			for (int i = 0; i < arr.length; i++) {
-				String str = arr[i];
-				tArr[i] = (str.length() == 0) ? ' ' : str.charAt(0);
-			}
+			ArrayList<Character> list = toTypeColl(Character.class, arr);
+			Character[] tArr = list.toArray(new Character[list.size()]);
 			return (arrCls == char[].class) ? toPrimitive(tArr) : tArr;
 		} else if (arrCls == String[].class) {
 			return arr;
 		} else {
 			throw new IllegalArgumentException("Unable to convert to" + arrCls);
+		}
+	}
+
+	public static <T> ArrayList<T> toTypeColl(Class<T> cls, String[] arr) {
+		ArrayList<Object> list = new ArrayList<Object>();
+		for (String str : arr) {
+			Object val = parseValue(cls, str);
+			if (val != null) {
+				list.add(val);
+			} else {
+				throw new IllegalArgumentException("Unable to convert to" + cls);
+			}
+		}
+		@SuppressWarnings("unchecked")
+		ArrayList<T> typedList = (ArrayList<T>) list;
+		return typedList;
+	}
+
+	public static Object parseValue(Class<?> cls, String str) {
+		if (isByte(cls)) {
+			return Byte.valueOf(str);
+		} else if (isShort(cls)) {
+			return Short.valueOf(str);
+		} else if (isInteger(cls)) {
+			return Integer.valueOf(str);
+		} else if (isLong(cls)) {
+			return Long.valueOf(str);
+		} else if (isFloat(cls)) {
+			return Float.valueOf(str);
+		} else if (isDouble(cls)) {
+			return Double.valueOf(str);
+		} else if (isBoolean(cls)) {
+			return Boolean.valueOf(str);
+		} else if (isCharacter(cls)) {
+			return Character.valueOf((str.length() == 0) ? ' ' : str.charAt(0));
+		} else if (isString(cls)) {
+			return str;
+		} else if (isUUID(cls)) {
+			return UUID.fromString(str);
+		} else if (isEnum(cls)) {
+			return instantiateEnum(cls, str);
+		} else {
+			return null;
 		}
 	}
 

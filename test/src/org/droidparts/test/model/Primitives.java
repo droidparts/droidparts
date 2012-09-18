@@ -1,9 +1,13 @@
 package org.droidparts.test.model;
 
-import org.droidparts.annotation.json.Key;
-import org.droidparts.model.Model;
+import java.util.ArrayList;
+import java.util.HashSet;
 
-public class Primitives extends Model {
+import org.droidparts.annotation.json.Key;
+import org.droidparts.annotation.sql.Column;
+import org.droidparts.model.Entity;
+
+public class Primitives extends Entity {
 	private static final long serialVersionUID = 1L;
 
 	@Key
@@ -26,6 +30,12 @@ public class Primitives extends Model {
 	public String string1;
 
 	@Key(name = "string_array")
-	public String[] arr;
-
+	@Column
+	public String[] strArr;
+	@Column
+	public int[] intArr;
+	@Column
+	public ArrayList<String> strList = new ArrayList<String>();
+	@Column
+	public HashSet<Double> doubleSet = new HashSet<Double>();
 }

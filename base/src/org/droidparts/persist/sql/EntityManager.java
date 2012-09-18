@@ -38,6 +38,7 @@ import static org.droidparts.reflect.util.TypeHelper.isString;
 import static org.droidparts.reflect.util.TypeHelper.isUUID;
 import static org.droidparts.reflect.util.TypeHelper.toObjectArr;
 import static org.droidparts.reflect.util.TypeHelper.toTypeArr;
+import static org.droidparts.reflect.util.TypeHelper.toTypeColl;
 
 import java.io.ByteArrayOutputStream;
 import java.lang.reflect.Field;
@@ -94,7 +95,7 @@ public class EntityManager<EntityType extends Entity> extends
 			int colIdx = cursor.getColumnIndex(dbField.columnName);
 			if (colIdx >= 0) {
 				Object columnVal = readFromCursor(cursor, colIdx,
-						dbField.fieldType);
+						dbField.fieldType, dbField.fieldArrOrCollType);
 				if (columnVal != null) {
 					Field f = getField(entity.getClass(), dbField.fieldName);
 					setFieldVal(f, entity, columnVal);
@@ -238,7 +239,7 @@ public class EntityManager<EntityType extends Entity> extends
 	}
 
 	protected Object readFromCursor(Cursor cursor, int columnIndex,
-			Class<?> fieldCls) {
+			Class<?> fieldCls, Class<?> fieldArrOrCollType) {
 		if (cursor.isNull(columnIndex)) {
 			return null;
 		} else if (isBoolean(fieldCls)) {
@@ -278,10 +279,10 @@ public class EntityManager<EntityType extends Entity> extends
 			if (isArray(fieldCls)) {
 				return toTypeArr(fieldCls, parts);
 			} else {
-				Collection<?> coll = (Collection<?>) instantiate(fieldCls);
-				// TODO populate
-				throw new UnsupportedOperationException("Not yet.");
-				// return coll;
+				@SuppressWarnings("unchecked")
+				Collection<Object> coll = (Collection<Object>) instantiate(fieldCls);
+				coll.addAll(toTypeColl(fieldArrOrCollType, parts));
+				return coll;
 			}
 		} else {
 			// TODO ObjectInputStream

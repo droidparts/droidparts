@@ -1,7 +1,6 @@
 package org.droidparts.test;
 
 import org.droidparts.inject.AbstractDependencyProvider;
-import org.droidparts.persist.sql.AbstractDBOpenHelper;
 import org.droidparts.test.persist.DBOpenHelper;
 
 import android.content.Context;
@@ -16,7 +15,7 @@ public class DependencyProvider extends AbstractDependencyProvider {
 	}
 
 	@Override
-	public AbstractDBOpenHelper getDBOpenHelper() {
+	public DBOpenHelper getDBOpenHelper() {
 		return dbOpenHelper;
 	}
 

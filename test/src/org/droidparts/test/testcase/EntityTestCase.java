@@ -1,10 +1,13 @@
 package org.droidparts.test.testcase;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import org.droidparts.contract.DB;
+import org.droidparts.persist.sql.EntityManager;
 import org.droidparts.persist.sql.stmt.Is;
 import org.droidparts.test.model.Album;
+import org.droidparts.test.model.Primitives;
 import org.droidparts.test.model.Track;
 import org.droidparts.test.persist.sql.AlbumManager;
 import org.droidparts.test.persist.sql.TrackManager;
@@ -85,6 +88,23 @@ public class EntityTestCase extends AndroidTestCase {
 		Album album21 = albumManager.readFromCursor(cursor);
 		assertEquals(album2.name, album21.name);
 		cursor.close();
+	}
+
+	public void testArraysAndCollections() {
+		EntityManager<Primitives> primitivesManager = EntityManager
+				.getInstance(getContext(), Primitives.class);
+		Primitives pri = new Primitives();
+		pri.strArr = new String[] { "one", "two" };
+		pri.intArr = new int[] { 10, 20, 30 };
+		pri.strList.addAll(Arrays.asList(pri.strArr));
+		pri.doubleSet.add(100.500);
+		pri.doubleSet.add(12.5);
+		assertTrue(primitivesManager.create(pri));
+		pri = primitivesManager.read(pri.id);
+		assertEquals(2, pri.strArr.length);
+		assertEquals(30, pri.intArr[2]);
+		assertTrue(pri.strList.contains("one"));
+		assertTrue(pri.doubleSet.contains(12.5));
 	}
 
 	public void testInAndLike() throws Exception {

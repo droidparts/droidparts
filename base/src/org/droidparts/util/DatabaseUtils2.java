@@ -190,7 +190,6 @@ public final class DatabaseUtils2 implements SQL.DDL {
 				return TEXT;
 			}
 		} else if (isEntity(fieldType)) {
-			// TODO foreign key
 			return INTEGER;
 		} else {
 			// persist any other type as blob
