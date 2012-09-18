@@ -18,7 +18,6 @@ package org.droidparts.persist.json;
 import static org.droidparts.reflect.util.ReflectionUtils.getField;
 import static org.droidparts.reflect.util.ReflectionUtils.getTypedFieldVal;
 import static org.droidparts.reflect.util.ReflectionUtils.instantiate;
-import static org.droidparts.reflect.util.ReflectionUtils.instantiateEnum;
 import static org.droidparts.reflect.util.ReflectionUtils.setFieldVal;
 import static org.droidparts.reflect.util.TypeHelper.isArray;
 import static org.droidparts.reflect.util.TypeHelper.isBoolean;
@@ -35,6 +34,7 @@ import static org.droidparts.reflect.util.TypeHelper.isModel;
 import static org.droidparts.reflect.util.TypeHelper.isShort;
 import static org.droidparts.reflect.util.TypeHelper.isString;
 import static org.droidparts.reflect.util.TypeHelper.isUUID;
+import static org.droidparts.reflect.util.TypeHelper.parseValue;
 import static org.droidparts.reflect.util.TypeHelper.toTypeArr;
 import static org.json.JSONObject.NULL;
 
@@ -42,7 +42,6 @@ import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.UUID;
 
 import org.droidparts.model.Model;
 import org.droidparts.reflect.model.ModelField;
@@ -247,18 +246,6 @@ public class JSONSerializer<ModelType extends Model> {
 		String strVal = String.valueOf(jsonVal);
 		if (NULL.equals(jsonVal)) {
 			return jsonVal;
-		} else if (isByte(valType)) {
-			return Byte.valueOf(strVal);
-		} else if (isShort(valType)) {
-			return Short.valueOf(strVal);
-		} else if (isInteger(valType)) {
-			return Integer.valueOf(strVal);
-		} else if (isLong(valType)) {
-			return Long.valueOf(strVal);
-		} else if (isFloat(valType)) {
-			return Float.valueOf(strVal);
-		} else if (isDouble(valType)) {
-			return Double.valueOf(strVal);
 		} else if (isBoolean(valType)) {
 			if ("0".equals(strVal) || "false".equalsIgnoreCase(strVal)) {
 				return Boolean.FALSE;
@@ -268,15 +255,14 @@ public class JSONSerializer<ModelType extends Model> {
 				throw new IllegalArgumentException("Unparseable boolean: '"
 						+ strVal + "'.");
 			}
-		} else if (isCharacter(valType)) {
-			return (strVal.length() == 0) ? ' ' : strVal.charAt(0);
-		} else if (isString(valType)) {
-			return strVal;
-		} else if (isEnum(valType)) {
-			return instantiateEnum(valType, (String) jsonVal);
-		} else if (isUUID(valType)) {
-			return UUID.fromString((String) jsonVal);
-		} else if (isByteArray(valType)) {
+		}
+
+		Object parsedVal = parseValue(valType, strVal);
+		if (parsedVal != null) {
+			return parsedVal;
+		}
+
+		if (isByteArray(valType)) {
 			return jsonVal;
 		} else if (isModel(valType)) {
 			return getInstance(dirtyCast(valType)).deserialize(
