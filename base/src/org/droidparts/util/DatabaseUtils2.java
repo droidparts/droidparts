@@ -91,6 +91,19 @@ public final class DatabaseUtils2 implements SQL.DDL {
 				selectionArgs);
 	}
 
+	public static long[] readIds(Cursor c) {
+		long[] arr = new long[c.getCount()];
+		int count = 0;
+		try {
+			while (c.moveToNext()) {
+				arr[count++] = c.getLong(0);
+			}
+		} finally {
+			c.close();
+		}
+		return arr;
+	}
+
 	public static void execQueries(SQLiteDatabase db, ArrayList<String> queries) {
 		db.beginTransaction();
 		try {

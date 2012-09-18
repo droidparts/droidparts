@@ -17,6 +17,7 @@ package org.droidparts.persist.sql;
 
 import static org.droidparts.util.DatabaseUtils2.toWhereArgs;
 
+import java.util.ArrayList;
 import java.util.Collection;
 
 import org.droidparts.contract.DB;
@@ -70,14 +71,9 @@ public abstract class AbstractEntityManager<EntityType extends Entity>
 	}
 
 	public EntityType read(long id) {
-		EntityType item = null;
 		Cursor cursor = getDB().query(getTableName(), null,
 				DB.Column.ID + EQUAL, toWhereArgs(id), null, null, null);
-		if (cursor.moveToFirst()) {
-			item = readFromCursor(cursor);
-		}
-		cursor.close();
-		return item;
+		return readFirstFromCursor(cursor);
 	}
 
 	public boolean update(EntityType item) {
@@ -179,6 +175,30 @@ public abstract class AbstractEntityManager<EntityType extends Entity>
 	};
 
 	//
+
+	public EntityType readFirstFromCursor(Cursor cursor) {
+		EntityType item = null;
+		try {
+			if (cursor.moveToFirst()) {
+				item = readFromCursor(cursor);
+			}
+		} finally {
+			cursor.close();
+		}
+		return item;
+	}
+
+	public ArrayList<EntityType> readAllFromCursor(Cursor cursor) {
+		ArrayList<EntityType> list = new ArrayList<EntityType>();
+		try {
+			while (cursor.moveToNext()) {
+				list.add(readFromCursor(cursor));
+			}
+		} finally {
+			cursor.close();
+		}
+		return list;
+	}
 
 	public abstract EntityType readFromCursor(Cursor cursor);
 
