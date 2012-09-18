@@ -176,8 +176,8 @@ public final class DatabaseUtils2 implements SQL.DDL {
 			return INTEGER;
 		} else if (isFloat(fieldType) || isDouble(fieldType)) {
 			return REAL;
-		} else if (isString(fieldType) || isUUID(fieldType)
-				|| isEnum(fieldType)) {
+		} else if (isString(fieldType) || isEnum(fieldType)
+				|| isUUID(fieldType)) {
 			return TEXT;
 		} else if (isByteArray(fieldType) || isBitmap(fieldType)) {
 			return BLOB;

@@ -30,12 +30,22 @@ public class Primitives extends Entity {
 	public String string1;
 
 	@Key(name = "string_array")
-	@Column
+	@Column(nullable = true)
 	public String[] strArr;
-	@Column
+	@Column(nullable = true)
 	public int[] intArr;
-	@Column
+	@Column(nullable = true)
 	public ArrayList<String> strList = new ArrayList<String>();
-	@Column
+	@Column(nullable = true)
 	public HashSet<Double> doubleSet = new HashSet<Double>();
+
+	@Column(nullable = true)
+	public En en;
+	@Column(nullable = true)
+	public En[] enArr;
+
+	public static enum En {
+		HI, THERE,
+	}
+
 }

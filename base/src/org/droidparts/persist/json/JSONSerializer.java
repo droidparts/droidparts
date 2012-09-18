@@ -293,7 +293,7 @@ public class JSONSerializer<ModelType extends Model> {
 				}
 			}
 			if (isArr) {
-				return toTypeArr(valType, arr);
+				return toTypeArr(valArrOrCollType, arr);
 			} else {
 				return coll;
 			}

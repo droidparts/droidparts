@@ -277,7 +277,7 @@ public class EntityManager<EntityType extends Entity> extends
 			String[] parts = (str.length() > 0) ? str.split("\\" + SEP)
 					: new String[0];
 			if (isArray(fieldCls)) {
-				return toTypeArr(fieldCls, parts);
+				return toTypeArr(fieldArrOrCollType, parts);
 			} else {
 				@SuppressWarnings("unchecked")
 				Collection<Object> coll = (Collection<Object>) instantiate(fieldCls);

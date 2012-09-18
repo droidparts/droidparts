@@ -150,51 +150,59 @@ public class TypeHelper {
 		return arr;
 	}
 
-	public static Object toTypeArr(Class<?> arrCls, Object[] arr) {
+	public static Object toTypeArr(Class<?> arrValType, Object[] arr) {
 		String[] arr2 = new String[arr.length];
 		for (int i = 0; i < arr.length; i++) {
 			arr2[i] = arr[i].toString();
 		}
-		return toTypeArr(arrCls, arr2);
+		return toTypeArr(arrValType, arr2);
 	}
 
-	public static Object toTypeArr(Class<?> arrCls, String[] arr) {
-		if (arrCls == byte[].class || arrCls == Byte[].class) {
+	public static Object toTypeArr(Class<?> arrValType, String[] arr) {
+		if (isByte(arrValType)) {
 			ArrayList<Byte> list = toTypeColl(Byte.class, arr);
 			Byte[] tArr = list.toArray(new Byte[list.size()]);
-			return (arrCls == byte[].class) ? toPrimitive(tArr) : tArr;
-		} else if (arrCls == short[].class || arrCls == Short[].class) {
+			return (arrValType == byte.class) ? toPrimitive(tArr) : tArr;
+		} else if (isShort(arrValType)) {
 			ArrayList<Short> list = toTypeColl(Short.class, arr);
 			Short[] tArr = list.toArray(new Short[list.size()]);
-			return (arrCls == short[].class) ? toPrimitive(tArr) : tArr;
-		} else if (arrCls == int[].class || arrCls == Integer[].class) {
+			return (arrValType == short.class) ? toPrimitive(tArr) : tArr;
+		} else if (isInteger(arrValType)) {
 			ArrayList<Integer> list = toTypeColl(Integer.class, arr);
 			Integer[] tArr = list.toArray(new Integer[list.size()]);
-			return (arrCls == int[].class) ? toPrimitive(tArr) : tArr;
-		} else if (arrCls == long[].class || arrCls == Long[].class) {
+			return (arrValType == int.class) ? toPrimitive(tArr) : tArr;
+		} else if (isLong(arrValType)) {
 			ArrayList<Long> list = toTypeColl(Long.class, arr);
 			Long[] tArr = list.toArray(new Long[list.size()]);
-			return (arrCls == long[].class) ? toPrimitive(tArr) : tArr;
-		} else if (arrCls == float[].class || arrCls == Float[].class) {
+			return (arrValType == long.class) ? toPrimitive(tArr) : tArr;
+		} else if (isFloat(arrValType)) {
 			ArrayList<Float> list = toTypeColl(Float.class, arr);
 			Float[] tArr = list.toArray(new Float[list.size()]);
-			return (arrCls == float[].class) ? toPrimitive(tArr) : tArr;
-		} else if (arrCls == double[].class || arrCls == Double[].class) {
+			return (arrValType == float.class) ? toPrimitive(tArr) : tArr;
+		} else if (isDouble(arrValType)) {
 			ArrayList<Double> list = toTypeColl(Double.class, arr);
 			Double[] tArr = list.toArray(new Double[list.size()]);
-			return (arrCls == double[].class) ? toPrimitive(tArr) : tArr;
-		} else if (arrCls == boolean[].class || arrCls == Boolean[].class) {
+			return (arrValType == double.class) ? toPrimitive(tArr) : tArr;
+		} else if (isBoolean(arrValType)) {
 			ArrayList<Boolean> list = toTypeColl(Boolean.class, arr);
 			Boolean[] tArr = list.toArray(new Boolean[list.size()]);
-			return (arrCls == boolean[].class) ? toPrimitive(tArr) : tArr;
-		} else if (arrCls == char[].class || arrCls == Character[].class) {
+			return (arrValType == boolean.class) ? toPrimitive(tArr) : tArr;
+		} else if (isCharacter(arrValType)) {
 			ArrayList<Character> list = toTypeColl(Character.class, arr);
 			Character[] tArr = list.toArray(new Character[list.size()]);
-			return (arrCls == char[].class) ? toPrimitive(tArr) : tArr;
-		} else if (arrCls == String[].class) {
+			return (arrValType == char.class) ? toPrimitive(tArr) : tArr;
+		} else if (isString(arrValType)) {
 			return arr;
+		} else if (isEnum(arrValType)) {
+			@SuppressWarnings("rawtypes")
+			ArrayList<Enum> list = toTypeColl(Enum.class, arr);
+			return list.toArray(new Enum[list.size()]);
+		} else if (isUUID(arrValType)) {
+			ArrayList<UUID> list = toTypeColl(UUID.class, arr);
+			return list.toArray(new UUID[list.size()]);
 		} else {
-			throw new IllegalArgumentException("Unable to convert to" + arrCls);
+			throw new IllegalArgumentException("Unable to convert to"
+					+ arrValType);
 		}
 	}
 
@@ -232,10 +240,10 @@ public class TypeHelper {
 			return Character.valueOf((str.length() == 0) ? ' ' : str.charAt(0));
 		} else if (isString(cls)) {
 			return str;
-		} else if (isUUID(cls)) {
-			return UUID.fromString(str);
 		} else if (isEnum(cls)) {
 			return instantiateEnum(cls, str);
+		} else if (isUUID(cls)) {
+			return UUID.fromString(str);
 		} else {
 			return null;
 		}

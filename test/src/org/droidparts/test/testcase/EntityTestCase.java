@@ -8,6 +8,7 @@ import org.droidparts.persist.sql.EntityManager;
 import org.droidparts.persist.sql.stmt.Is;
 import org.droidparts.test.model.Album;
 import org.droidparts.test.model.Primitives;
+import org.droidparts.test.model.Primitives.En;
 import org.droidparts.test.model.Track;
 import org.droidparts.test.persist.sql.AlbumManager;
 import org.droidparts.test.persist.sql.TrackManager;
@@ -17,12 +18,15 @@ import android.test.AndroidTestCase;
 
 public class EntityTestCase extends AndroidTestCase {
 
+	private EntityManager<Primitives> primitivesManager;
 	private AlbumManager albumManager;
 	private TrackManager trackManager;
 
 	@Override
 	protected void setUp() throws Exception {
 		if (albumManager == null) {
+			primitivesManager = EntityManager.getInstance(getContext(),
+					Primitives.class);
 			albumManager = new AlbumManager(getContext());
 			trackManager = new TrackManager(getContext());
 		}
@@ -90,9 +94,18 @@ public class EntityTestCase extends AndroidTestCase {
 		cursor.close();
 	}
 
+	public void testEnum() {
+		Primitives pri = new Primitives();
+		pri.en = En.HI;
+		// FIXME
+		// pri.enArr = new En[] { En.HI, En.THERE };
+		primitivesManager.create(pri);
+		pri = primitivesManager.read(pri.id);
+		assertEquals(En.HI, pri.en);
+		// assertEquals(2, pri.enArr.length);
+	}
+
 	public void testArraysAndCollections() {
-		EntityManager<Primitives> primitivesManager = EntityManager
-				.getInstance(getContext(), Primitives.class);
 		Primitives pri = new Primitives();
 		pri.strArr = new String[] { "one", "two" };
 		pri.intArr = new int[] { 10, 20, 30 };
