@@ -21,6 +21,7 @@ import org.droidparts.activity.ListActivity;
 import org.droidparts.annotation.inject.InjectView;
 import org.droidparts.sample.R;
 import org.droidparts.sample.adapter.EntryListAdapter;
+import org.droidparts.sample.db.EntryManager;
 import org.droidparts.sample.model.Entry;
 import org.droidparts.util.L;
 
@@ -48,7 +49,7 @@ public class EntryListActivity extends ListActivity implements OnClickListener {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		adapter = new EntryListAdapter(this);
+		adapter = new EntryListAdapter(this, new EntryManager(this));
 		setListAdapter(adapter);
 		addButton.setOnClickListener(this);
 		toJsonButton.setOnClickListener(this);

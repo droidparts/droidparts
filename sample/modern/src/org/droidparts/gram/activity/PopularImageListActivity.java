@@ -16,11 +16,13 @@
 package org.droidparts.gram.activity;
 
 import org.droidparts.activity.SingleFragmentActivity;
+import org.droidparts.annotation.inject.InjectDependency;
 import org.droidparts.gram.R;
 import org.droidparts.gram.adapter.ImageListAdapter;
 import org.droidparts.gram.fragment.ImageDetailFragment;
 import org.droidparts.gram.fragment.ImageListFragment;
 import org.droidparts.gram.model.Image;
+import org.droidparts.gram.persist.ImageEntityManager;
 import org.droidparts.gram.service.ImageIntentService;
 import org.droidparts.service.listener.MainThreadResultReceiver;
 
@@ -33,6 +35,9 @@ import com.actionbarsherlock.view.MenuItem;
 public class PopularImageListActivity extends
 		SingleFragmentActivity<ImageListFragment> implements
 		ImageListFragment.Listener {
+
+	@InjectDependency
+	private ImageEntityManager imageEntityManager;
 
 	private ImageListAdapter adapter;
 
@@ -80,7 +85,7 @@ public class PopularImageListActivity extends
 	}
 
 	public void setAdapter() {
-		adapter = new ImageListAdapter(this);
+		adapter = new ImageListAdapter(this, imageEntityManager);
 		getFragment().setContent(adapter);
 	}
 

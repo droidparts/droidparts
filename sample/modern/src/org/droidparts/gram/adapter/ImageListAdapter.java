@@ -37,8 +37,9 @@ public class ImageListAdapter extends EntityCursorAdapter<Image> {
 
 	private final ImageAttacher imageAttacher;
 
-	public ImageListAdapter(Activity activity) {
-		super(activity, new ImageEntityManager(activity));
+	public ImageListAdapter(Activity activity,
+			ImageEntityManager imageEntityManager) {
+		super(activity, imageEntityManager, imageEntityManager.select());
 		imageAttacher = new ImageAttacher(activity);
 	}
 

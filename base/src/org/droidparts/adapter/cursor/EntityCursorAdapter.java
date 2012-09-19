@@ -30,14 +30,15 @@ public abstract class EntityCursorAdapter<EntityType extends Entity> extends
 	protected final EntityManager<EntityType> entityManager;
 
 	public EntityCursorAdapter(Activity activity,
-			EntityManager<EntityType> entityManager) {
-		this(activity, entityManager, entityManager.select());
-	}
-
-	public EntityCursorAdapter(Activity activity,
 			EntityManager<EntityType> entityManager,
 			SelectBuilder<EntityType> selectBuilder) {
-		super(activity, selectBuilder.execute());
+		this(activity, entityManager, selectBuilder.execute());
+	}
+
+	// @Deprecated
+	public EntityCursorAdapter(Activity activity,
+			EntityManager<EntityType> entityManager, Cursor cursor) {
+		super(activity, cursor);
 		this.entityManager = entityManager;
 	}
 
@@ -79,15 +80,6 @@ public abstract class EntityCursorAdapter<EntityType extends Entity> extends
 			getCursor().requery();
 		}
 		return success;
-	}
-
-	//
-
-	@Deprecated
-	public EntityCursorAdapter(Activity activity,
-			EntityManager<EntityType> entityManager, Cursor cursor) {
-		super(activity, cursor);
-		this.entityManager = entityManager;
 	}
 
 }
