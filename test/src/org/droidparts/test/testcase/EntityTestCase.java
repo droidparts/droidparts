@@ -193,6 +193,23 @@ public class EntityTestCase extends AndroidTestCase implements DB {
 		assertEquals(0, trackManager.select().count());
 	}
 
+	public void testEagerForeignKeys() {
+		Album album = new Album("Diamond", 2007);
+		albumManager.create(album);
+		Track track = new Track();
+		track.name = TRACK_NAMES[0];
+		track.album = album;
+		track.nullableAlbum = album;
+		trackManager.create(track);
+		track = trackManager.read(track.id);
+		assertNull(track.album.name);
+		assertNull(track.nullableAlbum.name);
+		trackManager.fillForeignKeys(track,
+				trackManager.getEagerForeignKeyColumnNames());
+		assertNotNull(track.album.name);
+		assertNull(track.nullableAlbum.name);
+	}
+
 	public void testUniqueAndNullable() {
 		Album album = new Album();
 		assertFalse(albumManager.create(album));

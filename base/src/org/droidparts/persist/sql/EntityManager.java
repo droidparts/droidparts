@@ -171,21 +171,21 @@ public class EntityManager<EntityType extends Entity> extends
 		}
 	}
 
-	public String[] getEagerForeignKeyFieldNames() {
-		if (eagerForeignKeyFieldNames == null) {
-			HashSet<String> eagerFieldNames = new HashSet<String>();
+	public String[] getEagerForeignKeyColumnNames() {
+		if (eagerForeignKeyColumnNames == null) {
+			HashSet<String> eagerColumnNames = new HashSet<String>();
 			for (EntityField ef : processor.getModelClassFields()) {
 				if (ef.columnEager) {
-					eagerFieldNames.add(ef.fieldName);
+					eagerColumnNames.add(ef.columnName);
 				}
 			}
-			eagerForeignKeyFieldNames = eagerFieldNames
-					.toArray(new String[eagerFieldNames.size()]);
+			eagerForeignKeyColumnNames = eagerColumnNames
+					.toArray(new String[eagerColumnNames.size()]);
 		}
-		return eagerForeignKeyFieldNames;
+		return eagerForeignKeyColumnNames;
 	}
 
-	private String[] eagerForeignKeyFieldNames;
+	private String[] eagerForeignKeyColumnNames;
 
 	protected void putToContentValues(ContentValues cv, String key,
 			Class<?> valueCls, Object value) {

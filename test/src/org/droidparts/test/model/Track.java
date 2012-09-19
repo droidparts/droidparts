@@ -12,7 +12,7 @@ public class Track extends Entity {
 	@Column(name = DB.Column.NAME)
 	public String name;
 
-	@Column(name = DB.Column.ALBUM_ID)
+	@Column(name = DB.Column.ALBUM_ID, eager = true)
 	public Album album;
 
 	@Column(nullable = true)
