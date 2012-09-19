@@ -22,8 +22,9 @@ import android.test.AndroidTestCase;
 public class EntityTestCase extends AndroidTestCase implements DB {
 
 	private EntityManager<Primitives> primitivesManager;
-	private EntityManager<Tag> tagManager;
+	private EntityManager<AlbumToTag> albumToTagManager;
 	private AlbumManager albumManager;
+	private EntityManager<Tag> tagManager;
 	private TrackManager trackManager;
 
 	private static final String[] TRACK_NAMES = new String[] { "Diamond",
@@ -36,6 +37,8 @@ public class EntityTestCase extends AndroidTestCase implements DB {
 		if (primitivesManager == null) {
 			primitivesManager = EntityManager.getInstance(getContext(),
 					Primitives.class);
+			albumToTagManager = EntityManager.getInstance(getContext(),
+					AlbumToTag.class);
 			tagManager = EntityManager.getInstance(getContext(), Tag.class);
 			albumManager = new AlbumManager(getContext());
 			trackManager = new TrackManager(getContext());
@@ -48,6 +51,18 @@ public class EntityTestCase extends AndroidTestCase implements DB {
 		tagManager.delete().execute();
 		albumManager.delete().execute();
 		trackManager.delete().execute();
+	}
+
+	public void testUniqueIndex() {
+		Album album = new Album("A", 1);
+		Tag tag = new Tag("t");
+		AlbumToTag att = new AlbumToTag(album, tag);
+		assertTrue(albumToTagManager.create(att));
+		assertFalse(albumToTagManager.create(att));
+		album.name = "B";
+		album.id = 0;
+		assertTrue(albumToTagManager.create(att));
+		assertEquals(2, albumToTagManager.select().count());
 	}
 
 	public void testCRUD() throws Exception {
@@ -232,8 +247,6 @@ public class EntityTestCase extends AndroidTestCase implements DB {
 	}
 
 	public void testM2M() {
-		EntityManager<AlbumToTag> albumToTagManager = EntityManager
-				.getInstance(getContext(), AlbumToTag.class);
 		Album album = new Album("A", 1);
 		albumManager.create(album);
 		ArrayList<Tag> tags = new ArrayList<Tag>();

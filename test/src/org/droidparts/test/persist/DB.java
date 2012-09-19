@@ -4,9 +4,11 @@ public interface DB extends org.droidparts.contract.DB {
 
 	public interface Table extends org.droidparts.contract.DB.Table {
 
-		String ALBUM = "album";
-		String TRACK = "track";
-		String ALBUM_TO_TRACK = "album_to_track";
+		String ALBUMS = "albums";
+		String TRACKS = "tracks";
+		String TAGS = "tags";
+
+		String ALBUM_TO_TAG = "album_to_tag";
 
 	}
 

@@ -5,7 +5,7 @@ import org.droidparts.annotation.sql.Table;
 import org.droidparts.model.Entity;
 import org.droidparts.test.persist.DB;
 
-@Table(name = "tracks")
+@Table(name = DB.Table.TRACKS)
 public class Track extends Entity {
 	private static final long serialVersionUID = 1L;
 

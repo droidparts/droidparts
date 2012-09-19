@@ -11,7 +11,7 @@ import org.droidparts.test.model.Track;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 
-public class DBOpenHelper extends AbstractDBOpenHelper2 {
+public class DBOpenHelper extends AbstractDBOpenHelper2 implements DB {
 
 	public DBOpenHelper(Context ctx) {
 		super(ctx, null, 1);
@@ -26,7 +26,8 @@ public class DBOpenHelper extends AbstractDBOpenHelper2 {
 
 	@Override
 	protected void onCreateExtra(SQLiteDatabase db) {
-		createIndex(db, "AlbumToTag", true, "album_id", "tag_id");
+		createIndex(db, Table.ALBUM_TO_TAG, true, Column.ALBUM_ID,
+				Column.TAG_ID);
 	}
 
 	@Override
