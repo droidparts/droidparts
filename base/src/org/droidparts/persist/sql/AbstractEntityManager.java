@@ -22,7 +22,6 @@ import org.droidparts.contract.DB;
 import org.droidparts.contract.SQL;
 import org.droidparts.model.Entity;
 import org.droidparts.persist.sql.stmt.DeleteBuilder;
-import org.droidparts.persist.sql.stmt.Is;
 import org.droidparts.persist.sql.stmt.SelectBuilder;
 import org.droidparts.persist.sql.stmt.UpdateBuilder;
 import org.droidparts.util.L;
@@ -57,7 +56,7 @@ public abstract class AbstractEntityManager<EntityType extends Entity>
 	}
 
 	public EntityType read(long id) {
-		Cursor cursor = select().where(DB.Column.ID, Is.EQUAL, id).execute();
+		Cursor cursor = select().whereId(id).execute();
 		return readFirst(cursor);
 	}
 
@@ -65,13 +64,12 @@ public abstract class AbstractEntityManager<EntityType extends Entity>
 		createOrUpdateForeignKeys(item);
 		ContentValues cv = toContentValues(item);
 		cv.remove(DB.Column.ID);
-		int rowCount = update().where(DB.Column.ID, Is.EQUAL, item.id)
-				.setContent(cv).execute();
+		int rowCount = update().whereId(item.id).setContent(cv).execute();
 		return rowCount > 0;
 	}
 
 	public boolean delete(long id) {
-		int rowCount = delete().where(DB.Column.ID, Is.EQUAL, id).execute();
+		int rowCount = delete().whereId(id).execute();
 		return rowCount > 0;
 	}
 
