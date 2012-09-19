@@ -59,7 +59,7 @@ public abstract class AbstractEntityManager<EntityType extends Entity>
 		try {
 			id = getDB().insertOrThrow(getTableName(), null, cv);
 		} catch (SQLException e) {
-			L.e(e.getMessage());
+			L.w(e.getMessage());
 			L.d(e);
 		}
 		if (id > 0) {
@@ -85,7 +85,7 @@ public abstract class AbstractEntityManager<EntityType extends Entity>
 			rowCount = getDB().update(getTableName(), cv, DB.Column.ID + EQUAL,
 					toWhereArgs(item.id));
 		} catch (SQLException e) {
-			L.e(e.getMessage());
+			L.w(e.getMessage());
 			L.d(e);
 		}
 		return rowCount > 0;
@@ -97,7 +97,7 @@ public abstract class AbstractEntityManager<EntityType extends Entity>
 			rowCount = getDB().delete(getTableName(), DB.Column.ID + EQUAL,
 					toWhereArgs(id));
 		} catch (SQLException e) {
-			L.e(e.getMessage());
+			L.w(e.getMessage());
 			L.d(e);
 		}
 		return rowCount > 0;
