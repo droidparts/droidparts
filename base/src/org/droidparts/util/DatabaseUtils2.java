@@ -118,7 +118,10 @@ public final class DatabaseUtils2 implements SQL.DDL {
 	}
 
 	public static void createIndex(SQLiteDatabase db, String table,
-			boolean unique, String... columns) {
+			boolean unique, String firstColumn, String... otherColumns) {
+		ArrayList<String> columns = new ArrayList<String>();
+		columns.add(firstColumn);
+		columns.addAll(asList(otherColumns));
 		StringBuilder sb = new StringBuilder();
 		sb.append(unique ? CREATE_UNIQUE_INDEX : CREATE_INDEX);
 		sb.append("idx_" + table + "_" + join(columns, "_", null));

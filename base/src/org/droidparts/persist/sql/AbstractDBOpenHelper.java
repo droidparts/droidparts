@@ -48,8 +48,9 @@ public abstract class AbstractDBOpenHelper extends SQLiteOpenHelper implements
 	}
 
 	protected void createIndex(SQLiteDatabase db, String table, boolean unique,
-			String... columns) {
-		DatabaseUtils2.createIndex(db, table, unique, columns);
+			String firstColumn, String... otherColumns) {
+		DatabaseUtils2
+				.createIndex(db, table, unique, firstColumn, otherColumns);
 	}
 
 	protected void dropTables(SQLiteDatabase db, String... optionalTableNames) {
