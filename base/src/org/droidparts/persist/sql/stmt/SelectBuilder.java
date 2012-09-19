@@ -45,6 +45,11 @@ public class SelectBuilder<EntityType extends Entity> extends
 	}
 
 	@Override
+	public SelectBuilder<EntityType> whereId(long id, long... moreIds) {
+		return (SelectBuilder<EntityType>) super.whereId(id, moreIds);
+	}
+
+	@Override
 	public SelectBuilder<EntityType> where(String columnName, Is operator,
 			Object... columnValue) {
 		return (SelectBuilder<EntityType>) super.where(columnName, operator,

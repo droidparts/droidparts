@@ -32,6 +32,11 @@ public class DeleteBuilder<EntityType extends Entity> extends
 	}
 
 	@Override
+	public DeleteBuilder<EntityType> whereId(long id, long... moreIds) {
+		return (DeleteBuilder<EntityType>) super.whereId(id, moreIds);
+	}
+
+	@Override
 	public DeleteBuilder<EntityType> where(String columnName, Is operator,
 			Object... columnValue) {
 		return (DeleteBuilder<EntityType>) super.where(columnName, operator,

@@ -101,8 +101,7 @@ public class EntityTestCase extends AndroidTestCase implements DB {
 		created = albumManager.create(album2);
 		assertTrue(created);
 
-		int count = albumManager.select().where(Column.ID, Is.EQUAL, album1.id)
-				.count();
+		int count = albumManager.select().whereId(album1.id).count();
 		assertEquals(1, count);
 
 		Cursor cursor = albumManager.select()
@@ -165,7 +164,7 @@ public class EntityTestCase extends AndroidTestCase implements DB {
 		boolean success = albumManager.create(list);
 		assertTrue(success);
 		//
-		int count = albumManager.select().where(Column.ID, Is.IN, 1, 2).count();
+		int count = albumManager.select().whereId(1, 2).count();
 		assertEquals(2, count);
 		//
 		int[] arr = new int[] { 1, 2 };

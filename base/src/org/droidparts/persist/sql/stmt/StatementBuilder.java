@@ -22,6 +22,7 @@ import static org.droidparts.util.DatabaseUtils2.toWhereArgs;
 
 import java.util.ArrayList;
 
+import org.droidparts.contract.DB;
 import org.droidparts.contract.SQL;
 import org.droidparts.model.Entity;
 
@@ -41,6 +42,15 @@ public abstract class StatementBuilder<EntityType extends Entity> implements
 	public StatementBuilder(SQLiteDatabase db, String tableName) {
 		this.db = db;
 		this.tableName = tableName;
+	}
+
+	public StatementBuilder<EntityType> whereId(long id, long... moreIds) {
+		if (moreIds.length == 0) {
+			return where(DB.Column.ID, Is.EQUAL, id);
+		} else {
+			long[] ids = prepend(id, moreIds);
+			return where(DB.Column.ID, Is.IN, ids);
+		}
 	}
 
 	protected StatementBuilder<EntityType> where(String columnName,
@@ -98,6 +108,15 @@ public abstract class StatementBuilder<EntityType extends Entity> implements
 		selection = selectionBuilder.toString();
 		selectionArgs = selectionArgsBuilder
 				.toArray(new String[selectionArgsBuilder.size()]);
+	}
+
+	private static long[] prepend(long id, long[] moreIds) {
+		long[] ids = new long[moreIds.length + 1];
+		ids[0] = id;
+		for (int i = 0; i < moreIds.length; i++) {
+			ids[i + 1] = moreIds[i];
+		}
+		return ids;
 	}
 
 }
