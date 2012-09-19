@@ -39,6 +39,7 @@ import java.util.HashSet;
 import org.droidparts.contract.DB.Column;
 import org.droidparts.contract.SQL;
 import org.droidparts.model.Entity;
+import org.droidparts.persist.sql.AbstractEntityManager;
 import org.droidparts.reflect.model.EntityField;
 import org.droidparts.reflect.processor.EntityAnnotationProcessor;
 
@@ -91,17 +92,43 @@ public final class DatabaseUtils2 implements SQL.DDL {
 				selectionArgs);
 	}
 
-	public static long[] readIds(Cursor c) {
-		long[] arr = new long[c.getCount()];
+	public static long[] readIds(Cursor cursor) {
+		long[] arr = new long[cursor.getCount()];
 		int count = 0;
 		try {
-			while (c.moveToNext()) {
-				arr[count++] = c.getLong(0);
+			while (cursor.moveToNext()) {
+				arr[count++] = cursor.getLong(0);
 			}
 		} finally {
-			c.close();
+			cursor.close();
 		}
 		return arr;
+	}
+
+	public static <EntityType extends Entity> EntityType readFirst(
+			AbstractEntityManager<EntityType> entityManager, Cursor cursor) {
+		EntityType item = null;
+		try {
+			if (cursor.moveToFirst()) {
+				item = entityManager.readRow(cursor);
+			}
+		} finally {
+			cursor.close();
+		}
+		return item;
+	}
+
+	public static <EntityType extends Entity> ArrayList<EntityType> readAll(
+			AbstractEntityManager<EntityType> entityManager, Cursor cursor) {
+		ArrayList<EntityType> list = new ArrayList<EntityType>();
+		try {
+			while (cursor.moveToNext()) {
+				list.add(entityManager.readRow(cursor));
+			}
+		} finally {
+			cursor.close();
+		}
+		return list;
 	}
 
 	public static void execQueries(SQLiteDatabase db, ArrayList<String> queries) {

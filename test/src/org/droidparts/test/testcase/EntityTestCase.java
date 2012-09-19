@@ -108,14 +108,14 @@ public class EntityTestCase extends AndroidTestCase implements DB {
 				.where(Column.COMMENT, Is.NOT_NULL).execute();
 		assertEquals(1, cursor.getCount());
 		cursor.moveToFirst();
-		Album album11 = albumManager.readFrom(cursor);
+		Album album11 = albumManager.readRow(cursor);
 		assertEquals(album1.name, album11.name);
 		cursor.close();
 
 		cursor = albumManager.select().where(Column.COMMENT, Is.NULL).execute();
 		assertEquals(1, cursor.getCount());
 		cursor.moveToFirst();
-		Album album21 = albumManager.readFrom(cursor);
+		Album album21 = albumManager.readRow(cursor);
 		assertEquals(album2.name, album21.name);
 		cursor.close();
 	}
