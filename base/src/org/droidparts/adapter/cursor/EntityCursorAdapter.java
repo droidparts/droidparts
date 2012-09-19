@@ -44,7 +44,7 @@ public abstract class EntityCursorAdapter<EntityType extends Entity> extends
 
 	@Override
 	public void bindView(View view, Context context, Cursor cursor) {
-		bindView(context, view, entityManager.readFromCursor(cursor));
+		bindView(context, view, entityManager.readFrom(cursor));
 	}
 
 	public abstract void bindView(Context context, View view, EntityType item);

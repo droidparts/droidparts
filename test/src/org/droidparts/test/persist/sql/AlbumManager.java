@@ -29,7 +29,7 @@ public class AlbumManager extends EntityManager<Album> implements DB {
 		ArrayList<Tag> tags = new ArrayList<Tag>();
 		Cursor c = tagManager.select()
 				.where(Column.ID, Is.IN, getTagIds(albumId)).execute();
-		tags = tagManager.readAllFromCursor(c);
+		tags = tagManager.readAll(c);
 		return tags;
 	}
 
@@ -40,7 +40,7 @@ public class AlbumManager extends EntityManager<Album> implements DB {
 			if (!success) {
 				Cursor c = tagManager.select()
 						.where(Column.NAME, Is.EQUAL, tag.name).execute();
-				tag = tagManager.readFirstFromCursor(c);
+				tag = tagManager.readFirst(c);
 			}
 			albumToTagManager.create(new AlbumToTag(album, tag));
 		}

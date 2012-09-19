@@ -97,7 +97,7 @@ public class EntityManager<EntityType extends Entity> extends
 	}
 
 	@Override
-	public EntityType readFromCursor(Cursor cursor) {
+	public EntityType readFrom(Cursor cursor) {
 		EntityType entity = instantiate(cls);
 		EntityField[] fields = processor.getModelClassFields();
 		for (EntityField dbField : fields) {

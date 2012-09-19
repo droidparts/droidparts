@@ -58,7 +58,7 @@ public abstract class AbstractEntityManager<EntityType extends Entity>
 
 	public EntityType read(long id) {
 		Cursor cursor = select().where(DB.Column.ID, Is.EQUAL, id).execute();
-		return readFirstFromCursor(cursor);
+		return readFirst(cursor);
 	}
 
 	public boolean update(EntityType item) {
@@ -148,11 +148,11 @@ public abstract class AbstractEntityManager<EntityType extends Entity>
 
 	//
 
-	public EntityType readFirstFromCursor(Cursor cursor) {
+	public EntityType readFirst(Cursor cursor) {
 		EntityType item = null;
 		try {
 			if (cursor.moveToFirst()) {
-				item = readFromCursor(cursor);
+				item = readFrom(cursor);
 			}
 		} finally {
 			cursor.close();
@@ -160,11 +160,11 @@ public abstract class AbstractEntityManager<EntityType extends Entity>
 		return item;
 	}
 
-	public ArrayList<EntityType> readAllFromCursor(Cursor cursor) {
+	public ArrayList<EntityType> readAll(Cursor cursor) {
 		ArrayList<EntityType> list = new ArrayList<EntityType>();
 		try {
 			while (cursor.moveToNext()) {
-				list.add(readFromCursor(cursor));
+				list.add(readFrom(cursor));
 			}
 		} finally {
 			cursor.close();
@@ -172,7 +172,7 @@ public abstract class AbstractEntityManager<EntityType extends Entity>
 		return list;
 	}
 
-	public abstract EntityType readFromCursor(Cursor cursor);
+	public abstract EntityType readFrom(Cursor cursor);
 
 	public abstract void fillForeignKeys(EntityType item, String... fieldNames);
 
