@@ -21,6 +21,7 @@ import org.droidparts.model.Entity;
 import org.droidparts.util.L;
 
 import android.content.ContentValues;
+import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Pair;
 
@@ -58,7 +59,14 @@ public class UpdateBuilder<EntityType extends Entity> extends
 				+ contentValues + "', selection: '" + selection.first
 				+ "', selectionArgs: '" + Arrays.toString(selection.second)
 				+ "'.");
-		return db.update(tableName, contentValues, selection.first,
-				selection.second);
+		int rowCount = 0;
+		try {
+			rowCount = db.update(tableName, contentValues, selection.first,
+					selection.second);
+		} catch (SQLException e) {
+			L.e(e.getMessage());
+			L.d(e);
+		}
+		return rowCount;
 	}
 }

@@ -15,8 +15,6 @@
  */
 package org.droidparts.persist.sql;
 
-import static org.droidparts.util.DatabaseUtils2.toWhereArgs;
-
 import java.util.ArrayList;
 import java.util.Collection;
 
@@ -24,6 +22,7 @@ import org.droidparts.contract.DB;
 import org.droidparts.contract.SQL;
 import org.droidparts.model.Entity;
 import org.droidparts.persist.sql.stmt.DeleteBuilder;
+import org.droidparts.persist.sql.stmt.Is;
 import org.droidparts.persist.sql.stmt.SelectBuilder;
 import org.droidparts.persist.sql.stmt.UpdateBuilder;
 import org.droidparts.util.L;
@@ -46,7 +45,7 @@ public abstract class AbstractEntityManager<EntityType extends Entity>
 		try {
 			id = getDB().insertOrThrow(getTableName(), null, cv);
 		} catch (SQLException e) {
-			L.w(e.getMessage());
+			L.e(e.getMessage());
 			L.d(e);
 		}
 		if (id > 0) {
@@ -58,8 +57,7 @@ public abstract class AbstractEntityManager<EntityType extends Entity>
 	}
 
 	public EntityType read(long id) {
-		Cursor cursor = getDB().query(getTableName(), null,
-				DB.Column.ID + EQUAL, toWhereArgs(id), null, null, null);
+		Cursor cursor = select().where(DB.Column.ID, Is.EQUAL, id).execute();
 		return readFirstFromCursor(cursor);
 	}
 
@@ -67,26 +65,13 @@ public abstract class AbstractEntityManager<EntityType extends Entity>
 		createOrUpdateForeignKeys(item);
 		ContentValues cv = toContentValues(item);
 		cv.remove(DB.Column.ID);
-		int rowCount = 0;
-		try {
-			rowCount = getDB().update(getTableName(), cv, DB.Column.ID + EQUAL,
-					toWhereArgs(item.id));
-		} catch (SQLException e) {
-			L.w(e.getMessage());
-			L.d(e);
-		}
+		int rowCount = update().where(DB.Column.ID, Is.EQUAL, item.id)
+				.setContent(cv).execute();
 		return rowCount > 0;
 	}
 
 	public boolean delete(long id) {
-		int rowCount = 0;
-		try {
-			rowCount = getDB().delete(getTableName(), DB.Column.ID + EQUAL,
-					toWhereArgs(id));
-		} catch (SQLException e) {
-			L.w(e.getMessage());
-			L.d(e);
-		}
+		int rowCount = delete().where(DB.Column.ID, Is.EQUAL, id).execute();
 		return rowCount > 0;
 	}
 
