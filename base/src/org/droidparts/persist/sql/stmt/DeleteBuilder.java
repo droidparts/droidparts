@@ -17,26 +17,31 @@ package org.droidparts.persist.sql.stmt;
 
 import java.util.Arrays;
 
+import org.droidparts.model.Entity;
 import org.droidparts.util.L;
 
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Pair;
 
-public class DeleteBuilder extends StatementBuilder {
+public class DeleteBuilder<EntityType extends Entity> extends
+		StatementBuilder<EntityType> {
 
 	public DeleteBuilder(SQLiteDatabase db, String tableName) {
 		super(db, tableName);
 	}
 
 	@Override
-	public DeleteBuilder where(String columnName, Is operator,
+	public DeleteBuilder<EntityType> where(String columnName, Is operator,
 			Object... columnValue) {
-		return (DeleteBuilder) super.where(columnName, operator, columnValue);
+		return (DeleteBuilder<EntityType>) super.where(columnName, operator,
+				columnValue);
 	}
 
 	@Override
-	public DeleteBuilder where(String selection, Object... selectionArgs) {
-		return (DeleteBuilder) super.where(selection, selectionArgs);
+	public DeleteBuilder<EntityType> where(String selection,
+			Object... selectionArgs) {
+		return (DeleteBuilder<EntityType>) super
+				.where(selection, selectionArgs);
 	}
 
 	public int execute() {

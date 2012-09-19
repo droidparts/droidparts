@@ -17,13 +17,15 @@ package org.droidparts.persist.sql.stmt;
 
 import java.util.Arrays;
 
+import org.droidparts.model.Entity;
 import org.droidparts.util.L;
 
 import android.content.ContentValues;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Pair;
 
-public class UpdateBuilder extends StatementBuilder {
+public class UpdateBuilder<EntityType extends Entity> extends
+		StatementBuilder<EntityType> {
 
 	private ContentValues contentValues = null;
 
@@ -32,17 +34,20 @@ public class UpdateBuilder extends StatementBuilder {
 	}
 
 	@Override
-	public UpdateBuilder where(String columnName, Is operator,
+	public UpdateBuilder<EntityType> where(String columnName, Is operator,
 			Object... columnValue) {
-		return (UpdateBuilder) super.where(columnName, operator, columnValue);
+		return (UpdateBuilder<EntityType>) super.where(columnName, operator,
+				columnValue);
 	}
 
 	@Override
-	public UpdateBuilder where(String selection, Object... selectionArgs) {
-		return (UpdateBuilder) super.where(selection, selectionArgs);
+	public UpdateBuilder<EntityType> where(String selection,
+			Object... selectionArgs) {
+		return (UpdateBuilder<EntityType>) super
+				.where(selection, selectionArgs);
 	}
 
-	public UpdateBuilder setContent(ContentValues contentValues) {
+	public UpdateBuilder<EntityType> setContent(ContentValues contentValues) {
 		this.contentValues = contentValues;
 		return this;
 	}

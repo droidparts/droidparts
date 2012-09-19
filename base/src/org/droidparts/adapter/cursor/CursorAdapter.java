@@ -22,7 +22,7 @@ import android.app.Activity;
 import android.database.Cursor;
 import android.view.LayoutInflater;
 
-public abstract class CursorAdapter<Type> extends android.widget.CursorAdapter {
+public abstract class CursorAdapter extends android.widget.CursorAdapter {
 
 	@InjectSystemService
 	protected LayoutInflater layoutInflater;

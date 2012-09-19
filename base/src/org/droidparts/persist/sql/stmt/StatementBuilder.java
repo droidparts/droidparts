@@ -23,11 +23,13 @@ import static org.droidparts.util.DatabaseUtils2.toWhereArgs;
 import java.util.ArrayList;
 
 import org.droidparts.contract.SQL;
+import org.droidparts.model.Entity;
 
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Pair;
 
-public abstract class StatementBuilder implements SQL {
+public abstract class StatementBuilder<EntityType extends Entity> implements
+		SQL {
 
 	protected final SQLiteDatabase db;
 	protected final String tableName;
@@ -41,8 +43,8 @@ public abstract class StatementBuilder implements SQL {
 		this.tableName = tableName;
 	}
 
-	protected StatementBuilder where(String columnName, Is operator,
-			Object... columnValue) {
+	protected StatementBuilder<EntityType> where(String columnName,
+			Is operator, Object... columnValue) {
 		selection = null;
 		columnValue = varArgsHack(columnValue);
 		whereList.add(Pair.create(columnName,
@@ -50,7 +52,8 @@ public abstract class StatementBuilder implements SQL {
 		return this;
 	}
 
-	protected StatementBuilder where(String selection, Object... selectionArgs) {
+	protected StatementBuilder<EntityType> where(String selection,
+			Object... selectionArgs) {
 		this.selection = selection;
 		this.selectionArgs = toWhereArgs(selectionArgs);
 		return this;

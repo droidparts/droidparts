@@ -149,16 +149,16 @@ public abstract class AbstractEntityManager<EntityType extends Entity>
 
 	// statement builders
 
-	public SelectBuilder select() {
-		return new SelectBuilder(getDB(), getTableName());
+	public SelectBuilder<EntityType> select() {
+		return new SelectBuilder<EntityType>(getDB(), getTableName());
 	}
 
-	public UpdateBuilder update() {
-		return new UpdateBuilder(getDB(), getTableName());
+	public UpdateBuilder<EntityType> update() {
+		return new UpdateBuilder<EntityType>(getDB(), getTableName());
 	}
 
-	public DeleteBuilder delete() {
-		return new DeleteBuilder(getDB(), getTableName());
+	public DeleteBuilder<EntityType> delete() {
+		return new DeleteBuilder<EntityType>(getDB(), getTableName());
 	}
 
 	//
