@@ -50,6 +50,49 @@ import android.database.sqlite.SQLiteQueryBuilder;
 
 public final class DatabaseUtils2 implements SQL.DDL {
 
+	// EntityManager
+
+	public static long[] readIds(Cursor cursor) {
+		long[] arr = new long[cursor.getCount()];
+		int count = 0;
+		try {
+			while (cursor.moveToNext()) {
+				arr[count++] = cursor.getLong(0);
+			}
+		} finally {
+			cursor.close();
+		}
+		return arr;
+	}
+
+	public static <EntityType extends Entity> EntityType readFirst(
+			AbstractEntityManager<EntityType> entityManager, Cursor cursor) {
+		EntityType item = null;
+		try {
+			if (cursor.moveToFirst()) {
+				item = entityManager.readRow(cursor);
+			}
+		} finally {
+			cursor.close();
+		}
+		return item;
+	}
+
+	public static <EntityType extends Entity> ArrayList<EntityType> readAll(
+			AbstractEntityManager<EntityType> entityManager, Cursor cursor) {
+		ArrayList<EntityType> list = new ArrayList<EntityType>();
+		try {
+			while (cursor.moveToNext()) {
+				list.add(entityManager.readRow(cursor));
+			}
+		} finally {
+			cursor.close();
+		}
+		return list;
+	}
+
+	// StatementBuilder
+
 	public static String[] toWhereArgs(Object... args) {
 		String[] arr = new String[args.length];
 		for (int i = 0; i < args.length; i++) {
@@ -92,44 +135,7 @@ public final class DatabaseUtils2 implements SQL.DDL {
 				selectionArgs);
 	}
 
-	public static long[] readIds(Cursor cursor) {
-		long[] arr = new long[cursor.getCount()];
-		int count = 0;
-		try {
-			while (cursor.moveToNext()) {
-				arr[count++] = cursor.getLong(0);
-			}
-		} finally {
-			cursor.close();
-		}
-		return arr;
-	}
-
-	public static <EntityType extends Entity> EntityType readFirst(
-			AbstractEntityManager<EntityType> entityManager, Cursor cursor) {
-		EntityType item = null;
-		try {
-			if (cursor.moveToFirst()) {
-				item = entityManager.readRow(cursor);
-			}
-		} finally {
-			cursor.close();
-		}
-		return item;
-	}
-
-	public static <EntityType extends Entity> ArrayList<EntityType> readAll(
-			AbstractEntityManager<EntityType> entityManager, Cursor cursor) {
-		ArrayList<EntityType> list = new ArrayList<EntityType>();
-		try {
-			while (cursor.moveToNext()) {
-				list.add(entityManager.readRow(cursor));
-			}
-		} finally {
-			cursor.close();
-		}
-		return list;
-	}
+	// DBOpenHelper
 
 	public static void execQueries(SQLiteDatabase db, ArrayList<String> queries) {
 		db.beginTransaction();
@@ -178,8 +184,6 @@ public final class DatabaseUtils2 implements SQL.DDL {
 		}
 		execQueries(db, queries);
 	}
-
-	//
 
 	public static String getSQLCreate(String tableName, EntityField[] fields) {
 		StringBuilder sb = new StringBuilder();

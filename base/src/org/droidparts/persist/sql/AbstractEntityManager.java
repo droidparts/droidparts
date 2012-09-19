@@ -147,6 +147,10 @@ public abstract class AbstractEntityManager<EntityType extends Entity>
 
 	//
 
+	public long[] readIds(Cursor cursor) {
+		return DatabaseUtils2.readIds(cursor);
+	}
+
 	public EntityType readFirst(Cursor cursor) {
 		return DatabaseUtils2.readFirst(this, cursor);
 	}
