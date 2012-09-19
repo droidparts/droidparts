@@ -89,6 +89,13 @@ public class EntityManager<EntityType extends Entity> extends
 		processor = new EntityAnnotationProcessor(cls);
 	}
 
+	public void fillEagerForeignKeys(EntityType item) {
+		String[] eagerColumnNames = getEagerForeignKeyColumnNames();
+		if (eagerColumnNames.length != 0) {
+			fillForeignKeys(item, eagerColumnNames);
+		}
+	}
+
 	@Override
 	public EntityType readFromCursor(Cursor cursor) {
 		EntityType entity = instantiate(cls);
@@ -168,7 +175,7 @@ public class EntityManager<EntityType extends Entity> extends
 		}
 	}
 
-	public String[] getEagerForeignKeyColumnNames() {
+	protected String[] getEagerForeignKeyColumnNames() {
 		if (eagerForeignKeyColumnNames == null) {
 			HashSet<String> eagerColumnNames = new HashSet<String>();
 			for (EntityField ef : processor.getModelClassFields()) {

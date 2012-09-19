@@ -57,10 +57,7 @@ public abstract class EntityCursorAdapter<EntityType extends Entity> extends
 	public EntityType read(int position) {
 		long id = getItemId(position);
 		EntityType item = entityManager.read(id);
-		String[] eagerColumnNames = entityManager.getEagerForeignKeyColumnNames();
-		if (eagerColumnNames.length != 0) {
-			entityManager.fillForeignKeys(item, eagerColumnNames);
-		}
+		entityManager.fillEagerForeignKeys(item);
 		return item;
 	}
 
