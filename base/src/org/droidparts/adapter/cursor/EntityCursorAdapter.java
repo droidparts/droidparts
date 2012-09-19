@@ -30,7 +30,7 @@ public abstract class EntityCursorAdapter<EntityType extends Entity> extends
 
 	public EntityCursorAdapter(Activity activity,
 			EntityManager<EntityType> entityManager) {
-		this(activity, entityManager, entityManager.list());
+		this(activity, entityManager, entityManager.select().execute());
 	}
 
 	public EntityCursorAdapter(Activity activity,

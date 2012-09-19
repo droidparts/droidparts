@@ -38,19 +38,6 @@ public abstract class AbstractEntityManager<EntityType extends Entity>
 
 	// CRUD methods
 
-	public Cursor list(String... columns) {
-		return list(null, columns);
-	}
-
-	protected Cursor list(String orderBy, String... columns) {
-		if (columns != null && columns.length == 0) {
-			columns = null;
-		}
-		Cursor cursor = getDB().query(getTableName(), columns, null, null,
-				null, null, orderBy);
-		return cursor;
-	}
-
 	public boolean create(EntityType item) {
 		createOrUpdateForeignKeys(item);
 		ContentValues cv = toContentValues(item);
@@ -164,15 +151,15 @@ public abstract class AbstractEntityManager<EntityType extends Entity>
 
 	public SelectBuilder select() {
 		return new SelectBuilder(getDB(), getTableName());
-	};
+	}
 
 	public UpdateBuilder update() {
 		return new UpdateBuilder(getDB(), getTableName());
-	};
+	}
 
 	public DeleteBuilder delete() {
 		return new DeleteBuilder(getDB(), getTableName());
-	};
+	}
 
 	//
 
