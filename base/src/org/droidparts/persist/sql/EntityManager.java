@@ -15,7 +15,7 @@
  */
 package org.droidparts.persist.sql;
 
-import static org.droidparts.reflect.processor.EntityAnnotationProcessor.toPKColumnName;
+import static java.util.Arrays.asList;
 import static org.droidparts.reflect.util.ReflectionUtils.getField;
 import static org.droidparts.reflect.util.ReflectionUtils.getTypedFieldVal;
 import static org.droidparts.reflect.util.ReflectionUtils.instantiate;
@@ -109,11 +109,8 @@ public class EntityManager<EntityType extends Entity> extends
 
 	@Override
 	public void fillForeignKeys(EntityType item, String... columnNames) {
-		HashSet<String> columnNameSet = new HashSet<String>(columnNames.length);
-		for (String colName : columnNames) {
-			columnNameSet.add(toPKColumnName(colName));
-		}
-		boolean fillAll = (columnNames.length == 0);
+		HashSet<String> columnNameSet = new HashSet<String>(asList(columnNames));
+		boolean fillAll = columnNameSet.isEmpty();
 		for (EntityField entityField : processor.getModelClassFields()) {
 			if (isEntity(entityField.fieldType)
 					&& (fillAll || columnNameSet

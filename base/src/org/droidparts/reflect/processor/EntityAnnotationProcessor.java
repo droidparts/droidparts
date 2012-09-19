@@ -17,7 +17,6 @@ package org.droidparts.reflect.processor;
 
 import static org.droidparts.reflect.util.TypeHelper.isBoolean;
 import static org.droidparts.reflect.util.TypeHelper.isByte;
-import static org.droidparts.reflect.util.TypeHelper.isEntity;
 import static org.droidparts.reflect.util.TypeHelper.isFloat;
 import static org.droidparts.reflect.util.TypeHelper.isInteger;
 import static org.droidparts.reflect.util.TypeHelper.isLong;
@@ -35,15 +34,6 @@ import org.droidparts.util.L;
 
 public class EntityAnnotationProcessor extends
 		AbstractAnnotationProcessor<EntityField> {
-
-	private static final String ID_SUFFIX = "_id";
-
-	public static String toPKColumnName(String name) {
-		if (!name.endsWith(ID_SUFFIX)) {
-			name += ID_SUFFIX;
-		}
-		return name;
-	}
 
 	public EntityAnnotationProcessor(Class<? extends Entity> cls) {
 		super(cls);
@@ -85,12 +75,14 @@ public class EntityAnnotationProcessor extends
 		String name = ann.name();
 		if (isEmpty(name)) {
 			name = field.getName();
-		}
-		if (isEntity(field.getType())) {
-			name = toPKColumnName(name);
+			if (!name.endsWith(ID_SUFFIX)) {
+				name += ID_SUFFIX;
+			}
 		}
 		return name;
 	}
+
+	private static final String ID_SUFFIX = "_id";
 
 	private void sanitizeFields(ArrayList<EntityField> fields) {
 		for (EntityField field : fields) {
