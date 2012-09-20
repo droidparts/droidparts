@@ -138,7 +138,7 @@ public class ImageAttacher {
 					} catch (Exception e) {
 						onFailure(imageView, fileUrl, e);
 					}
-					if (bm != null) {
+					if (bm != null && !data.containsKey(imageView)) {
 						bm = onSuccess(imageView, fileUrl, bm);
 						AttachRunnable r = new AttachRunnable(placeholderView,
 								imageView, bm);
