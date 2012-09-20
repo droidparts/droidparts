@@ -128,10 +128,10 @@ public class ImageAttacher {
 		public void run() {
 			for (ImageView imageView : data.keySet()) {
 				Pair<String, View> pair = data.get(imageView);
+				data.remove(imageView);
 				if (pair != null) {
 					String fileUrl = pair.first;
 					View placeholderView = pair.second;
-					data.remove(imageView);
 					Bitmap bm = null;
 					try {
 						bm = getCachedOrFetchAndCache(fileUrl);
