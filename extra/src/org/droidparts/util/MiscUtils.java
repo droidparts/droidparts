@@ -22,8 +22,9 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 
-public class MiscUtils {
+public final class MiscUtils {
 
 	public static void merge(JSONObject source, JSONObject target,
 			boolean overwrite) throws JSONException {
@@ -45,7 +46,17 @@ public class MiscUtils {
 		return (idx != -1) ? valuesArr[idx] : null;
 	}
 
-	private MiscUtils() {
+	public static Bitmap scaleBitmap(Bitmap bm, int maxSidePx) {
+		float w = bm.getWidth();
+		float h = bm.getHeight();
+		if (w > h) {
+			h = (maxSidePx / w) * h;
+			w = maxSidePx;
+		} else {
+			w = (maxSidePx / h) * w;
+			h = maxSidePx;
+		}
+		return Bitmap.createScaledBitmap(bm, (int) w, (int) h, true);
 	}
 
 }
