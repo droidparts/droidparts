@@ -49,6 +49,7 @@ import org.droidparts.model.Model;
 import org.droidparts.reflect.model.ModelField;
 import org.droidparts.reflect.processor.ModelAnnotationProcessor;
 import org.droidparts.util.L;
+import org.droidparts.util.PersistUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -66,35 +67,12 @@ public class JSONSerializer<ModelType extends Model> {
 		return new JSONSerializer<ModelType>(cls);
 	}
 
-	public static boolean gotNonNull(JSONObject obj, String key)
-			throws JSONException {
-		return obj.has(key) && !NULL.equals(obj.get(key));
-	}
-
 	private final Class<? extends Model> cls;
 	private final ModelAnnotationProcessor processor;
 
 	public JSONSerializer(Class<ModelType> cls) {
 		this.cls = cls;
 		this.processor = new ModelAnnotationProcessor(cls);
-	}
-
-	public final JSONArray serialize(Collection<ModelType> items)
-			throws JSONException {
-		JSONArray arr = new JSONArray();
-		for (ModelType item : items) {
-			arr.put(serialize(item));
-		}
-		return arr;
-	}
-
-	public final ArrayList<ModelType> deserialize(JSONArray arr)
-			throws JSONException {
-		ArrayList<ModelType> list = new ArrayList<ModelType>();
-		for (int i = 0; i < arr.length(); i++) {
-			list.add(deserialize(arr.getJSONObject(i)));
-		}
-		return list;
 	}
 
 	public JSONObject serialize(ModelType item) throws JSONException {
@@ -115,71 +93,22 @@ public class JSONSerializer<ModelType extends Model> {
 		return model;
 	}
 
-	private void readFromModelAndPutToJSON(ModelType item,
-			ModelField jsonField, JSONObject obj, String key)
+	public final JSONArray serialize(Collection<ModelType> items)
 			throws JSONException {
-		Pair<String, String> keyParts = getNestedKeyParts(key);
-		if (keyParts != null) {
-			String subKey = keyParts.first;
-			JSONObject subObj;
-			if (gotNonNull(obj, subKey)) {
-				subObj = obj.getJSONObject(subKey);
-			} else {
-				subObj = new JSONObject();
-				obj.put(subKey, subObj);
-			}
-			readFromModelAndPutToJSON(item, jsonField, subObj, keyParts.second);
-		} else {
-			Field f = getField(item.getClass(), jsonField.fieldName);
-			Object columnVal = getTypedFieldVal(f, item);
-			try {
-				putToJSONObject(obj, key, jsonField.fieldType, columnVal);
-			} catch (Exception e) {
-				if (jsonField.keyOptional) {
-					L.w("Failded to serialize " + processor.getModelClassName()
-							+ "." + jsonField.fieldName + ": " + e.getMessage());
-				} else {
-					throw new JSONException(Log.getStackTraceString(e));
-				}
-			}
+		JSONArray arr = new JSONArray();
+		for (ModelType item : items) {
+			arr.put(serialize(item));
 		}
+		return arr;
 	}
 
-	private void readFromJSONAndSetFieldVal(ModelType model,
-			ModelField modelField, JSONObject obj, String key)
+	public final ArrayList<ModelType> deserialize(JSONArray arr)
 			throws JSONException {
-		Pair<String, String> keyParts = getNestedKeyParts(key);
-		if (keyParts != null) {
-			String subKey = keyParts.first;
-			if (gotNonNull(obj, subKey)) {
-				JSONObject subObj = obj.getJSONObject(subKey);
-				readFromJSONAndSetFieldVal(model, modelField, subObj,
-						keyParts.second);
-			} else {
-				throwIfRequired(modelField);
-			}
-		} else if (obj.has(key)) {
-			Object val = obj.get(key);
-			Field f = getField(model.getClass(), modelField.fieldName);
-			try {
-				val = readFromJSON(modelField.fieldType,
-						modelField.fieldArrOrCollType, val);
-				if (!NULL.equals(val)) {
-					setFieldVal(f, model, val);
-				} else {
-					L.i("Received NULL '" + modelField.keyName + "', skipping.");
-				}
-			} catch (Exception e) {
-				if (modelField.keyOptional) {
-					L.w("Failed to deserialize '" + modelField.keyName + "': "
-							+ e.getMessage());
-				} else {
-					throw new JSONException(Log.getStackTraceString(e));
-				}
-			}
-		} else {
-			throwIfRequired(modelField);
+		ArrayList<ModelType> list = new ArrayList<ModelType>();
+		for (int i = 0; i < arr.length(); i++) {
+			list.add(deserialize(arr.getJSONObject(i)));
 		}
+		return list;
 	}
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
@@ -298,6 +227,78 @@ public class JSONSerializer<ModelType extends Model> {
 			}
 		} else {
 			throw new IllegalArgumentException("Unsupported class: " + valType);
+		}
+	}
+
+	protected boolean gotNonNull(JSONObject obj, String key)
+			throws JSONException {
+		return PersistUtils.gotNonNull(obj, key);
+	}
+
+	private void readFromModelAndPutToJSON(ModelType item,
+			ModelField jsonField, JSONObject obj, String key)
+			throws JSONException {
+		Pair<String, String> keyParts = getNestedKeyParts(key);
+		if (keyParts != null) {
+			String subKey = keyParts.first;
+			JSONObject subObj;
+			if (gotNonNull(obj, subKey)) {
+				subObj = obj.getJSONObject(subKey);
+			} else {
+				subObj = new JSONObject();
+				obj.put(subKey, subObj);
+			}
+			readFromModelAndPutToJSON(item, jsonField, subObj, keyParts.second);
+		} else {
+			Field f = getField(item.getClass(), jsonField.fieldName);
+			Object columnVal = getTypedFieldVal(f, item);
+			try {
+				putToJSONObject(obj, key, jsonField.fieldType, columnVal);
+			} catch (Exception e) {
+				if (jsonField.keyOptional) {
+					L.w("Failded to serialize " + processor.getModelClassName()
+							+ "." + jsonField.fieldName + ": " + e.getMessage());
+				} else {
+					throw new JSONException(Log.getStackTraceString(e));
+				}
+			}
+		}
+	}
+
+	private void readFromJSONAndSetFieldVal(ModelType model,
+			ModelField modelField, JSONObject obj, String key)
+			throws JSONException {
+		Pair<String, String> keyParts = getNestedKeyParts(key);
+		if (keyParts != null) {
+			String subKey = keyParts.first;
+			if (gotNonNull(obj, subKey)) {
+				JSONObject subObj = obj.getJSONObject(subKey);
+				readFromJSONAndSetFieldVal(model, modelField, subObj,
+						keyParts.second);
+			} else {
+				throwIfRequired(modelField);
+			}
+		} else if (obj.has(key)) {
+			Object val = obj.get(key);
+			Field f = getField(model.getClass(), modelField.fieldName);
+			try {
+				val = readFromJSON(modelField.fieldType,
+						modelField.fieldArrOrCollType, val);
+				if (!NULL.equals(val)) {
+					setFieldVal(f, model, val);
+				} else {
+					L.i("Received NULL '" + modelField.keyName + "', skipping.");
+				}
+			} catch (Exception e) {
+				if (modelField.keyOptional) {
+					L.w("Failed to deserialize '" + modelField.keyName + "': "
+							+ e.getMessage());
+				} else {
+					throw new JSONException(Log.getStackTraceString(e));
+				}
+			}
+		} else {
+			throwIfRequired(modelField);
 		}
 	}
 

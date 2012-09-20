@@ -20,7 +20,7 @@ import java.util.ArrayList;
 import org.droidparts.contract.SQL;
 import org.droidparts.model.Entity;
 import org.droidparts.reflect.processor.EntityAnnotationProcessor;
-import org.droidparts.util.DatabaseUtils2;
+import org.droidparts.util.PersistUtils;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
@@ -44,17 +44,17 @@ public abstract class AbstractDBOpenHelper extends SQLiteOpenHelper implements
 	// helpers
 
 	protected void execQueries(SQLiteDatabase db, ArrayList<String> queries) {
-		DatabaseUtils2.execQueries(db, queries);
+		PersistUtils.execQueries(db, queries);
 	}
 
 	protected void createIndex(SQLiteDatabase db, String table, boolean unique,
 			String firstColumn, String... otherColumns) {
-		DatabaseUtils2
+		PersistUtils
 				.createIndex(db, table, unique, firstColumn, otherColumns);
 	}
 
 	protected void dropTables(SQLiteDatabase db, String... optionalTableNames) {
-		DatabaseUtils2.dropTables(db, optionalTableNames);
+		PersistUtils.dropTables(db, optionalTableNames);
 	}
 
 	//
@@ -64,7 +64,7 @@ public abstract class AbstractDBOpenHelper extends SQLiteOpenHelper implements
 		ArrayList<String> queries = new ArrayList<String>();
 		for (Class<? extends Entity> cls : getEntityClasses()) {
 			EntityAnnotationProcessor proc = new EntityAnnotationProcessor(cls);
-			String query = DatabaseUtils2.getSQLCreate(
+			String query = PersistUtils.getSQLCreate(
 					proc.getModelClassName(), proc.getModelClassFields());
 			queries.add(query);
 		}

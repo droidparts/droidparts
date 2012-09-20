@@ -9,7 +9,6 @@ import org.droidparts.test.model.Album;
 import org.droidparts.test.model.AlbumToTag;
 import org.droidparts.test.model.Tag;
 import org.droidparts.test.persist.DB;
-import org.droidparts.util.DatabaseUtils2;
 
 import android.content.Context;
 import android.database.Cursor;
@@ -49,6 +48,6 @@ public class AlbumManager extends EntityManager<Album> implements DB {
 	public long[] getTagIds(long albumId) {
 		Cursor c = albumToTagManager.select().columns(Column.TAG_ID)
 				.where(Column.ALBUM_ID, Is.EQUAL, albumId).execute();
-		return DatabaseUtils2.readIds(c);
+		return readIds(c);
 	}
 }

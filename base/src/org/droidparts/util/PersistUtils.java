@@ -32,6 +32,7 @@ import static org.droidparts.reflect.util.TypeHelper.isShort;
 import static org.droidparts.reflect.util.TypeHelper.isString;
 import static org.droidparts.reflect.util.TypeHelper.isUUID;
 import static org.droidparts.util.Strings.join;
+import static org.json.JSONObject.NULL;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -42,13 +43,22 @@ import org.droidparts.model.Entity;
 import org.droidparts.persist.sql.AbstractEntityManager;
 import org.droidparts.reflect.model.EntityField;
 import org.droidparts.reflect.processor.EntityAnnotationProcessor;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import android.database.Cursor;
 import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteQueryBuilder;
 
-public final class DatabaseUtils2 implements SQL.DDL {
+public final class PersistUtils implements SQL.DDL {
+
+	// JSONSerializer
+
+	public static boolean gotNonNull(JSONObject obj, String key)
+			throws JSONException {
+		return obj.has(key) && !NULL.equals(obj.get(key));
+	}
 
 	// EntityManager
 

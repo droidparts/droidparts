@@ -24,7 +24,7 @@ import org.droidparts.model.Entity;
 import org.droidparts.persist.sql.stmt.DeleteBuilder;
 import org.droidparts.persist.sql.stmt.SelectBuilder;
 import org.droidparts.persist.sql.stmt.UpdateBuilder;
-import org.droidparts.util.DatabaseUtils2;
+import org.droidparts.util.PersistUtils;
 import org.droidparts.util.L;
 
 import android.content.ContentValues;
@@ -148,15 +148,15 @@ public abstract class AbstractEntityManager<EntityType extends Entity>
 	//
 
 	public long[] readIds(Cursor cursor) {
-		return DatabaseUtils2.readIds(cursor);
+		return PersistUtils.readIds(cursor);
 	}
 
 	public EntityType readFirst(Cursor cursor) {
-		return DatabaseUtils2.readFirst(this, cursor);
+		return PersistUtils.readFirst(this, cursor);
 	}
 
 	public ArrayList<EntityType> readAll(Cursor cursor) {
-		return DatabaseUtils2.readAll(this, cursor);
+		return PersistUtils.readAll(this, cursor);
 	}
 
 	public abstract EntityType readRow(Cursor cursor);
