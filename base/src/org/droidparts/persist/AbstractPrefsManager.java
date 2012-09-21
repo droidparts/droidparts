@@ -68,12 +68,17 @@ public abstract class AbstractPrefsManager {
 
 	// shortcuts
 
-	protected boolean getBoolean(int keyResId, int defValueResId) {
-		return prefs.getBoolean(ctx.getString(keyResId),
-				Boolean.valueOf(ctx.getString(defValueResId)));
+	protected boolean readBoolean(int keyResId, int defValueResId) {
+		return prefs.getBoolean(res.getString(keyResId),
+				res.getBoolean(defValueResId));
 	}
 
-	protected String getString(int keyResId, int defValueResId) {
+	protected int readInt(int keyResId, int defValueResId) {
+		return prefs.getInt(res.getString(keyResId),
+				res.getInteger(defValueResId));
+	}
+
+	protected String readString(int keyResId, int defValueResId) {
 		return prefs.getString(ctx.getString(keyResId),
 				ctx.getString(defValueResId));
 	}
@@ -82,20 +87,24 @@ public abstract class AbstractPrefsManager {
 		return prefs.edit().putBoolean(key, val).commit();
 	}
 
-	protected boolean saveFloat(String key, float val) {
-		return prefs.edit().putFloat(key, val).commit();
-	}
-
 	protected boolean saveInt(String key, int val) {
 		return prefs.edit().putInt(key, val).commit();
 	}
 
-	protected boolean saveLong(String key, long val) {
-		return prefs.edit().putLong(key, val).commit();
-	}
-
 	protected boolean saveString(String key, String val) {
 		return prefs.edit().putString(key, val).commit();
+	}
+
+	//
+
+	@Deprecated
+	protected boolean getBoolean(int keyResId, int defValueResId) {
+		return readBoolean(keyResId, defValueResId);
+	}
+
+	@Deprecated
+	protected String getString(int keyResId, int defValueResId) {
+		return readString(keyResId, defValueResId);
 	}
 
 }
