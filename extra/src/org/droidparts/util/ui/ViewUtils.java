@@ -43,7 +43,7 @@ public class ViewUtils {
 		view.setVisibility(gone ? GONE : VISIBLE);
 	}
 
-	public static void crossFade(final View viewFrom, final View viewTo,
+	public static void crossFade(final View visibleViewFrom, final View invisibleViewTo,
 			int durationMillis, final Runnable onAnimationEnd) {
 		Animation animFrom = new AlphaAnimation(1, 0);
 		Animation animTo = new AlphaAnimation(0, 1);
@@ -52,15 +52,15 @@ public class ViewUtils {
 		animTo.setAnimationListener(new AnimationListenerAdapter() {
 			@Override
 			public void onAnimationEnd(Animation animation) {
-				setInvisible(viewFrom, true);
-				setInvisible(viewTo, false);
+				setInvisible(visibleViewFrom, true);
+				setInvisible(invisibleViewTo, false);
 				if (onAnimationEnd != null) {
 					onAnimationEnd.run();
 				}
 			}
 		});
-		viewFrom.startAnimation(animFrom);
-		viewTo.startAnimation(animTo);
+		visibleViewFrom.startAnimation(animFrom);
+		invisibleViewTo.startAnimation(animTo);
 	}
 
 	public static void showKeyboard(final View view) {
