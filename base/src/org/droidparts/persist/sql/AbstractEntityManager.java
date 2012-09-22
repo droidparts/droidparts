@@ -24,8 +24,8 @@ import org.droidparts.model.Entity;
 import org.droidparts.persist.sql.stmt.DeleteBuilder;
 import org.droidparts.persist.sql.stmt.SelectBuilder;
 import org.droidparts.persist.sql.stmt.UpdateBuilder;
-import org.droidparts.util.PersistUtils;
 import org.droidparts.util.L;
+import org.droidparts.util.PersistUtils;
 
 import android.content.ContentValues;
 import android.database.Cursor;

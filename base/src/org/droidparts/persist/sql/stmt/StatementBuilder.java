@@ -25,6 +25,7 @@ import java.util.ArrayList;
 import org.droidparts.contract.DB;
 import org.droidparts.contract.SQL;
 import org.droidparts.model.Entity;
+import org.droidparts.util.L;
 
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Pair;
@@ -83,7 +84,9 @@ public abstract class StatementBuilder<EntityType extends Entity> implements
 			Pair<String, Pair<Is, Object[]>> p = whereList.get(i);
 			String columnName = p.first;
 			Is operator = p.second.first;
-			Object[] columnValues = p.second.second;
+			String[] whereArgs = toWhereArgs(p.second.second);
+			int argNum = whereArgs.length;
+			//
 			if (i > 0) {
 				selectionBuilder.append(AND);
 			}
@@ -91,23 +94,41 @@ public abstract class StatementBuilder<EntityType extends Entity> implements
 			switch (operator) {
 			case NULL:
 			case NOT_NULL:
+				if (argNum != 0) {
+					errArgs(operator, argNum);
+				}
+				break;
+			case BETWEEN:
+			case NOT_BETWEEN:
+				if (argNum != 2) {
+					errArgs(operator, argNum);
+				}
 				break;
 			case IN:
 			case NOT_IN:
+				if (argNum < 1) {
+					errArgs(operator, argNum);
+				}
 				selectionBuilder.append("(");
-				selectionBuilder.append(buildPlaceholders(columnValues.length));
+				selectionBuilder.append(buildPlaceholders(whereArgs.length));
 				selectionBuilder.append(")");
-				selectionArgsBuilder.addAll(asList(toWhereArgs(columnValues)));
 				break;
 			default:
-				String columnVal = toWhereArgs(columnValues)[0];
-				selectionArgsBuilder.add(columnVal);
+				if (argNum != 1) {
+					errArgs(operator, argNum);
+				}
 				break;
 			}
+			selectionArgsBuilder.addAll(asList(whereArgs));
 		}
 		selection = selectionBuilder.toString();
 		selectionArgs = selectionArgsBuilder
 				.toArray(new String[selectionArgsBuilder.size()]);
+	}
+
+	private void errArgs(Is operator, int num) {
+		L.e("Invalid number of agruments for " + operator.str + ": " + num
+				+ ".");
 	}
 
 	private static long[] prepend(long id, long[] moreIds) {
