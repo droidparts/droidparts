@@ -45,8 +45,8 @@ public class SelectBuilder<EntityType extends Entity> extends
 	}
 
 	@Override
-	public SelectBuilder<EntityType> whereId(long id, long... moreIds) {
-		return (SelectBuilder<EntityType>) super.whereId(id, moreIds);
+	public SelectBuilder<EntityType> whereId(long... oneOrMore) {
+		return (SelectBuilder<EntityType>) super.whereId(oneOrMore);
 	}
 
 	@Override

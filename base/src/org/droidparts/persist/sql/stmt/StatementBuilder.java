@@ -45,12 +45,11 @@ public abstract class StatementBuilder<EntityType extends Entity> implements
 		this.tableName = tableName;
 	}
 
-	public StatementBuilder<EntityType> whereId(long id, long... moreIds) {
-		if (moreIds.length == 0) {
-			return where(DB.Column.ID, Is.EQUAL, id);
+	public StatementBuilder<EntityType> whereId(long... oneOrMore) {
+		if (oneOrMore.length == 1) {
+			return where(DB.Column.ID, Is.EQUAL, oneOrMore[0]);
 		} else {
-			long[] ids = prepend(id, moreIds);
-			return where(DB.Column.ID, Is.IN, ids);
+			return where(DB.Column.ID, Is.IN, oneOrMore);
 		}
 	}
 
@@ -129,15 +128,6 @@ public abstract class StatementBuilder<EntityType extends Entity> implements
 	private void errArgs(Is operator, int num) {
 		L.e("Invalid number of agruments for " + operator.str + ": " + num
 				+ ".");
-	}
-
-	private static long[] prepend(long id, long[] moreIds) {
-		long[] ids = new long[moreIds.length + 1];
-		ids[0] = id;
-		for (int i = 0; i < moreIds.length; i++) {
-			ids[i + 1] = moreIds[i];
-		}
-		return ids;
 	}
 
 }

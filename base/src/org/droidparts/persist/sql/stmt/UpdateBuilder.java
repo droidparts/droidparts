@@ -35,8 +35,8 @@ public class UpdateBuilder<EntityType extends Entity> extends
 	}
 
 	@Override
-	public UpdateBuilder<EntityType> whereId(long id, long... moreIds) {
-		return (UpdateBuilder<EntityType>) super.whereId(id, moreIds);
+	public UpdateBuilder<EntityType> whereId(long... oneOrMore) {
+		return (UpdateBuilder<EntityType>) super.whereId(oneOrMore);
 	}
 
 	@Override
