@@ -21,19 +21,21 @@ import android.test.AndroidTestCase;
 
 public class EntityTestCase extends AndroidTestCase implements DB {
 
+	private static final String[] ALBUMS = new String[] { "Diamond", "Iris" };
+	private static final int[] YEARS = new int[] { 2007, 2009 };
+	private static final String[] TRACKS = new String[] { "Diamond",
+			"Beautiful", "Stay", "Secret Desire", "The Sun", "Buddha" };
+	private static final String[] TAGS = new String[] { "downtempo", "lounge",
+			"chillout" };
+
 	private EntityManager<Primitives> primitivesManager;
 	private EntityManager<AlbumToTag> albumToTagManager;
 	private AlbumManager albumManager;
 	private EntityManager<Tag> tagManager;
 	private TrackManager trackManager;
 
-	private static final String[] TRACK_NAMES = new String[] { "Diamond",
-			"Beautiful", "Stay" };
-	private static final String[] TAG_NAMES = new String[] { "DroiParts", "is",
-			"pretty", "awesome", "!" };
-
 	@Override
-	protected void setUp() throws Exception {
+	protected void setUp() {
 		if (primitivesManager == null) {
 			primitivesManager = EntityManager.getInstance(getContext(),
 					Primitives.class);
@@ -46,7 +48,7 @@ public class EntityTestCase extends AndroidTestCase implements DB {
 	}
 
 	@Override
-	protected void tearDown() throws Exception {
+	protected void tearDown() {
 		primitivesManager.delete().execute();
 		tagManager.delete().execute();
 		albumManager.delete().execute();
@@ -54,26 +56,23 @@ public class EntityTestCase extends AndroidTestCase implements DB {
 	}
 
 	public void testUniqueIndex() {
-		Album album = new Album("A", 1);
-		Tag tag = new Tag("t");
+		Album album = new Album(ALBUMS[0], YEARS[0]);
+		Tag tag = new Tag(TAGS[0]);
 		AlbumToTag att = new AlbumToTag(album, tag);
 		assertTrue(albumToTagManager.create(att));
 		assertFalse(albumToTagManager.create(att));
-		album.name = "B";
+		album.name = ALBUMS[1];
 		album.id = 0;
 		assertTrue(albumToTagManager.create(att));
 		assertEquals(2, albumToTagManager.select().count());
 	}
 
-	public void testCRUD() throws Exception {
-		Album album1 = new Album();
-		album1.name = "Diamond";
-		album1.year = 4;
-		albumManager.create(album1);
+	public void testCRUD() {
+		Album album1 = createAlbum();
 		assertFalse(album1.id == 0);
 		Album album2 = albumManager.read(album1.id);
 		assertEquals(album1.name, album2.name);
-		album2.name = "Iris";
+		album2.name = ALBUMS[1];
 		albumManager.update(album2);
 		Album album3 = albumManager.read(album2.id);
 		assertEquals(album2.name, album3.name);
@@ -82,10 +81,9 @@ public class EntityTestCase extends AndroidTestCase implements DB {
 		assertNull(albumManager.read(album1.id));
 	}
 
-	public void testUniqueAndNull() throws Exception {
-		Album album1 = new Album();
-		album1.name = "one1";
-		album1.comment = "two1";
+	public void testUniqueAndNull() {
+		Album album1 = new Album(ALBUMS[0], YEARS[0]);
+		album1.comment = TAGS[0];
 		boolean created = albumManager.create(album1);
 		assertTrue(created);
 
@@ -154,38 +152,63 @@ public class EntityTestCase extends AndroidTestCase implements DB {
 		assertTrue(pri.doubleSet.contains(12.5));
 	}
 
-	public void testInAndLike() throws Exception {
+	public void testWhereId() {
+		createAlbums(10);
+		//
+		int count = albumManager.select().whereId(5, 8).count();
+		assertEquals(2, count);
+		count = albumManager.select().whereId(3).count();
+		assertEquals(1, count);
+		count = albumManager.select().whereId(15).count();
+		assertEquals(0, count);
+	}
+
+	public void testBetween() {
+		createAlbums(20);
+		//
+		int count = albumManager.select().where(Column.ID, Is.BETWEEN, 5, 10)
+				.count();
+		assertEquals(6, count);
+		count = albumManager.select().where(Column.ID, Is.NOT_BETWEEN, 5, 10)
+				.count();
+		assertEquals(14, count);
+	}
+
+	public void testIn() {
+		createAlbums(3);
+		//
+		int[] arr = new int[] { 1, 2 };
+		int count = albumManager.select().where(Column.ID, Is.IN, arr).count();
+		assertEquals(2, count);
+		count = albumManager.select().where(Column.ID, Is.NOT_IN, arr).count();
+		assertEquals(1, count);
+	}
+
+	public void testLike() {
 		ArrayList<Album> list = new ArrayList<Album>();
-		for (String str : new String[] { "pc", "mac", "phone" }) {
+		for (String str : TRACKS) {
 			Album album = new Album();
 			album.name = str;
 			list.add(album);
 		}
-		boolean success = albumManager.create(list);
-		assertTrue(success);
-		//
-		int count = albumManager.select().whereId(1, 2).count();
-		assertEquals(2, count);
-		//
-		int[] arr = new int[] { 1, 2 };
-		count = albumManager.select().where(Column.ID, Is.NOT_IN, arr).count();
+		albumManager.create(list);
+		int count = albumManager.select()
+				.where(Column.NAME, Is.LIKE, "%%udd%%").count();
 		assertEquals(1, count);
-		//
-		count = albumManager.select().where(Column.NAME, Is.LIKE, "%%hon%%")
-				.count();
-		assertEquals(1, count);
+		count = albumManager.select()
+				.where(Column.NAME, Is.NOT_LIKE, "%%udd%%").count();
+		assertEquals(TRACKS.length - 1, count);
 	}
 
 	public void testForeignKeys() {
-		Album album = new Album("Diamond", 2007);
-		albumManager.create(album);
-		for (String name : TRACK_NAMES) {
+		Album album = createAlbum();
+		for (String name : TRACKS) {
 			Track track = new Track();
 			track.album = album;
 			track.name = name;
 			trackManager.create(track);
 		}
-		assertEquals(3,
+		assertEquals(TRACKS.length,
 				trackManager.select()
 						.where(Column.ALBUM_ID, Is.EQUAL, album.id).count());
 		albumManager.delete(album.id);
@@ -193,10 +216,9 @@ public class EntityTestCase extends AndroidTestCase implements DB {
 	}
 
 	public void testEagerForeignKeys() {
-		Album album = new Album("Diamond", 2007);
-		albumManager.create(album);
+		Album album = createAlbum();
 		Track track = new Track();
-		track.name = TRACK_NAMES[0];
+		track.name = TRACKS[0];
 		track.album = album;
 		track.nullableAlbum = album;
 		trackManager.create(track);
@@ -239,11 +261,7 @@ public class EntityTestCase extends AndroidTestCase implements DB {
 		int count = 100;
 		int offset = 10;
 		int limit = 20;
-		ArrayList<Album> albums = new ArrayList<Album>();
-		for (int i = 0; i < count; i++) {
-			albums.add(new Album("A " + i, i));
-		}
-		albumManager.create(albums);
+		createAlbums(count);
 		assertEquals(count, albumManager.select().count());
 		assertEquals(limit, albumManager.select().limit(limit).count());
 		assertEquals(limit, albumManager.select().offset(offset).limit(limit)
@@ -253,8 +271,7 @@ public class EntityTestCase extends AndroidTestCase implements DB {
 	}
 
 	public void testWhere() {
-		Album album = new Album("A", 1);
-		albumManager.create(album);
+		Album album = createAlbum();
 		assertEquals(1, albumManager.select().where("_id = ?", album.id)
 				.count());
 		assertEquals(1, albumManager.select().where("_id = " + album.id)
@@ -262,23 +279,35 @@ public class EntityTestCase extends AndroidTestCase implements DB {
 	}
 
 	public void testM2M() {
-		Album album = new Album("A", 1);
-		albumManager.create(album);
+		Album album = createAlbum();
 		ArrayList<Tag> tags = new ArrayList<Tag>();
-		for (String name : TAG_NAMES) {
+		for (String name : TAGS) {
 			tags.add(new Tag(name));
 		}
 		albumManager.addTags(album.id, tags);
 		//
-		assertEquals(TAG_NAMES.length, albumToTagManager.select().count());
+		assertEquals(TAGS.length, albumToTagManager.select().count());
 		tags = albumManager.getTags(album.id);
-		assertEquals(TAG_NAMES.length, tags.size());
+		assertEquals(TAGS.length, tags.size());
 		//
 		tagManager.delete(tags);
 		tags = albumManager.getTags(album.id);
 		assertEquals(0, albumToTagManager.select().count());
 		assertEquals(0, tags.size());
-		//
+	}
+
+	private Album createAlbum() {
+		Album album = new Album(ALBUMS[0], YEARS[0]);
+		albumManager.create(album);
+		return album;
+	}
+
+	private boolean createAlbums(int count) {
+		ArrayList<Album> albums = new ArrayList<Album>();
+		for (int i = 0; i < count; i++) {
+			albums.add(new Album("A " + i, i));
+		}
+		return albumManager.create(albums);
 	}
 
 }
