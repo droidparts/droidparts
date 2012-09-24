@@ -19,7 +19,6 @@ import org.droidparts.model.Entity;
 import org.droidparts.persist.sql.EntityManager;
 import org.droidparts.persist.sql.stmt.SelectBuilder;
 
-import android.app.Activity;
 import android.content.Context;
 import android.database.Cursor;
 import android.view.View;
@@ -29,16 +28,16 @@ public abstract class EntityCursorAdapter<EntityType extends Entity> extends
 
 	protected final EntityManager<EntityType> entityManager;
 
-	public EntityCursorAdapter(Activity activity,
+	public EntityCursorAdapter(Context ctx,
 			EntityManager<EntityType> entityManager,
 			SelectBuilder<EntityType> selectBuilder) {
-		this(activity, entityManager, selectBuilder.execute());
+		this(ctx, entityManager, selectBuilder.execute());
 	}
 
 	// @Deprecated
-	public EntityCursorAdapter(Activity activity,
+	public EntityCursorAdapter(Context ctx,
 			EntityManager<EntityType> entityManager, Cursor cursor) {
-		super(activity, cursor);
+		super(ctx, cursor);
 		this.entityManager = entityManager;
 	}
 

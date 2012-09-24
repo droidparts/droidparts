@@ -18,7 +18,7 @@ package org.droidparts.adapter.cursor;
 import org.droidparts.annotation.inject.InjectSystemService;
 import org.droidparts.inject.Injector;
 
-import android.app.Activity;
+import android.content.Context;
 import android.database.Cursor;
 import android.view.LayoutInflater;
 
@@ -27,9 +27,9 @@ public abstract class CursorAdapter extends android.widget.CursorAdapter {
 	@InjectSystemService
 	protected LayoutInflater layoutInflater;
 
-	public CursorAdapter(Activity activity, Cursor cursor) {
-		super(activity, cursor);
-		Injector.get().inject(activity, this);
+	public CursorAdapter(Context ctx, Cursor cursor) {
+		super(ctx, cursor);
+		Injector.get().inject(ctx, this);
 	}
 
 }
