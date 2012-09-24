@@ -36,6 +36,7 @@ import static org.json.JSONObject.NULL;
 
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.concurrent.Callable;
 
 import org.droidparts.contract.DB.Column;
 import org.droidparts.contract.SQL;
@@ -145,39 +146,43 @@ public final class PersistUtils implements SQL.DDL {
 				selectionArgs);
 	}
 
-	// DBOpenHelper
-
-	public static void execQueries(SQLiteDatabase db, ArrayList<String> queries) {
+	public static <Result> Result executeInTransaction(SQLiteDatabase db,
+			Callable<Result> task) {
 		db.beginTransaction();
 		try {
-			for (String query : queries) {
-				L.d(query);
-				db.execSQL(query);
-			}
+			Result result = task.call();
 			db.setTransactionSuccessful();
+			return result;
+		} catch (Exception e) {
+			L.e(e.getMessage());
+			L.d(e);
+			return null;
 		} finally {
 			db.endTransaction();
 		}
 	}
 
-	public static void createIndex(SQLiteDatabase db, String table,
-			boolean unique, String firstColumn, String... otherColumns) {
-		ArrayList<String> columns = new ArrayList<String>();
-		columns.add(firstColumn);
-		columns.addAll(asList(otherColumns));
-		StringBuilder sb = new StringBuilder();
-		sb.append(unique ? CREATE_UNIQUE_INDEX : CREATE_INDEX);
-		sb.append("idx_" + table + "_" + join(columns, "_", null));
-		sb.append(ON + table);
-		sb.append(OPENING_BRACE);
-		sb.append(join(columns, SEPARATOR, null));
-		sb.append(CLOSING_BRACE);
-		db.execSQL(sb.toString());
+	// DBOpenHelper
+
+	public static boolean executeStatements(final SQLiteDatabase db,
+			final ArrayList<String> statements) {
+		Callable<Boolean> task = new Callable<Boolean>() {
+
+			@Override
+			public Boolean call() throws Exception {
+				for (String statement : statements) {
+					L.d(statement);
+					db.execSQL(statement);
+				}
+				return Boolean.TRUE;
+			}
+		};
+		Boolean result = executeInTransaction(db, task);
+		return (result != null);
 	}
 
-	public static void dropTables(SQLiteDatabase db,
+	public static boolean dropTables(SQLiteDatabase db,
 			String... optionalTableNames) {
-		ArrayList<String> queries = new ArrayList<String>();
 		HashSet<String> tableNames = new HashSet<String>();
 		if (optionalTableNames.length == 0) {
 			Cursor c = db.rawQuery(
@@ -189,10 +194,26 @@ public final class PersistUtils implements SQL.DDL {
 		} else {
 			tableNames.addAll(asList(optionalTableNames));
 		}
+		ArrayList<String> statements = new ArrayList<String>();
 		for (String tableName : tableNames) {
-			queries.add("DROP TABLE IF EXISTS " + tableName + ";");
+			statements.add("DROP TABLE IF EXISTS " + tableName + ";");
 		}
-		execQueries(db, queries);
+		return executeStatements(db, statements);
+	}
+
+	public static String getCreateIndex(String table, boolean unique,
+			String firstColumn, String... otherColumns) {
+		ArrayList<String> columns = new ArrayList<String>();
+		columns.add(firstColumn);
+		columns.addAll(asList(otherColumns));
+		StringBuilder sb = new StringBuilder();
+		sb.append(unique ? CREATE_UNIQUE_INDEX : CREATE_INDEX);
+		sb.append("idx_" + table + "_" + join(columns, "_", null));
+		sb.append(ON + table);
+		sb.append(OPENING_BRACE);
+		sb.append(join(columns, SEPARATOR, null));
+		sb.append(CLOSING_BRACE);
+		return sb.toString();
 	}
 
 	public static String getSQLCreate(String tableName, EntityField[] fields) {

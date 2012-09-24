@@ -42,6 +42,10 @@ public abstract class EntityCursorAdapter<EntityType extends Entity> extends
 		this.entityManager = entityManager;
 	}
 
+	public void changeQuery(SelectBuilder<EntityType> selectBuilder) {
+		changeCursor(selectBuilder.execute());
+	}
+
 	@Override
 	public void bindView(View view, Context context, Cursor cursor) {
 		bindView(context, view, entityManager.readRow(cursor));

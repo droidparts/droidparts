@@ -43,33 +43,37 @@ public abstract class AbstractDBOpenHelper extends SQLiteOpenHelper implements
 
 	// helpers
 
-	protected void execQueries(SQLiteDatabase db, ArrayList<String> queries) {
-		PersistUtils.execQueries(db, queries);
+	protected boolean executeStatements(SQLiteDatabase db,
+			ArrayList<String> queries) {
+		return PersistUtils.executeStatements(db, queries);
 	}
 
-	protected void createIndex(SQLiteDatabase db, String table, boolean unique,
-			String firstColumn, String... otherColumns) {
-		PersistUtils
-				.createIndex(db, table, unique, firstColumn, otherColumns);
+	protected boolean createIndex(SQLiteDatabase db, String table,
+			boolean unique, String firstColumn, String... otherColumns) {
+		ArrayList<String> statements = new ArrayList<String>();
+		statements.add(PersistUtils.getCreateIndex(table, unique, firstColumn,
+				otherColumns));
+		return executeStatements(db, statements);
 	}
 
-	protected void dropTables(SQLiteDatabase db, String... optionalTableNames) {
-		PersistUtils.dropTables(db, optionalTableNames);
+	protected boolean dropTables(SQLiteDatabase db,
+			String... optionalTableNames) {
+		return PersistUtils.dropTables(db, optionalTableNames);
 	}
 
 	//
 
 	@Override
 	public final void onCreate(SQLiteDatabase db) {
-		ArrayList<String> queries = new ArrayList<String>();
+		ArrayList<String> statements = new ArrayList<String>();
 		for (Class<? extends Entity> cls : getEntityClasses()) {
 			EntityAnnotationProcessor proc = new EntityAnnotationProcessor(cls);
-			String query = PersistUtils.getSQLCreate(
-					proc.getModelClassName(), proc.getModelClassFields());
-			queries.add(query);
+			String query = PersistUtils.getSQLCreate(proc.getModelClassName(),
+					proc.getModelClassFields());
+			statements.add(query);
 		}
 		onOpen(db);
-		execQueries(db, queries);
+		executeStatements(db, statements);
 		onCreateExtra(db);
 	}
 
@@ -85,6 +89,11 @@ public abstract class AbstractDBOpenHelper extends SQLiteOpenHelper implements
 	@Deprecated
 	protected void dropAll(SQLiteDatabase db, boolean tables, boolean indexes) {
 		dropTables(db);
+	}
+
+	@Deprecated
+	protected void execQueries(SQLiteDatabase db, ArrayList<String> queries) {
+		executeStatements(db, queries);
 	}
 
 }

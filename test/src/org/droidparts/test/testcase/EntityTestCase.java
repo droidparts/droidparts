@@ -302,7 +302,7 @@ public class EntityTestCase extends AndroidTestCase implements DB {
 		return album;
 	}
 
-	private boolean createAlbums(int count) {
+	private int createAlbums(int count) {
 		ArrayList<Album> albums = new ArrayList<Album>();
 		for (int i = 0; i < count; i++) {
 			albums.add(new Album("A " + i, i));

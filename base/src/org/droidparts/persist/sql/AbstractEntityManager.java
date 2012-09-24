@@ -17,6 +17,7 @@ package org.droidparts.persist.sql;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.concurrent.Callable;
 
 import org.droidparts.contract.DB;
 import org.droidparts.contract.SQL;
@@ -86,49 +87,46 @@ public abstract class AbstractEntityManager<EntityType extends Entity>
 
 	// mass CUD
 
-	public boolean create(Collection<EntityType> items) {
+	public int create(Collection<EntityType> items) {
 		return cud(items, 1);
 	}
 
-	public boolean update(Collection<EntityType> items) {
+	public int update(Collection<EntityType> items) {
 		return cud(items, 2);
 	}
 
-	public boolean delete(Collection<EntityType> items) {
+	public int delete(Collection<EntityType> items) {
 		return cud(items, 3);
 	}
 
-	private boolean cud(Collection<EntityType> items, int operation) {
-		int count = 0;
-		getDB().beginTransaction();
-		try {
-			for (EntityType item : items) {
-				boolean success;
-				switch (operation) {
-				case 1:
-					success = create(item);
-					break;
-				case 2:
-					success = update(item);
-					break;
-				case 3:
-					success = delete(item.id);
-					break;
-				default:
-					throw new IllegalArgumentException();
+	private int cud(final Collection<EntityType> items, final int operation) {
+		Callable<Integer> task = new Callable<Integer>() {
+
+			@Override
+			public Integer call() throws Exception {
+				int count = 0;
+				for (EntityType item : items) {
+					boolean success = false;
+					switch (operation) {
+					case 1:
+						success = create(item);
+						break;
+					case 2:
+						success = update(item);
+						break;
+					case 3:
+						success = delete(item.id);
+						break;
+					}
+					if (success) {
+						count++;
+					}
 				}
-				if (success) {
-					count++;
-				}
+				return count;
 			}
-			boolean success = (count == items.size());
-			if (success) {
-				getDB().setTransactionSuccessful();
-			}
-			return success;
-		} finally {
-			getDB().endTransaction();
-		}
+		};
+		Integer result = executeInTransaction(task);
+		return (result != null) ? result : 0;
 	}
 
 	// statement builders
@@ -146,6 +144,10 @@ public abstract class AbstractEntityManager<EntityType extends Entity>
 	}
 
 	//
+
+	public <Result> Result executeInTransaction(Callable<Result> task) {
+		return PersistUtils.executeInTransaction(getDB(), task);
+	}
 
 	public long[] readIds(Cursor cursor) {
 		return PersistUtils.readIds(cursor);
