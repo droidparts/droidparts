@@ -43,7 +43,7 @@ public class PrefsManager extends AbstractPrefsManager {
 	}
 
 	private HashSet<String> getShowDetailVaules() {
-		String str = getString(R.string.pref_show_detail,
+		String str = readString(R.string.pref_show_detail,
 				R.string.pref_show_detail);
 		String[] arr = MultiSelectListPreference
 				.fromPersistedPreferenceValue(str);
