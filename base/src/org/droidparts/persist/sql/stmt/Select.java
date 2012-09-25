@@ -29,8 +29,8 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Pair;
 
-public class SelectBuilder<EntityType extends Entity> extends
-		StatementBuilder<EntityType> {
+public class Select<EntityType extends Entity> extends
+		Statement<EntityType> {
 
 	private String[] columns = null;
 	private boolean distinct = false;
@@ -40,60 +40,60 @@ public class SelectBuilder<EntityType extends Entity> extends
 	private int limit = 0;
 	private final LinkedHashMap<String, Boolean> orderBy = new LinkedHashMap<String, Boolean>();
 
-	public SelectBuilder(SQLiteDatabase db, String tableName) {
+	public Select(SQLiteDatabase db, String tableName) {
 		super(db, tableName);
 	}
 
 	@Override
-	public SelectBuilder<EntityType> whereId(long... oneOrMore) {
-		return (SelectBuilder<EntityType>) super.whereId(oneOrMore);
+	public Select<EntityType> whereId(long... oneOrMore) {
+		return (Select<EntityType>) super.whereId(oneOrMore);
 	}
 
 	@Override
-	public SelectBuilder<EntityType> where(String columnName, Is operator,
+	public Select<EntityType> where(String columnName, Is operator,
 			Object... columnValue) {
-		return (SelectBuilder<EntityType>) super.where(columnName, operator,
+		return (Select<EntityType>) super.where(columnName, operator,
 				columnValue);
 	}
 
 	@Override
-	public SelectBuilder<EntityType> where(String selection,
+	public Select<EntityType> where(String selection,
 			Object... selectionArgs) {
-		return (SelectBuilder<EntityType>) super
+		return (Select<EntityType>) super
 				.where(selection, selectionArgs);
 	}
 
-	public SelectBuilder<EntityType> columns(String... columns) {
+	public Select<EntityType> columns(String... columns) {
 		this.columns = columns;
 		return this;
 	}
 
-	public SelectBuilder<EntityType> distinct() {
+	public Select<EntityType> distinct() {
 		this.distinct = true;
 		return this;
 	}
 
-	public SelectBuilder<EntityType> groupBy(String... columns) {
+	public Select<EntityType> groupBy(String... columns) {
 		this.groupBy = columns;
 		return this;
 	}
 
-	public SelectBuilder<EntityType> having(String having) {
+	public Select<EntityType> having(String having) {
 		this.having = having;
 		return this;
 	}
 
-	public SelectBuilder<EntityType> offset(int offset) {
+	public Select<EntityType> offset(int offset) {
 		this.offset = offset;
 		return this;
 	}
 
-	public SelectBuilder<EntityType> limit(int limit) {
+	public Select<EntityType> limit(int limit) {
 		this.limit = limit;
 		return this;
 	}
 
-	public SelectBuilder<EntityType> orderBy(String column, boolean ascending) {
+	public Select<EntityType> orderBy(String column, boolean ascending) {
 		orderBy.put(column, ascending);
 		return this;
 	}

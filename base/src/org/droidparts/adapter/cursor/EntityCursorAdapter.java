@@ -17,7 +17,7 @@ package org.droidparts.adapter.cursor;
 
 import org.droidparts.model.Entity;
 import org.droidparts.persist.sql.EntityManager;
-import org.droidparts.persist.sql.stmt.SelectBuilder;
+import org.droidparts.persist.sql.stmt.Select;
 
 import android.content.Context;
 import android.database.Cursor;
@@ -33,13 +33,13 @@ public abstract class EntityCursorAdapter<EntityType extends Entity> extends
 	}
 
 	public EntityCursorAdapter(Context ctx, Class<EntityType> entityCls,
-			SelectBuilder<EntityType> selectBuilder) {
-		super(ctx, (selectBuilder != null) ? selectBuilder.execute() : null);
+			Select<EntityType> select) {
+		super(ctx, (select != null) ? select.execute() : null);
 		this.entityManager = EntityManager.getInstance(ctx, entityCls);
 	}
 
-	public void changeQuery(SelectBuilder<EntityType> selectBuilder) {
-		changeCursor(selectBuilder.execute());
+	public void changeData(Select<EntityType> select) {
+		changeCursor(select.execute());
 	}
 
 	@Override
@@ -84,7 +84,7 @@ public abstract class EntityCursorAdapter<EntityType extends Entity> extends
 	@Deprecated
 	public EntityCursorAdapter(Context ctx,
 			EntityManager<EntityType> entityManager,
-			SelectBuilder<EntityType> selectBuilder) {
+			Select<EntityType> selectBuilder) {
 		this(ctx, entityManager, selectBuilder.execute());
 	}
 

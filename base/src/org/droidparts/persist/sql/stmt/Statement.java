@@ -30,7 +30,7 @@ import org.droidparts.util.L;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Pair;
 
-public abstract class StatementBuilder<EntityType extends Entity> implements
+public abstract class Statement<EntityType extends Entity> implements
 		SQL {
 
 	protected final SQLiteDatabase db;
@@ -40,12 +40,12 @@ public abstract class StatementBuilder<EntityType extends Entity> implements
 	private String[] selectionArgs;
 	private final ArrayList<Pair<String, Pair<Is, Object[]>>> whereList = new ArrayList<Pair<String, Pair<Is, Object[]>>>();
 
-	public StatementBuilder(SQLiteDatabase db, String tableName) {
+	public Statement(SQLiteDatabase db, String tableName) {
 		this.db = db;
 		this.tableName = tableName;
 	}
 
-	public StatementBuilder<EntityType> whereId(long... oneOrMore) {
+	public Statement<EntityType> whereId(long... oneOrMore) {
 		if (oneOrMore.length == 1) {
 			return where(DB.Column.ID, Is.EQUAL, oneOrMore[0]);
 		} else {
@@ -53,7 +53,7 @@ public abstract class StatementBuilder<EntityType extends Entity> implements
 		}
 	}
 
-	protected StatementBuilder<EntityType> where(String columnName,
+	protected Statement<EntityType> where(String columnName,
 			Is operator, Object... columnValue) {
 		selection = null;
 		columnValue = varArgsHack(columnValue);
@@ -62,7 +62,7 @@ public abstract class StatementBuilder<EntityType extends Entity> implements
 		return this;
 	}
 
-	protected StatementBuilder<EntityType> where(String selection,
+	protected Statement<EntityType> where(String selection,
 			Object... selectionArgs) {
 		this.selection = selection;
 		this.selectionArgs = toWhereArgs(selectionArgs);

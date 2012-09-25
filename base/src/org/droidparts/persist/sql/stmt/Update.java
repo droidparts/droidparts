@@ -25,35 +25,35 @@ import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Pair;
 
-public class UpdateBuilder<EntityType extends Entity> extends
-		StatementBuilder<EntityType> {
+public class Update<EntityType extends Entity> extends
+		Statement<EntityType> {
 
 	private ContentValues contentValues = null;
 
-	public UpdateBuilder(SQLiteDatabase db, String tableName) {
+	public Update(SQLiteDatabase db, String tableName) {
 		super(db, tableName);
 	}
 
 	@Override
-	public UpdateBuilder<EntityType> whereId(long... oneOrMore) {
-		return (UpdateBuilder<EntityType>) super.whereId(oneOrMore);
+	public Update<EntityType> whereId(long... oneOrMore) {
+		return (Update<EntityType>) super.whereId(oneOrMore);
 	}
 
 	@Override
-	public UpdateBuilder<EntityType> where(String columnName, Is operator,
+	public Update<EntityType> where(String columnName, Is operator,
 			Object... columnValue) {
-		return (UpdateBuilder<EntityType>) super.where(columnName, operator,
+		return (Update<EntityType>) super.where(columnName, operator,
 				columnValue);
 	}
 
 	@Override
-	public UpdateBuilder<EntityType> where(String selection,
+	public Update<EntityType> where(String selection,
 			Object... selectionArgs) {
-		return (UpdateBuilder<EntityType>) super
+		return (Update<EntityType>) super
 				.where(selection, selectionArgs);
 	}
 
-	public UpdateBuilder<EntityType> setContent(ContentValues contentValues) {
+	public Update<EntityType> setContent(ContentValues contentValues) {
 		this.contentValues = contentValues;
 		return this;
 	}

@@ -24,29 +24,29 @@ import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Pair;
 
-public class DeleteBuilder<EntityType extends Entity> extends
-		StatementBuilder<EntityType> {
+public class Delete<EntityType extends Entity> extends
+		Statement<EntityType> {
 
-	public DeleteBuilder(SQLiteDatabase db, String tableName) {
+	public Delete(SQLiteDatabase db, String tableName) {
 		super(db, tableName);
 	}
 
 	@Override
-	public DeleteBuilder<EntityType> whereId(long... oneOrMore) {
-		return (DeleteBuilder<EntityType>) super.whereId(oneOrMore);
+	public Delete<EntityType> whereId(long... oneOrMore) {
+		return (Delete<EntityType>) super.whereId(oneOrMore);
 	}
 
 	@Override
-	public DeleteBuilder<EntityType> where(String columnName, Is operator,
+	public Delete<EntityType> where(String columnName, Is operator,
 			Object... columnValue) {
-		return (DeleteBuilder<EntityType>) super.where(columnName, operator,
+		return (Delete<EntityType>) super.where(columnName, operator,
 				columnValue);
 	}
 
 	@Override
-	public DeleteBuilder<EntityType> where(String selection,
+	public Delete<EntityType> where(String selection,
 			Object... selectionArgs) {
-		return (DeleteBuilder<EntityType>) super
+		return (Delete<EntityType>) super
 				.where(selection, selectionArgs);
 	}
 

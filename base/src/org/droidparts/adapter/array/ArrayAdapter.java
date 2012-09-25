@@ -42,10 +42,16 @@ public class ArrayAdapter<T> extends android.widget.ArrayAdapter<T> {
 		Injector.get().inject(ctx, this);
 	}
 
-	public void reset(List<T> list) {
+	public void changeData(List<T> list) {
 		clear();
 		for (T item : list) {
 			add(item);
 		}
+	}
+
+	//
+	@Deprecated
+	public void reset(List<T> list) {
+		changeData(list);
 	}
 }

@@ -22,9 +22,9 @@ import java.util.concurrent.Callable;
 import org.droidparts.contract.DB;
 import org.droidparts.contract.SQL;
 import org.droidparts.model.Entity;
-import org.droidparts.persist.sql.stmt.DeleteBuilder;
-import org.droidparts.persist.sql.stmt.SelectBuilder;
-import org.droidparts.persist.sql.stmt.UpdateBuilder;
+import org.droidparts.persist.sql.stmt.Delete;
+import org.droidparts.persist.sql.stmt.Select;
+import org.droidparts.persist.sql.stmt.Update;
 import org.droidparts.util.L;
 import org.droidparts.util.PersistUtils;
 
@@ -131,16 +131,16 @@ public abstract class AbstractEntityManager<EntityType extends Entity>
 
 	// statement builders
 
-	public SelectBuilder<EntityType> select() {
-		return new SelectBuilder<EntityType>(getDB(), getTableName());
+	public Select<EntityType> select() {
+		return new Select<EntityType>(getDB(), getTableName());
 	}
 
-	public UpdateBuilder<EntityType> update() {
-		return new UpdateBuilder<EntityType>(getDB(), getTableName());
+	public Update<EntityType> update() {
+		return new Update<EntityType>(getDB(), getTableName());
 	}
 
-	public DeleteBuilder<EntityType> delete() {
-		return new DeleteBuilder<EntityType>(getDB(), getTableName());
+	public Delete<EntityType> delete() {
+		return new Delete<EntityType>(getDB(), getTableName());
 	}
 
 	//
