@@ -49,7 +49,7 @@ public class EntryListActivity extends ListActivity implements OnClickListener {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		adapter = new EntryListAdapter(this, new EntryManager(this));
+		adapter = new EntryListAdapter(this, new EntryManager(this).select());
 		setListAdapter(adapter);
 		addButton.setOnClickListener(this);
 		toJsonButton.setOnClickListener(this);

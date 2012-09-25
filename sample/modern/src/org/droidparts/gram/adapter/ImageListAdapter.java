@@ -21,10 +21,9 @@ import org.droidparts.adapter.cursor.EntityCursorAdapter;
 import org.droidparts.adapter.tag.IconText2Tag;
 import org.droidparts.gram.R;
 import org.droidparts.gram.model.Image;
-import org.droidparts.gram.persist.ImageEntityManager;
+import org.droidparts.persist.sql.stmt.SelectBuilder;
 import org.droidparts.util.ImageAttacher;
 
-import android.app.Activity;
 import android.content.Context;
 import android.database.Cursor;
 import android.text.Html;
@@ -37,10 +36,9 @@ public class ImageListAdapter extends EntityCursorAdapter<Image> {
 
 	private final ImageAttacher imageAttacher;
 
-	public ImageListAdapter(Activity activity,
-			ImageEntityManager imageEntityManager) {
-		super(activity, imageEntityManager, imageEntityManager.select());
-		imageAttacher = new ImageAttacher(activity);
+	public ImageListAdapter(Context ctx, SelectBuilder<Image> selectBuilder) {
+		super(ctx, Image.class, selectBuilder);
+		imageAttacher = new ImageAttacher(ctx);
 	}
 
 	@Override

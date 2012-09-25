@@ -28,17 +28,14 @@ public abstract class EntityCursorAdapter<EntityType extends Entity> extends
 
 	protected final EntityManager<EntityType> entityManager;
 
-	public EntityCursorAdapter(Context ctx,
-			EntityManager<EntityType> entityManager,
-			SelectBuilder<EntityType> selectBuilder) {
-		this(ctx, entityManager, selectBuilder.execute());
+	public EntityCursorAdapter(Context ctx, Class<EntityType> entityCls) {
+		this(ctx, entityCls, null);
 	}
 
-	// @Deprecated
-	public EntityCursorAdapter(Context ctx,
-			EntityManager<EntityType> entityManager, Cursor cursor) {
-		super(ctx, cursor);
-		this.entityManager = entityManager;
+	public EntityCursorAdapter(Context ctx, Class<EntityType> entityCls,
+			SelectBuilder<EntityType> selectBuilder) {
+		super(ctx, (selectBuilder != null) ? selectBuilder.execute() : null);
+		this.entityManager = EntityManager.getInstance(ctx, entityCls);
 	}
 
 	public void changeQuery(SelectBuilder<EntityType> selectBuilder) {
@@ -80,6 +77,22 @@ public abstract class EntityCursorAdapter<EntityType extends Entity> extends
 			getCursor().requery();
 		}
 		return success;
+	}
+
+	//
+
+	@Deprecated
+	public EntityCursorAdapter(Context ctx,
+			EntityManager<EntityType> entityManager,
+			SelectBuilder<EntityType> selectBuilder) {
+		this(ctx, entityManager, selectBuilder.execute());
+	}
+
+	@Deprecated
+	public EntityCursorAdapter(Context ctx,
+			EntityManager<EntityType> entityManager, Cursor cursor) {
+		super(ctx, cursor);
+		this.entityManager = entityManager;
 	}
 
 }

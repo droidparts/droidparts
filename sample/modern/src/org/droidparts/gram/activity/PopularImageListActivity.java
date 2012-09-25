@@ -85,7 +85,7 @@ public class PopularImageListActivity extends
 	}
 
 	public void setAdapter() {
-		adapter = new ImageListAdapter(this, imageEntityManager);
+		adapter = new ImageListAdapter(this, imageEntityManager.select());
 		getFragment().setContent(adapter);
 	}
 
