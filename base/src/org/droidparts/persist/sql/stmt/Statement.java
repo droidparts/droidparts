@@ -30,8 +30,7 @@ import org.droidparts.util.L;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Pair;
 
-public abstract class Statement<EntityType extends Entity> implements
-		SQL {
+public abstract class Statement<EntityType extends Entity> implements SQL {
 
 	protected final SQLiteDatabase db;
 	protected final String tableName;
@@ -45,7 +44,7 @@ public abstract class Statement<EntityType extends Entity> implements
 		this.tableName = tableName;
 	}
 
-	public Statement<EntityType> whereId(long... oneOrMore) {
+	protected Statement<EntityType> whereId(long... oneOrMore) {
 		if (oneOrMore.length == 1) {
 			return where(DB.Column.ID, Is.EQUAL, oneOrMore[0]);
 		} else {
@@ -53,8 +52,8 @@ public abstract class Statement<EntityType extends Entity> implements
 		}
 	}
 
-	protected Statement<EntityType> where(String columnName,
-			Is operator, Object... columnValue) {
+	protected Statement<EntityType> where(String columnName, Is operator,
+			Object... columnValue) {
 		selection = null;
 		columnValue = varArgsHack(columnValue);
 		whereList.add(Pair.create(columnName,

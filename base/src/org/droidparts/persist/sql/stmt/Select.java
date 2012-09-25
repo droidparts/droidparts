@@ -29,8 +29,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Pair;
 
-public class Select<EntityType extends Entity> extends
-		Statement<EntityType> {
+public class Select<EntityType extends Entity> extends Statement<EntityType> {
 
 	private String[] columns = null;
 	private boolean distinct = false;
@@ -57,10 +56,8 @@ public class Select<EntityType extends Entity> extends
 	}
 
 	@Override
-	public Select<EntityType> where(String selection,
-			Object... selectionArgs) {
-		return (Select<EntityType>) super
-				.where(selection, selectionArgs);
+	public Select<EntityType> where(String selection, Object... selectionArgs) {
+		return (Select<EntityType>) super.where(selection, selectionArgs);
 	}
 
 	public Select<EntityType> columns(String... columns) {

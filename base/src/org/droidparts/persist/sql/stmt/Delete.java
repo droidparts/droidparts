@@ -24,8 +24,7 @@ import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Pair;
 
-public class Delete<EntityType extends Entity> extends
-		Statement<EntityType> {
+public class Delete<EntityType extends Entity> extends Statement<EntityType> {
 
 	public Delete(SQLiteDatabase db, String tableName) {
 		super(db, tableName);
@@ -44,10 +43,8 @@ public class Delete<EntityType extends Entity> extends
 	}
 
 	@Override
-	public Delete<EntityType> where(String selection,
-			Object... selectionArgs) {
-		return (Delete<EntityType>) super
-				.where(selection, selectionArgs);
+	public Delete<EntityType> where(String selection, Object... selectionArgs) {
+		return (Delete<EntityType>) super.where(selection, selectionArgs);
 	}
 
 	public int execute() {

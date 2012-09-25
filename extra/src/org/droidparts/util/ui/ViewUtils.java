@@ -43,8 +43,9 @@ public class ViewUtils {
 		view.setVisibility(gone ? GONE : VISIBLE);
 	}
 
-	public static void crossFade(final View visibleViewFrom, final View invisibleViewTo,
-			int durationMillis, final Runnable onAnimationEnd) {
+	public static void crossFade(final View visibleViewFrom,
+			final View invisibleViewTo, int durationMillis,
+			final Runnable onAnimationEnd) {
 		Animation animFrom = new AlphaAnimation(1, 0);
 		Animation animTo = new AlphaAnimation(0, 1);
 		animFrom.setDuration(durationMillis);

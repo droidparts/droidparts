@@ -25,8 +25,7 @@ import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Pair;
 
-public class Update<EntityType extends Entity> extends
-		Statement<EntityType> {
+public class Update<EntityType extends Entity> extends Statement<EntityType> {
 
 	private ContentValues contentValues = null;
 
@@ -47,10 +46,8 @@ public class Update<EntityType extends Entity> extends
 	}
 
 	@Override
-	public Update<EntityType> where(String selection,
-			Object... selectionArgs) {
-		return (Update<EntityType>) super
-				.where(selection, selectionArgs);
+	public Update<EntityType> where(String selection, Object... selectionArgs) {
+		return (Update<EntityType>) super.where(selection, selectionArgs);
 	}
 
 	public Update<EntityType> setContent(ContentValues contentValues) {
