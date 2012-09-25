@@ -39,7 +39,7 @@ public class ReflectionUtils {
 
 	}
 
-	public static <FieldType> FieldType getTypedFieldVal(Field field, Object obj)
+	public static <FieldType> FieldType getTypedFieldVal(Object obj, Field field)
 			throws IllegalArgumentException {
 		try {
 			field.setAccessible(true);
@@ -51,7 +51,7 @@ public class ReflectionUtils {
 		}
 	}
 
-	public static void setFieldVal(Field field, Object obj, Object val)
+	public static void setFieldVal(Object obj, Field field, Object val)
 			throws IllegalArgumentException {
 		try {
 			if (val == null) {

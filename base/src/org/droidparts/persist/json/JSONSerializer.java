@@ -251,7 +251,7 @@ public class JSONSerializer<ModelType extends Model> {
 			readFromModelAndPutToJSON(item, jsonField, subObj, keyParts.second);
 		} else {
 			Field f = getField(item.getClass(), jsonField.fieldName);
-			Object columnVal = getTypedFieldVal(f, item);
+			Object columnVal = getTypedFieldVal(item, f);
 			try {
 				putToJSONObject(obj, key, jsonField.fieldType, columnVal);
 			} catch (Exception e) {
@@ -285,7 +285,7 @@ public class JSONSerializer<ModelType extends Model> {
 				val = readFromJSON(modelField.fieldType,
 						modelField.fieldArrOrCollType, val);
 				if (!NULL.equals(val)) {
-					setFieldVal(f, model, val);
+					setFieldVal(model, f, val);
 				} else {
 					L.i("Received NULL '" + modelField.keyName + "', skipping.");
 				}

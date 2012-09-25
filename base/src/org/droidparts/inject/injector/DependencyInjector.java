@@ -67,7 +67,7 @@ public class DependencyInjector {
 		Object val = getDependency(ctx, field.getType());
 		if (val != null) {
 			try {
-				setFieldVal(field, target, val);
+				setFieldVal(target, field, val);
 				return true;
 			} catch (IllegalArgumentException e) {
 				// swallow

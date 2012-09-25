@@ -107,7 +107,7 @@ public class EntityManager<EntityType extends Entity> extends
 						dbField.fieldType, dbField.fieldArrOrCollType);
 				if (columnVal != null) {
 					Field f = getField(entity.getClass(), dbField.fieldName);
-					setFieldVal(f, entity, columnVal);
+					setFieldVal(entity, f, columnVal);
 				}
 			}
 		}
@@ -125,12 +125,12 @@ public class EntityManager<EntityType extends Entity> extends
 				Field field = ReflectionUtils.getField(cls,
 						entityField.fieldName);
 				EntityType foreignEntity = ReflectionUtils.getTypedFieldVal(
-						field, item);
+						item, field);
 				if (foreignEntity != null) {
 					Object obj = getInstance(ctx,
 							dirtyCast(entityField.fieldType)).read(
 							foreignEntity.id);
-					setFieldVal(field, item, obj);
+					setFieldVal(item, field, obj);
 				}
 			}
 		}
@@ -152,7 +152,7 @@ public class EntityManager<EntityType extends Entity> extends
 		EntityField[] fields = processor.getModelClassFields();
 		for (EntityField dbField : fields) {
 			Field field = getField(item.getClass(), dbField.fieldName);
-			Object columnVal = getTypedFieldVal(field, item);
+			Object columnVal = getTypedFieldVal(item, field);
 			putToContentValues(cv, dbField.columnName, dbField.fieldType,
 					columnVal);
 		}
@@ -166,7 +166,7 @@ public class EntityManager<EntityType extends Entity> extends
 				Field field = ReflectionUtils.getField(cls,
 						entityField.fieldName);
 				EntityType foreignEntity = ReflectionUtils.getTypedFieldVal(
-						field, item);
+						item, field);
 				if (foreignEntity != null) {
 					getInstance(ctx, dirtyCast(entityField.fieldType))
 							.createOrUpdate(foreignEntity);

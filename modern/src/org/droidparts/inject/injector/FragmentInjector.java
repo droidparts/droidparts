@@ -37,7 +37,7 @@ public class FragmentInjector {
 			Fragment fragment = activity.getSupportFragmentManager()
 					.findFragmentById(fragmenId);
 			try {
-				setFieldVal(field, activity, fragment);
+				setFieldVal(activity, field, fragment);
 				return true;
 			} catch (IllegalArgumentException e) {
 				// swallow

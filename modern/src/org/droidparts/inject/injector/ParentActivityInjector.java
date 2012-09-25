@@ -27,7 +27,7 @@ public class ParentActivityInjector {
 	static boolean inject(Fragment fragment, Field field) {
 		FragmentActivity activity = fragment.getActivity();
 		try {
-			setFieldVal(field, fragment, activity);
+			setFieldVal(fragment, field, activity);
 			return true;
 		} catch (IllegalArgumentException e) {
 			// swallow

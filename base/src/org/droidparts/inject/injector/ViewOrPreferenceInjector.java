@@ -50,7 +50,7 @@ public class ViewOrPreferenceInjector {
 						.getText(viewOrPrefId));
 			}
 			try {
-				setFieldVal(field, target, val);
+				setFieldVal(target, field, val);
 				return true;
 			} catch (IllegalArgumentException e) {
 				// swallow

@@ -54,7 +54,7 @@ public class SystemServiceInjector {
 				.getType()) : serviceName;
 		Object serv = ctx.getSystemService(name);
 		try {
-			setFieldVal(field, target, serv);
+			setFieldVal(target, field, serv);
 			return true;
 		} catch (IllegalArgumentException e) {
 			// swallow

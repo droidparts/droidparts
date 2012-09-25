@@ -55,7 +55,7 @@ public class ResourceInjector {
 				L.e("Resource not supported yet: " + field.getType().getName());
 			}
 			try {
-				setFieldVal(field, target, val);
+				setFieldVal(target, field, val);
 				return true;
 			} catch (IllegalArgumentException e) {
 				// swallow
