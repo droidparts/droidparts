@@ -31,7 +31,8 @@ public class ReflectionUtils {
 	public static Field getField(Class<?> cls, String fieldName)
 			throws IllegalArgumentException {
 		try {
-			return cls.getField(fieldName);
+			Field f = cls.getField(fieldName);
+			return f;
 		} catch (Exception e) {
 			L.e(cls.getSimpleName() + " has no field " + fieldName + ".");
 			throw new IllegalArgumentException(e);
@@ -39,12 +40,12 @@ public class ReflectionUtils {
 
 	}
 
-	public static <FieldType> FieldType getTypedFieldVal(Object obj, Field field)
+	public static <ValType> ValType getFieldVal(Object obj, Field field)
 			throws IllegalArgumentException {
 		try {
 			field.setAccessible(true);
 			@SuppressWarnings("unchecked")
-			FieldType val = (FieldType) field.get(obj);
+			ValType val = (ValType) field.get(obj);
 			return val;
 		} catch (Exception e) {
 			throw new IllegalArgumentException(e);
@@ -54,9 +55,6 @@ public class ReflectionUtils {
 	public static void setFieldVal(Object obj, Field field, Object val)
 			throws IllegalArgumentException {
 		try {
-			if (val == null) {
-				throw new IllegalArgumentException("null val");
-			}
 			field.setAccessible(true);
 			field.set(obj, val);
 		} catch (Exception e) {

@@ -17,7 +17,7 @@ package org.droidparts.persist.sql;
 
 import static java.util.Arrays.asList;
 import static org.droidparts.reflect.util.ReflectionUtils.getField;
-import static org.droidparts.reflect.util.ReflectionUtils.getTypedFieldVal;
+import static org.droidparts.reflect.util.ReflectionUtils.getFieldVal;
 import static org.droidparts.reflect.util.ReflectionUtils.instantiate;
 import static org.droidparts.reflect.util.ReflectionUtils.instantiateEnum;
 import static org.droidparts.reflect.util.ReflectionUtils.setFieldVal;
@@ -124,7 +124,7 @@ public class EntityManager<EntityType extends Entity> extends
 							.contains(entityField.columnName))) {
 				Field field = ReflectionUtils.getField(cls,
 						entityField.fieldName);
-				EntityType foreignEntity = ReflectionUtils.getTypedFieldVal(
+				EntityType foreignEntity = ReflectionUtils.getFieldVal(
 						item, field);
 				if (foreignEntity != null) {
 					Object obj = getInstance(ctx,
@@ -152,7 +152,7 @@ public class EntityManager<EntityType extends Entity> extends
 		EntityField[] fields = processor.getModelClassFields();
 		for (EntityField dbField : fields) {
 			Field field = getField(item.getClass(), dbField.fieldName);
-			Object columnVal = getTypedFieldVal(item, field);
+			Object columnVal = getFieldVal(item, field);
 			putToContentValues(cv, dbField.columnName, dbField.fieldType,
 					columnVal);
 		}
@@ -165,7 +165,7 @@ public class EntityManager<EntityType extends Entity> extends
 			if (isEntity(entityField.fieldType)) {
 				Field field = ReflectionUtils.getField(cls,
 						entityField.fieldName);
-				EntityType foreignEntity = ReflectionUtils.getTypedFieldVal(
+				EntityType foreignEntity = ReflectionUtils.getFieldVal(
 						item, field);
 				if (foreignEntity != null) {
 					getInstance(ctx, dirtyCast(entityField.fieldType))

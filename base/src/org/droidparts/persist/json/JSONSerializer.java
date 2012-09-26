@@ -16,7 +16,7 @@
 package org.droidparts.persist.json;
 
 import static org.droidparts.reflect.util.ReflectionUtils.getField;
-import static org.droidparts.reflect.util.ReflectionUtils.getTypedFieldVal;
+import static org.droidparts.reflect.util.ReflectionUtils.getFieldVal;
 import static org.droidparts.reflect.util.ReflectionUtils.instantiate;
 import static org.droidparts.reflect.util.ReflectionUtils.setFieldVal;
 import static org.droidparts.reflect.util.TypeHelper.isArray;
@@ -251,7 +251,7 @@ public class JSONSerializer<ModelType extends Model> {
 			readFromModelAndPutToJSON(item, jsonField, subObj, keyParts.second);
 		} else {
 			Field f = getField(item.getClass(), jsonField.fieldName);
-			Object columnVal = getTypedFieldVal(item, f);
+			Object columnVal = getFieldVal(item, f);
 			try {
 				putToJSONObject(obj, key, jsonField.fieldType, columnVal);
 			} catch (Exception e) {
