@@ -232,11 +232,9 @@ public final class PersistUtils implements SQL.DDL {
 			sb.append(dbField.columnName);
 			sb.append(columnType);
 			if (!dbField.columnNullable) {
-				sb.append(" ");
 				sb.append(NOT_NULL);
 			}
 			if (dbField.columnUnique) {
-				sb.append(" ");
 				sb.append(UNIQUE);
 			}
 			if (isEntity(dbField.fieldType)) {

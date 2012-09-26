@@ -58,8 +58,8 @@ public interface SQL {
 		String BLOB = " BLOB";
 
 		String PK = DB.Column.ID + " INTEGER PRIMARY KEY";
-		String NOT_NULL = "NOT NULL";
-		String UNIQUE = "UNIQUE";
+		String NOT_NULL = " NOT NULL";
+		String UNIQUE = " UNIQUE";
 	}
 
 }
