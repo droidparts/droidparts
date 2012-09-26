@@ -1,3 +1,12 @@
+0.8.0 /2012-09-26/:
+    * EntityMananger: added readFirstFromCursor(), readAllFromCursor(), removed list().
+    * Changed EntityCursorAdapter constructors, one of them now accepts Select object.
+    * Added scaleBitmap() to MiscUtils.
+    * Removed SimplerAsyncTask; SimplestAsyncTask => SimpleAsyncTask.
+    * Removed the 'Builder' part from SQL statement builders.
+    * Added SQL NOT LIKE, (NOT) BETWEEN statement support.
+    * Little this, little that.
+
 0.7.9 /2012-09-18/:
     * AbstractDBOpenHelper: dropAll() => dropTables() with optional table names.
     * ImageAttacher: processBitmapBeforeAttaching() => onSuccess(), added onFailure().
