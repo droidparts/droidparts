@@ -230,7 +230,6 @@ public final class PersistUtils implements SQL.DDL {
 			String columnType = getColumnType(dbField.fieldType,
 					dbField.fieldArrOrCollType);
 			sb.append(dbField.columnName);
-			sb.append(" ");
 			sb.append(columnType);
 			if (!dbField.columnNullable) {
 				sb.append(" ");

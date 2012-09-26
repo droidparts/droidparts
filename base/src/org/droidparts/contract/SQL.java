@@ -52,10 +52,10 @@ public interface SQL {
 		String SEPARATOR = ", ";
 		String CLOSING_BRACE = ");";
 
-		String INTEGER = "INTEGER";
-		String REAL = "REAL";
-		String TEXT = "TEXT";
-		String BLOB = "BLOB";
+		String INTEGER = " INTEGER";
+		String REAL = " REAL";
+		String TEXT = " TEXT";
+		String BLOB = " BLOB";
 
 		String PK = DB.Column.ID + " INTEGER PRIMARY KEY";
 		String NOT_NULL = "NOT NULL";
