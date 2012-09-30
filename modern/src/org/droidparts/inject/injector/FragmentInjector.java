@@ -19,7 +19,7 @@ import static org.droidparts.reflect.util.ReflectionUtils.setFieldVal;
 
 import java.lang.reflect.Field;
 
-import org.droidparts.annotation.inject.InjectFragment;
+import org.droidparts.reflect.model.inject.ann.InjectFragmentAnn;
 import org.droidparts.util.inner.ResourceUtils;
 
 import android.support.v4.app.Fragment;
@@ -27,15 +27,15 @@ import android.support.v4.app.FragmentActivity;
 
 public class FragmentInjector {
 
-	static boolean inject(FragmentActivity activity, InjectFragment ann,
+	static boolean inject(FragmentActivity activity, InjectFragmentAnn ann,
 			Field field) {
-		int fragmenId = ann.value();
-		if (fragmenId == 0) {
-			fragmenId = ResourceUtils.getResourceId(activity, field.getName());
+		int fragmentId = ann.value;
+		if (fragmentId == 0) {
+			fragmentId = ResourceUtils.getResourceId(activity, field.getName());
 		}
-		if (fragmenId != 0) {
+		if (fragmentId != 0) {
 			Fragment fragment = activity.getSupportFragmentManager()
-					.findFragmentById(fragmenId);
+					.findFragmentById(fragmentId);
 			try {
 				setFieldVal(activity, field, fragment);
 				return true;

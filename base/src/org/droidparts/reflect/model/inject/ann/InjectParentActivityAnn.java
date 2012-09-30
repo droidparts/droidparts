@@ -13,18 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License. 
  */
-package org.droidparts.reflect.model;
+package org.droidparts.reflect.model.inject.ann;
 
-public abstract class AbstractField {
+import org.droidparts.annotation.inject.InjectParentActivity;
 
-	public String fieldName;
-	public Class<?> fieldType;
-	public Class<?> fieldArrOrCollType;
+public class InjectParentActivityAnn extends InjectAnn<InjectParentActivity> {
 
-	@Override
-	public String toString() {
-		return "fieldName: " + fieldName + ", fieldType: " + fieldType
-				+ ", fieldArrOrCollType: " + fieldArrOrCollType;
+	public InjectParentActivityAnn(InjectParentActivity annotation) {
+		super(InjectParentActivity.class);
 	}
 
 }

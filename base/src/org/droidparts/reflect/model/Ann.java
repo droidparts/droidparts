@@ -15,14 +15,33 @@
  */
 package org.droidparts.reflect.model;
 
-public class ModelField extends AbstractField {
+import java.lang.annotation.Annotation;
 
-	public String keyName;
-	public boolean keyOptional;
+public class Ann<T extends Annotation> {
+
+	public final Class<? extends Annotation> cls;
+
+	public Ann(Class<T> cls) {
+		this.cls = cls;
+	}
+
+	@Override
+	public int hashCode() {
+		return cls.hashCode();
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (o == this) {
+			return true;
+		} else if (o instanceof Ann) {
+			return cls.equals(((Ann<?>) o).cls);
+		}
+		return false;
+	}
 
 	@Override
 	public String toString() {
-		return super.toString() + ", keyName: " + keyName + ", keyOptional: "
-				+ keyOptional;
+		return cls.toString();
 	}
 }

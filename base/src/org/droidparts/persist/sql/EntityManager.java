@@ -16,7 +16,6 @@
 package org.droidparts.persist.sql;
 
 import static java.util.Arrays.asList;
-import static org.droidparts.reflect.util.ReflectionUtils.getField;
 import static org.droidparts.reflect.util.ReflectionUtils.getFieldVal;
 import static org.droidparts.reflect.util.ReflectionUtils.instantiate;
 import static org.droidparts.reflect.util.ReflectionUtils.instantiateEnum;
@@ -51,7 +50,7 @@ import java.util.UUID;
 import org.droidparts.annotation.inject.InjectDependency;
 import org.droidparts.inject.Injector;
 import org.droidparts.model.Entity;
-import org.droidparts.reflect.model.EntityField;
+import org.droidparts.reflect.model.sql.EntitySpec;
 import org.droidparts.reflect.processor.EntityAnnotationProcessor;
 import org.droidparts.reflect.util.ReflectionUtils;
 import org.droidparts.util.Strings;
@@ -99,15 +98,14 @@ public class EntityManager<EntityType extends Entity> extends
 	@Override
 	public EntityType readRow(Cursor cursor) {
 		EntityType entity = instantiate(cls);
-		EntityField[] fields = processor.getModelClassFields();
-		for (EntityField dbField : fields) {
-			int colIdx = cursor.getColumnIndex(dbField.columnName);
+		EntitySpec[] specs = processor.getModelClassFields();
+		for (EntitySpec spec : specs) {
+			int colIdx = cursor.getColumnIndex(spec.column.name);
 			if (colIdx >= 0) {
-				Object columnVal = readFromCursor(cursor, colIdx,
-						dbField.fieldType, dbField.fieldArrOrCollType);
+				Object columnVal = readFromCursor(cursor, colIdx, spec.field,
+						spec.multiFieldArgType);
 				if (columnVal != null) {
-					Field f = getField(entity.getClass(), dbField.fieldName);
-					setFieldVal(entity, f, columnVal);
+					setFieldVal(entity, spec.field, columnVal);
 				}
 			}
 		}
@@ -118,19 +116,17 @@ public class EntityManager<EntityType extends Entity> extends
 	public void fillForeignKeys(EntityType item, String... columnNames) {
 		HashSet<String> columnNameSet = new HashSet<String>(asList(columnNames));
 		boolean fillAll = columnNameSet.isEmpty();
-		for (EntityField entityField : processor.getModelClassFields()) {
-			if (isEntity(entityField.fieldType)
+		for (EntitySpec entitySpec : processor.getModelClassFields()) {
+			if (isEntity(entitySpec.field.getType())
 					&& (fillAll || columnNameSet
-							.contains(entityField.columnName))) {
-				Field field = ReflectionUtils.getField(cls,
-						entityField.fieldName);
-				EntityType foreignEntity = ReflectionUtils.getFieldVal(
-						item, field);
+							.contains(entitySpec.column.name))) {
+				EntityType foreignEntity = ReflectionUtils.getFieldVal(item,
+						entitySpec.field);
 				if (foreignEntity != null) {
 					Object obj = getInstance(ctx,
-							dirtyCast(entityField.fieldType)).read(
+							dirtyCast(entitySpec.field.getType())).read(
 							foreignEntity.id);
-					setFieldVal(item, field, obj);
+					setFieldVal(item, entitySpec.field, obj);
 				}
 			}
 		}
@@ -149,26 +145,23 @@ public class EntityManager<EntityType extends Entity> extends
 	@Override
 	protected ContentValues toContentValues(EntityType item) {
 		ContentValues cv = new ContentValues();
-		EntityField[] fields = processor.getModelClassFields();
-		for (EntityField dbField : fields) {
-			Field field = getField(item.getClass(), dbField.fieldName);
-			Object columnVal = getFieldVal(item, field);
-			putToContentValues(cv, dbField.columnName, dbField.fieldType,
-					columnVal);
+		EntitySpec[] fields = processor.getModelClassFields();
+		for (EntitySpec dbField : fields) {
+			Object columnVal = getFieldVal(item, dbField.field);
+			putToContentValues(cv, dbField.column.name,
+					dbField.field.getType(), columnVal);
 		}
 		return cv;
 	}
 
 	@Override
 	protected void createOrUpdateForeignKeys(EntityType item) {
-		for (EntityField entityField : processor.getModelClassFields()) {
-			if (isEntity(entityField.fieldType)) {
-				Field field = ReflectionUtils.getField(cls,
-						entityField.fieldName);
-				EntityType foreignEntity = ReflectionUtils.getFieldVal(
-						item, field);
+		for (EntitySpec entityField : processor.getModelClassFields()) {
+			if (isEntity(entityField.field.getType())) {
+				EntityType foreignEntity = ReflectionUtils.getFieldVal(item,
+						entityField.field);
 				if (foreignEntity != null) {
-					getInstance(ctx, dirtyCast(entityField.fieldType))
+					getInstance(ctx, dirtyCast(entityField.field.getType()))
 							.createOrUpdate(foreignEntity);
 				}
 			}
@@ -178,9 +171,9 @@ public class EntityManager<EntityType extends Entity> extends
 	protected String[] getEagerForeignKeyColumnNames() {
 		if (eagerForeignKeyColumnNames == null) {
 			HashSet<String> eagerColumnNames = new HashSet<String>();
-			for (EntityField ef : processor.getModelClassFields()) {
-				if (ef.columnEager) {
-					eagerColumnNames.add(ef.columnName);
+			for (EntitySpec ef : processor.getModelClassFields()) {
+				if (ef.column.eager) {
+					eagerColumnNames.add(ef.column.name);
 				}
 			}
 			eagerForeignKeyColumnNames = eagerColumnNames
@@ -247,57 +240,58 @@ public class EntityManager<EntityType extends Entity> extends
 	}
 
 	protected Object readFromCursor(Cursor cursor, int columnIndex,
-			Class<?> fieldCls, Class<?> fieldArrOrCollType) {
+			Field field, Class<?> multiFieldArgType) {
+		Class<?> fieldType = field.getType();
 		if (cursor.isNull(columnIndex)) {
 			return null;
-		} else if (isBoolean(fieldCls)) {
+		} else if (isBoolean(fieldType)) {
 			return cursor.getInt(columnIndex) == 1;
-		} else if (isByte(fieldCls)) {
+		} else if (isByte(fieldType)) {
 			return Byte.valueOf(cursor.getString(columnIndex));
-		} else if (isByteArray(fieldCls)) {
+		} else if (isByteArray(fieldType)) {
 			return cursor.getBlob(columnIndex);
-		} else if (isDouble(fieldCls)) {
+		} else if (isDouble(fieldType)) {
 			return cursor.getDouble(columnIndex);
-		} else if (isFloat(fieldCls)) {
+		} else if (isFloat(fieldType)) {
 			return cursor.getFloat(columnIndex);
-		} else if (isInteger(fieldCls)) {
+		} else if (isInteger(fieldType)) {
 			return cursor.getInt(columnIndex);
-		} else if (isLong(fieldCls)) {
+		} else if (isLong(fieldType)) {
 			return cursor.getLong(columnIndex);
-		} else if (isShort(fieldCls)) {
+		} else if (isShort(fieldType)) {
 			return cursor.getShort(columnIndex);
-		} else if (isString(fieldCls)) {
+		} else if (isString(fieldType)) {
 			return cursor.getString(columnIndex);
-		} else if (isUUID(fieldCls)) {
+		} else if (isUUID(fieldType)) {
 			return UUID.fromString(cursor.getString(columnIndex));
-		} else if (isDate(fieldCls)) {
+		} else if (isDate(fieldType)) {
 			return new Date(cursor.getLong(columnIndex));
-		} else if (isBitmap(fieldCls)) {
+		} else if (isBitmap(fieldType)) {
 			byte[] arr = cursor.getBlob(columnIndex);
 			return BitmapFactory.decodeByteArray(arr, 0, arr.length);
-		} else if (isEnum(fieldCls)) {
-			return instantiateEnum(fieldCls, cursor.getString(columnIndex));
-		} else if (isEntity(fieldCls)) {
+		} else if (isEnum(fieldType)) {
+			return instantiateEnum(fieldType, cursor.getString(columnIndex));
+		} else if (isEntity(fieldType)) {
 			long id = cursor.getLong(columnIndex);
-			EntityType entity = instantiate(fieldCls);
+			EntityType entity = instantiate(fieldType);
 			entity.id = id;
 			return entity;
-		} else if (isArray(fieldCls) || isCollection(fieldCls)) {
+		} else if (isArray(fieldType) || isCollection(fieldType)) {
 			String str = cursor.getString(columnIndex);
 			String[] parts = (str.length() > 0) ? str.split("\\" + SEP)
 					: new String[0];
-			if (isArray(fieldCls)) {
-				return toTypeArr(fieldArrOrCollType, parts);
+			if (isArray(fieldType)) {
+				return toTypeArr(multiFieldArgType, parts);
 			} else {
 				@SuppressWarnings("unchecked")
-				Collection<Object> coll = (Collection<Object>) instantiate(fieldCls);
-				coll.addAll(toTypeColl(fieldArrOrCollType, parts));
+				Collection<Object> coll = (Collection<Object>) instantiate(fieldType);
+				coll.addAll(toTypeColl(multiFieldArgType, parts));
 				return coll;
 			}
 		} else {
 			// TODO ObjectInputStream
 			throw new IllegalArgumentException("Need to manually read "
-					+ fieldCls + " from Cursor.");
+					+ fieldType + " from Cursor.");
 		}
 	}
 

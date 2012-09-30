@@ -23,7 +23,7 @@ import static org.droidparts.reflect.util.TypeHelper.isString;
 
 import java.lang.reflect.Field;
 
-import org.droidparts.annotation.inject.InjectResource;
+import org.droidparts.reflect.model.inject.ann.InjectResourceAnn;
 import org.droidparts.util.L;
 
 import android.content.Context;
@@ -31,9 +31,9 @@ import android.content.res.Resources;
 
 public class ResourceInjector {
 
-	static boolean inject(Context ctx, InjectResource ann, Object target,
+	static boolean inject(Context ctx, InjectResourceAnn ann, Object target,
 			Field field) {
-		int resId = ann.value();
+		int resId = ann.value;
 		if (resId != 0) {
 			Resources res = ctx.getResources();
 			Class<?> cls = field.getType();

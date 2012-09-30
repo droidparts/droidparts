@@ -15,18 +15,16 @@
  */
 package org.droidparts.inject.injector;
 
-import static org.droidparts.reflect.util.ReflectionUtils.listAnnotatedFields;
-
-import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
-import java.util.HashSet;
-import java.util.List;
 
-import org.droidparts.annotation.inject.InjectBundleExtra;
-import org.droidparts.annotation.inject.InjectDependency;
-import org.droidparts.annotation.inject.InjectResource;
-import org.droidparts.annotation.inject.InjectSystemService;
-import org.droidparts.annotation.inject.InjectView;
+import org.droidparts.reflect.model.Ann;
+import org.droidparts.reflect.model.inject.InjectSpec;
+import org.droidparts.reflect.model.inject.ann.InjectBundleExtraAnn;
+import org.droidparts.reflect.model.inject.ann.InjectDependencyAnn;
+import org.droidparts.reflect.model.inject.ann.InjectResourceAnn;
+import org.droidparts.reflect.model.inject.ann.InjectSystemServiceAnn;
+import org.droidparts.reflect.model.inject.ann.InjectViewAnn;
+import org.droidparts.reflect.processor.InjectAnnotationProcessor;
 import org.droidparts.util.L;
 
 import android.app.Activity;
@@ -37,12 +35,6 @@ import android.view.View;
 
 public class InjectorDelegate {
 
-	private final HashSet<Class<? extends Annotation>> supportedAnnotations;
-
-	public InjectorDelegate() {
-		supportedAnnotations = getSupportedAnnotations();
-	}
-
 	public static void setUp(Context ctx) {
 		DependencyInjector.init(ctx);
 	}
@@ -51,45 +43,42 @@ public class InjectorDelegate {
 		DependencyInjector.tearDown();
 	}
 
-	public void inject(Context ctx, View root, Object target) {
+	public final void inject(Context ctx, View root, Object target) {
 		long start = System.currentTimeMillis();
 		final Class<?> cls = target.getClass();
-		List<Field> fields = listAnnotatedFields(cls);
-		for (Field field : fields) {
-			for (Annotation ann : field.getAnnotations()) {
-				boolean success = inject(ctx, root, target, ann, field);
-				if (success) {
-					break;
-				} else if (supportedAnnotations.contains(ann.annotationType())) {
-					L.e("Failed to inject field '" + field.getName() + "' in "
-							+ cls.getSimpleName() + ".");
-				}
+		InjectSpec[] specs = new InjectAnnotationProcessor(cls).getSpecs();
+		for (InjectSpec spec : specs) {
+			boolean success = inject(ctx, root, target, spec.injectAnn,
+					spec.field);
+			if (!success) {
+				L.e("Failed to inject field '" + spec.field.getName() + "' in "
+						+ cls.getSimpleName() + ".");
 			}
 		}
 		long end = System.currentTimeMillis() - start;
 		L.d(String.format("Injected on %s in %d ms.", cls.getSimpleName(), end));
 	}
 
-	protected boolean inject(Context ctx, View root, Object target,
-			Annotation ann, Field field) {
-		Class<? extends Annotation> annType = ann.annotationType();
+	protected boolean inject(Context ctx, View root, Object target, Ann<?> ann,
+			Field field) {
+		Class<?> annType = ann.getClass();
 		boolean success = false;
-		if (annType == InjectDependency.class) {
+		if (annType == InjectDependencyAnn.class) {
 			success = DependencyInjector.inject(ctx, target, field);
-		} else if (annType == InjectBundleExtra.class) {
+		} else if (annType == InjectBundleExtraAnn.class) {
 			Bundle data = getIntentExtras(target);
 			success = BundleExtraInjector.inject(ctx, data,
-					(InjectBundleExtra) ann, target, field);
-		} else if (annType == InjectResource.class) {
-			success = ResourceInjector.inject(ctx, (InjectResource) ann,
+					(InjectBundleExtraAnn) ann, target, field);
+		} else if (annType == InjectResourceAnn.class) {
+			success = ResourceInjector.inject(ctx, (InjectResourceAnn) ann,
 					target, field);
-		} else if (annType == InjectSystemService.class) {
+		} else if (annType == InjectSystemServiceAnn.class) {
 			success = SystemServiceInjector.inject(ctx,
-					(InjectSystemService) ann, target, field);
-		} else if (annType == InjectView.class) {
+					(InjectSystemServiceAnn) ann, target, field);
+		} else if (annType == InjectViewAnn.class) {
 			if (root != null) {
-				success = ViewOrPreferenceInjector.inject(ctx, root, (InjectView) ann,
-						target, field);
+				success = ViewOrPreferenceInjector.inject(ctx, root,
+						(InjectViewAnn) ann, target, field);
 			}
 		}
 		return success;
@@ -103,16 +92,6 @@ public class InjectorDelegate {
 			// TODO
 		}
 		return data;
-	}
-
-	protected HashSet<Class<? extends Annotation>> getSupportedAnnotations() {
-		HashSet<Class<? extends Annotation>> set = new HashSet<Class<? extends Annotation>>();
-		set.add(InjectBundleExtra.class);
-		set.add(InjectDependency.class);
-		set.add(InjectResource.class);
-		set.add(InjectSystemService.class);
-		set.add(InjectView.class);
-		return set;
 	}
 
 }

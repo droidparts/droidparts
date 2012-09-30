@@ -19,17 +19,17 @@ import static org.droidparts.reflect.util.ReflectionUtils.setFieldVal;
 
 import java.lang.reflect.Field;
 
-import org.droidparts.annotation.inject.InjectBundleExtra;
+import org.droidparts.reflect.model.inject.ann.InjectBundleExtraAnn;
 
 import android.content.Context;
 import android.os.Bundle;
 
 public class BundleExtraInjector {
 
-	static boolean inject(Context ctx, Bundle data, InjectBundleExtra ann,
+	static boolean inject(Context ctx, Bundle data, InjectBundleExtraAnn ann,
 			Object target, Field field) {
-		String key = ann.value();
-		boolean optional = ann.optional();
+		String key = ann.value;
+		boolean optional = ann.optional;
 		Object val = data.get(key);
 		if (val == null && optional) {
 			return true;

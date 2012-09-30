@@ -20,12 +20,14 @@ import static org.droidparts.util.Strings.isEmpty;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 
-import org.droidparts.annotation.json.Key;
 import org.droidparts.model.Model;
-import org.droidparts.reflect.model.ModelField;
+import org.droidparts.reflect.model.json.ModelSpec;
+import org.droidparts.reflect.model.json.ann.KeyAnn;
+import org.droidparts.reflect.model.json.ann.ObjectAnn;
+import org.droidparts.reflect.util.AnnUtil;
 
 public class ModelAnnotationProcessor extends
-		AbstractAnnotationProcessor<ModelField> {
+		AbstractAnnotationProcessor<ModelSpec> {
 
 	public ModelAnnotationProcessor(Class<? extends Model> cls) {
 		super(cls);
@@ -34,10 +36,9 @@ public class ModelAnnotationProcessor extends
 	@Override
 	protected String modelClassName() {
 		String name = null;
-		org.droidparts.annotation.json.Object ann = cls
-				.getAnnotation(org.droidparts.annotation.json.Object.class);
+		ObjectAnn ann = (ObjectAnn) AnnUtil.getClassAnn(cls, ObjectAnn.class);
 		if (ann != null) {
-			name = ann.name();
+			name = ann.name;
 		}
 		if (isEmpty(name)) {
 			name = cls.getSimpleName();
@@ -46,23 +47,25 @@ public class ModelAnnotationProcessor extends
 	}
 
 	@Override
-	protected ModelField[] modelClassFields() {
-		ArrayList<ModelField> list = new ArrayList<ModelField>();
+	protected ModelSpec[] modelClassFields() {
+		ArrayList<ModelSpec> list = new ArrayList<ModelSpec>();
 		for (Field field : getClassHierarchyFields()) {
-			Key keyAnn = field.getAnnotation(Key.class);
+			KeyAnn keyAnn = (KeyAnn) AnnUtil.getFieldAnn(cls, field,
+					KeyAnn.class);
 			if (keyAnn != null) {
-				ModelField jsonField = new ModelField();
-				fillField(field, jsonField);
-				jsonField.keyName = getKeyName(keyAnn, field);
-				jsonField.keyOptional = keyAnn.optional();
-				list.add(jsonField);
+				ModelSpec spec = new ModelSpec();
+				spec.field = field;
+				spec.multiFieldArgType = getMultiFieldArgType(field);
+				spec.key.name = getKeyName(keyAnn, field);
+				spec.key.optional = keyAnn.optional;
+				list.add(spec);
 			}
 		}
-		return list.toArray(new ModelField[list.size()]);
+		return list.toArray(new ModelSpec[list.size()]);
 	}
 
-	private String getKeyName(Key ann, Field field) {
-		String name = ann.name();
+	private String getKeyName(KeyAnn ann, Field field) {
+		String name = ann.name;
 		if (isEmpty(name)) {
 			name = field.getName();
 		}

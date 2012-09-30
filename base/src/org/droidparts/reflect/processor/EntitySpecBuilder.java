@@ -26,14 +26,15 @@ import static org.droidparts.util.Strings.isEmpty;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 
-import org.droidparts.annotation.sql.Column;
-import org.droidparts.annotation.sql.Table;
 import org.droidparts.model.Entity;
-import org.droidparts.reflect.model.EntityField;
+import org.droidparts.reflect.model.sql.EntitySpec;
+import org.droidparts.reflect.model.sql.ann.ColumnAnn;
+import org.droidparts.reflect.model.sql.ann.TableAnn;
+import org.droidparts.reflect.util.AnnUtil;
 import org.droidparts.util.L;
 
 public class EntityAnnotationProcessor extends
-		AbstractAnnotationProcessor<EntityField> {
+		AbstractAnnotationProcessor<EntitySpec> {
 
 	public EntityAnnotationProcessor(Class<? extends Entity> cls) {
 		super(cls);
@@ -42,9 +43,9 @@ public class EntityAnnotationProcessor extends
 	@Override
 	protected String modelClassName() {
 		String name = null;
-		Table ann = cls.getAnnotation(Table.class);
+		TableAnn ann = (TableAnn) AnnUtil.getClassAnn(cls, TableAnn.class);
 		if (ann != null) {
-			name = ann.name();
+			name = ann.name;
 		}
 		if (isEmpty(name)) {
 			name = cls.getSimpleName();
@@ -53,26 +54,28 @@ public class EntityAnnotationProcessor extends
 	}
 
 	@Override
-	protected EntityField[] modelClassFields() {
-		ArrayList<EntityField> list = new ArrayList<EntityField>();
+	protected EntitySpec[] modelClassFields() {
+		ArrayList<EntitySpec> list = new ArrayList<EntitySpec>();
 		for (Field field : getClassHierarchyFields()) {
-			Column columnAnn = field.getAnnotation(Column.class);
+			ColumnAnn columnAnn = (ColumnAnn) AnnUtil.getFieldAnn(cls, field,
+					ColumnAnn.class);
 			if (columnAnn != null) {
-				EntityField dbField = new EntityField();
-				fillField(field, dbField);
-				dbField.columnName = getColumnName(columnAnn, field);
-				dbField.columnNullable = columnAnn.nullable();
-				dbField.columnUnique = columnAnn.unique();
-				dbField.columnEager = columnAnn.eager();
-				list.add(dbField);
+				EntitySpec spec = new EntitySpec();
+				spec.field = field;
+				spec.multiFieldArgType = getMultiFieldArgType(field);
+				spec.column.name = getColumnName(columnAnn, field);
+				spec.column.nullable = columnAnn.nullable;
+				spec.column.unique = columnAnn.unique;
+				spec.column.eager = columnAnn.eager;
+				list.add(spec);
 			}
 		}
 		sanitizeFields(list);
-		return list.toArray(new EntityField[list.size()]);
+		return list.toArray(new EntitySpec[list.size()]);
 	}
 
-	private String getColumnName(Column ann, Field field) {
-		String name = ann.name();
+	private String getColumnName(ColumnAnn ann, Field field) {
+		String name = ann.name;
 		if (isEmpty(name)) {
 			name = field.getName();
 			if (!name.endsWith(ID_SUFFIX)) {
@@ -84,15 +87,15 @@ public class EntityAnnotationProcessor extends
 
 	private static final String ID_SUFFIX = "_id";
 
-	private void sanitizeFields(ArrayList<EntityField> fields) {
-		for (EntityField field : fields) {
-			if (field.columnNullable) {
-				Class<?> fieldType = field.fieldType;
+	private void sanitizeFields(ArrayList<EntitySpec> entitySpecs) {
+		for (EntitySpec spec : entitySpecs) {
+			if (spec.column.nullable) {
+				Class<?> fieldType = spec.field.getType();
 				if (isBoolean(fieldType) || isByte(fieldType)
 						|| isFloat(fieldType) || isInteger(fieldType)
 						|| isLong(fieldType) || isShort(fieldType)) {
 					L.e(fieldType.getSimpleName() + " can't be null.");
-					field.columnNullable = false;
+					spec.column.nullable = false;
 				}
 			}
 		}

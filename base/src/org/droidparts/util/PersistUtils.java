@@ -42,7 +42,7 @@ import org.droidparts.contract.DB.Column;
 import org.droidparts.contract.SQL;
 import org.droidparts.model.Entity;
 import org.droidparts.persist.sql.AbstractEntityManager;
-import org.droidparts.reflect.model.EntityField;
+import org.droidparts.reflect.model.sql.EntitySpec;
 import org.droidparts.reflect.processor.EntityAnnotationProcessor;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -216,30 +216,30 @@ public final class PersistUtils implements SQL.DDL {
 		return sb.toString();
 	}
 
-	public static String getSQLCreate(String tableName, EntityField[] fields) {
+	public static String getSQLCreate(String tableName, EntitySpec[] specs) {
 		StringBuilder sb = new StringBuilder();
 		sb.append(CREATE_TABLE + tableName + OPENING_BRACE);
 		sb.append(PK);
 		StringBuilder fkSb = new StringBuilder();
-		for (EntityField dbField : fields) {
-			if (Column.ID.equals(dbField.columnName)) {
+		for (EntitySpec spec : specs) {
+			if (Column.ID.equals(spec.column.name)) {
 				// already got it
 				continue;
 			}
 			sb.append(SEPARATOR);
-			String columnType = getColumnType(dbField.fieldType,
-					dbField.fieldArrOrCollType);
-			sb.append(dbField.columnName);
+			String columnType = getColumnType(spec.field.getType(),
+					spec.multiFieldArgType);
+			sb.append(spec.column.name);
 			sb.append(columnType);
-			if (!dbField.columnNullable) {
+			if (!spec.column.nullable) {
 				sb.append(NOT_NULL);
 			}
-			if (dbField.columnUnique) {
+			if (spec.column.unique) {
 				sb.append(UNIQUE);
 			}
-			if (isEntity(dbField.fieldType)) {
+			if (isEntity(spec.field.getType())) {
 				fkSb.append(SEPARATOR);
-				appendForeignKeyDef(dbField, fkSb);
+				appendForeignKeyDef(spec, fkSb);
 			}
 		}
 		sb.append(fkSb);
@@ -286,14 +286,14 @@ public final class PersistUtils implements SQL.DDL {
 		return BLOB;
 	}
 
-	private static void appendForeignKeyDef(EntityField dbField,
-			StringBuilder sb) {
+	private static void appendForeignKeyDef(EntitySpec dbField, StringBuilder sb) {
 		@SuppressWarnings("unchecked")
-		Class<? extends Entity> entityType = (Class<? extends Entity>) dbField.fieldType;
+		Class<? extends Entity> entityType = (Class<? extends Entity>) dbField.field
+				.getType();
 		String foreignTableName = new EntityAnnotationProcessor(entityType)
 				.getModelClassName();
 		sb.append("FOREIGN KEY(");
-		sb.append(dbField.columnName);
+		sb.append(dbField.column.name);
 		sb.append(") REFERENCES ");
 		sb.append(foreignTableName);
 		sb.append("(").append(Column.ID).append(") ON DELETE CASCADE");

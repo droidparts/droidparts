@@ -21,24 +21,10 @@ import static org.droidparts.reflect.util.TypeHelper.toObjectArr;
 import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
-import java.util.ArrayList;
-import java.util.List;
 
 import org.droidparts.util.L;
 
 public class ReflectionUtils {
-
-	public static Field getField(Class<?> cls, String fieldName)
-			throws IllegalArgumentException {
-		try {
-			Field f = cls.getField(fieldName);
-			return f;
-		} catch (Exception e) {
-			L.e(cls.getSimpleName() + " has no field " + fieldName + ".");
-			throw new IllegalArgumentException(e);
-		}
-
-	}
 
 	public static <ValType> ValType getFieldVal(Object obj, Field field)
 			throws IllegalArgumentException {
@@ -94,29 +80,17 @@ public class ReflectionUtils {
 		return en;
 	}
 
-	public static List<Field> listAnnotatedFields(Class<?> cls) {
-		ArrayList<Class<?>> clsTree = new ArrayList<Class<?>>();
-		boolean enteredDroidParts = false;
-		do {
-			clsTree.add(0, cls);
-			boolean inDroidParts = cls.getCanonicalName().startsWith(
-					"org.droidparts");
-			if (enteredDroidParts && !inDroidParts) {
-				break;
-			} else {
-				enteredDroidParts = inDroidParts;
-				cls = cls.getSuperclass();
-			}
-		} while (cls != null);
-		ArrayList<Field> fields = new ArrayList<Field>();
-		for (Class<?> c : clsTree) {
-			for (Field f : c.getDeclaredFields()) {
-				if (f.getAnnotations().length > 0) {
-					fields.add(f);
+	public static Object[] varArgsHack(Object[] varArgs) {
+		if (varArgs != null && varArgs.length == 1) {
+			Object firstArg = varArgs[0];
+			if (firstArg != null) {
+				Class<?> firstArgCls = firstArg.getClass();
+				if (isArray(firstArgCls)) {
+					varArgs = toObjectArr(firstArg);
 				}
 			}
 		}
-		return fields;
+		return varArgs;
 	}
 
 	public static Class<?> getArrayType(Class<?> arrCls) {
@@ -160,19 +134,6 @@ public class ReflectionUtils {
 		} else {
 			return new Class<?>[0];
 		}
-	}
-
-	public static Object[] varArgsHack(Object[] varArgs) {
-		if (varArgs != null && varArgs.length == 1) {
-			Object firstArg = varArgs[0];
-			if (firstArg != null) {
-				Class<?> firstArgCls = firstArg.getClass();
-				if (isArray(firstArgCls)) {
-					varArgs = toObjectArr(firstArg);
-				}
-			}
-		}
-		return varArgs;
 	}
 
 	protected ReflectionUtils() {

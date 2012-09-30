@@ -21,7 +21,7 @@ import static org.droidparts.util.Strings.isEmpty;
 import java.lang.reflect.Field;
 import java.util.HashMap;
 
-import org.droidparts.annotation.inject.InjectSystemService;
+import org.droidparts.reflect.model.inject.ann.InjectSystemServiceAnn;
 import org.droidparts.util.L;
 
 import android.accessibilityservice.AccessibilityService;
@@ -47,9 +47,9 @@ import android.view.inputmethod.InputMethodManager;
 
 public class SystemServiceInjector {
 
-	static boolean inject(Context ctx, InjectSystemService ann, Object target,
-			Field field) {
-		String serviceName = ann.value();
+	static boolean inject(Context ctx, InjectSystemServiceAnn ann,
+			Object target, Field field) {
+		String serviceName = ann.value;
 		String name = isEmpty(serviceName) ? serviceRegistry.get(field
 				.getType()) : serviceName;
 		Object serv = ctx.getSystemService(name);

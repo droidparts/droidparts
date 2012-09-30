@@ -19,7 +19,7 @@ import static org.droidparts.reflect.util.ReflectionUtils.setFieldVal;
 
 import java.lang.reflect.Field;
 
-import org.droidparts.annotation.inject.InjectView;
+import org.droidparts.reflect.model.inject.ann.InjectViewAnn;
 import org.droidparts.util.inner.ResourceUtils;
 
 import android.content.Context;
@@ -28,10 +28,10 @@ import android.view.View;
 
 public class ViewOrPreferenceInjector {
 
-	static boolean inject(Context ctx, View root, InjectView ann,
+	static boolean inject(Context ctx, View root, InjectViewAnn ann,
 			Object target, Field field) {
 		boolean isView = View.class.isAssignableFrom(field.getType());
-		int viewOrPrefId = ann.value();
+		int viewOrPrefId = ann.value;
 		if (viewOrPrefId == 0) {
 			String fieldName = field.getName();
 			if (isView) {

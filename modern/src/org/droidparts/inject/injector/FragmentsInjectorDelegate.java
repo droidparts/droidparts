@@ -15,12 +15,11 @@
  */
 package org.droidparts.inject.injector;
 
-import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
-import java.util.HashSet;
 
-import org.droidparts.annotation.inject.InjectFragment;
-import org.droidparts.annotation.inject.InjectParentActivity;
+import org.droidparts.reflect.model.Ann;
+import org.droidparts.reflect.model.inject.ann.InjectFragmentAnn;
+import org.droidparts.reflect.model.inject.ann.InjectParentActivityAnn;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -31,18 +30,18 @@ import android.view.View;
 public class FragmentsInjectorDelegate extends InjectorDelegate {
 
 	@Override
-	protected boolean inject(Context ctx, View root, Object target,
-			Annotation ann, Field field) {
-		boolean success = super.inject(ctx, root, target, ann, field);
+	protected boolean inject(Context ctx, View root, Object target, Ann<?> ann,
+			Field field) {
+		boolean success = false;
+		Class<?> annType = ann.getClass();
+		if (annType == InjectFragmentAnn.class) {
+			success = FragmentInjector.inject((FragmentActivity) target,
+					(InjectFragmentAnn) ann, field);
+		} else if (annType == InjectParentActivityAnn.class) {
+			success = ParentActivityInjector.inject((Fragment) target, field);
+		}
 		if (!success) {
-			Class<? extends Annotation> annType = ann.annotationType();
-			if (annType == InjectFragment.class) {
-				success = FragmentInjector.inject((FragmentActivity) target,
-						(InjectFragment) ann, field);
-			} else if (annType == InjectParentActivity.class) {
-				success = ParentActivityInjector.inject((Fragment) target,
-						field);
-			}
+			success = super.inject(ctx, root, target, ann, field);
 		}
 		return success;
 	}
@@ -54,15 +53,6 @@ public class FragmentsInjectorDelegate extends InjectorDelegate {
 			data = ((Fragment) obj).getArguments();
 		}
 		return data;
-	}
-
-	@Override
-	protected HashSet<Class<? extends Annotation>> getSupportedAnnotations() {
-		HashSet<Class<? extends Annotation>> set = super
-				.getSupportedAnnotations();
-		set.add(InjectFragment.class);
-		set.add(InjectParentActivity.class);
-		return set;
 	}
 
 }

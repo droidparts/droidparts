@@ -17,7 +17,6 @@ package org.droidparts.reflect.processor;
 
 import static org.droidparts.reflect.util.ReflectionUtils.getArrayType;
 import static org.droidparts.reflect.util.ReflectionUtils.getFieldGenericArgs;
-import static org.droidparts.reflect.util.ReflectionUtils.listAnnotatedFields;
 import static org.droidparts.reflect.util.TypeHelper.isArray;
 import static org.droidparts.reflect.util.TypeHelper.isCollection;
 
@@ -25,14 +24,15 @@ import java.lang.reflect.Field;
 import java.util.List;
 
 import org.droidparts.model.Model;
-import org.droidparts.reflect.model.AbstractField;
+import org.droidparts.reflect.model.FieldSpec;
+import org.droidparts.reflect.util.AnnUtil;
 
-public abstract class AbstractAnnotationProcessor<ModelFieldType> {
+public abstract class AbstractAnnotationProcessor<FieldSpecType extends FieldSpec> {
 
 	protected final Class<? extends Model> cls;
 
 	private String modelClassName;
-	private ModelFieldType[] modelClassFields;
+	private FieldSpecType[] modelClassFields;
 
 	public AbstractAnnotationProcessor(Class<? extends Model> cls) {
 		this.cls = cls;
@@ -45,7 +45,7 @@ public abstract class AbstractAnnotationProcessor<ModelFieldType> {
 		return modelClassName;
 	}
 
-	public final ModelFieldType[] getModelClassFields() {
+	public final FieldSpecType[] getModelClassFields() {
 		if (modelClassFields == null) {
 			modelClassFields = modelClassFields();
 		}
@@ -54,21 +54,22 @@ public abstract class AbstractAnnotationProcessor<ModelFieldType> {
 
 	protected abstract String modelClassName();
 
-	protected abstract ModelFieldType[] modelClassFields();
+	protected abstract FieldSpecType[] modelClassFields();
 
 	protected final List<Field> getClassHierarchyFields() {
-		return listAnnotatedFields(cls);
+		return AnnUtil.listAnnotatedFields(cls);
 	}
 
-	protected final void fillField(Field source, AbstractField target) {
-		target.fieldName = source.getName();
-		target.fieldType = source.getType();
-		if (isArray(target.fieldType)) {
-			target.fieldArrOrCollType = getArrayType(target.fieldType);
-		} else if (isCollection(target.fieldType)) {
-			Class<?>[] genericArgs = getFieldGenericArgs(source);
-			target.fieldArrOrCollType = (genericArgs.length > 0) ? genericArgs[0]
-					: Object.class;
+	protected final Class<?> getMultiFieldArgType(Field field) {
+		Class<?> cls = null;
+		Class<?> fieldType = field.getType();
+		if (isArray(fieldType)) {
+			cls = getArrayType(fieldType);
+		} else if (isCollection(fieldType)) {
+			Class<?>[] genericArgs = getFieldGenericArgs(field);
+			cls = (genericArgs.length > 0) ? genericArgs[0] : Object.class;
 		}
+		return cls;
 	}
+
 }

@@ -13,19 +13,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License. 
  */
-package org.droidparts.reflect.model;
+package org.droidparts.reflect.model.sql.ann;
 
-public class EntityField extends AbstractField {
+import org.droidparts.annotation.sql.Table;
+import org.droidparts.reflect.model.Ann;
 
-	public String columnName;
-	public boolean columnNullable;
-	public boolean columnUnique;
-	public boolean columnEager;
+public final class TableAnn extends Ann<Table> {
 
-	@Override
-	public String toString() {
-		return super.toString() + ", columnName: " + columnName
-				+ ", columnNullable: " + columnNullable + ", columnUnique: "
-				+ columnUnique + ", columnEager: " + columnEager;
+	public String name;
+
+	public TableAnn(Table annotation) {
+		this();
+		name = annotation.name();
+	}
+
+	public TableAnn() {
+		super(Table.class);
 	}
 }
