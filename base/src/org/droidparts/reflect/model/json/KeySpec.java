@@ -18,7 +18,7 @@ package org.droidparts.reflect.model.json;
 import org.droidparts.reflect.model.FieldSpec;
 import org.droidparts.reflect.model.json.ann.KeyAnn;
 
-public class ModelSpec extends FieldSpec {
+public class KeySpec extends FieldSpec {
 
 	public final KeyAnn key = new KeyAnn();
 

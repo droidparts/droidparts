@@ -45,8 +45,8 @@ import java.util.Collection;
 import java.util.Date;
 
 import org.droidparts.model.Model;
-import org.droidparts.reflect.model.json.ModelSpec;
-import org.droidparts.reflect.processor.ModelAnnotationProcessor;
+import org.droidparts.reflect.model.json.KeySpec;
+import org.droidparts.reflect.util.SpecBuilder;
 import org.droidparts.util.L;
 import org.droidparts.util.PersistUtils;
 import org.json.JSONArray;
@@ -67,17 +67,15 @@ public class JSONSerializer<ModelType extends Model> {
 	}
 
 	private final Class<? extends Model> cls;
-	private final ModelAnnotationProcessor processor;
 
 	public JSONSerializer(Class<ModelType> cls) {
 		this.cls = cls;
-		this.processor = new ModelAnnotationProcessor(cls);
 	}
 
 	public JSONObject serialize(ModelType item) throws JSONException {
 		JSONObject obj = new JSONObject();
-		ModelSpec[] fields = processor.getModelClassFields();
-		for (ModelSpec jsonField : fields) {
+		KeySpec[] fields = SpecBuilder.getJsonKeySpecs(cls);
+		for (KeySpec jsonField : fields) {
 			readFromModelAndPutToJSON(item, jsonField, obj, jsonField.key.name);
 		}
 		return obj;
@@ -85,8 +83,8 @@ public class JSONSerializer<ModelType extends Model> {
 
 	public ModelType deserialize(JSONObject obj) throws JSONException {
 		ModelType model = instantiate(cls);
-		ModelSpec[] fields = processor.getModelClassFields();
-		for (ModelSpec jsonField : fields) {
+		KeySpec[] fields = SpecBuilder.getJsonKeySpecs(cls);
+		for (KeySpec jsonField : fields) {
 			readFromJSONAndSetFieldVal(model, jsonField, obj,
 					jsonField.key.name);
 		}
@@ -237,7 +235,7 @@ public class JSONSerializer<ModelType extends Model> {
 		return PersistUtils.gotNonNull(obj, key);
 	}
 
-	private void readFromModelAndPutToJSON(ModelType item, ModelSpec jsonField,
+	private void readFromModelAndPutToJSON(ModelType item, KeySpec jsonField,
 			JSONObject obj, String key) throws JSONException {
 		Pair<String, String> keyParts = getNestedKeyParts(key);
 		if (keyParts != null) {
@@ -256,9 +254,9 @@ public class JSONSerializer<ModelType extends Model> {
 				putToJSONObject(obj, key, jsonField.field.getType(), columnVal);
 			} catch (Exception e) {
 				if (jsonField.key.optional) {
-					L.w("Failded to serialize " + processor.getModelClassName()
-							+ "." + jsonField.field.getName() + ": "
-							+ e.getMessage());
+					L.w("Failded to serialize "
+							+ SpecBuilder.getJsonObjectName(cls) + "."
+							+ jsonField.field.getName() + ": " + e.getMessage());
 				} else {
 					throw new JSONException(Log.getStackTraceString(e));
 				}
@@ -267,7 +265,7 @@ public class JSONSerializer<ModelType extends Model> {
 	}
 
 	private void readFromJSONAndSetFieldVal(ModelType model,
-			ModelSpec modelField, JSONObject obj, String key)
+			KeySpec modelField, JSONObject obj, String key)
 			throws JSONException {
 		Pair<String, String> keyParts = getNestedKeyParts(key);
 		if (keyParts != null) {
@@ -321,7 +319,7 @@ public class JSONSerializer<ModelType extends Model> {
 		return cls2;
 	}
 
-	private void throwIfRequired(ModelSpec modelField) throws JSONException {
+	private void throwIfRequired(KeySpec modelField) throws JSONException {
 		if (!modelField.key.optional) {
 			throw new JSONException("Required key '" + modelField.key.name
 					+ "' not present.");

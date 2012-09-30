@@ -18,7 +18,7 @@ package org.droidparts.reflect.model.sql;
 import org.droidparts.reflect.model.FieldSpec;
 import org.droidparts.reflect.model.sql.ann.ColumnAnn;
 
-public class EntitySpec extends FieldSpec {
+public class ColumnSpec extends FieldSpec {
 
 	public final ColumnAnn column = new ColumnAnn();
 

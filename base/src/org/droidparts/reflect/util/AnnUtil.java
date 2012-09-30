@@ -46,21 +46,25 @@ import org.droidparts.reflect.model.sql.ann.TableAnn;
 
 public final class AnnUtil {
 
-	public static <T extends Annotation> Ann<T> getClassAnn(Class<?> cls,
-			Class<? extends Ann<T>> annCls) {
-		for (Ann ann : getClassAnns(cls)) {
+	public static <T extends Annotation> Ann<T> getClassAnn(
+			Class<? extends Ann<T>> annCls, Class<?> cls) {
+		for (Ann<?> ann : getClassAnns(cls)) {
 			if (ann.getClass() == annCls) {
-				return ann;
+				@SuppressWarnings("unchecked")
+				Ann<T> typedAnn = (Ann<T>) ann;
+				return typedAnn;
 			}
 		}
 		return null;
 	}
 
-	public static <T extends Annotation> Ann<T> getFieldAnn(Class<?> cls,
-			Field f, Class<? extends Ann<T>> annCls) {
-		for (Ann ann : getFieldAnns(cls, f)) {
-			if (ann.getClass() == annCls) {
-				return ann;
+	public static <T extends Annotation> Ann<T> getFieldAnn(
+			Class<? extends Ann<T>> annCls, Class<?> cls, Field f) {
+		for (Ann<?> ann : getFieldAnns(cls, f)) {
+			if (ann.getClass().isAssignableFrom(annCls)) {
+				@SuppressWarnings("unchecked")
+				Ann<T> typedAnn = (Ann<T>) ann;
+				return typedAnn;
 			}
 		}
 		return null;

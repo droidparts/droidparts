@@ -24,7 +24,7 @@ import org.droidparts.reflect.model.inject.ann.InjectDependencyAnn;
 import org.droidparts.reflect.model.inject.ann.InjectResourceAnn;
 import org.droidparts.reflect.model.inject.ann.InjectSystemServiceAnn;
 import org.droidparts.reflect.model.inject.ann.InjectViewAnn;
-import org.droidparts.reflect.processor.InjectAnnotationProcessor;
+import org.droidparts.reflect.util.SpecBuilder;
 import org.droidparts.util.L;
 
 import android.app.Activity;
@@ -46,7 +46,7 @@ public class InjectorDelegate {
 	public final void inject(Context ctx, View root, Object target) {
 		long start = System.currentTimeMillis();
 		final Class<?> cls = target.getClass();
-		InjectSpec[] specs = new InjectAnnotationProcessor(cls).getSpecs();
+		InjectSpec[] specs = SpecBuilder.getInjectSpecs(cls);
 		for (InjectSpec spec : specs) {
 			boolean success = inject(ctx, root, target, spec.injectAnn,
 					spec.field);
