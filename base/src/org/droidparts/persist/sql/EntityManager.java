@@ -114,16 +114,16 @@ public class EntityManager<EntityType extends Entity> extends
 	public void fillForeignKeys(EntityType item, String... columnNames) {
 		HashSet<String> columnNameSet = new HashSet<String>(asList(columnNames));
 		boolean fillAll = columnNameSet.isEmpty();
-		for (ColumnSpec entitySpec : getTableColumnSpecs(cls)) {
-			if (isEntity(entitySpec.field.getType())
-					&& (fillAll || columnNameSet.contains(entitySpec.ann.name))) {
+		for (ColumnSpec spec : getTableColumnSpecs(cls)) {
+			if (isEntity(spec.field.getType())
+					&& (fillAll || columnNameSet.contains(spec.ann.name))) {
 				EntityType foreignEntity = ReflectionUtils.getFieldVal(item,
-						entitySpec.field);
+						spec.field);
 				if (foreignEntity != null) {
 					Object obj = getInstance(ctx,
-							dirtyCast(entitySpec.field.getType())).read(
+							dirtyCast(spec.field.getType())).read(
 							foreignEntity.id);
-					setFieldVal(item, entitySpec.field, obj);
+					setFieldVal(item, spec.field, obj);
 				}
 			}
 		}
@@ -142,9 +142,9 @@ public class EntityManager<EntityType extends Entity> extends
 	@Override
 	protected ContentValues toContentValues(EntityType item) {
 		ContentValues cv = new ContentValues();
-		for (ColumnSpec dbField : getTableColumnSpecs(cls)) {
-			Object columnVal = getFieldVal(item, dbField.field);
-			putToContentValues(cv, dbField.ann.name, dbField.field.getType(),
+		for (ColumnSpec spec : getTableColumnSpecs(cls)) {
+			Object columnVal = getFieldVal(item, spec.field);
+			putToContentValues(cv, spec.ann.name, spec.field.getType(),
 					columnVal);
 		}
 		return cv;
@@ -152,12 +152,12 @@ public class EntityManager<EntityType extends Entity> extends
 
 	@Override
 	protected void createOrUpdateForeignKeys(EntityType item) {
-		for (ColumnSpec entityField : getTableColumnSpecs(cls)) {
-			if (isEntity(entityField.field.getType())) {
+		for (ColumnSpec spec : getTableColumnSpecs(cls)) {
+			if (isEntity(spec.field.getType())) {
 				EntityType foreignEntity = ReflectionUtils.getFieldVal(item,
-						entityField.field);
+						spec.field);
 				if (foreignEntity != null) {
-					getInstance(ctx, dirtyCast(entityField.field.getType()))
+					getInstance(ctx, dirtyCast(spec.field.getType()))
 							.createOrUpdate(foreignEntity);
 				}
 			}
@@ -167,9 +167,9 @@ public class EntityManager<EntityType extends Entity> extends
 	protected String[] getEagerForeignKeyColumnNames() {
 		if (eagerForeignKeyColumnNames == null) {
 			HashSet<String> eagerColumnNames = new HashSet<String>();
-			for (ColumnSpec ef : getTableColumnSpecs(cls)) {
-				if (ef.ann.eager) {
-					eagerColumnNames.add(ef.ann.name);
+			for (ColumnSpec spec : getTableColumnSpecs(cls)) {
+				if (spec.ann.eager) {
+					eagerColumnNames.add(spec.ann.name);
 				}
 			}
 			eagerForeignKeyColumnNames = eagerColumnNames
