@@ -254,8 +254,7 @@ public class JSONSerializer<ModelType extends Model> {
 				putToJSONObject(obj, key, jsonField.field.getType(), columnVal);
 			} catch (Exception e) {
 				if (jsonField.ann.optional) {
-					L.w("Failded to serialize "
-							+ SpecBuilder.getJsonObjectName(cls) + "."
+					L.w("Failded to serialize " + cls.getSimpleName() + "."
 							+ jsonField.field.getName() + ": " + e.getMessage());
 				} else {
 					throw new JSONException(Log.getStackTraceString(e));

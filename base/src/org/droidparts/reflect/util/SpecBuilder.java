@@ -43,7 +43,6 @@ import org.droidparts.reflect.model.inject.InjectSpec;
 import org.droidparts.reflect.model.inject.ann.InjectAnn;
 import org.droidparts.reflect.model.json.KeySpec;
 import org.droidparts.reflect.model.json.ann.KeyAnn;
-import org.droidparts.reflect.model.json.ann.ObjectAnn;
 import org.droidparts.reflect.model.sql.ColumnSpec;
 import org.droidparts.reflect.model.sql.ann.ColumnAnn;
 import org.droidparts.reflect.model.sql.ann.TableAnn;
@@ -119,18 +118,6 @@ public final class SpecBuilder {
 	}
 
 	// JSON
-
-	public static String getJsonObjectName(Class<? extends Model> cls) {
-		String name = null;
-		ObjectAnn ann = (ObjectAnn) getClassAnn(ObjectAnn.class, cls);
-		if (ann != null) {
-			name = ann.name;
-		}
-		if (isEmpty(name)) {
-			name = cls.getSimpleName();
-		}
-		return name;
-	}
 
 	public static KeySpec[] getJsonKeySpecs(Class<? extends Model> cls) {
 		KeySpec[] specs = keySpecCache.get(cls);

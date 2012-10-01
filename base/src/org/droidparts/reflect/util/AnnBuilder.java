@@ -27,7 +27,6 @@ import org.droidparts.annotation.inject.InjectResource;
 import org.droidparts.annotation.inject.InjectSystemService;
 import org.droidparts.annotation.inject.InjectView;
 import org.droidparts.annotation.json.Key;
-import org.droidparts.annotation.json.Object;
 import org.droidparts.annotation.sql.Column;
 import org.droidparts.annotation.sql.Table;
 import org.droidparts.reflect.model.Ann;
@@ -39,7 +38,6 @@ import org.droidparts.reflect.model.inject.ann.InjectResourceAnn;
 import org.droidparts.reflect.model.inject.ann.InjectSystemServiceAnn;
 import org.droidparts.reflect.model.inject.ann.InjectViewAnn;
 import org.droidparts.reflect.model.json.ann.KeyAnn;
-import org.droidparts.reflect.model.json.ann.ObjectAnn;
 import org.droidparts.reflect.model.sql.ann.ColumnAnn;
 import org.droidparts.reflect.model.sql.ann.TableAnn;
 
@@ -84,8 +82,6 @@ public final class AnnBuilder {
 			// class
 			if (Table.class == annotationType) {
 				anns.add(new TableAnn((Table) annotation));
-			} else if (Object.class == annotationType) {
-				anns.add(new ObjectAnn((Object) annotation));
 			}
 			// field
 			else if (Column.class == annotationType) {
