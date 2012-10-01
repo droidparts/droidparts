@@ -125,7 +125,7 @@ public final class SpecBuilder {
 					KeyAnn ann = new KeyAnn();
 					ann.name = getKeyName(keyAnn, field);
 					ann.optional = keyAnn.optional;
-					list.add(new KeySpec(field, multiFieldArgType, keyAnn));
+					list.add(new KeySpec(field, multiFieldArgType, ann));
 				}
 			}
 			specs = list.toArray(new KeySpec[list.size()]);

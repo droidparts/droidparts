@@ -45,7 +45,7 @@ public final class AnnBuilder {
 
 	static <T extends Annotation> Ann<T> getClassAnn(
 			Class<? extends Ann<T>> annCls, Class<?> cls) {
-		for (Ann<?> ann : getClassAnns(cls)) {
+		for (Ann<?> ann : getAnns(cls.getAnnotations())) {
 			if (ann.getClass() == annCls) {
 				@SuppressWarnings("unchecked")
 				Ann<T> typedAnn = (Ann<T>) ann;
@@ -67,10 +67,6 @@ public final class AnnBuilder {
 		return null;
 	}
 
-	static <T extends Annotation> Ann<T>[] getClassAnns(Class<?> cls) {
-		return getAnns(cls.getAnnotations());
-	}
-
 	static <T extends Annotation> Ann<T>[] getFieldAnns(Class<?> cls, Field f) {
 		return getAnns(f.getAnnotations());
 	}
@@ -78,41 +74,48 @@ public final class AnnBuilder {
 	static <T extends Annotation> Ann<T>[] getAnns(Annotation[] annotations) {
 		ArrayList<Ann<?>> anns = new ArrayList<Ann<?>>();
 		for (Annotation annotation : annotations) {
-			Class<?> annotationType = annotation.annotationType();
-			// class
-			if (Table.class == annotationType) {
-				anns.add(new TableAnn((Table) annotation));
-			}
-			// field
-			else if (Column.class == annotationType) {
-				anns.add(new ColumnAnn((Column) annotation));
-			} else if (Key.class == annotationType) {
-				anns.add(new KeyAnn((Key) annotation));
-			}
-			// inject
-			else if (InjectBundleExtra.class == annotationType) {
-				anns.add(new InjectBundleExtraAnn(
-						(InjectBundleExtra) annotation));
-			} else if (InjectDependency.class == annotationType) {
-				anns.add(new InjectDependencyAnn((InjectDependency) annotation));
-			} else if (InjectResource.class == annotationType) {
-				anns.add(new InjectResourceAnn((InjectResource) annotation));
-			} else if (InjectSystemService.class == annotationType) {
-				anns.add(new InjectSystemServiceAnn(
-						(InjectSystemService) annotation));
-			} else if (InjectView.class == annotationType) {
-				anns.add(new InjectViewAnn((InjectView) annotation));
-			}
-			// inject modern
-			else if (InjectFragment.class == annotationType) {
-				anns.add(new InjectFragmentAnn((InjectFragment) annotation));
-			} else if (InjectParentActivity.class == annotationType) {
-				anns.add(new InjectParentActivityAnn(
-						(InjectParentActivity) annotation));
+			Ann<?> ann = toAnn(annotation);
+			if (ann != null) {
+				anns.add(ann);
 			}
 		}
 		@SuppressWarnings("unchecked")
 		Ann<T>[] arr = anns.toArray(new Ann[anns.size()]);
 		return arr;
 	}
+
+	private static Ann<?> toAnn(Annotation annotation) {
+		Class<?> annotationType = annotation.annotationType();
+		Ann<?> ann = null;
+		// class
+		if (Table.class == annotationType) {
+			ann = new TableAnn((Table) annotation);
+		}
+		// field
+		else if (Column.class == annotationType) {
+			ann = new ColumnAnn((Column) annotation);
+		} else if (Key.class == annotationType) {
+			ann = new KeyAnn((Key) annotation);
+		}
+		// inject
+		else if (InjectBundleExtra.class == annotationType) {
+			ann = new InjectBundleExtraAnn((InjectBundleExtra) annotation);
+		} else if (InjectDependency.class == annotationType) {
+			ann = new InjectDependencyAnn((InjectDependency) annotation);
+		} else if (InjectResource.class == annotationType) {
+			ann = new InjectResourceAnn((InjectResource) annotation);
+		} else if (InjectSystemService.class == annotationType) {
+			ann = new InjectSystemServiceAnn((InjectSystemService) annotation);
+		} else if (InjectView.class == annotationType) {
+			ann = new InjectViewAnn((InjectView) annotation);
+		}
+		// inject modern
+		else if (InjectFragment.class == annotationType) {
+			ann = new InjectFragmentAnn((InjectFragment) annotation);
+		} else if (InjectParentActivity.class == annotationType) {
+			ann = new InjectParentActivityAnn((InjectParentActivity) annotation);
+		}
+		return ann;
+	}
+
 }
