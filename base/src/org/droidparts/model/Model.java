@@ -15,9 +15,14 @@
  */
 package org.droidparts.model;
 
-import java.io.Serializable;
+import static org.droidparts.reflect.util.ReflectionUtils.getFieldVal;
+import static org.droidparts.reflect.util.ReflectionUtils.listAnnotatedFields;
 
-import org.droidparts.util.inner.ModelUtils;
+import java.io.Serializable;
+import java.lang.reflect.Field;
+import java.util.List;
+
+import org.droidparts.util.L;
 
 public abstract class Model implements Serializable {
 	private static final long serialVersionUID = 1L;
@@ -27,18 +32,42 @@ public abstract class Model implements Serializable {
 	}
 
 	@Override
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		sb.append(getClass().getSimpleName());
+		sb.append(" [");
+		List<Field> fields = listAnnotatedFields(getClass());
+		for (int i = 0; i < fields.size(); i++) {
+			if (i > 0) {
+				sb.append(", ");
+			}
+			Field field = fields.get(i);
+			sb.append(field.getName());
+			sb.append(": ");
+			try {
+				sb.append(getFieldVal(this, field));
+			} catch (Exception e) {
+				L.d(e);
+				sb.append("n/a");
+			}
+		}
+		sb.append("]");
+		return sb.toString();
+	}
+
+	@Override
 	public boolean equals(Object o) {
-		return ModelUtils.equals(this, o);
+		if (o != null) {
+			if (getClass() == o.getClass()) {
+				return hashCode() == o.hashCode();
+			}
+		}
+		return false;
 	}
 
 	@Override
 	public int hashCode() {
-		return ModelUtils.hashCode(this);
-	}
-
-	@Override
-	public String toString() {
-		return ModelUtils.toString(this);
+		return toString().hashCode();
 	}
 
 }

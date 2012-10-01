@@ -36,15 +36,14 @@ public abstract class Entity extends Model {
 
 	@Override
 	public boolean equals(Object o) {
-		if (o == null) {
-			return false;
-		} else if (this == o) {
-			return true;
-		} else if (getClass() == o.getClass()) {
-			return id == ((Entity) o).id;
-		} else {
-			return false;
+		if (o != null) {
+			if (this == o) {
+				return true;
+			} else if (getClass() == o.getClass()) {
+				return id == ((Entity) o).id;
+			}
 		}
+		return false;
 	}
 
 	@Override
