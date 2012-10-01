@@ -15,9 +15,15 @@
  */
 package org.droidparts.reflect.model.sql;
 
+import java.lang.reflect.Field;
+
 import org.droidparts.reflect.model.FieldSpec;
 import org.droidparts.reflect.model.sql.ann.ColumnAnn;
 
 public class ColumnSpec extends FieldSpec<ColumnAnn> {
+
+	public ColumnSpec(Field field, Class<?> multiFieldArgType, ColumnAnn ann) {
+		super(field, multiFieldArgType, ann);
+	}
 
 }

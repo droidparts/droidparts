@@ -15,9 +15,15 @@
  */
 package org.droidparts.reflect.model.inject;
 
+import java.lang.reflect.Field;
+
 import org.droidparts.reflect.model.FieldSpec;
 import org.droidparts.reflect.model.inject.ann.InjectAnn;
 
 public class InjectSpec extends FieldSpec<InjectAnn<?>> {
+
+	public InjectSpec(Field field, InjectAnn<?> ann) {
+		super(field, null, ann);
+	}
 
 }

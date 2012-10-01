@@ -15,9 +15,15 @@
  */
 package org.droidparts.reflect.model.json;
 
+import java.lang.reflect.Field;
+
 import org.droidparts.reflect.model.FieldSpec;
 import org.droidparts.reflect.model.json.ann.KeyAnn;
 
 public class KeySpec extends FieldSpec<KeyAnn> {
+
+	public KeySpec(Field field, Class<?> multiFieldArgType, KeyAnn ann) {
+		super(field, multiFieldArgType, ann);
+	}
 
 }

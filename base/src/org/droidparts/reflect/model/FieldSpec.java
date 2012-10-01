@@ -19,10 +19,16 @@ import java.lang.reflect.Field;
 
 public abstract class FieldSpec<AnnType extends Ann<?>> {
 
-	public Field field;
-	public Class<?> multiFieldArgType;
+	public final Field field;
+	public final Class<?> multiFieldArgType;
 
-	public AnnType ann;
+	public final AnnType ann;
+
+	public FieldSpec(Field field, Class<?> multiFieldArgType, AnnType ann) {
+		this.field = field;
+		this.multiFieldArgType = multiFieldArgType;
+		this.ann = ann;
+	}
 
 	@Override
 	public String toString() {

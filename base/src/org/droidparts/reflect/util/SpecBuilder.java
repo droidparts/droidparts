@@ -60,10 +60,7 @@ public final class SpecBuilder {
 			for (Field field : fields) {
 				for (Ann<?> ann : getFieldAnns(cls, field)) {
 					if (ann instanceof InjectAnn) {
-						InjectSpec spec = new InjectSpec();
-						spec.field = field;
-						spec.ann = (InjectAnn<?>) ann;
-						list.add(spec);
+						list.add(new InjectSpec(field, (InjectAnn<?>) ann));
 						break;
 					}
 				}
@@ -99,15 +96,13 @@ public final class SpecBuilder {
 				ColumnAnn columnAnn = (ColumnAnn) getFieldAnn(ColumnAnn.class,
 						cls, field);
 				if (columnAnn != null) {
-					ColumnSpec spec = new ColumnSpec();
-					spec.field = field;
-					spec.multiFieldArgType = getMultiFieldArgType(field);
-					spec.ann = new ColumnAnn();
-					spec.ann.name = getColumnName(columnAnn, field);
-					spec.ann.nullable = columnAnn.nullable;
-					spec.ann.unique = columnAnn.unique;
-					spec.ann.eager = columnAnn.eager;
-					list.add(spec);
+					Class<?> multiFieldArgType = getMultiFieldArgType(field);
+					ColumnAnn ann = new ColumnAnn();
+					ann.name = getColumnName(columnAnn, field);
+					ann.nullable = columnAnn.nullable;
+					ann.unique = columnAnn.unique;
+					ann.eager = columnAnn.eager;
+					list.add(new ColumnSpec(field, multiFieldArgType, ann));
 				}
 			}
 			sanitizeFields(list);
@@ -126,13 +121,11 @@ public final class SpecBuilder {
 			for (Field field : listAnnotatedFields(cls)) {
 				KeyAnn keyAnn = (KeyAnn) getFieldAnn(KeyAnn.class, cls, field);
 				if (keyAnn != null) {
-					KeySpec spec = new KeySpec();
-					spec.field = field;
-					spec.multiFieldArgType = getMultiFieldArgType(field);
-					spec.ann = new KeyAnn();
-					spec.ann.name = getKeyName(keyAnn, field);
-					spec.ann.optional = keyAnn.optional;
-					list.add(spec);
+					Class<?> multiFieldArgType = getMultiFieldArgType(field);
+					KeyAnn ann = new KeyAnn();
+					ann.name = getKeyName(keyAnn, field);
+					ann.optional = keyAnn.optional;
+					list.add(new KeySpec(field, multiFieldArgType, keyAnn));
 				}
 			}
 			specs = list.toArray(new KeySpec[list.size()]);
