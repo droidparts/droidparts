@@ -32,4 +32,9 @@ public final class KeyAnn extends Ann<Key> {
 	public KeyAnn() {
 		super(Key.class);
 	}
+
+	@Override
+	public String toString() {
+		return super.toString() + ", name: " + name + ", optional: " + optional;
+	}
 }

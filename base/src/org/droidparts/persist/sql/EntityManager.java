@@ -20,6 +20,7 @@ import static org.droidparts.reflect.util.ReflectionUtils.getFieldVal;
 import static org.droidparts.reflect.util.ReflectionUtils.instantiate;
 import static org.droidparts.reflect.util.ReflectionUtils.instantiateEnum;
 import static org.droidparts.reflect.util.ReflectionUtils.setFieldVal;
+import static org.droidparts.reflect.util.SpecBuilder.getTableColumnSpecs;
 import static org.droidparts.reflect.util.TypeHelper.isArray;
 import static org.droidparts.reflect.util.TypeHelper.isBitmap;
 import static org.droidparts.reflect.util.TypeHelper.isBoolean;
@@ -96,9 +97,8 @@ public class EntityManager<EntityType extends Entity> extends
 	@Override
 	public EntityType readRow(Cursor cursor) {
 		EntityType entity = instantiate(cls);
-		ColumnSpec[] specs = SpecBuilder.getTableColumns(cls);
-		for (ColumnSpec spec : specs) {
-			int colIdx = cursor.getColumnIndex(spec.column.name);
+		for (ColumnSpec spec : getTableColumnSpecs(cls)) {
+			int colIdx = cursor.getColumnIndex(spec.ann.name);
 			if (colIdx >= 0) {
 				Object columnVal = readFromCursor(cursor, colIdx, spec.field,
 						spec.multiFieldArgType);
@@ -114,10 +114,9 @@ public class EntityManager<EntityType extends Entity> extends
 	public void fillForeignKeys(EntityType item, String... columnNames) {
 		HashSet<String> columnNameSet = new HashSet<String>(asList(columnNames));
 		boolean fillAll = columnNameSet.isEmpty();
-		for (ColumnSpec entitySpec : SpecBuilder.getTableColumns(cls)) {
+		for (ColumnSpec entitySpec : getTableColumnSpecs(cls)) {
 			if (isEntity(entitySpec.field.getType())
-					&& (fillAll || columnNameSet
-							.contains(entitySpec.column.name))) {
+					&& (fillAll || columnNameSet.contains(entitySpec.ann.name))) {
 				EntityType foreignEntity = ReflectionUtils.getFieldVal(item,
 						entitySpec.field);
 				if (foreignEntity != null) {
@@ -143,18 +142,17 @@ public class EntityManager<EntityType extends Entity> extends
 	@Override
 	protected ContentValues toContentValues(EntityType item) {
 		ContentValues cv = new ContentValues();
-		ColumnSpec[] fields = SpecBuilder.getTableColumns(cls);
-		for (ColumnSpec dbField : fields) {
+		for (ColumnSpec dbField : getTableColumnSpecs(cls)) {
 			Object columnVal = getFieldVal(item, dbField.field);
-			putToContentValues(cv, dbField.column.name,
-					dbField.field.getType(), columnVal);
+			putToContentValues(cv, dbField.ann.name, dbField.field.getType(),
+					columnVal);
 		}
 		return cv;
 	}
 
 	@Override
 	protected void createOrUpdateForeignKeys(EntityType item) {
-		for (ColumnSpec entityField : SpecBuilder.getTableColumns(cls)) {
+		for (ColumnSpec entityField : getTableColumnSpecs(cls)) {
 			if (isEntity(entityField.field.getType())) {
 				EntityType foreignEntity = ReflectionUtils.getFieldVal(item,
 						entityField.field);
@@ -169,9 +167,9 @@ public class EntityManager<EntityType extends Entity> extends
 	protected String[] getEagerForeignKeyColumnNames() {
 		if (eagerForeignKeyColumnNames == null) {
 			HashSet<String> eagerColumnNames = new HashSet<String>();
-			for (ColumnSpec ef : SpecBuilder.getTableColumns(cls)) {
-				if (ef.column.eager) {
-					eagerColumnNames.add(ef.column.name);
+			for (ColumnSpec ef : getTableColumnSpecs(cls)) {
+				if (ef.ann.eager) {
+					eagerColumnNames.add(ef.ann.name);
 				}
 			}
 			eagerForeignKeyColumnNames = eagerColumnNames

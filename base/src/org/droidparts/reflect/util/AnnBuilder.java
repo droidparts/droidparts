@@ -18,7 +18,6 @@ package org.droidparts.reflect.util;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
-import java.util.List;
 
 import org.droidparts.annotation.inject.InjectBundleExtra;
 import org.droidparts.annotation.inject.InjectDependency;
@@ -44,9 +43,9 @@ import org.droidparts.reflect.model.json.ann.ObjectAnn;
 import org.droidparts.reflect.model.sql.ann.ColumnAnn;
 import org.droidparts.reflect.model.sql.ann.TableAnn;
 
-public final class AnnUtil {
+public final class AnnBuilder {
 
-	public static <T extends Annotation> Ann<T> getClassAnn(
+	static <T extends Annotation> Ann<T> getClassAnn(
 			Class<? extends Ann<T>> annCls, Class<?> cls) {
 		for (Ann<?> ann : getClassAnns(cls)) {
 			if (ann.getClass() == annCls) {
@@ -58,7 +57,7 @@ public final class AnnUtil {
 		return null;
 	}
 
-	public static <T extends Annotation> Ann<T> getFieldAnn(
+	static <T extends Annotation> Ann<T> getFieldAnn(
 			Class<? extends Ann<T>> annCls, Class<?> cls, Field f) {
 		for (Ann<?> ann : getFieldAnns(cls, f)) {
 			if (ann.getClass().isAssignableFrom(annCls)) {
@@ -70,17 +69,15 @@ public final class AnnUtil {
 		return null;
 	}
 
-	public static <T extends Annotation> Ann<T>[] getClassAnns(Class<?> cls) {
+	static <T extends Annotation> Ann<T>[] getClassAnns(Class<?> cls) {
 		return getAnns(cls.getAnnotations());
 	}
 
-	public static <T extends Annotation> Ann<T>[] getFieldAnns(Class<?> cls,
-			Field f) {
+	static <T extends Annotation> Ann<T>[] getFieldAnns(Class<?> cls, Field f) {
 		return getAnns(f.getAnnotations());
 	}
 
-	public static <T extends Annotation> Ann<T>[] getAnns(
-			Annotation[] annotations) {
+	static <T extends Annotation> Ann<T>[] getAnns(Annotation[] annotations) {
 		ArrayList<Ann<?>> anns = new ArrayList<Ann<?>>();
 		for (Annotation annotation : annotations) {
 			Class<?> annotationType = annotation.annotationType();
@@ -121,30 +118,5 @@ public final class AnnUtil {
 		@SuppressWarnings("unchecked")
 		Ann<T>[] arr = anns.toArray(new Ann[anns.size()]);
 		return arr;
-	}
-
-	public static List<Field> listAnnotatedFields(Class<?> cls) {
-		ArrayList<Class<?>> clsTree = new ArrayList<Class<?>>();
-		boolean enteredDroidParts = false;
-		do {
-			clsTree.add(0, cls);
-			boolean inDroidParts = cls.getCanonicalName().startsWith(
-					"org.droidparts");
-			if (enteredDroidParts && !inDroidParts) {
-				break;
-			} else {
-				enteredDroidParts = inDroidParts;
-				cls = cls.getSuperclass();
-			}
-		} while (cls != null);
-		ArrayList<Field> fields = new ArrayList<Field>();
-		for (Class<?> c : clsTree) {
-			for (Field f : c.getDeclaredFields()) {
-				if (f.getAnnotations().length > 0) {
-					fields.add(f);
-				}
-			}
-		}
-		return fields;
 	}
 }

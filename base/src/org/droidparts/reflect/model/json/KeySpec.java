@@ -18,13 +18,6 @@ package org.droidparts.reflect.model.json;
 import org.droidparts.reflect.model.FieldSpec;
 import org.droidparts.reflect.model.json.ann.KeyAnn;
 
-public class KeySpec extends FieldSpec {
+public class KeySpec extends FieldSpec<KeyAnn> {
 
-	public final KeyAnn key = new KeyAnn();
-
-	@Override
-	public String toString() {
-		return super.toString() + ", keyName: " + key.name + ", keyOptional: "
-				+ key.optional;
-	}
 }

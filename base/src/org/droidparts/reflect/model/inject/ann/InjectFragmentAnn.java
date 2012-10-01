@@ -19,7 +19,7 @@ import org.droidparts.annotation.inject.InjectFragment;
 
 public class InjectFragmentAnn extends InjectAnn<InjectFragment> {
 
-	public int value;
+	public final int value;
 
 	public InjectFragmentAnn(InjectFragment annotation) {
 		super(InjectFragment.class);

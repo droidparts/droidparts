@@ -18,8 +18,6 @@ package org.droidparts.reflect.model.inject;
 import org.droidparts.reflect.model.FieldSpec;
 import org.droidparts.reflect.model.inject.ann.InjectAnn;
 
-public class InjectSpec extends FieldSpec {
-
-	public InjectAnn<?> injectAnn;
+public class InjectSpec extends FieldSpec<InjectAnn<?>> {
 
 }

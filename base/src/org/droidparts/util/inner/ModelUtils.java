@@ -19,7 +19,7 @@ import java.lang.reflect.Field;
 import java.util.List;
 
 import org.droidparts.model.Model;
-import org.droidparts.reflect.util.AnnUtil;
+import org.droidparts.reflect.util.ReflectionUtils;
 import org.droidparts.util.L;
 
 public class ModelUtils {
@@ -30,7 +30,7 @@ public class ModelUtils {
 		} else if (model == other) {
 			return true;
 		} else if (other.getClass() == model.getClass()) {
-			List<Field> fields = AnnUtil.listAnnotatedFields(model
+			List<Field> fields = ReflectionUtils.listAnnotatedFields(model
 					.getClass());
 			for (Field f : fields) {
 				try {
@@ -59,7 +59,7 @@ public class ModelUtils {
 		StringBuilder sb = new StringBuilder();
 		sb.append(cls.getSimpleName());
 		sb.append(" [");
-		List<Field> fields = AnnUtil.listAnnotatedFields(cls);
+		List<Field> fields = ReflectionUtils.listAnnotatedFields(cls);
 		for (int i = 0; i < fields.size(); i++) {
 			Field field = fields.get(i);
 			sb.append(field.getName());

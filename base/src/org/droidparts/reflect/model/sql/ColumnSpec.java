@@ -18,14 +18,6 @@ package org.droidparts.reflect.model.sql;
 import org.droidparts.reflect.model.FieldSpec;
 import org.droidparts.reflect.model.sql.ann.ColumnAnn;
 
-public class ColumnSpec extends FieldSpec {
+public class ColumnSpec extends FieldSpec<ColumnAnn> {
 
-	public final ColumnAnn column = new ColumnAnn();
-
-	@Override
-	public String toString() {
-		return super.toString() + ", columnName: " + column.name
-				+ ", columnNullable: " + column.nullable + ", columnUnique: "
-				+ column.unique + ", columnEager: " + column.eager;
-	}
 }

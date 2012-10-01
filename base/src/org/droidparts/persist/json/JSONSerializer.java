@@ -76,7 +76,7 @@ public class JSONSerializer<ModelType extends Model> {
 		JSONObject obj = new JSONObject();
 		KeySpec[] fields = SpecBuilder.getJsonKeySpecs(cls);
 		for (KeySpec jsonField : fields) {
-			readFromModelAndPutToJSON(item, jsonField, obj, jsonField.key.name);
+			readFromModelAndPutToJSON(item, jsonField, obj, jsonField.ann.name);
 		}
 		return obj;
 	}
@@ -86,7 +86,7 @@ public class JSONSerializer<ModelType extends Model> {
 		KeySpec[] fields = SpecBuilder.getJsonKeySpecs(cls);
 		for (KeySpec jsonField : fields) {
 			readFromJSONAndSetFieldVal(model, jsonField, obj,
-					jsonField.key.name);
+					jsonField.ann.name);
 		}
 		return model;
 	}
@@ -253,7 +253,7 @@ public class JSONSerializer<ModelType extends Model> {
 			try {
 				putToJSONObject(obj, key, jsonField.field.getType(), columnVal);
 			} catch (Exception e) {
-				if (jsonField.key.optional) {
+				if (jsonField.ann.optional) {
 					L.w("Failded to serialize "
 							+ SpecBuilder.getJsonObjectName(cls) + "."
 							+ jsonField.field.getName() + ": " + e.getMessage());
@@ -285,12 +285,12 @@ public class JSONSerializer<ModelType extends Model> {
 				if (!NULL.equals(val)) {
 					setFieldVal(model, modelField.field, val);
 				} else {
-					L.i("Received NULL '" + modelField.key.name
+					L.i("Received NULL '" + modelField.ann.name
 							+ "', skipping.");
 				}
 			} catch (Exception e) {
-				if (modelField.key.optional) {
-					L.w("Failed to deserialize '" + modelField.key.name + "': "
+				if (modelField.ann.optional) {
+					L.w("Failed to deserialize '" + modelField.ann.name + "': "
 							+ e.getMessage());
 				} else {
 					throw new JSONException(Log.getStackTraceString(e));
@@ -320,8 +320,8 @@ public class JSONSerializer<ModelType extends Model> {
 	}
 
 	private void throwIfRequired(KeySpec modelField) throws JSONException {
-		if (!modelField.key.optional) {
-			throw new JSONException("Required key '" + modelField.key.name
+		if (!modelField.ann.optional) {
+			throw new JSONException("Required key '" + modelField.ann.name
 					+ "' not present.");
 		}
 	}

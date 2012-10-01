@@ -16,6 +16,7 @@
 package org.droidparts.util;
 
 import static java.util.Arrays.asList;
+import static org.droidparts.reflect.util.SpecBuilder.getTableName;
 import static org.droidparts.reflect.util.TypeHelper.isArray;
 import static org.droidparts.reflect.util.TypeHelper.isBoolean;
 import static org.droidparts.reflect.util.TypeHelper.isByte;
@@ -43,7 +44,6 @@ import org.droidparts.contract.SQL;
 import org.droidparts.model.Entity;
 import org.droidparts.persist.sql.AbstractEntityManager;
 import org.droidparts.reflect.model.sql.ColumnSpec;
-import org.droidparts.reflect.util.SpecBuilder;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -222,19 +222,19 @@ public final class PersistUtils implements SQL.DDL {
 		sb.append(PK);
 		StringBuilder fkSb = new StringBuilder();
 		for (ColumnSpec spec : specs) {
-			if (Column.ID.equals(spec.column.name)) {
+			if (Column.ID.equals(spec.ann.name)) {
 				// already got it
 				continue;
 			}
 			sb.append(SEPARATOR);
 			String columnType = getColumnType(spec.field.getType(),
 					spec.multiFieldArgType);
-			sb.append(spec.column.name);
+			sb.append(spec.ann.name);
 			sb.append(columnType);
-			if (!spec.column.nullable) {
+			if (!spec.ann.nullable) {
 				sb.append(NOT_NULL);
 			}
-			if (spec.column.unique) {
+			if (spec.ann.unique) {
 				sb.append(UNIQUE);
 			}
 			if (isEntity(spec.field.getType())) {
@@ -290,9 +290,9 @@ public final class PersistUtils implements SQL.DDL {
 		@SuppressWarnings("unchecked")
 		Class<? extends Entity> entityType = (Class<? extends Entity>) dbField.field
 				.getType();
-		String foreignTableName = SpecBuilder.getTableName(entityType);
+		String foreignTableName = getTableName(entityType);
 		sb.append("FOREIGN KEY(");
-		sb.append(dbField.column.name);
+		sb.append(dbField.ann.name);
 		sb.append(") REFERENCES ");
 		sb.append(foreignTableName);
 		sb.append("(").append(Column.ID).append(") ON DELETE CASCADE");

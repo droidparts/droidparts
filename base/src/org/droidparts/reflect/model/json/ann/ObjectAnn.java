@@ -31,4 +31,9 @@ public final class ObjectAnn extends Ann<Object> {
 		super(Object.class);
 	}
 
+	@Override
+	public String toString() {
+		return super.toString() + ", name: " + name;
+	}
+
 }

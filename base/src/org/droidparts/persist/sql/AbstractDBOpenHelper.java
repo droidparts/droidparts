@@ -15,11 +15,13 @@
  */
 package org.droidparts.persist.sql;
 
+import static org.droidparts.reflect.util.SpecBuilder.getTableColumnSpecs;
+import static org.droidparts.reflect.util.SpecBuilder.getTableName;
+
 import java.util.ArrayList;
 
 import org.droidparts.contract.SQL;
 import org.droidparts.model.Entity;
-import org.droidparts.reflect.util.SpecBuilder;
 import org.droidparts.util.PersistUtils;
 
 import android.content.Context;
@@ -67,9 +69,8 @@ public abstract class AbstractDBOpenHelper extends SQLiteOpenHelper implements
 	public final void onCreate(SQLiteDatabase db) {
 		ArrayList<String> statements = new ArrayList<String>();
 		for (Class<? extends Entity> cls : getEntityClasses()) {
-			String query = PersistUtils.getSQLCreate(
-					SpecBuilder.getTableName(cls),
-					SpecBuilder.getTableColumns(cls));
+			String query = PersistUtils.getSQLCreate(getTableName(cls),
+					getTableColumnSpecs(cls));
 			statements.add(query);
 		}
 		onOpen(db);

@@ -15,6 +15,8 @@
  */
 package org.droidparts.inject.injector;
 
+import static org.droidparts.reflect.util.SpecBuilder.getInjectSpecs;
+
 import java.lang.reflect.Field;
 
 import org.droidparts.reflect.model.Ann;
@@ -24,7 +26,6 @@ import org.droidparts.reflect.model.inject.ann.InjectDependencyAnn;
 import org.droidparts.reflect.model.inject.ann.InjectResourceAnn;
 import org.droidparts.reflect.model.inject.ann.InjectSystemServiceAnn;
 import org.droidparts.reflect.model.inject.ann.InjectViewAnn;
-import org.droidparts.reflect.util.SpecBuilder;
 import org.droidparts.util.L;
 
 import android.app.Activity;
@@ -46,10 +47,8 @@ public class InjectorDelegate {
 	public final void inject(Context ctx, View root, Object target) {
 		long start = System.currentTimeMillis();
 		final Class<?> cls = target.getClass();
-		InjectSpec[] specs = SpecBuilder.getInjectSpecs(cls);
-		for (InjectSpec spec : specs) {
-			boolean success = inject(ctx, root, target, spec.injectAnn,
-					spec.field);
+		for (InjectSpec spec : getInjectSpecs(cls)) {
+			boolean success = inject(ctx, root, target, spec.ann, spec.field);
 			if (!success) {
 				L.e("Failed to inject field '" + spec.field.getName() + "' in "
 						+ cls.getSimpleName() + ".");

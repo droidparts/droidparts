@@ -36,4 +36,10 @@ public final class ColumnAnn extends Ann<Column> {
 	public ColumnAnn() {
 		super(Column.class);
 	}
+
+	@Override
+	public String toString() {
+		return super.toString() + ", name: " + name + ", nullable: " + nullable
+				+ ", unique: " + unique + ", eager: " + eager;
+	}
 }

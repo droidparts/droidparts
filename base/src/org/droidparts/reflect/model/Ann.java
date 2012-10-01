@@ -17,17 +17,12 @@ package org.droidparts.reflect.model;
 
 import java.lang.annotation.Annotation;
 
-public class Ann<T extends Annotation> {
+public abstract class Ann<T extends Annotation> {
 
-	public final Class<? extends Annotation> cls;
+	private final Class<T> cls;
 
 	public Ann(Class<T> cls) {
 		this.cls = cls;
-	}
-
-	@Override
-	public int hashCode() {
-		return cls.hashCode();
 	}
 
 	@Override
@@ -41,7 +36,12 @@ public class Ann<T extends Annotation> {
 	}
 
 	@Override
+	public int hashCode() {
+		return cls.hashCode();
+	}
+
+	@Override
 	public String toString() {
-		return cls.toString();
+		return cls.getSimpleName();
 	}
 }

@@ -17,15 +17,18 @@ package org.droidparts.reflect.model;
 
 import java.lang.reflect.Field;
 
-public abstract class FieldSpec {
+public abstract class FieldSpec<AnnType extends Ann<?>> {
 
 	public Field field;
 	public Class<?> multiFieldArgType;
 
+	public AnnType ann;
+
 	@Override
 	public String toString() {
-		return "fieldName: " + field.getName() + ", fieldType: "
-				+ field.getType() + ", multiFieldArgType: " + multiFieldArgType;
+		return getClass().getSimpleName() + ", fieldName:" + field.getName()
+				+ ", fieldType:" + field.getType() + ", multiFieldArgType:"
+				+ multiFieldArgType + ", ann:" + ann;
 	}
 
 }

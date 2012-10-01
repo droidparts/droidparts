@@ -33,7 +33,7 @@ import org.json.JSONObject;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 
-public class TypeHelper {
+public final class TypeHelper {
 
 	public static boolean isByte(Class<?> cls) {
 		return (cls == byte.class || cls == Byte.class);
