@@ -43,21 +43,21 @@ import org.droidparts.reflect.model.sql.ann.TableAnn;
 
 public final class AnnBuilder {
 
+	@SuppressWarnings("unchecked")
 	static <T extends Annotation> Ann<T> getClassAnn(
 			Class<? extends Ann<T>> annCls, Class<?> cls) {
-		for (Ann<?> ann : getAnns(cls.getAnnotations())) {
-			if (ann.getClass() == annCls) {
-				@SuppressWarnings("unchecked")
-				Ann<T> typedAnn = (Ann<T>) ann;
-				return typedAnn;
-			}
-		}
-		return null;
+		return pickAnn(annCls, (Ann<T>[]) getClassAnns(cls));
 	}
 
+	@SuppressWarnings("unchecked")
 	static <T extends Annotation> Ann<T> getFieldAnn(
 			Class<? extends Ann<T>> annCls, Class<?> cls, Field f) {
-		for (Ann<?> ann : getFieldAnns(cls, f)) {
+		return pickAnn(annCls, (Ann<T>[]) getFieldAnns(cls, f));
+	}
+
+	private static <T extends Annotation> Ann<T> pickAnn(
+			Class<? extends Ann<T>> annCls, Ann<T>[] anns) {
+		for (Ann<?> ann : anns) {
 			if (ann.getClass().isAssignableFrom(annCls)) {
 				@SuppressWarnings("unchecked")
 				Ann<T> typedAnn = (Ann<T>) ann;
@@ -67,11 +67,19 @@ public final class AnnBuilder {
 		return null;
 	}
 
-	static <T extends Annotation> Ann<T>[] getFieldAnns(Class<?> cls, Field f) {
-		return getAnns(f.getAnnotations());
+	static <T extends Annotation> Ann<T>[] getClassAnns(Class<?> cls) {
+		return toAnns(cls.getAnnotations());
 	}
 
-	static <T extends Annotation> Ann<T>[] getAnns(Annotation[] annotations) {
+	static <T extends Annotation> Ann<T>[] getFieldAnns(Class<?> cls, Field f) {
+		return toAnns(f.getAnnotations());
+	}
+
+	//
+
+	@SuppressWarnings("unchecked")
+	private static <T extends Annotation> Ann<T>[] toAnns(
+			Annotation[] annotations) {
 		ArrayList<Ann<?>> anns = new ArrayList<Ann<?>>();
 		for (Annotation annotation : annotations) {
 			Ann<?> ann = toAnn(annotation);
@@ -79,9 +87,7 @@ public final class AnnBuilder {
 				anns.add(ann);
 			}
 		}
-		@SuppressWarnings("unchecked")
-		Ann<T>[] arr = anns.toArray(new Ann[anns.size()]);
-		return arr;
+		return anns.toArray(new Ann[anns.size()]);
 	}
 
 	private static Ann<?> toAnn(Annotation annotation) {
