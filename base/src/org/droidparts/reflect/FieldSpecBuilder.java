@@ -13,11 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License. 
  */
-package org.droidparts.reflect.util;
+package org.droidparts.reflect;
 
-import static org.droidparts.reflect.util.AnnBuilder.getClassAnn;
-import static org.droidparts.reflect.util.AnnBuilder.getFieldAnn;
-import static org.droidparts.reflect.util.AnnBuilder.getFieldAnns;
+import static org.droidparts.reflect.AnnBuilder.getClassAnn;
+import static org.droidparts.reflect.AnnBuilder.getFieldAnn;
+import static org.droidparts.reflect.AnnBuilder.getFieldAnns;
 import static org.droidparts.reflect.util.ReflectionUtils.getArrayType;
 import static org.droidparts.reflect.util.ReflectionUtils.getFieldGenericArgs;
 import static org.droidparts.reflect.util.ReflectionUtils.listAnnotatedFields;
@@ -39,33 +39,34 @@ import java.util.concurrent.ConcurrentHashMap;
 import org.droidparts.model.Entity;
 import org.droidparts.model.Model;
 import org.droidparts.reflect.ann.Ann;
-import org.droidparts.reflect.ann.AnnSpec;
+import org.droidparts.reflect.ann.FieldSpec;
 import org.droidparts.reflect.ann.inject.InjectAnn;
 import org.droidparts.reflect.ann.json.KeyAnn;
 import org.droidparts.reflect.ann.sql.ColumnAnn;
 import org.droidparts.reflect.ann.sql.TableAnn;
+import org.droidparts.reflect.util.ReflectionUtils;
 import org.droidparts.util.L;
 
-public final class AnnSpecBuilder {
+public final class FieldSpecBuilder {
 
 	// Inject
 
 	@SuppressWarnings("unchecked")
-	public static AnnSpec<InjectAnn<?>>[] getInjectSpecs(Class<?> cls) {
-		AnnSpec<InjectAnn<?>>[] specs = injectSpecCache.get(cls);
+	public static FieldSpec<InjectAnn<?>>[] getInjectSpecs(Class<?> cls) {
+		FieldSpec<InjectAnn<?>>[] specs = injectSpecCache.get(cls);
 		if (specs == null) {
-			ArrayList<AnnSpec<InjectAnn<?>>> list = new ArrayList<AnnSpec<InjectAnn<?>>>();
+			ArrayList<FieldSpec<InjectAnn<?>>> list = new ArrayList<FieldSpec<InjectAnn<?>>>();
 			List<Field> fields = ReflectionUtils.listAnnotatedFields(cls);
 			for (Field field : fields) {
 				for (Ann<?> ann : getFieldAnns(cls, field)) {
 					if (ann instanceof InjectAnn) {
-						list.add(new AnnSpec<InjectAnn<?>>(field, null,
+						list.add(new FieldSpec<InjectAnn<?>>(field, null,
 								(InjectAnn<?>) ann));
 						break;
 					}
 				}
 			}
-			specs = list.toArray(new AnnSpec[list.size()]);
+			specs = list.toArray(new FieldSpec[list.size()]);
 			injectSpecCache.put(cls, specs);
 		}
 		return specs;
@@ -89,11 +90,11 @@ public final class AnnSpecBuilder {
 	}
 
 	@SuppressWarnings("unchecked")
-	public static AnnSpec<ColumnAnn>[] getTableColumnSpecs(
+	public static FieldSpec<ColumnAnn>[] getTableColumnSpecs(
 			Class<? extends Entity> cls) {
-		AnnSpec<ColumnAnn>[] specs = columnSpecCache.get(cls);
+		FieldSpec<ColumnAnn>[] specs = columnSpecCache.get(cls);
 		if (specs == null) {
-			ArrayList<AnnSpec<ColumnAnn>> list = new ArrayList<AnnSpec<ColumnAnn>>();
+			ArrayList<FieldSpec<ColumnAnn>> list = new ArrayList<FieldSpec<ColumnAnn>>();
 			for (Field field : listAnnotatedFields(cls)) {
 				ColumnAnn columnAnn = (ColumnAnn) getFieldAnn(ColumnAnn.class,
 						cls, field);
@@ -104,12 +105,12 @@ public final class AnnSpecBuilder {
 					ann.nullable = columnAnn.nullable;
 					ann.unique = columnAnn.unique;
 					ann.eager = columnAnn.eager;
-					list.add(new AnnSpec<ColumnAnn>(field, multiFieldArgType,
+					list.add(new FieldSpec<ColumnAnn>(field, multiFieldArgType,
 							ann));
 				}
 			}
 			sanitizeFields(list);
-			specs = list.toArray(new AnnSpec[list.size()]);
+			specs = list.toArray(new FieldSpec[list.size()]);
 			columnSpecCache.put(cls, specs);
 		}
 		return specs;
@@ -117,10 +118,10 @@ public final class AnnSpecBuilder {
 
 	// JSON
 	@SuppressWarnings("unchecked")
-	public static AnnSpec<KeyAnn>[] getJsonKeySpecs(Class<? extends Model> cls) {
-		AnnSpec<KeyAnn>[] specs = keySpecCache.get(cls);
+	public static FieldSpec<KeyAnn>[] getJsonKeySpecs(Class<? extends Model> cls) {
+		FieldSpec<KeyAnn>[] specs = keySpecCache.get(cls);
 		if (specs == null) {
-			ArrayList<AnnSpec<KeyAnn>> list = new ArrayList<AnnSpec<KeyAnn>>();
+			ArrayList<FieldSpec<KeyAnn>> list = new ArrayList<FieldSpec<KeyAnn>>();
 			for (Field field : listAnnotatedFields(cls)) {
 				KeyAnn keyAnn = (KeyAnn) getFieldAnn(KeyAnn.class, cls, field);
 				if (keyAnn != null) {
@@ -128,11 +129,11 @@ public final class AnnSpecBuilder {
 					KeyAnn ann = new KeyAnn();
 					ann.name = getKeyName(keyAnn, field);
 					ann.optional = keyAnn.optional;
-					list.add(new AnnSpec<KeyAnn>(field, multiFieldArgType,
+					list.add(new FieldSpec<KeyAnn>(field, multiFieldArgType,
 							(KeyAnn) ann));
 				}
 			}
-			specs = list.toArray(new AnnSpec[list.size()]);
+			specs = list.toArray(new FieldSpec[list.size()]);
 			keySpecCache.put(cls, specs);
 		}
 		return specs;
@@ -140,12 +141,12 @@ public final class AnnSpecBuilder {
 
 	// caches
 
-	private static final ConcurrentHashMap<Class<?>, AnnSpec<InjectAnn<?>>[]> injectSpecCache = new ConcurrentHashMap<Class<?>, AnnSpec<InjectAnn<?>>[]>();
+	private static final ConcurrentHashMap<Class<?>, FieldSpec<InjectAnn<?>>[]> injectSpecCache = new ConcurrentHashMap<Class<?>, FieldSpec<InjectAnn<?>>[]>();
 
 	private static final ConcurrentHashMap<Class<? extends Entity>, String> tableNameCache = new ConcurrentHashMap<Class<? extends Entity>, String>();
-	private static final ConcurrentHashMap<Class<? extends Entity>, AnnSpec<ColumnAnn>[]> columnSpecCache = new ConcurrentHashMap<Class<? extends Entity>, AnnSpec<ColumnAnn>[]>();
+	private static final ConcurrentHashMap<Class<? extends Entity>, FieldSpec<ColumnAnn>[]> columnSpecCache = new ConcurrentHashMap<Class<? extends Entity>, FieldSpec<ColumnAnn>[]>();
 
-	private static final ConcurrentHashMap<Class<? extends Model>, AnnSpec<KeyAnn>[]> keySpecCache = new ConcurrentHashMap<Class<? extends Model>, AnnSpec<KeyAnn>[]>();
+	private static final ConcurrentHashMap<Class<? extends Model>, FieldSpec<KeyAnn>[]> keySpecCache = new ConcurrentHashMap<Class<? extends Model>, FieldSpec<KeyAnn>[]>();
 
 	// Utils
 
@@ -186,8 +187,8 @@ public final class AnnSpecBuilder {
 
 	private static final String ID_SUFFIX = "_id";
 
-	private static void sanitizeFields(ArrayList<AnnSpec<ColumnAnn>> columnSpecs) {
-		for (AnnSpec<ColumnAnn> spec : columnSpecs) {
+	private static void sanitizeFields(ArrayList<FieldSpec<ColumnAnn>> columnSpecs) {
+		for (FieldSpec<ColumnAnn> spec : columnSpecs) {
 			if (spec.ann.nullable) {
 				Class<?> fieldType = spec.field.getType();
 				if (isBoolean(fieldType) || isByte(fieldType)

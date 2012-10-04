@@ -16,7 +16,7 @@
 package org.droidparts.util;
 
 import static java.util.Arrays.asList;
-import static org.droidparts.reflect.util.AnnSpecBuilder.getTableName;
+import static org.droidparts.reflect.FieldSpecBuilder.getTableName;
 import static org.droidparts.reflect.util.TypeHelper.isArray;
 import static org.droidparts.reflect.util.TypeHelper.isBoolean;
 import static org.droidparts.reflect.util.TypeHelper.isByte;
@@ -43,7 +43,7 @@ import org.droidparts.contract.DB.Column;
 import org.droidparts.contract.SQL;
 import org.droidparts.model.Entity;
 import org.droidparts.persist.sql.AbstractEntityManager;
-import org.droidparts.reflect.ann.AnnSpec;
+import org.droidparts.reflect.ann.FieldSpec;
 import org.droidparts.reflect.ann.sql.ColumnAnn;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -218,12 +218,12 @@ public final class PersistUtils implements SQL.DDL {
 	}
 
 	public static String getSQLCreate(String tableName,
-			AnnSpec<ColumnAnn>[] specs) {
+			FieldSpec<ColumnAnn>[] specs) {
 		StringBuilder sb = new StringBuilder();
 		sb.append(CREATE_TABLE + tableName + OPENING_BRACE);
 		sb.append(PK);
 		StringBuilder fkSb = new StringBuilder();
-		for (AnnSpec<ColumnAnn> spec : specs) {
+		for (FieldSpec<ColumnAnn> spec : specs) {
 			if (Column.ID.equals(spec.ann.name)) {
 				// already got it
 				continue;
@@ -288,7 +288,7 @@ public final class PersistUtils implements SQL.DDL {
 		return BLOB;
 	}
 
-	private static void appendForeignKeyDef(AnnSpec<ColumnAnn> spec,
+	private static void appendForeignKeyDef(FieldSpec<ColumnAnn> spec,
 			StringBuilder sb) {
 		@SuppressWarnings("unchecked")
 		Class<? extends Entity> entityType = (Class<? extends Entity>) spec.field

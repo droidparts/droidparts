@@ -17,14 +17,14 @@ package org.droidparts.reflect.ann;
 
 import java.lang.reflect.Field;
 
-public class AnnSpec<AnnType extends Ann<?>> {
+public class FieldSpec<AnnType extends Ann<?>> {
 
 	public final Field field;
 	public final Class<?> multiFieldArgType;
 
 	public final AnnType ann;
 
-	public AnnSpec(Field field, Class<?> multiFieldArgType, AnnType ann) {
+	public FieldSpec(Field field, Class<?> multiFieldArgType, AnnType ann) {
 		this.field = field;
 		this.multiFieldArgType = multiFieldArgType;
 		this.ann = ann;

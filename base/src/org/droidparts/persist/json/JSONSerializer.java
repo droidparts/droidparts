@@ -15,10 +15,10 @@
  */
 package org.droidparts.persist.json;
 
+import static org.droidparts.reflect.FieldSpecBuilder.getJsonKeySpecs;
 import static org.droidparts.reflect.util.ReflectionUtils.getFieldVal;
 import static org.droidparts.reflect.util.ReflectionUtils.instantiate;
 import static org.droidparts.reflect.util.ReflectionUtils.setFieldVal;
-import static org.droidparts.reflect.util.AnnSpecBuilder.getJsonKeySpecs;
 import static org.droidparts.reflect.util.TypeHelper.isArray;
 import static org.droidparts.reflect.util.TypeHelper.isBoolean;
 import static org.droidparts.reflect.util.TypeHelper.isByte;
@@ -46,7 +46,7 @@ import java.util.Collection;
 import java.util.Date;
 
 import org.droidparts.model.Model;
-import org.droidparts.reflect.ann.AnnSpec;
+import org.droidparts.reflect.ann.FieldSpec;
 import org.droidparts.reflect.ann.json.KeyAnn;
 import org.droidparts.util.L;
 import org.droidparts.util.PersistUtils;
@@ -75,7 +75,7 @@ public class JSONSerializer<ModelType extends Model> {
 
 	public JSONObject serialize(ModelType item) throws JSONException {
 		JSONObject obj = new JSONObject();
-		for (AnnSpec<KeyAnn> spec : getJsonKeySpecs(cls)) {
+		for (FieldSpec<KeyAnn> spec : getJsonKeySpecs(cls)) {
 			readFromModelAndPutToJSON(item, spec, obj, spec.ann.name);
 		}
 		return obj;
@@ -83,7 +83,7 @@ public class JSONSerializer<ModelType extends Model> {
 
 	public ModelType deserialize(JSONObject obj) throws JSONException {
 		ModelType model = instantiate(cls);
-		for (AnnSpec<KeyAnn> spec : getJsonKeySpecs(cls)) {
+		for (FieldSpec<KeyAnn> spec : getJsonKeySpecs(cls)) {
 			readFromJSONAndSetFieldVal(model, spec, obj, spec.ann.name);
 		}
 		return model;
@@ -234,7 +234,7 @@ public class JSONSerializer<ModelType extends Model> {
 	}
 
 	private void readFromModelAndPutToJSON(ModelType item,
-			AnnSpec<KeyAnn> spec, JSONObject obj, String key)
+			FieldSpec<KeyAnn> spec, JSONObject obj, String key)
 			throws JSONException {
 		Pair<String, String> keyParts = getNestedKeyParts(key);
 		if (keyParts != null) {
@@ -263,7 +263,7 @@ public class JSONSerializer<ModelType extends Model> {
 	}
 
 	private void readFromJSONAndSetFieldVal(ModelType model,
-			AnnSpec<KeyAnn> spec, JSONObject obj, String key)
+			FieldSpec<KeyAnn> spec, JSONObject obj, String key)
 			throws JSONException {
 		Pair<String, String> keyParts = getNestedKeyParts(key);
 		if (keyParts != null) {
@@ -314,7 +314,7 @@ public class JSONSerializer<ModelType extends Model> {
 		return cls2;
 	}
 
-	private void throwIfRequired(AnnSpec<KeyAnn> spec) throws JSONException {
+	private void throwIfRequired(FieldSpec<KeyAnn> spec) throws JSONException {
 		if (!spec.ann.optional) {
 			throw new JSONException("Required key '" + spec.ann.name
 					+ "' not present.");

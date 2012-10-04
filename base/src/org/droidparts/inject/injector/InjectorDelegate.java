@@ -15,12 +15,12 @@
  */
 package org.droidparts.inject.injector;
 
-import static org.droidparts.reflect.util.AnnSpecBuilder.getInjectSpecs;
+import static org.droidparts.reflect.FieldSpecBuilder.getInjectSpecs;
 
 import java.lang.reflect.Field;
 
 import org.droidparts.reflect.ann.Ann;
-import org.droidparts.reflect.ann.AnnSpec;
+import org.droidparts.reflect.ann.FieldSpec;
 import org.droidparts.reflect.ann.inject.InjectAnn;
 import org.droidparts.reflect.ann.inject.InjectBundleExtraAnn;
 import org.droidparts.reflect.ann.inject.InjectDependencyAnn;
@@ -48,7 +48,7 @@ public class InjectorDelegate {
 	public final void inject(Context ctx, View root, Object target) {
 		long start = System.currentTimeMillis();
 		final Class<?> cls = target.getClass();
-		for (AnnSpec<InjectAnn<?>> spec : getInjectSpecs(cls)) {
+		for (FieldSpec<InjectAnn<?>> spec : getInjectSpecs(cls)) {
 			boolean success = inject(ctx, root, target, spec.ann, spec.field);
 			if (!success) {
 				L.e("Failed to inject field '" + spec.field.getName() + "' in "

@@ -16,11 +16,11 @@
 package org.droidparts.persist.sql;
 
 import static java.util.Arrays.asList;
+import static org.droidparts.reflect.FieldSpecBuilder.getTableColumnSpecs;
 import static org.droidparts.reflect.util.ReflectionUtils.getFieldVal;
 import static org.droidparts.reflect.util.ReflectionUtils.instantiate;
 import static org.droidparts.reflect.util.ReflectionUtils.instantiateEnum;
 import static org.droidparts.reflect.util.ReflectionUtils.setFieldVal;
-import static org.droidparts.reflect.util.AnnSpecBuilder.getTableColumnSpecs;
 import static org.droidparts.reflect.util.TypeHelper.isArray;
 import static org.droidparts.reflect.util.TypeHelper.isBitmap;
 import static org.droidparts.reflect.util.TypeHelper.isBoolean;
@@ -51,10 +51,10 @@ import java.util.UUID;
 import org.droidparts.annotation.inject.InjectDependency;
 import org.droidparts.inject.Injector;
 import org.droidparts.model.Entity;
-import org.droidparts.reflect.ann.AnnSpec;
+import org.droidparts.reflect.FieldSpecBuilder;
+import org.droidparts.reflect.ann.FieldSpec;
 import org.droidparts.reflect.ann.sql.ColumnAnn;
 import org.droidparts.reflect.util.ReflectionUtils;
-import org.droidparts.reflect.util.AnnSpecBuilder;
 import org.droidparts.util.Strings;
 
 import android.content.ContentValues;
@@ -98,7 +98,7 @@ public class EntityManager<EntityType extends Entity> extends
 	@Override
 	public EntityType readRow(Cursor cursor) {
 		EntityType entity = instantiate(cls);
-		for (AnnSpec<ColumnAnn> spec : getTableColumnSpecs(cls)) {
+		for (FieldSpec<ColumnAnn> spec : getTableColumnSpecs(cls)) {
 			int colIdx = cursor.getColumnIndex(spec.ann.name);
 			if (colIdx >= 0) {
 				Object columnVal = readFromCursor(cursor, colIdx, spec.field,
@@ -115,7 +115,7 @@ public class EntityManager<EntityType extends Entity> extends
 	public void fillForeignKeys(EntityType item, String... columnNames) {
 		HashSet<String> columnNameSet = new HashSet<String>(asList(columnNames));
 		boolean fillAll = columnNameSet.isEmpty();
-		for (AnnSpec<ColumnAnn> spec : getTableColumnSpecs(cls)) {
+		for (FieldSpec<ColumnAnn> spec : getTableColumnSpecs(cls)) {
 			if (isEntity(spec.field.getType())
 					&& (fillAll || columnNameSet.contains(spec.ann.name))) {
 				EntityType foreignEntity = ReflectionUtils.getFieldVal(item,
@@ -137,13 +137,13 @@ public class EntityManager<EntityType extends Entity> extends
 
 	@Override
 	protected String getTableName() {
-		return AnnSpecBuilder.getTableName(cls);
+		return FieldSpecBuilder.getTableName(cls);
 	}
 
 	@Override
 	protected ContentValues toContentValues(EntityType item) {
 		ContentValues cv = new ContentValues();
-		for (AnnSpec<ColumnAnn> spec : getTableColumnSpecs(cls)) {
+		for (FieldSpec<ColumnAnn> spec : getTableColumnSpecs(cls)) {
 			Object columnVal = getFieldVal(item, spec.field);
 			putToContentValues(cv, spec.ann.name, spec.field.getType(),
 					columnVal);
@@ -153,7 +153,7 @@ public class EntityManager<EntityType extends Entity> extends
 
 	@Override
 	protected void createOrUpdateForeignKeys(EntityType item) {
-		for (AnnSpec<ColumnAnn> spec : getTableColumnSpecs(cls)) {
+		for (FieldSpec<ColumnAnn> spec : getTableColumnSpecs(cls)) {
 			if (isEntity(spec.field.getType())) {
 				EntityType foreignEntity = ReflectionUtils.getFieldVal(item,
 						spec.field);
@@ -168,7 +168,7 @@ public class EntityManager<EntityType extends Entity> extends
 	protected String[] getEagerForeignKeyColumnNames() {
 		if (eagerForeignKeyColumnNames == null) {
 			HashSet<String> eagerColumnNames = new HashSet<String>();
-			for (AnnSpec<ColumnAnn> spec : getTableColumnSpecs(cls)) {
+			for (FieldSpec<ColumnAnn> spec : getTableColumnSpecs(cls)) {
 				if (spec.ann.eager) {
 					eagerColumnNames.add(spec.ann.name);
 				}
