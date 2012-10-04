@@ -13,21 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License. 
  */
-package org.droidparts.reflect.model.sql.ann;
+package org.droidparts.reflect.ann.inject;
 
-import org.droidparts.annotation.sql.Table;
-import org.droidparts.reflect.model.Ann;
+import org.droidparts.annotation.inject.InjectSystemService;
 
-public final class TableAnn extends Ann<Table> {
+public final class InjectSystemServiceAnn extends
+		InjectAnn<InjectSystemService> {
 
-	public String name;
+	public final String value;
 
-	public TableAnn(Table annotation) {
-		this();
-		name = annotation.name();
-	}
-
-	public TableAnn() {
-		super(Table.class);
+	public InjectSystemServiceAnn(InjectSystemService annotation) {
+		super(InjectSystemService.class);
+		value = annotation.value();
 	}
 }

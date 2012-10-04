@@ -19,7 +19,7 @@ import static org.droidparts.reflect.util.ReflectionUtils.setFieldVal;
 
 import java.lang.reflect.Field;
 
-import org.droidparts.reflect.model.inject.ann.InjectBundleExtraAnn;
+import org.droidparts.reflect.ann.inject.InjectBundleExtraAnn;
 
 import android.content.Context;
 import android.os.Bundle;

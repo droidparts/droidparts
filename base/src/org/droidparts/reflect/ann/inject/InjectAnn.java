@@ -13,17 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License. 
  */
-package org.droidparts.reflect.model.json;
+package org.droidparts.reflect.ann.inject;
 
-import java.lang.reflect.Field;
+import java.lang.annotation.Annotation;
 
-import org.droidparts.reflect.model.FieldSpec;
-import org.droidparts.reflect.model.json.ann.KeyAnn;
+import org.droidparts.reflect.ann.Ann;
 
-public class KeySpec extends FieldSpec<KeyAnn> {
+public class InjectAnn<T extends Annotation> extends Ann<T> {
 
-	public KeySpec(Field field, Class<?> multiFieldArgType, KeyAnn ann) {
-		super(field, multiFieldArgType, ann);
+	public InjectAnn(Class<T> cls) {
+		super(cls);
 	}
 
 }

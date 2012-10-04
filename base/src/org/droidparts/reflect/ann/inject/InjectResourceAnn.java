@@ -13,17 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License. 
  */
-package org.droidparts.reflect.model.inject;
+package org.droidparts.reflect.ann.inject;
 
-import java.lang.reflect.Field;
+import org.droidparts.annotation.inject.InjectResource;
 
-import org.droidparts.reflect.model.FieldSpec;
-import org.droidparts.reflect.model.inject.ann.InjectAnn;
+public final class InjectResourceAnn extends InjectAnn<InjectResource> {
 
-public class InjectSpec extends FieldSpec<InjectAnn<?>> {
+	public final int value;
 
-	public InjectSpec(Field field, InjectAnn<?> ann) {
-		super(field, null, ann);
+	public InjectResourceAnn(InjectResource annotation) {
+		super(InjectResource.class);
+		value = annotation.value();
 	}
-
 }

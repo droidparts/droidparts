@@ -19,7 +19,7 @@ import static org.droidparts.reflect.util.ReflectionUtils.setFieldVal;
 
 import java.lang.reflect.Field;
 
-import org.droidparts.reflect.model.inject.ann.InjectFragmentAnn;
+import org.droidparts.reflect.ann.inject.InjectFragmentAnn;
 import org.droidparts.util.inner.ResourceUtils;
 
 import android.support.v4.app.Fragment;

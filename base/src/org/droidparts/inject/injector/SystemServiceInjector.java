@@ -21,7 +21,7 @@ import static org.droidparts.util.Strings.isEmpty;
 import java.lang.reflect.Field;
 import java.util.HashMap;
 
-import org.droidparts.reflect.model.inject.ann.InjectSystemServiceAnn;
+import org.droidparts.reflect.ann.inject.InjectSystemServiceAnn;
 import org.droidparts.util.L;
 
 import android.accessibilityservice.AccessibilityService;

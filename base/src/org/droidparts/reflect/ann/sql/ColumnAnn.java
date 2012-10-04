@@ -13,28 +13,33 @@
  * See the License for the specific language governing permissions and
  * limitations under the License. 
  */
-package org.droidparts.reflect.model.json.ann;
+package org.droidparts.reflect.ann.sql;
 
-import org.droidparts.annotation.json.Key;
-import org.droidparts.reflect.model.Ann;
+import org.droidparts.annotation.sql.Column;
+import org.droidparts.reflect.ann.Ann;
 
-public final class KeyAnn extends Ann<Key> {
+public final class ColumnAnn extends Ann<Column> {
 
 	public String name;
-	public boolean optional;
+	public boolean nullable;
+	public boolean unique;
+	public boolean eager;
 
-	public KeyAnn(Key annotation) {
+	public ColumnAnn(Column annotation) {
 		this();
 		name = annotation.name();
-		optional = annotation.optional();
+		nullable = annotation.nullable();
+		unique = annotation.unique();
+		eager = annotation.eager();
 	}
 
-	public KeyAnn() {
-		super(Key.class);
+	public ColumnAnn() {
+		super(Column.class);
 	}
 
 	@Override
 	public String toString() {
-		return super.toString() + ", name: " + name + ", optional: " + optional;
+		return super.toString() + ", name: " + name + ", nullable: " + nullable
+				+ ", unique: " + unique + ", eager: " + eager;
 	}
 }

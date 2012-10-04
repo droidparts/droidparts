@@ -16,7 +16,7 @@
 package org.droidparts.util;
 
 import static java.util.Arrays.asList;
-import static org.droidparts.reflect.util.SpecBuilder.getTableName;
+import static org.droidparts.reflect.util.AnnSpecBuilder.getTableName;
 import static org.droidparts.reflect.util.TypeHelper.isArray;
 import static org.droidparts.reflect.util.TypeHelper.isBoolean;
 import static org.droidparts.reflect.util.TypeHelper.isByte;
@@ -43,7 +43,8 @@ import org.droidparts.contract.DB.Column;
 import org.droidparts.contract.SQL;
 import org.droidparts.model.Entity;
 import org.droidparts.persist.sql.AbstractEntityManager;
-import org.droidparts.reflect.model.sql.ColumnSpec;
+import org.droidparts.reflect.ann.AnnSpec;
+import org.droidparts.reflect.ann.sql.ColumnAnn;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -216,12 +217,13 @@ public final class PersistUtils implements SQL.DDL {
 		return sb.toString();
 	}
 
-	public static String getSQLCreate(String tableName, ColumnSpec[] specs) {
+	public static String getSQLCreate(String tableName,
+			AnnSpec<ColumnAnn>[] specs) {
 		StringBuilder sb = new StringBuilder();
 		sb.append(CREATE_TABLE + tableName + OPENING_BRACE);
 		sb.append(PK);
 		StringBuilder fkSb = new StringBuilder();
-		for (ColumnSpec spec : specs) {
+		for (AnnSpec<ColumnAnn> spec : specs) {
 			if (Column.ID.equals(spec.ann.name)) {
 				// already got it
 				continue;
@@ -286,13 +288,14 @@ public final class PersistUtils implements SQL.DDL {
 		return BLOB;
 	}
 
-	private static void appendForeignKeyDef(ColumnSpec dbField, StringBuilder sb) {
+	private static void appendForeignKeyDef(AnnSpec<ColumnAnn> spec,
+			StringBuilder sb) {
 		@SuppressWarnings("unchecked")
-		Class<? extends Entity> entityType = (Class<? extends Entity>) dbField.field
+		Class<? extends Entity> entityType = (Class<? extends Entity>) spec.field
 				.getType();
 		String foreignTableName = getTableName(entityType);
 		sb.append("FOREIGN KEY(");
-		sb.append(dbField.ann.name);
+		sb.append(spec.ann.name);
 		sb.append(") REFERENCES ");
 		sb.append(foreignTableName);
 		sb.append("(").append(Column.ID).append(") ON DELETE CASCADE");

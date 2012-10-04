@@ -13,18 +13,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License. 
  */
-package org.droidparts.reflect.model.inject.ann;
+package org.droidparts.reflect.ann.json;
 
-import org.droidparts.annotation.inject.InjectBundleExtra;
+import org.droidparts.annotation.json.Key;
+import org.droidparts.reflect.ann.Ann;
 
-public final class InjectBundleExtraAnn extends InjectAnn<InjectBundleExtra> {
+public final class KeyAnn extends Ann<Key> {
 
-	public final String value;
-	public final boolean optional;
+	public String name;
+	public boolean optional;
 
-	public InjectBundleExtraAnn(InjectBundleExtra annotation) {
-		super(InjectBundleExtra.class);
-		value = annotation.value();
+	public KeyAnn(Key annotation) {
+		this();
+		name = annotation.name();
 		optional = annotation.optional();
+	}
+
+	public KeyAnn() {
+		super(Key.class);
+	}
+
+	@Override
+	public String toString() {
+		return super.toString() + ", name: " + name + ", optional: " + optional;
 	}
 }

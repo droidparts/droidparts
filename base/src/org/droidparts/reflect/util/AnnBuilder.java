@@ -29,17 +29,17 @@ import org.droidparts.annotation.inject.InjectView;
 import org.droidparts.annotation.json.Key;
 import org.droidparts.annotation.sql.Column;
 import org.droidparts.annotation.sql.Table;
-import org.droidparts.reflect.model.Ann;
-import org.droidparts.reflect.model.inject.ann.InjectBundleExtraAnn;
-import org.droidparts.reflect.model.inject.ann.InjectDependencyAnn;
-import org.droidparts.reflect.model.inject.ann.InjectFragmentAnn;
-import org.droidparts.reflect.model.inject.ann.InjectParentActivityAnn;
-import org.droidparts.reflect.model.inject.ann.InjectResourceAnn;
-import org.droidparts.reflect.model.inject.ann.InjectSystemServiceAnn;
-import org.droidparts.reflect.model.inject.ann.InjectViewAnn;
-import org.droidparts.reflect.model.json.ann.KeyAnn;
-import org.droidparts.reflect.model.sql.ann.ColumnAnn;
-import org.droidparts.reflect.model.sql.ann.TableAnn;
+import org.droidparts.reflect.ann.Ann;
+import org.droidparts.reflect.ann.inject.InjectBundleExtraAnn;
+import org.droidparts.reflect.ann.inject.InjectDependencyAnn;
+import org.droidparts.reflect.ann.inject.InjectFragmentAnn;
+import org.droidparts.reflect.ann.inject.InjectParentActivityAnn;
+import org.droidparts.reflect.ann.inject.InjectResourceAnn;
+import org.droidparts.reflect.ann.inject.InjectSystemServiceAnn;
+import org.droidparts.reflect.ann.inject.InjectViewAnn;
+import org.droidparts.reflect.ann.json.KeyAnn;
+import org.droidparts.reflect.ann.sql.ColumnAnn;
+import org.droidparts.reflect.ann.sql.TableAnn;
 
 public final class AnnBuilder {
 

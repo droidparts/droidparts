@@ -13,14 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License. 
  */
-package org.droidparts.reflect.model.inject.ann;
+package org.droidparts.reflect.ann.inject;
 
-import org.droidparts.annotation.inject.InjectParentActivity;
+import org.droidparts.annotation.inject.InjectFragment;
 
-public class InjectParentActivityAnn extends InjectAnn<InjectParentActivity> {
+public class InjectFragmentAnn extends InjectAnn<InjectFragment> {
 
-	public InjectParentActivityAnn(InjectParentActivity annotation) {
-		super(InjectParentActivity.class);
+	public final int value;
+
+	public InjectFragmentAnn(InjectFragment annotation) {
+		super(InjectFragment.class);
+		value = annotation.value();
 	}
 
 }

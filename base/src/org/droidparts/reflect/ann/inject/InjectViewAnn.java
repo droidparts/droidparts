@@ -13,13 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License. 
  */
-package org.droidparts.reflect.model.inject.ann;
+package org.droidparts.reflect.ann.inject;
 
-import org.droidparts.annotation.inject.InjectDependency;
+import org.droidparts.annotation.inject.InjectView;
 
-public final class InjectDependencyAnn extends InjectAnn<InjectDependency> {
+public final class InjectViewAnn extends InjectAnn<InjectView> {
 
-	public InjectDependencyAnn(InjectDependency annotation) {
-		super(InjectDependency.class);
+	public final int value;
+
+	public InjectViewAnn(InjectView annotation) {
+		super(InjectView.class);
+		value = annotation.value();
 	}
 }

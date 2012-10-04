@@ -13,17 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License. 
  */
-package org.droidparts.reflect.model.sql;
+package org.droidparts.reflect.ann.inject;
 
-import java.lang.reflect.Field;
+import org.droidparts.annotation.inject.InjectBundleExtra;
 
-import org.droidparts.reflect.model.FieldSpec;
-import org.droidparts.reflect.model.sql.ann.ColumnAnn;
+public final class InjectBundleExtraAnn extends InjectAnn<InjectBundleExtra> {
 
-public class ColumnSpec extends FieldSpec<ColumnAnn> {
+	public final String value;
+	public final boolean optional;
 
-	public ColumnSpec(Field field, Class<?> multiFieldArgType, ColumnAnn ann) {
-		super(field, multiFieldArgType, ann);
+	public InjectBundleExtraAnn(InjectBundleExtra annotation) {
+		super(InjectBundleExtra.class);
+		value = annotation.value();
+		optional = annotation.optional();
 	}
-
 }

@@ -13,33 +13,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License. 
  */
-package org.droidparts.reflect.model.sql.ann;
+package org.droidparts.reflect.ann;
 
-import org.droidparts.annotation.sql.Column;
-import org.droidparts.reflect.model.Ann;
+import java.lang.reflect.Field;
 
-public final class ColumnAnn extends Ann<Column> {
+public class AnnSpec<AnnType extends Ann<?>> {
 
-	public String name;
-	public boolean nullable;
-	public boolean unique;
-	public boolean eager;
+	public final Field field;
+	public final Class<?> multiFieldArgType;
 
-	public ColumnAnn(Column annotation) {
-		this();
-		name = annotation.name();
-		nullable = annotation.nullable();
-		unique = annotation.unique();
-		eager = annotation.eager();
-	}
+	public final AnnType ann;
 
-	public ColumnAnn() {
-		super(Column.class);
+	public AnnSpec(Field field, Class<?> multiFieldArgType, AnnType ann) {
+		this.field = field;
+		this.multiFieldArgType = multiFieldArgType;
+		this.ann = ann;
 	}
 
 	@Override
 	public String toString() {
-		return super.toString() + ", name: " + name + ", nullable: " + nullable
-				+ ", unique: " + unique + ", eager: " + eager;
+		return getClass().getSimpleName() + ", fieldName:" + field.getName()
+				+ ", fieldType:" + field.getType() + ", multiFieldArgType:"
+				+ multiFieldArgType + ", ann:" + ann;
 	}
+
 }

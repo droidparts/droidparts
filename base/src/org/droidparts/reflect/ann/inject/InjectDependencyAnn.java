@@ -13,17 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License. 
  */
-package org.droidparts.reflect.model.inject.ann;
+package org.droidparts.reflect.ann.inject;
 
-import org.droidparts.annotation.inject.InjectSystemService;
+import org.droidparts.annotation.inject.InjectDependency;
 
-public final class InjectSystemServiceAnn extends
-		InjectAnn<InjectSystemService> {
+public final class InjectDependencyAnn extends InjectAnn<InjectDependency> {
 
-	public final String value;
-
-	public InjectSystemServiceAnn(InjectSystemService annotation) {
-		super(InjectSystemService.class);
-		value = annotation.value();
+	public InjectDependencyAnn(InjectDependency annotation) {
+		super(InjectDependency.class);
 	}
 }

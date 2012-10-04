@@ -17,9 +17,9 @@ package org.droidparts.inject.injector;
 
 import java.lang.reflect.Field;
 
-import org.droidparts.reflect.model.Ann;
-import org.droidparts.reflect.model.inject.ann.InjectFragmentAnn;
-import org.droidparts.reflect.model.inject.ann.InjectParentActivityAnn;
+import org.droidparts.reflect.ann.Ann;
+import org.droidparts.reflect.ann.inject.InjectFragmentAnn;
+import org.droidparts.reflect.ann.inject.InjectParentActivityAnn;
 
 import android.content.Context;
 import android.os.Bundle;

@@ -13,28 +13,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License. 
  */
-package org.droidparts.reflect.model;
+package org.droidparts.reflect.ann.sql;
 
-import java.lang.reflect.Field;
+import org.droidparts.annotation.sql.Table;
+import org.droidparts.reflect.ann.Ann;
 
-public abstract class FieldSpec<AnnType extends Ann<?>> {
+public final class TableAnn extends Ann<Table> {
 
-	public final Field field;
-	public final Class<?> multiFieldArgType;
+	public String name;
 
-	public final AnnType ann;
-
-	public FieldSpec(Field field, Class<?> multiFieldArgType, AnnType ann) {
-		this.field = field;
-		this.multiFieldArgType = multiFieldArgType;
-		this.ann = ann;
+	public TableAnn(Table annotation) {
+		this();
+		name = annotation.name();
 	}
 
-	@Override
-	public String toString() {
-		return getClass().getSimpleName() + ", fieldName:" + field.getName()
-				+ ", fieldType:" + field.getType() + ", multiFieldArgType:"
-				+ multiFieldArgType + ", ann:" + ann;
+	public TableAnn() {
+		super(Table.class);
 	}
-
 }
