@@ -31,6 +31,7 @@ public class DialogFragment extends android.app.DialogFragment {
 	@Override
 	public final View onCreateView(LayoutInflater inflater,
 			ViewGroup container, Bundle savedInstanceState) {
+		FragmentsInjector.get().inject(getDialog(), this);
 		View view = onCreateView(savedInstanceState, inflater, container);
 		if (view != null) {
 			FragmentsInjector.get().inject(view, this);

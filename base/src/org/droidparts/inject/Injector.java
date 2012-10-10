@@ -19,6 +19,7 @@ import org.droidparts.inject.injector.DependencyInjector;
 import org.droidparts.inject.injector.InjectorDelegate;
 
 import android.app.Activity;
+import android.app.Dialog;
 import android.app.Service;
 import android.content.Context;
 import android.view.View;
@@ -59,16 +60,12 @@ public class Injector {
 		return DependencyInjector.getDependency(ctx, cls);
 	}
 
-	public void inject(Activity act) {
-		setContext(act);
-		// XXX
-		View root = act.findViewById(android.R.id.content).getRootView();
-		delegate.inject(act, root, act);
-	}
-
-	public void inject(Service serv) {
-		setContext(serv);
-		delegate.inject(serv, null, serv);
+	public void inject(Object target) {
+		if (ctx != null) {
+			delegate.inject(ctx, null, target);
+		} else {
+			throw new IllegalStateException("No context provided.");
+		}
 	}
 
 	public void inject(Context ctx, Object target) {
@@ -76,18 +73,26 @@ public class Injector {
 		delegate.inject(ctx, null, target);
 	}
 
+	public void inject(Service serv) {
+		setContext(serv);
+		delegate.inject(serv, null, serv);
+	}
+
+	public void inject(Activity act) {
+		setContext(act);
+		View root = act.findViewById(android.R.id.content).getRootView();
+		delegate.inject(act, root, act);
+	}
+
+	public void inject(Dialog dialog, Object target) {
+		View root = dialog.findViewById(android.R.id.content).getRootView();
+		inject(root, target);
+	}
+
 	public void inject(View view, Object target) {
 		Context ctx = view.getContext();
 		setContext(ctx);
 		delegate.inject(ctx, view, target);
-	}
-
-	public void inject(Object target) {
-		if (ctx != null) {
-			delegate.inject(ctx, null, target);
-		} else {
-			throw new IllegalStateException("No context provided.");
-		}
 	}
 
 	protected Injector(InjectorDelegate delegate) {
