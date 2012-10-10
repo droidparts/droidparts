@@ -46,9 +46,7 @@ public abstract class FragmentActivity extends android.app.Activity implements
 	public void onPreInject() {
 	}
 
-	// @Override
-	// XXX
-	public void setSupportProgressBarIndeterminateVisibility(boolean visible) {
+	public final void setActionBarLoadingIndicatorVisible(boolean visible) {
 		isLoading = visible;
 		if (reloadMenuItem != null) {
 			reloadMenuItem.setActionView(visible ? loadingIndicator : null);
@@ -57,13 +55,13 @@ public abstract class FragmentActivity extends android.app.Activity implements
 		}
 	}
 
-	public void setReloadMenuItem(MenuItem menuItem) {
+	public final void setActionBarReloadMenuItem(MenuItem menuItem) {
 		this.reloadMenuItem = menuItem;
 		if (menuItem != null && loadingIndicator == null) {
 			loadingIndicator = LayoutInflater.from(this).inflate(
 					R.layout.view_ab_loading_indicator, null);
 		}
-		setSupportProgressBarIndeterminateVisibility(isLoading);
+		setActionBarLoadingIndicatorVisible(isLoading);
 	}
 
 	public void setFragmentVisible(int fragmentId, boolean visible) {

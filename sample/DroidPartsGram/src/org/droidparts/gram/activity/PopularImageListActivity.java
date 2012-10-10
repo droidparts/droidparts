@@ -55,7 +55,7 @@ public class PopularImageListActivity extends
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		getSupportMenuInflater().inflate(R.menu.options_image_list, menu);
-		setReloadMenuItem(menu.findItem(R.id.menu_refresh));
+		setActionBarReloadMenuItem(menu.findItem(R.id.menu_refresh));
 		return true;
 	}
 
@@ -64,7 +64,7 @@ public class PopularImageListActivity extends
 		Intent intent;
 		switch (item.getItemId()) {
 		case R.id.menu_refresh:
-			setSupportProgressBarIndeterminateVisibility(true);
+			setActionBarLoadingIndicatorVisible(true);
 			intent = ImageIntentService.getUpdatePicsIntent(this,
 					refreshResultReceiver);
 			startService(intent);
@@ -92,7 +92,7 @@ public class PopularImageListActivity extends
 	private MainThreadResultReceiver refreshResultReceiver = new MainThreadResultReceiver() {
 
 		protected void onReceiveResult(int resultCode, Bundle resultData) {
-			setSupportProgressBarIndeterminateVisibility(false);
+			setActionBarLoadingIndicatorVisible(false);
 			setAdapter();
 		}
 
