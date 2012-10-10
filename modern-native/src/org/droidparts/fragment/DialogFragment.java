@@ -15,9 +15,9 @@
  */
 package org.droidparts.fragment;
 
-import org.droidparts.activity.FragmentActivity;
 import org.droidparts.inject.FragmentsInjector;
 
+import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
@@ -41,7 +41,7 @@ public class DialogFragment extends android.app.DialogFragment {
 		return super.onCreateView(inflater, container, savedInstanceState);
 	}
 
-	public void show(FragmentActivity activity) {
+	public void show(Activity activity) {
 		String tag = getClass().getName();
 		FragmentManager fm = activity.getFragmentManager();
 		FragmentTransaction ft = fm.beginTransaction();
