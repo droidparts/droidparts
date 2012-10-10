@@ -32,7 +32,9 @@ public class DialogFragment extends android.app.DialogFragment {
 	public final View onCreateView(LayoutInflater inflater,
 			ViewGroup container, Bundle savedInstanceState) {
 		View view = onCreateView(savedInstanceState, inflater, container);
-		FragmentsInjector.get().inject(view, this);
+		if (view != null) {
+			FragmentsInjector.get().inject(view, this);
+		}
 		return view;
 	}
 
