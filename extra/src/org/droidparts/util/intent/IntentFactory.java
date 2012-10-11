@@ -31,7 +31,7 @@ import android.net.Uri;
 
 public class IntentFactory {
 
-	public static Intent getShare(String subject, String body) {
+	public static Intent getShare(String subject, CharSequence body) {
 		Intent intent = new Intent(ACTION_SEND);
 		intent.setType("text/plain");
 		intent.putExtra(EXTRA_SUBJECT, subject);
