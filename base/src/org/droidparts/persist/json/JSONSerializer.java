@@ -193,7 +193,8 @@ public class JSONSerializer<ModelType extends Model> {
 			return getInstance(dirtyCast(fieldType)).deserialize(
 					(JSONObject) jsonVal);
 		} else if (isArray(fieldType) || isCollection(fieldType)) {
-			JSONArray jArr = (JSONArray) jsonVal;
+			JSONArray jArr = (jsonVal instanceof JSONArray) ? (JSONArray) jsonVal
+					: new JSONArray(strVal);
 			boolean isArr = isArray(fieldType);
 			Object[] arr = null;
 			Collection<Object> coll = null;
