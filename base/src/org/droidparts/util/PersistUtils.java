@@ -57,7 +57,7 @@ public final class PersistUtils implements SQL.DDL {
 
 	// JSONSerializer
 
-	public static boolean gotNonNull(JSONObject obj, String key)
+	public static boolean hasNonNull(JSONObject obj, String key)
 			throws JSONException {
 		return obj.has(key) && !NULL.equals(obj.get(key));
 	}
@@ -299,5 +299,12 @@ public final class PersistUtils implements SQL.DDL {
 		sb.append(") REFERENCES ");
 		sb.append(foreignTableName);
 		sb.append("(").append(Column.ID).append(") ON DELETE CASCADE");
+	}
+
+	//
+	@Deprecated
+	public static boolean gotNonNull(JSONObject obj, String key)
+			throws JSONException {
+		return hasNonNull(obj, key);
 	}
 }

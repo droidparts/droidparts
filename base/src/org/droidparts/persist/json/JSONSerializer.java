@@ -228,9 +228,9 @@ public class JSONSerializer<ModelType extends Model> {
 		}
 	}
 
-	protected boolean gotNonNull(JSONObject obj, String key)
+	protected boolean hasNonNull(JSONObject obj, String key)
 			throws JSONException {
-		return PersistUtils.gotNonNull(obj, key);
+		return PersistUtils.hasNonNull(obj, key);
 	}
 
 	private void readFromModelAndPutToJSON(ModelType item,
@@ -240,7 +240,7 @@ public class JSONSerializer<ModelType extends Model> {
 		if (keyParts != null) {
 			String subKey = keyParts.first;
 			JSONObject subObj;
-			if (gotNonNull(obj, subKey)) {
+			if (hasNonNull(obj, subKey)) {
 				subObj = obj.getJSONObject(subKey);
 			} else {
 				subObj = new JSONObject();
@@ -268,7 +268,7 @@ public class JSONSerializer<ModelType extends Model> {
 		Pair<String, String> keyParts = getNestedKeyParts(key);
 		if (keyParts != null) {
 			String subKey = keyParts.first;
-			if (gotNonNull(obj, subKey)) {
+			if (hasNonNull(obj, subKey)) {
 				JSONObject subObj = obj.getJSONObject(subKey);
 				readFromJSONAndSetFieldVal(model, spec, subObj, keyParts.second);
 			} else {
