@@ -69,7 +69,7 @@ public class ImageIntentService extends SimpleIntentService {
 		if (ACTION_REFRESH.equals(action)) {
 			JSONObject obj = restClient.getJSONObject(refreshUri.toString());
 			JSONArray arr = obj.getJSONArray("data");
-			ArrayList<Image> list = new ImageSerializer().deserialize(arr);
+			ArrayList<Image> list = new ImageSerializer(this).deserialize(arr);
 			imageEntityManager.delete().execute();
 			imageEntityManager.create(list);
 			return data;

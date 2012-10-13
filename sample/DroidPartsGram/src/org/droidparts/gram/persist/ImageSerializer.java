@@ -22,10 +22,12 @@ import org.droidparts.util.L;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.content.Context;
+
 public class ImageSerializer extends JSONSerializer<Image> {
 
-	public ImageSerializer() {
-		super(Image.class);
+	public ImageSerializer(Context ctx) {
+		super(ctx, Image.class);
 	}
 
 	@Override

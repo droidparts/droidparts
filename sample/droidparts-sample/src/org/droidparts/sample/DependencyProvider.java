@@ -16,7 +16,7 @@ public class DependencyProvider extends AbstractDependencyProvider {
 	public DependencyProvider(Context ctx) {
 		super(ctx);
 		dbOpenHelper = new DBOpenHelper(ctx);
-		entrySerializer = new EntrySerializer();
+		entrySerializer = new EntrySerializer(ctx);
 	}
 
 	@Override

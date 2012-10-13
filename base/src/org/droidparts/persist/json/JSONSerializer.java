@@ -45,6 +45,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
 
+import org.droidparts.inject.Injector;
 import org.droidparts.model.Model;
 import org.droidparts.reflect.ann.FieldSpec;
 import org.droidparts.reflect.ann.json.KeyAnn;
@@ -54,6 +55,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.content.Context;
 import android.util.Log;
 import android.util.Pair;
 
@@ -63,13 +65,16 @@ public class JSONSerializer<ModelType extends Model> {
 	public static final String __ = "->" + (char) 29;
 
 	public static <ModelType extends Model> JSONSerializer<ModelType> getInstance(
-			Class<ModelType> cls) {
-		return new JSONSerializer<ModelType>(cls);
+			Context ctx, Class<ModelType> cls) {
+		return new JSONSerializer<ModelType>(ctx, cls);
 	}
 
+	private final Context ctx;
 	private final Class<? extends Model> cls;
 
-	public JSONSerializer(Class<ModelType> cls) {
+	public JSONSerializer(Context ctx, Class<ModelType> cls) {
+		Injector.get().inject(ctx, this);
+		this.ctx = ctx.getApplicationContext();
 		this.cls = cls;
 	}
 
@@ -139,7 +144,7 @@ public class JSONSerializer<ModelType extends Model> {
 		} else if (isByteArray(valType)) {
 			obj.put(key, val);
 		} else if (isModel(valType)) {
-			JSONObject obj2 = getInstance(dirtyCast(valType)).serialize(
+			JSONObject obj2 = getInstance(ctx, dirtyCast(valType)).serialize(
 					(Model) val);
 			obj.put(key, obj2);
 		} else if (isArray(valType) || isCollection(valType)) {
@@ -155,7 +160,8 @@ public class JSONSerializer<ModelType extends Model> {
 			if (list.size() > 0) {
 				Class<?> itemCls = list.get(0).getClass();
 				if (isModel(itemCls)) {
-					JSONSerializer serializer = getInstance(dirtyCast(itemCls));
+					JSONSerializer serializer = getInstance(ctx,
+							dirtyCast(itemCls));
 					jArr = serializer.serialize(list);
 				} else {
 					for (Object o : list) {
@@ -190,7 +196,7 @@ public class JSONSerializer<ModelType extends Model> {
 		if (isByteArray(fieldType)) {
 			return jsonVal;
 		} else if (isModel(fieldType)) {
-			return getInstance(dirtyCast(fieldType)).deserialize(
+			return getInstance(ctx, dirtyCast(fieldType)).deserialize(
 					(JSONObject) jsonVal);
 		} else if (isArray(fieldType) || isCollection(fieldType)) {
 			JSONArray jArr = (jsonVal instanceof JSONArray) ? (JSONArray) jsonVal
@@ -205,7 +211,7 @@ public class JSONSerializer<ModelType extends Model> {
 			}
 			JSONSerializer serializer = null;
 			if (isModel(multiFieldArgType)) {
-				serializer = getInstance(dirtyCast(multiFieldArgType));
+				serializer = getInstance(ctx, dirtyCast(multiFieldArgType));
 			}
 			for (int i = 0; i < jArr.length(); i++) {
 				Object obj = jArr.get(i);
