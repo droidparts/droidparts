@@ -36,6 +36,7 @@ import static org.droidparts.reflect.util.TypeHelper.isShort;
 import static org.droidparts.reflect.util.TypeHelper.isString;
 import static org.droidparts.reflect.util.TypeHelper.isUUID;
 import static org.droidparts.reflect.util.TypeHelper.parseValue;
+import static org.droidparts.reflect.util.TypeHelper.toObjectArr;
 import static org.droidparts.reflect.util.TypeHelper.toTypeArr;
 import static org.json.JSONObject.NULL;
 
@@ -150,7 +151,7 @@ public class JSONSerializer<ModelType extends Model> {
 		} else if (isArray(valType) || isCollection(valType)) {
 			ArrayList<Object> list = new ArrayList<Object>();
 			if (isArray(valType)) {
-				Object[] arr = (Object[]) val;
+				Object[] arr = toObjectArr(val);
 				list.addAll(Arrays.asList(arr));
 			} else if (isCollection(valType)) {
 				Collection<Object> coll = (Collection<Object>) val;
