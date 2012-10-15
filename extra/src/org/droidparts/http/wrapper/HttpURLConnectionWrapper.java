@@ -115,7 +115,7 @@ public class HttpURLConnectionWrapper extends HttpClientWrapper {
 		}
 	}
 
-	public static void connectAndCheckResponseCode(HttpURLConnection conn)
+	public static int connectAndCheckResponseCode(HttpURLConnection conn)
 			throws HTTPException {
 		try {
 			conn.connect();
@@ -126,6 +126,7 @@ public class HttpURLConnectionWrapper extends HttpClientWrapper {
 				conn.disconnect();
 				throw new HTTPException(respCode, respBody);
 			}
+			return respCode;
 		} catch (Exception e) {
 			if (e instanceof HTTPException) {
 				throw (HTTPException) e;

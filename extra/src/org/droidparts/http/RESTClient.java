@@ -90,29 +90,30 @@ public class RESTClient {
 
 	//
 
-	public String get(String uri) throws HTTPException {
+	public HTTPResponse get(String uri) throws HTTPException {
 		L.d("GET on " + uri);
-		String respStr;
+		HTTPResponse response = new HTTPResponse();
 		if (useHttpURLConnection()) {
 			HttpURLConnectionWrapper wrapper = getModern();
 			HttpURLConnection conn = wrapper.getConnection(uri, GET);
-			HttpURLConnectionWrapper.connectAndCheckResponseCode(conn);
-			respStr = HttpURLConnectionWrapper
+			response.code = HttpURLConnectionWrapper
+					.connectAndCheckResponseCode(conn);
+			response.body = HttpURLConnectionWrapper
 					.getResponseBodyAndDisconnect(conn);
 		} else {
 			DefaultHttpClientWrapper wrapper = getLegacy();
 			HttpGet req = new HttpGet(uri);
 			HttpResponse resp = wrapper.getResponse(req);
-			respStr = DefaultHttpClientWrapper.getResponseBody(resp);
+			response.body = DefaultHttpClientWrapper.getResponseBody(resp);
 			DefaultHttpClientWrapper.consumeResponse(resp);
 		}
-		return respStr;
+		return response;
 	}
 
-	public String post(String uri, String contentType, String data)
+	public HTTPResponse post(String uri, String contentType, String data)
 			throws HTTPException {
 		L.d("POST on " + uri + ", data: " + data);
-		String respStr;
+		HTTPResponse response = new HTTPResponse();
 		if (useHttpURLConnection()) {
 			HttpURLConnectionWrapper wrapper = getModern();
 			HttpURLConnection conn = wrapper.getConnection(uri, POST);
@@ -127,8 +128,10 @@ public class RESTClient {
 			} finally {
 				silentlyClose(os);
 			}
-			HttpURLConnectionWrapper.connectAndCheckResponseCode(conn);
-			respStr = HttpURLConnectionWrapper
+			response.code = HttpURLConnectionWrapper
+					.connectAndCheckResponseCode(conn);
+			response.headers = conn.getHeaderFields();
+			response.body = HttpURLConnectionWrapper
 					.getResponseBodyAndDisconnect(conn);
 		} else {
 			HttpPost req = new HttpPost(uri);
@@ -142,16 +145,16 @@ public class RESTClient {
 			}
 			DefaultHttpClientWrapper wrapper = getLegacy();
 			HttpResponse resp = wrapper.getResponse(req);
-			respStr = DefaultHttpClientWrapper.getResponseBody(resp);
+			response.body = DefaultHttpClientWrapper.getResponseBody(resp);
 			DefaultHttpClientWrapper.consumeResponse(resp);
 		}
-		return respStr;
+		return response;
 	}
 
-	public String put(String uri, String contentType, String data)
+	public HTTPResponse put(String uri, String contentType, String data)
 			throws HTTPException {
 		L.d("PUT on " + uri + ", data: " + data);
-		String respStr;
+		HTTPResponse response = new HTTPResponse();
 		// TODO useHttpURLConnection()
 		HttpPut req = new HttpPut(uri);
 		try {
@@ -169,11 +172,9 @@ public class RESTClient {
 			String[] parts = loc.getValue().split("/");
 			String location = parts[parts.length - 1];
 			L.d("location: " + location);
-			respStr = location;
-		} else {
-			respStr = null;
+			response.body = location;
 		}
-		return respStr;
+		return response;
 	}
 
 	public void delete(String uri) throws HTTPException {

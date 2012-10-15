@@ -35,7 +35,7 @@ public class RESTClient2 extends RESTClient {
 	}
 
 	public JSONObject getJSONObject(String uri) throws HTTPException {
-		String resp = get(uri);
+		String resp = get(uri).body;
 		try {
 			return new JSONObject(resp);
 		} catch (JSONException e) {
@@ -44,7 +44,7 @@ public class RESTClient2 extends RESTClient {
 	}
 
 	public JSONArray getJSONArray(String uri) throws HTTPException {
-		String resp = get(uri);
+		String resp = get(uri).body;
 		try {
 			return new JSONArray(resp);
 		} catch (JSONException e) {
@@ -52,31 +52,31 @@ public class RESTClient2 extends RESTClient {
 		}
 	}
 
-	public String put(String uri, String data) throws HTTPException {
+	public HTTPResponse put(String uri, String data) throws HTTPException {
 		return put(uri, TEXT_PLAIN, data);
 	}
 
-	public String put(String uri, JSONObject data) throws HTTPException {
+	public HTTPResponse put(String uri, JSONObject data) throws HTTPException {
 		return put(uri, APPLICATION_JSON, data.toString());
 	}
 
-	public String put(String uri, JSONArray data) throws HTTPException {
+	public HTTPResponse put(String uri, JSONArray data) throws HTTPException {
 		return put(uri, APPLICATION_JSON, data.toString());
 	}
 
-	public String post(String uri, String data) throws HTTPException {
+	public HTTPResponse post(String uri, String data) throws HTTPException {
 		return post(uri, TEXT_PLAIN, data);
 	}
 
-	public String post(String uri, JSONObject data) throws HTTPException {
+	public HTTPResponse post(String uri, JSONObject data) throws HTTPException {
 		return post(uri, APPLICATION_JSON, data.toString());
 	}
 
-	public String post(String uri, JSONArray data) throws HTTPException {
+	public HTTPResponse post(String uri, JSONArray data) throws HTTPException {
 		return post(uri, APPLICATION_JSON, data.toString());
 	}
 
-	public String post(String uri, Map<String, String> formData)
+	public HTTPResponse post(String uri, Map<String, String> formData)
 			throws HTTPException {
 		Uri.Builder builder = new Uri.Builder();
 		for (String key : formData.keySet()) {
