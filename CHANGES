@@ -1,3 +1,9 @@
+0.8.5 /2012-10-15/:
+    * Renamed droidparts-modern to droidparts-modern-sherlock; added droidparts-modern-native.
+    * Improved dependency injection speed.
+    * setReloadMenuItem => setActionBarReloadMenuItem(), setSupportProgressBarIndeterminateVisibility() => setActionBarLoadingIndicatorVisible().
+    * Other tweaks & minor API changes.
+    
 0.8.0 /2012-09-26/:
     * EntityMananger: added readFirstFromCursor(), readAllFromCursor(), removed list().
     * Changed EntityCursorAdapter constructors, one of them now accepts Select object.
