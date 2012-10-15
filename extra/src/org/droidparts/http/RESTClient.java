@@ -19,8 +19,11 @@ import static android.text.TextUtils.isEmpty;
 import static org.droidparts.contract.Constants.UTF8;
 import static org.droidparts.http.wrapper.HttpClientWrapper.useHttpURLConnection;
 import static org.droidparts.http.wrapper.HttpURLConnectionWrapper.GET;
+import static org.droidparts.http.wrapper.HttpURLConnectionWrapper.POST;
+import static org.droidparts.util.io.IOUtils.silentlyClose;
 
 import java.io.BufferedInputStream;
+import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.util.HashMap;
@@ -92,8 +95,8 @@ public class RESTClient {
 		String respStr;
 		if (useHttpURLConnection()) {
 			HttpURLConnectionWrapper wrapper = getModern();
-			HttpURLConnection conn = wrapper.getConnectedHttpURLConnection(uri,
-					GET);
+			HttpURLConnection conn = wrapper.getConnection(uri, GET);
+			HttpURLConnectionWrapper.connectAndCheckResponseCode(conn);
 			respStr = HttpURLConnectionWrapper
 					.getResponseBodyAndDisconnect(conn);
 		} else {
@@ -106,34 +109,54 @@ public class RESTClient {
 		return respStr;
 	}
 
-	public String post(String uri, String contentEncoding, String data)
+	public String post(String uri, String contentType, String data)
 			throws HTTPException {
 		L.d("POST on " + uri + ", data: " + data);
-		// TODO useHttpURLConnection()
-		HttpPost req = new HttpPost(uri);
-		try {
-			StringEntity entity = new StringEntity(data, UTF8);
-			entity.setContentType(contentEncoding);
-			req.setEntity(entity);
-		} catch (UnsupportedEncodingException e) {
-			L.e(e);
-			throw new HTTPException(e);
+		String respStr;
+		if (useHttpURLConnection()) {
+			HttpURLConnectionWrapper wrapper = getModern();
+			HttpURLConnection conn = wrapper.getConnection(uri, POST);
+			conn.setRequestProperty("Accept-Charset", UTF8);
+			conn.setRequestProperty("Content-Type", contentType);
+			OutputStream os = null;
+			try {
+				os = conn.getOutputStream();
+				os.write(data.getBytes(UTF8));
+			} catch (Exception e) {
+				throw new HTTPException(e);
+			} finally {
+				silentlyClose(os);
+			}
+			HttpURLConnectionWrapper.connectAndCheckResponseCode(conn);
+			respStr = HttpURLConnectionWrapper
+					.getResponseBodyAndDisconnect(conn);
+		} else {
+			HttpPost req = new HttpPost(uri);
+			try {
+				StringEntity entity = new StringEntity(data, UTF8);
+				entity.setContentType(contentType);
+				req.setEntity(entity);
+			} catch (UnsupportedEncodingException e) {
+				L.e(e);
+				throw new HTTPException(e);
+			}
+			DefaultHttpClientWrapper wrapper = getLegacy();
+			HttpResponse resp = wrapper.getResponse(req);
+			respStr = DefaultHttpClientWrapper.getResponseBody(resp);
+			DefaultHttpClientWrapper.consumeResponse(resp);
 		}
-		DefaultHttpClientWrapper wrapper = getLegacy();
-		HttpResponse resp = wrapper.getResponse(req);
-		String respStr = DefaultHttpClientWrapper.getResponseBody(resp);
-		DefaultHttpClientWrapper.consumeResponse(resp);
 		return respStr;
 	}
 
-	public String put(String uri, String contentEncoding, String data)
+	public String put(String uri, String contentType, String data)
 			throws HTTPException {
 		L.d("PUT on " + uri + ", data: " + data);
+		String respStr;
 		// TODO useHttpURLConnection()
 		HttpPut req = new HttpPut(uri);
 		try {
 			StringEntity entity = new StringEntity(data, UTF8);
-			entity.setContentType(contentEncoding);
+			entity.setContentType(contentType);
 			req.setEntity(entity);
 		} catch (UnsupportedEncodingException e) {
 			throw new HTTPException(e);
@@ -146,10 +169,11 @@ public class RESTClient {
 			String[] parts = loc.getValue().split("/");
 			String location = parts[parts.length - 1];
 			L.d("location: " + location);
-			return location;
+			respStr = location;
 		} else {
-			return null;
+			respStr = null;
 		}
+		return respStr;
 	}
 
 	public void delete(String uri) throws HTTPException {
@@ -168,8 +192,8 @@ public class RESTClient {
 		ConsumingInputStream cis = null;
 		if (useHttpURLConnection()) {
 			HttpURLConnectionWrapper wrapper = getModern();
-			HttpURLConnection conn = wrapper.getConnectedHttpURLConnection(uri,
-					GET);
+			HttpURLConnection conn = wrapper.getConnection(uri, GET);
+			HttpURLConnectionWrapper.connectAndCheckResponseCode(conn);
 			contentLength = conn.getContentLength();
 			cis = new ConsumingInputStream(
 					HttpURLConnectionWrapper.getUnpackedInputStream(conn), conn);

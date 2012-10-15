@@ -86,13 +86,13 @@ public class HttpURLConnectionWrapper extends HttpClientWrapper {
 		};
 	}
 
-	public HttpURLConnection getConnectedHttpURLConnection(String urlStr,
-			String requestMethod) throws HTTPException {
+	public HttpURLConnection getConnection(String urlStr, String requestMethod)
+			throws HTTPException {
+		if (auth != null) {
+			Authenticator.setDefault(auth);
+		}
 		try {
 			URL url = new URL(urlStr);
-			if (auth != null) {
-				Authenticator.setDefault(auth);
-			}
 			HttpURLConnection conn;
 			if (proxy != null) {
 				conn = (HttpURLConnection) url.openConnection(proxy);
@@ -109,24 +109,31 @@ public class HttpURLConnectionWrapper extends HttpClientWrapper {
 			if (PUT.equals(requestMethod) || POST.equals(requestMethod)) {
 				conn.setDoOutput(true);
 			}
-			conn.connect();
-			int respCode = conn.getResponseCode();
-			if (respCode >= 400) {
-				conn.disconnect();
-				// TODO read response body
-				throw new HTTPException(respCode, null);
-			}
 			return conn;
 		} catch (Exception e) {
 			throw new HTTPException(e);
-		} finally {
-			if (auth != null) {
-				Authenticator.setDefault(null);
-			}
 		}
 	}
 
-	//
+	public static void connectAndCheckResponseCode(HttpURLConnection conn)
+			throws HTTPException {
+		try {
+			conn.connect();
+			int respCode = conn.getResponseCode();
+			if (respCode >= 400) {
+				String respBody = IOUtils.readAndCloseInputStream(conn
+						.getInputStream());
+				conn.disconnect();
+				throw new HTTPException(respCode, respBody);
+			}
+		} catch (Exception e) {
+			if (e instanceof HTTPException) {
+				throw (HTTPException) e;
+			} else {
+				throw new HTTPException(e);
+			}
+		}
+	}
 
 	public static String getResponseBodyAndDisconnect(HttpURLConnection conn)
 			throws HTTPException {
@@ -136,6 +143,7 @@ public class HttpURLConnectionWrapper extends HttpClientWrapper {
 			throw new HTTPException(e);
 		} finally {
 			conn.disconnect();
+			Authenticator.setDefault(null);
 		}
 	}
 
