@@ -15,10 +15,13 @@
  */
 package org.droidparts.http.wrapper;
 
+import static org.droidparts.contract.Constants.UTF8;
 import static org.droidparts.util.Strings.isEmpty;
+import static org.droidparts.util.io.IOUtils.silentlyClose;
 
 import java.io.File;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.Authenticator;
 import java.net.HttpURLConnection;
 import java.net.InetSocketAddress;
@@ -27,12 +30,14 @@ import java.net.Proxy;
 import java.net.URL;
 
 import org.droidparts.http.HTTPException;
+import org.droidparts.http.HTTPResponse;
 import org.droidparts.util.L;
 import org.droidparts.util.io.IOUtils;
 
 import android.content.Context;
 
-public class HttpURLConnectionWrapper extends HttpClientWrapper {
+public class HttpURLConnectionWrapper extends
+		HttpClientWrapper<HttpURLConnection> {
 
 	public static final String GET = "GET";
 	public static final String PUT = "PUT";
@@ -86,6 +91,32 @@ public class HttpURLConnectionWrapper extends HttpClientWrapper {
 		};
 	}
 
+	public static void postOrPut(HttpURLConnection conn, String contentType,
+			String data) throws HTTPException {
+		conn.setRequestProperty("Accept-Charset", UTF8);
+		conn.setRequestProperty("Content-Type", contentType);
+		OutputStream os = null;
+		try {
+			os = conn.getOutputStream();
+			os.write(data.getBytes(UTF8));
+		} catch (Exception e) {
+			throw new HTTPException(e);
+		} finally {
+			silentlyClose(os);
+		}
+	}
+
+	public static HTTPResponse getReponse(HttpURLConnection conn)
+			throws HTTPException {
+		HTTPResponse response = new HTTPResponse();
+		response.code = HttpURLConnectionWrapper
+				.connectAndGetResponseCodeOrThrow(conn);
+		response.headers = conn.getHeaderFields();
+		response.body = HttpURLConnectionWrapper
+				.getResponseBodyAndDisconnect(conn);
+		return response;
+	}
+
 	public HttpURLConnection getConnection(String urlStr, String requestMethod)
 			throws HTTPException {
 		if (auth != null) {
@@ -115,7 +146,7 @@ public class HttpURLConnectionWrapper extends HttpClientWrapper {
 		}
 	}
 
-	public static int connectAndCheckResponseCode(HttpURLConnection conn)
+	public static int connectAndGetResponseCodeOrThrow(HttpURLConnection conn)
 			throws HTTPException {
 		try {
 			conn.connect();
@@ -136,7 +167,7 @@ public class HttpURLConnectionWrapper extends HttpClientWrapper {
 		}
 	}
 
-	public static String getResponseBodyAndDisconnect(HttpURLConnection conn)
+	private static String getResponseBodyAndDisconnect(HttpURLConnection conn)
 			throws HTTPException {
 		try {
 			return IOUtils.readAndCloseInputStream(conn.getInputStream());

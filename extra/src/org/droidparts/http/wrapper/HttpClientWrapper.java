@@ -21,7 +21,7 @@ import java.util.HashMap;
 
 import android.os.Build;
 
-public abstract class HttpClientWrapper {
+public abstract class HttpClientWrapper<T> {
 
 	public static boolean useHttpURLConnection() {
 		// http://android-developers.blogspot.com/2011/09/androids-http-clients.html

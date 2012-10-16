@@ -20,8 +20,14 @@ import static org.apache.http.auth.AuthScope.ANY_HOST;
 import static org.apache.http.auth.AuthScope.ANY_PORT;
 import static org.apache.http.conn.params.ConnRoutePNames.DEFAULT_PROXY;
 import static org.droidparts.contract.Constants.BUFFER_SIZE;
+import static org.droidparts.contract.Constants.UTF8;
 
 import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.InflaterInputStream;
 
@@ -32,16 +38,18 @@ import org.apache.http.HttpResponse;
 import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.UsernamePasswordCredentials;
 import org.apache.http.client.methods.HttpUriRequest;
+import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.params.HttpConnectionParams;
 import org.apache.http.params.HttpParams;
 import org.apache.http.params.HttpProtocolParams;
 import org.droidparts.http.HTTPException;
+import org.droidparts.http.HTTPResponse;
 import org.droidparts.util.L;
 import org.droidparts.util.io.IOUtils;
 
 // For API < 10
-public class DefaultHttpClientWrapper extends HttpClientWrapper {
+public class DefaultHttpClientWrapper extends HttpClientWrapper<HttpResponse> {
 
 	// TODO tweak to resemble
 	// http://developer.android.com/reference/android/net/http/AndroidHttpClient.html
@@ -84,28 +92,65 @@ public class DefaultHttpClientWrapper extends HttpClientWrapper {
 				credentials);
 	}
 
+	public static StringEntity buildStringEntity(String contentType, String data)
+			throws HTTPException {
+		try {
+			StringEntity entity = new StringEntity(data, UTF8);
+			entity.setContentType(contentType);
+			return entity;
+		} catch (UnsupportedEncodingException e) {
+			L.e(e);
+			throw new HTTPException(e);
+		}
+	}
+
+	public static HTTPResponse getReponse(DefaultHttpClientWrapper wrapper,
+			HttpUriRequest req) throws HTTPException {
+		HTTPResponse response = new HTTPResponse();
+		HttpResponse resp = wrapper.getResponse(req);
+		response.code = DefaultHttpClientWrapper.getResponseCodeOrThrow(resp);
+		response.headers = DefaultHttpClientWrapper.getResponseHeaders(resp);
+		response.body = DefaultHttpClientWrapper
+				.getResponseBodyAndConsume(resp);
+		return response;
+	}
+
 	public HttpResponse getResponse(HttpUriRequest req) throws HTTPException {
 		for (String name : headers.keySet()) {
 			req.setHeader(name, headers.get(name));
 		}
 		req.setHeader("Accept-Encoding", "gzip,deflate");
 		try {
-			HttpResponse resp = httpClient.execute(req);
-			int respCode = resp.getStatusLine().getStatusCode();
-			if (respCode >= 400) {
-				consumeResponse(resp);
-				// TODO read response body
-				throw new HTTPException(respCode, null);
-			}
-			return resp;
+			return httpClient.execute(req);
 		} catch (Exception e) {
 			throw new HTTPException(e);
 		}
 	}
 
-	//
+	private static int getResponseCodeOrThrow(HttpResponse resp)
+			throws HTTPException {
+		int respCode = resp.getStatusLine().getStatusCode();
+		if (respCode >= 400) {
+			String respBody = getResponseBodyAndConsume(resp);
+			throw new HTTPException(respCode, respBody);
+		}
+		return respCode;
+	}
 
-	public static String getResponseBody(HttpResponse resp)
+	private static Map<String, List<String>> getResponseHeaders(
+			HttpResponse resp) {
+		HashMap<String, List<String>> headers = new HashMap<String, List<String>>();
+		for (Header header : resp.getAllHeaders()) {
+			String name = header.getName();
+			if (!headers.containsKey(name)) {
+				headers.put(name, new ArrayList<String>());
+			}
+			headers.get(name).add(header.getValue());
+		}
+		return headers;
+	}
+
+	private static String getResponseBodyAndConsume(HttpResponse resp)
 			throws HTTPException {
 		HttpEntity entity = resp.getEntity();
 		InputStream is = getUnpackedInputStream(entity);
@@ -113,6 +158,8 @@ public class DefaultHttpClientWrapper extends HttpClientWrapper {
 			return IOUtils.readAndCloseInputStream(is);
 		} catch (Exception e) {
 			throw new HTTPException(e);
+		} finally {
+			consumeResponse(resp);
 		}
 	}
 
@@ -121,9 +168,9 @@ public class DefaultHttpClientWrapper extends HttpClientWrapper {
 		try {
 			InputStream is = entity.getContent();
 			Header contentEncodingHeader = entity.getContentEncoding();
-			L.d(contentEncodingHeader);
 			if (contentEncodingHeader != null) {
 				String contentEncoding = contentEncodingHeader.getValue();
+				L.d("Content-Encoding: " + contentEncoding);
 				if (!isEmpty(contentEncoding)) {
 					contentEncoding = contentEncoding.toLowerCase();
 					if (contentEncoding.contains("gzip")) {

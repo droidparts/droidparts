@@ -16,26 +16,22 @@
 package org.droidparts.http;
 
 import static android.text.TextUtils.isEmpty;
-import static org.droidparts.contract.Constants.UTF8;
 import static org.droidparts.http.wrapper.HttpClientWrapper.useHttpURLConnection;
+import static org.droidparts.http.wrapper.HttpURLConnectionWrapper.DELETE;
 import static org.droidparts.http.wrapper.HttpURLConnectionWrapper.GET;
 import static org.droidparts.http.wrapper.HttpURLConnectionWrapper.POST;
-import static org.droidparts.util.io.IOUtils.silentlyClose;
+import static org.droidparts.http.wrapper.HttpURLConnectionWrapper.PUT;
 
 import java.io.BufferedInputStream;
-import java.io.OutputStream;
-import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.util.HashMap;
 
-import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpPut;
-import org.apache.http.entity.StringEntity;
 import org.droidparts.http.wrapper.ConsumingInputStream;
 import org.droidparts.http.wrapper.DefaultHttpClientWrapper;
 import org.droidparts.http.wrapper.HttpClientWrapper;
@@ -92,98 +88,66 @@ public class RESTClient {
 
 	public HTTPResponse get(String uri) throws HTTPException {
 		L.d("GET on " + uri);
-		HTTPResponse response = new HTTPResponse();
+		HTTPResponse response;
 		if (useHttpURLConnection()) {
-			HttpURLConnectionWrapper wrapper = getModern();
-			HttpURLConnection conn = wrapper.getConnection(uri, GET);
-			response.code = HttpURLConnectionWrapper
-					.connectAndCheckResponseCode(conn);
-			response.body = HttpURLConnectionWrapper
-					.getResponseBodyAndDisconnect(conn);
+			HttpURLConnection conn = getModern().getConnection(uri, GET);
+			response = HttpURLConnectionWrapper.getReponse(conn);
 		} else {
-			DefaultHttpClientWrapper wrapper = getLegacy();
 			HttpGet req = new HttpGet(uri);
-			HttpResponse resp = wrapper.getResponse(req);
-			response.body = DefaultHttpClientWrapper.getResponseBody(resp);
-			DefaultHttpClientWrapper.consumeResponse(resp);
+			response = DefaultHttpClientWrapper.getReponse(getLegacy(), req);
 		}
+		L.d(response);
 		return response;
 	}
 
 	public HTTPResponse post(String uri, String contentType, String data)
 			throws HTTPException {
 		L.d("POST on " + uri + ", data: " + data);
-		HTTPResponse response = new HTTPResponse();
+		HTTPResponse response;
 		if (useHttpURLConnection()) {
-			HttpURLConnectionWrapper wrapper = getModern();
-			HttpURLConnection conn = wrapper.getConnection(uri, POST);
-			conn.setRequestProperty("Accept-Charset", UTF8);
-			conn.setRequestProperty("Content-Type", contentType);
-			OutputStream os = null;
-			try {
-				os = conn.getOutputStream();
-				os.write(data.getBytes(UTF8));
-			} catch (Exception e) {
-				throw new HTTPException(e);
-			} finally {
-				silentlyClose(os);
-			}
-			response.code = HttpURLConnectionWrapper
-					.connectAndCheckResponseCode(conn);
-			response.headers = conn.getHeaderFields();
-			response.body = HttpURLConnectionWrapper
-					.getResponseBodyAndDisconnect(conn);
+			HttpURLConnection conn = getModern().getConnection(uri, POST);
+			HttpURLConnectionWrapper.postOrPut(conn, contentType, data);
+			response = HttpURLConnectionWrapper.getReponse(conn);
 		} else {
 			HttpPost req = new HttpPost(uri);
-			try {
-				StringEntity entity = new StringEntity(data, UTF8);
-				entity.setContentType(contentType);
-				req.setEntity(entity);
-			} catch (UnsupportedEncodingException e) {
-				L.e(e);
-				throw new HTTPException(e);
-			}
-			DefaultHttpClientWrapper wrapper = getLegacy();
-			HttpResponse resp = wrapper.getResponse(req);
-			response.body = DefaultHttpClientWrapper.getResponseBody(resp);
-			DefaultHttpClientWrapper.consumeResponse(resp);
+			req.setEntity(DefaultHttpClientWrapper.buildStringEntity(
+					contentType, data));
+			response = DefaultHttpClientWrapper.getReponse(getLegacy(), req);
 		}
+		L.d(response);
 		return response;
 	}
 
 	public HTTPResponse put(String uri, String contentType, String data)
 			throws HTTPException {
 		L.d("PUT on " + uri + ", data: " + data);
-		HTTPResponse response = new HTTPResponse();
-		// TODO useHttpURLConnection()
-		HttpPut req = new HttpPut(uri);
-		try {
-			StringEntity entity = new StringEntity(data, UTF8);
-			entity.setContentType(contentType);
-			req.setEntity(entity);
-		} catch (UnsupportedEncodingException e) {
-			throw new HTTPException(e);
+		HTTPResponse response;
+		if (useHttpURLConnection()) {
+			HttpURLConnection conn = getModern().getConnection(uri, PUT);
+			HttpURLConnectionWrapper.postOrPut(conn, contentType, data);
+			response = HttpURLConnectionWrapper.getReponse(conn);
+		} else {
+			HttpPut req = new HttpPut(uri);
+			req.setEntity(DefaultHttpClientWrapper.buildStringEntity(
+					contentType, data));
+			response = DefaultHttpClientWrapper.getReponse(getLegacy(), req);
 		}
-		DefaultHttpClientWrapper wrapper = getLegacy();
-		HttpResponse resp = wrapper.getResponse(req);
-		Header loc = resp.getLastHeader("Location");
-		DefaultHttpClientWrapper.consumeResponse(resp);
-		if (loc != null) {
-			String[] parts = loc.getValue().split("/");
-			String location = parts[parts.length - 1];
-			L.d("location: " + location);
-			response.body = location;
-		}
+		L.d(response);
 		return response;
 	}
 
-	public void delete(String uri) throws HTTPException {
+	public HTTPResponse delete(String uri) throws HTTPException {
 		L.d("DELETE on " + uri);
-		// TODO useHttpURLConnection()
-		DefaultHttpClientWrapper wrapper = getLegacy();
-		HttpDelete req = new HttpDelete(uri);
-		HttpResponse resp = wrapper.getResponse(req);
-		DefaultHttpClientWrapper.consumeResponse(resp);
+		HTTPResponse response;
+		if (useHttpURLConnection()) {
+			HttpURLConnection conn = getModern().getConnection(uri, DELETE);
+			response = HttpURLConnectionWrapper.getReponse(conn);
+		} else {
+			HttpDelete req = new HttpDelete(uri);
+			response = DefaultHttpClientWrapper.getReponse(getLegacy(), req);
+		}
+		L.d(response);
+		return response;
 	}
 
 	public Pair<Integer, BufferedInputStream> getInputStream(String uri)
@@ -194,7 +158,7 @@ public class RESTClient {
 		if (useHttpURLConnection()) {
 			HttpURLConnectionWrapper wrapper = getModern();
 			HttpURLConnection conn = wrapper.getConnection(uri, GET);
-			HttpURLConnectionWrapper.connectAndCheckResponseCode(conn);
+			HttpURLConnectionWrapper.connectAndGetResponseCodeOrThrow(conn);
 			contentLength = conn.getContentLength();
 			cis = new ConsumingInputStream(
 					HttpURLConnectionWrapper.getUnpackedInputStream(conn), conn);
@@ -209,6 +173,7 @@ public class RESTClient {
 					DefaultHttpClientWrapper.getUnpackedInputStream(entity),
 					entity);
 		}
+		L.d("Content-Length: " + contentLength);
 		return new Pair<Integer, BufferedInputStream>(contentLength, cis);
 	}
 
@@ -228,7 +193,7 @@ public class RESTClient {
 		return wrapper;
 	}
 
-	private void initWrapper(HttpClientWrapper wrapper) {
+	private void initWrapper(HttpClientWrapper<?> wrapper) {
 		wrapper.setHeaders(headers);
 		if (proxyUrl != null) {
 			wrapper.setProxy(proxyUrl, proxyUser, proxyPassword);
