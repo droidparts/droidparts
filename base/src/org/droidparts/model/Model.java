@@ -57,12 +57,13 @@ public abstract class Model implements Serializable {
 
 	@Override
 	public boolean equals(Object o) {
-		if (o != null) {
-			if (getClass() == o.getClass()) {
-				return hashCode() == o.hashCode();
-			}
+		if (this == o) {
+			return true;
+		} else if (o != null && getClass() == o.getClass()) {
+			return hashCode() == o.hashCode();
+		} else {
+			return false;
 		}
-		return false;
 	}
 
 	@Override

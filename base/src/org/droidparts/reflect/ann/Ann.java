@@ -31,8 +31,9 @@ public abstract class Ann<T extends Annotation> {
 			return true;
 		} else if (o instanceof Ann) {
 			return cls.equals(((Ann<?>) o).cls);
+		} else {
+			return false;
 		}
-		return false;
 	}
 
 	@Override
