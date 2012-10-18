@@ -15,10 +15,11 @@
  */
 package org.droidparts.task.listener;
 
+
 public interface AsyncTaskResultListener<Result> {
 
-	void onAsyncTaskSuccess(Result result);
+	void onSuccess(String taskTag, Result result);
 
-	void onAsyncTaskFailure(Exception e);
+	void onFailure(String taskTag, Exception e);
 
 }
