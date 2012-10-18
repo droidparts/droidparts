@@ -26,7 +26,6 @@ public abstract class AsyncTask<Params, Progress, Result> extends
 		android.os.AsyncTask<Params, Progress, Pair<Exception, Result>> {
 
 	protected final Context ctx;
-	protected final String tag;
 	protected final AsyncTaskProgressListener progressListener;
 	protected final AsyncTaskResultListener<Result> resultListener;
 
@@ -36,16 +35,10 @@ public abstract class AsyncTask<Params, Progress, Result> extends
 
 	public AsyncTask(Context ctx, AsyncTaskProgressListener progressListener,
 			AsyncTaskResultListener<Result> resultListener) {
-		this(ctx, progressListener, resultListener, null);
-	}
-
-	public AsyncTask(Context ctx, AsyncTaskProgressListener progressListener,
-			AsyncTaskResultListener<Result> resultListener, String tag) {
 		Injector.get().inject(ctx, this);
 		this.ctx = ctx;
 		this.progressListener = progressListener;
 		this.resultListener = resultListener;
-		this.tag = (tag == null) ? getClass().getName() : tag;
 	}
 
 	@Override
@@ -91,13 +84,13 @@ public abstract class AsyncTask<Params, Progress, Result> extends
 
 	protected void onSuccessPostExecute(Result result) {
 		if (resultListener != null) {
-			resultListener.onSuccess(tag, result);
+			resultListener.onAsyncTaskSuccess(result);
 		}
 	}
 
 	protected void onFailurePostExecute(Exception exception) {
 		if (resultListener != null) {
-			resultListener.onFailure(tag, exception);
+			resultListener.onAsyncTaskFailure(exception);
 		}
 	}
 
