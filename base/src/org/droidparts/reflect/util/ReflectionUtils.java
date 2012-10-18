@@ -87,8 +87,7 @@ public final class ReflectionUtils {
 		boolean enteredDroidParts = false;
 		do {
 			clsTree.add(0, cls);
-			boolean inDroidParts = cls.getCanonicalName().startsWith(
-					"org.droidparts");
+			boolean inDroidParts = cls.getName().startsWith("org.droidparts");
 			if (enteredDroidParts && !inDroidParts) {
 				break;
 			} else {

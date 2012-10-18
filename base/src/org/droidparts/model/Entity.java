@@ -31,7 +31,7 @@ public abstract class Entity extends Model {
 
 	@Override
 	public String toString() {
-		return getClass().getCanonicalName() + ", id: " + id;
+		return getClass().getName() + ", id: " + id;
 	}
 
 	@Override

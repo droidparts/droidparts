@@ -93,8 +93,7 @@ public class DependencyInjector {
 					return val;
 				} catch (Exception e) {
 					L.d(e);
-					L.e("No valid dependency method for "
-							+ cls.getCanonicalName());
+					L.e("No valid dependency method for " + cls.getName());
 				}
 			}
 		}
