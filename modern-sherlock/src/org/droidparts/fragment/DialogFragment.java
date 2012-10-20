@@ -30,6 +30,8 @@ import com.actionbarsherlock.app.SherlockDialogFragment;
 
 public class DialogFragment extends SherlockDialogFragment {
 
+	private boolean injected;
+
 	@Override
 	public final View onCreateView(LayoutInflater inflater,
 			ViewGroup container, Bundle savedInstanceState) {
@@ -38,12 +40,17 @@ public class DialogFragment extends SherlockDialogFragment {
 		if (view != null) {
 			FragmentsInjector.get().inject(view, this);
 		}
+		injected = true;
 		return view;
 	}
 
 	public View onCreateView(Bundle savedInstanceState,
 			LayoutInflater inflater, ViewGroup container) {
 		return super.onCreateView(inflater, container, savedInstanceState);
+	}
+
+	public final boolean isInjected() {
+		return injected;
 	}
 
 	public void show(FragmentActivity activity) {

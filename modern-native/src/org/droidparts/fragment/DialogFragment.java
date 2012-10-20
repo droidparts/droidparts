@@ -28,6 +28,8 @@ import android.view.ViewGroup;
 
 public class DialogFragment extends android.app.DialogFragment {
 
+	private boolean injected;
+
 	@Override
 	public final View onCreateView(LayoutInflater inflater,
 			ViewGroup container, Bundle savedInstanceState) {
@@ -35,6 +37,7 @@ public class DialogFragment extends android.app.DialogFragment {
 		View view = onCreateView(savedInstanceState, inflater, container);
 		if (view != null) {
 			FragmentsInjector.get().inject(view, this);
+			injected = true;
 		}
 		return view;
 	}
@@ -42,6 +45,10 @@ public class DialogFragment extends android.app.DialogFragment {
 	public View onCreateView(Bundle savedInstanceState,
 			LayoutInflater inflater, ViewGroup container) {
 		return super.onCreateView(inflater, container, savedInstanceState);
+	}
+
+	public final boolean isInjected() {
+		return injected;
 	}
 
 	public void show(Activity activity) {
