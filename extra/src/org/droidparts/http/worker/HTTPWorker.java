@@ -13,15 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License. 
  */
-package org.droidparts.http.wrapper;
+package org.droidparts.http.worker;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 import android.os.Build;
 
-public abstract class HttpClientWrapper<T> {
+public abstract class HTTPWorker<T> {
 
 	public static boolean useHttpURLConnection() {
 		// http://android-developers.blogspot.com/2011/09/androids-http-clients.html
@@ -30,16 +31,18 @@ public abstract class HttpClientWrapper<T> {
 
 	protected static final int SOCKET_OPERATION_TIMEOUT = 60 * 1000;
 
-	protected final HashMap<String, String> headers = new HashMap<String, String>();
+	protected final HashMap<String, ArrayList<String>> headers = new HashMap<String, ArrayList<String>>();
 	protected final String userAgent;
 
-	public HttpClientWrapper(String userAgent) {
+	public HTTPWorker(String userAgent) {
 		this.userAgent = userAgent;
 	}
 
-	public void setHeaders(HashMap<String, String> headers) {
-		this.headers.clear();
-		this.headers.putAll(headers);
+	public void addHeader(String key, String val) {
+		if (!headers.containsKey(key)) {
+			headers.put(key, new ArrayList<String>());
+		}
+		headers.get(key).add(val);
 	}
 
 	public abstract void authenticateBasic(String user, String password);

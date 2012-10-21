@@ -15,27 +15,22 @@
  */
 package org.droidparts.http;
 
-import static android.text.TextUtils.isEmpty;
-import static org.droidparts.http.wrapper.HttpClientWrapper.useHttpURLConnection;
-import static org.droidparts.http.wrapper.HttpURLConnectionWrapper.DELETE;
-import static org.droidparts.http.wrapper.HttpURLConnectionWrapper.GET;
-import static org.droidparts.http.wrapper.HttpURLConnectionWrapper.POST;
-import static org.droidparts.http.wrapper.HttpURLConnectionWrapper.PUT;
+import static org.droidparts.http.worker.HTTPWorker.useHttpURLConnection;
+import static org.droidparts.http.worker.HttpURLConnectionWorker.DELETE;
+import static org.droidparts.http.worker.HttpURLConnectionWorker.GET;
+import static org.droidparts.http.worker.HttpURLConnectionWorker.POST;
+import static org.droidparts.http.worker.HttpURLConnectionWorker.PUT;
 
 import java.io.BufferedInputStream;
 import java.net.HttpURLConnection;
-import java.util.HashMap;
 
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpPut;
-import org.droidparts.http.wrapper.ConsumingInputStream;
-import org.droidparts.http.wrapper.DefaultHttpClientWrapper;
-import org.droidparts.http.wrapper.HttpClientWrapper;
-import org.droidparts.http.wrapper.HttpURLConnectionWrapper;
+import org.droidparts.http.worker.HTTPWorker;
+import org.droidparts.http.worker.HttpClientWorker;
+import org.droidparts.http.worker.HttpURLConnectionWorker;
 import org.droidparts.util.L;
 
 import android.content.Context;
@@ -46,42 +41,37 @@ public class RESTClient {
 
 	private final Context ctx;
 
-	private final String userAgent;
-	private final HashMap<String, String> headers = new HashMap<String, String>();
-
-	private String authUser, authPassword;
-	private String proxyUrl, proxyUser, proxyPassword;
+	private final HttpClientWorker httpClientWorker;
+	private final HttpURLConnectionWorker httpURLConnectionWorker;
 
 	public RESTClient(Context ctx, String userAgent) {
 		this.ctx = ctx.getApplicationContext();
-		this.userAgent = userAgent;
+		if (useHttpURLConnection()) {
+			httpClientWorker = null;
+			httpURLConnectionWorker = new HttpURLConnectionWorker(userAgent);
+		} else {
+			httpClientWorker = new HttpClientWorker(userAgent);
+			httpURLConnectionWorker = null;
+		}
 		if (Build.VERSION.SDK_INT >= 14) {
 			setHttpResponseCacheEnabled(true);
 		}
 	}
 
 	public void setHttpResponseCacheEnabled(boolean enabled) {
-		HttpURLConnectionWrapper.setHttpResponseCacheEnabled(ctx, enabled);
+		HttpURLConnectionWorker.setHttpResponseCacheEnabled(ctx, enabled);
 	}
 
-	public void setHeader(String key, String value) {
-		if (isEmpty(key) || isEmpty(value)) {
-			throw new IllegalArgumentException("Key: " + key + ", value: "
-					+ value + " should be non-null.");
-		} else {
-			headers.put(key, value);
-		}
+	public void addHeader(String key, String value) {
+		getWorker().addHeader(key, value);
 	}
 
 	public void setProxy(String proxy, String username, String password) {
-		this.proxyUrl = proxy;
-		this.proxyUser = username;
-		this.proxyPassword = password;
+		getWorker().setProxy(proxy, username, password);
 	}
 
 	public void authenticateBasic(String username, String password) {
-		this.authUser = username;
-		this.authPassword = password;
+		getWorker().authenticateBasic(username, password);
 	}
 
 	//
@@ -90,11 +80,12 @@ public class RESTClient {
 		L.d("GET on " + uri);
 		HTTPResponse response;
 		if (useHttpURLConnection()) {
-			HttpURLConnection conn = getModern().getConnection(uri, GET);
-			response = HttpURLConnectionWrapper.getReponse(conn);
+			HttpURLConnection conn = httpURLConnectionWorker.getConnection(uri,
+					GET);
+			response = HttpURLConnectionWorker.getReponse(conn);
 		} else {
 			HttpGet req = new HttpGet(uri);
-			response = DefaultHttpClientWrapper.getReponse(getLegacy(), req);
+			response = httpClientWorker.getReponse(req);
 		}
 		L.d(response);
 		return response;
@@ -105,14 +96,14 @@ public class RESTClient {
 		L.d("POST on " + uri + ", data: " + data);
 		HTTPResponse response;
 		if (useHttpURLConnection()) {
-			HttpURLConnection conn = getModern().getConnection(uri, POST);
-			HttpURLConnectionWrapper.postOrPut(conn, contentType, data);
-			response = HttpURLConnectionWrapper.getReponse(conn);
+			HttpURLConnection conn = httpURLConnectionWorker.getConnection(uri,
+					POST);
+			HttpURLConnectionWorker.postOrPut(conn, contentType, data);
+			response = HttpURLConnectionWorker.getReponse(conn);
 		} else {
 			HttpPost req = new HttpPost(uri);
-			req.setEntity(DefaultHttpClientWrapper.buildStringEntity(
-					contentType, data));
-			response = DefaultHttpClientWrapper.getReponse(getLegacy(), req);
+			req.setEntity(HttpClientWorker.buildStringEntity(contentType, data));
+			response = httpClientWorker.getReponse(req);
 		}
 		L.d(response);
 		return response;
@@ -123,14 +114,14 @@ public class RESTClient {
 		L.d("PUT on " + uri + ", data: " + data);
 		HTTPResponse response;
 		if (useHttpURLConnection()) {
-			HttpURLConnection conn = getModern().getConnection(uri, PUT);
-			HttpURLConnectionWrapper.postOrPut(conn, contentType, data);
-			response = HttpURLConnectionWrapper.getReponse(conn);
+			HttpURLConnection conn = httpURLConnectionWorker.getConnection(uri,
+					PUT);
+			HttpURLConnectionWorker.postOrPut(conn, contentType, data);
+			response = HttpURLConnectionWorker.getReponse(conn);
 		} else {
 			HttpPut req = new HttpPut(uri);
-			req.setEntity(DefaultHttpClientWrapper.buildStringEntity(
-					contentType, data));
-			response = DefaultHttpClientWrapper.getReponse(getLegacy(), req);
+			req.setEntity(HttpClientWorker.buildStringEntity(contentType, data));
+			response = httpClientWorker.getReponse(req);
 		}
 		L.d(response);
 		return response;
@@ -140,11 +131,12 @@ public class RESTClient {
 		L.d("DELETE on " + uri);
 		HTTPResponse response;
 		if (useHttpURLConnection()) {
-			HttpURLConnection conn = getModern().getConnection(uri, DELETE);
-			response = HttpURLConnectionWrapper.getReponse(conn);
+			HttpURLConnection conn = httpURLConnectionWorker.getConnection(uri,
+					DELETE);
+			response = HttpURLConnectionWorker.getReponse(conn);
 		} else {
 			HttpDelete req = new HttpDelete(uri);
-			response = DefaultHttpClientWrapper.getReponse(getLegacy(), req);
+			response = httpClientWorker.getReponse(req);
 		}
 		L.d(response);
 		return response;
@@ -153,53 +145,21 @@ public class RESTClient {
 	public Pair<Integer, BufferedInputStream> getInputStream(String uri)
 			throws HTTPException {
 		L.d("InputStream on " + uri);
-		int contentLength = -1;
-		ConsumingInputStream cis = null;
+		Pair<Integer, BufferedInputStream> resp = null;
 		if (useHttpURLConnection()) {
-			HttpURLConnectionWrapper wrapper = getModern();
-			HttpURLConnection conn = wrapper.getConnection(uri, GET);
-			HttpURLConnectionWrapper.connectAndGetResponseCodeOrThrow(conn);
-			contentLength = conn.getContentLength();
-			cis = new ConsumingInputStream(
-					HttpURLConnectionWrapper.getUnpackedInputStream(conn), conn);
+			resp = httpURLConnectionWorker.getInputStream(uri);
 		} else {
-			DefaultHttpClientWrapper wrapper = getLegacy();
-			HttpGet req = new HttpGet(uri);
-			HttpResponse resp = wrapper.getResponse(req);
-			HttpEntity entity = resp.getEntity();
-			// 2G limit
-			contentLength = (int) entity.getContentLength();
-			cis = new ConsumingInputStream(
-					DefaultHttpClientWrapper.getUnpackedInputStream(entity),
-					entity);
+			resp = httpClientWorker.getInputStream(uri);
 		}
-		L.d("Content-Length: " + contentLength);
-		return new Pair<Integer, BufferedInputStream>(contentLength, cis);
+		L.d("Content-Length: " + resp.first);
+		return resp;
 	}
 
 	//
 
-	private DefaultHttpClientWrapper getLegacy() {
-		DefaultHttpClientWrapper wrapper = new DefaultHttpClientWrapper(
-				userAgent);
-		initWrapper(wrapper);
-		return wrapper;
-	}
-
-	private HttpURLConnectionWrapper getModern() {
-		HttpURLConnectionWrapper wrapper = new HttpURLConnectionWrapper(
-				userAgent);
-		initWrapper(wrapper);
-		return wrapper;
-	}
-
-	private void initWrapper(HttpClientWrapper<?> wrapper) {
-		wrapper.setHeaders(headers);
-		if (proxyUrl != null) {
-			wrapper.setProxy(proxyUrl, proxyUser, proxyPassword);
-		}
-		if (authUser != null && authPassword != null) {
-			wrapper.authenticateBasic(authUser, authPassword);
-		}
+	private HTTPWorker<?> getWorker() {
+		HTTPWorker<?> worker = (httpClientWorker != null) ? httpClientWorker
+				: httpURLConnectionWorker;
+		return worker;
 	}
 }

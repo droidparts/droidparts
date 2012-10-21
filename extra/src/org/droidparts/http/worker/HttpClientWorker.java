@@ -13,15 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License. 
  */
-package org.droidparts.http.wrapper;
+package org.droidparts.http.worker;
 
-import static android.text.TextUtils.isEmpty;
 import static org.apache.http.auth.AuthScope.ANY_HOST;
 import static org.apache.http.auth.AuthScope.ANY_PORT;
 import static org.apache.http.conn.params.ConnRoutePNames.DEFAULT_PROXY;
 import static org.droidparts.contract.Constants.BUFFER_SIZE;
 import static org.droidparts.contract.Constants.UTF8;
+import static org.droidparts.util.Strings.isNotEmpty;
 
+import java.io.BufferedInputStream;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
@@ -37,7 +38,9 @@ import org.apache.http.HttpHost;
 import org.apache.http.HttpResponse;
 import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.UsernamePasswordCredentials;
+import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpUriRequest;
+import org.apache.http.client.params.HttpClientParams;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.params.HttpConnectionParams;
@@ -48,18 +51,19 @@ import org.droidparts.http.HTTPResponse;
 import org.droidparts.util.L;
 import org.droidparts.util.io.IOUtils;
 
-// For API < 10
-public class DefaultHttpClientWrapper extends HttpClientWrapper<HttpResponse> {
+import android.util.Pair;
 
-	// TODO tweak to resemble
-	// http://developer.android.com/reference/android/net/http/AndroidHttpClient.html
+// For API < 10
+public class HttpClientWorker extends HTTPWorker<HttpResponse> {
 
 	private final DefaultHttpClient httpClient;
 
-	public DefaultHttpClientWrapper(String userAgent) {
+	public HttpClientWorker(String userAgent) {
 		super(userAgent);
 		httpClient = new DefaultHttpClient();
 		HttpParams params = httpClient.getParams();
+		HttpConnectionParams.setStaleCheckingEnabled(params, false);
+		HttpClientParams.setRedirecting(params, false);
 		HttpConnectionParams.setConnectionTimeout(params,
 				SOCKET_OPERATION_TIMEOUT);
 		HttpConnectionParams.setSoTimeout(params, SOCKET_OPERATION_TIMEOUT);
@@ -74,7 +78,7 @@ public class DefaultHttpClientWrapper extends HttpClientWrapper<HttpResponse> {
 			String user, String password) {
 		HttpHost proxyHost = new HttpHost(host, port, protocol);
 		httpClient.getParams().setParameter(DEFAULT_PROXY, proxyHost);
-		if (!isEmpty(user) && !isEmpty(password)) {
+		if (isNotEmpty(user) && isNotEmpty(password)) {
 			AuthScope authScope = new AuthScope(host, port);
 			UsernamePasswordCredentials credentials = new UsernamePasswordCredentials(
 					user, password);
@@ -104,24 +108,60 @@ public class DefaultHttpClientWrapper extends HttpClientWrapper<HttpResponse> {
 		}
 	}
 
-	public static HTTPResponse getReponse(DefaultHttpClientWrapper wrapper,
-			HttpUriRequest req) throws HTTPException {
+	public HTTPResponse getReponse(HttpUriRequest req) throws HTTPException {
 		HTTPResponse response = new HTTPResponse();
-		HttpResponse resp = wrapper.getResponse(req);
-		response.code = DefaultHttpClientWrapper.getResponseCodeOrThrow(resp);
-		response.headers = DefaultHttpClientWrapper.getResponseHeaders(resp);
-		response.body = DefaultHttpClientWrapper
-				.getResponseBodyAndConsume(resp);
+		HttpResponse resp = getHttpResponse(req);
+		response.code = getResponseCodeOrThrow(resp);
+		response.headers = getHeaders(resp);
+		response.body = getResponseBodyAndConsume(resp);
 		return response;
 	}
 
-	public HttpResponse getResponse(HttpUriRequest req) throws HTTPException {
-		for (String name : headers.keySet()) {
-			req.setHeader(name, headers.get(name));
+	public Pair<Integer, BufferedInputStream> getInputStream(String uri)
+			throws HTTPException {
+		HttpGet req = new HttpGet(uri);
+		HttpResponse resp = getHttpResponse(req);
+		HttpEntity entity = resp.getEntity();
+		// 2G limit
+		int contentLength = (int) entity.getContentLength();
+		ConsumingInputStream cis = new ConsumingInputStream(
+				getUnpackedInputStream(entity), entity);
+		return new Pair<Integer, BufferedInputStream>(contentLength, cis);
+	}
+
+	private HttpResponse getHttpResponse(HttpUriRequest req)
+			throws HTTPException {
+		for (String key : headers.keySet()) {
+			for (String val : headers.get(key)) {
+				req.addHeader(key, val);
+			}
 		}
 		req.setHeader("Accept-Encoding", "gzip,deflate");
 		try {
 			return httpClient.execute(req);
+		} catch (Exception e) {
+			throw new HTTPException(e);
+		}
+	}
+
+	private static InputStream getUnpackedInputStream(HttpEntity entity)
+			throws HTTPException {
+		try {
+			InputStream is = entity.getContent();
+			Header contentEncodingHeader = entity.getContentEncoding();
+			if (contentEncodingHeader != null) {
+				String contentEncoding = contentEncodingHeader.getValue();
+				L.d("Content-Encoding: " + contentEncoding);
+				if (isNotEmpty(contentEncoding)) {
+					contentEncoding = contentEncoding.toLowerCase();
+					if (contentEncoding.contains("gzip")) {
+						return new GZIPInputStream(is);
+					} else if (contentEncoding.contains("deflate")) {
+						return new InflaterInputStream(is);
+					}
+				}
+			}
+			return is;
 		} catch (Exception e) {
 			throw new HTTPException(e);
 		}
@@ -137,8 +177,7 @@ public class DefaultHttpClientWrapper extends HttpClientWrapper<HttpResponse> {
 		return respCode;
 	}
 
-	private static Map<String, List<String>> getResponseHeaders(
-			HttpResponse resp) {
+	private static Map<String, List<String>> getHeaders(HttpResponse resp) {
 		HashMap<String, List<String>> headers = new HashMap<String, List<String>>();
 		for (Header header : resp.getAllHeaders()) {
 			String name = header.getName();
@@ -159,38 +198,11 @@ public class DefaultHttpClientWrapper extends HttpClientWrapper<HttpResponse> {
 		} catch (Exception e) {
 			throw new HTTPException(e);
 		} finally {
-			consumeResponse(resp);
-		}
-	}
-
-	public static InputStream getUnpackedInputStream(HttpEntity entity)
-			throws HTTPException {
-		try {
-			InputStream is = entity.getContent();
-			Header contentEncodingHeader = entity.getContentEncoding();
-			if (contentEncodingHeader != null) {
-				String contentEncoding = contentEncodingHeader.getValue();
-				L.d("Content-Encoding: " + contentEncoding);
-				if (!isEmpty(contentEncoding)) {
-					contentEncoding = contentEncoding.toLowerCase();
-					if (contentEncoding.contains("gzip")) {
-						return new GZIPInputStream(is);
-					} else if (contentEncoding.contains("deflate")) {
-						return new InflaterInputStream(is);
-					}
-				}
+			try {
+				resp.getEntity().consumeContent();
+			} catch (Exception e) {
+				L.d(e);
 			}
-			return is;
-		} catch (Exception e) {
-			throw new HTTPException(e);
-		}
-	}
-
-	public static void consumeResponse(HttpResponse resp) {
-		try {
-			resp.getEntity().consumeContent();
-		} catch (Exception e) {
-			L.d(e);
 		}
 	}
 

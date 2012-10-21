@@ -13,12 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License. 
  */
-package org.droidparts.http.wrapper;
+package org.droidparts.http.worker;
 
 import static org.droidparts.contract.Constants.UTF8;
-import static org.droidparts.util.Strings.isEmpty;
+import static org.droidparts.util.Strings.isNotEmpty;
+import static org.droidparts.util.io.IOUtils.readAndCloseInputStream;
 import static org.droidparts.util.io.IOUtils.silentlyClose;
 
+import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -32,12 +34,11 @@ import java.net.URL;
 import org.droidparts.http.HTTPException;
 import org.droidparts.http.HTTPResponse;
 import org.droidparts.util.L;
-import org.droidparts.util.io.IOUtils;
 
 import android.content.Context;
+import android.util.Pair;
 
-public class HttpURLConnectionWrapper extends
-		HttpClientWrapper<HttpURLConnection> {
+public class HttpURLConnectionWorker extends HTTPWorker<HttpURLConnection> {
 
 	public static final String GET = "GET";
 	public static final String PUT = "PUT";
@@ -67,7 +68,7 @@ public class HttpURLConnectionWrapper extends
 		}
 	}
 
-	public HttpURLConnectionWrapper(String userAgent) {
+	public HttpURLConnectionWorker(String userAgent) {
 		super(userAgent);
 	}
 
@@ -75,7 +76,7 @@ public class HttpURLConnectionWrapper extends
 	protected void setProxy(String protocol, String host, int port,
 			String user, String password) {
 		proxy = new Proxy(Proxy.Type.HTTP, new InetSocketAddress(host, port));
-		if (!isEmpty(user) && !isEmpty(password)) {
+		if (isNotEmpty(user) && isNotEmpty(password)) {
 			// FIXME
 			authenticateBasic(user, password);
 		}
@@ -89,6 +90,37 @@ public class HttpURLConnectionWrapper extends
 						password.toCharArray());
 			}
 		};
+	}
+
+	public HttpURLConnection getConnection(String urlStr, String requestMethod)
+			throws HTTPException {
+		if (auth != null) {
+			Authenticator.setDefault(auth);
+		}
+		try {
+			URL url = new URL(urlStr);
+			HttpURLConnection conn;
+			if (proxy != null) {
+				conn = (HttpURLConnection) url.openConnection(proxy);
+			} else {
+				conn = (HttpURLConnection) url.openConnection();
+			}
+			for (String key : headers.keySet()) {
+				for (String val : headers.get(key)) {
+					conn.addRequestProperty(key, val);
+				}
+			}
+			conn.setRequestMethod(requestMethod);
+			if (userAgent != null) {
+				conn.setRequestProperty("http.agent", userAgent);
+			}
+			if (PUT.equals(requestMethod) || POST.equals(requestMethod)) {
+				conn.setDoOutput(true);
+			}
+			return conn;
+		} catch (Exception e) {
+			throw new HTTPException(e);
+		}
 	}
 
 	public static void postOrPut(HttpURLConnection conn, String contentType,
@@ -109,51 +141,29 @@ public class HttpURLConnectionWrapper extends
 	public static HTTPResponse getReponse(HttpURLConnection conn)
 			throws HTTPException {
 		HTTPResponse response = new HTTPResponse();
-		response.code = HttpURLConnectionWrapper
-				.connectAndGetResponseCodeOrThrow(conn);
+		response.code = connectAndGetResponseCodeOrThrow(conn);
 		response.headers = conn.getHeaderFields();
-		response.body = HttpURLConnectionWrapper
-				.getResponseBodyAndDisconnect(conn);
+		response.body = getResponseBodyAndDisconnect(conn);
 		return response;
 	}
 
-	public HttpURLConnection getConnection(String urlStr, String requestMethod)
+	public Pair<Integer, BufferedInputStream> getInputStream(String uri)
 			throws HTTPException {
-		if (auth != null) {
-			Authenticator.setDefault(auth);
-		}
-		try {
-			URL url = new URL(urlStr);
-			HttpURLConnection conn;
-			if (proxy != null) {
-				conn = (HttpURLConnection) url.openConnection(proxy);
-			} else {
-				conn = (HttpURLConnection) url.openConnection();
-			}
-			for (String name : headers.keySet()) {
-				conn.setRequestProperty(name, headers.get(name));
-			}
-			conn.setRequestMethod(requestMethod);
-			if (userAgent != null) {
-				conn.setRequestProperty("http.agent", userAgent);
-			}
-			if (PUT.equals(requestMethod) || POST.equals(requestMethod)) {
-				conn.setDoOutput(true);
-			}
-			return conn;
-		} catch (Exception e) {
-			throw new HTTPException(e);
-		}
+		HttpURLConnection conn = getConnection(uri, GET);
+		HttpURLConnectionWorker.connectAndGetResponseCodeOrThrow(conn);
+		int contentLength = conn.getContentLength();
+		ConsumingInputStream cis = new ConsumingInputStream(
+				getUnpackedInputStream(conn), conn);
+		return new Pair<Integer, BufferedInputStream>(contentLength, cis);
 	}
 
-	public static int connectAndGetResponseCodeOrThrow(HttpURLConnection conn)
+	private static int connectAndGetResponseCodeOrThrow(HttpURLConnection conn)
 			throws HTTPException {
 		try {
 			conn.connect();
 			int respCode = conn.getResponseCode();
 			if (respCode >= 400) {
-				String respBody = IOUtils.readAndCloseInputStream(conn
-						.getInputStream());
+				String respBody = readAndCloseInputStream(conn.getInputStream());
 				conn.disconnect();
 				throw new HTTPException(respCode, respBody);
 			}
@@ -167,24 +177,24 @@ public class HttpURLConnectionWrapper extends
 		}
 	}
 
-	private static String getResponseBodyAndDisconnect(HttpURLConnection conn)
-			throws HTTPException {
-		try {
-			return IOUtils.readAndCloseInputStream(conn.getInputStream());
-		} catch (Exception e) {
-			throw new HTTPException(e);
-		} finally {
-			conn.disconnect();
-			Authenticator.setDefault(null);
-		}
-	}
-
-	public static InputStream getUnpackedInputStream(HttpURLConnection conn)
+	private static InputStream getUnpackedInputStream(HttpURLConnection conn)
 			throws HTTPException {
 		try {
 			return conn.getInputStream();
 		} catch (Exception e) {
 			throw new HTTPException(e);
+		}
+	}
+
+	private static String getResponseBodyAndDisconnect(HttpURLConnection conn)
+			throws HTTPException {
+		try {
+			return readAndCloseInputStream(conn.getInputStream());
+		} catch (Exception e) {
+			throw new HTTPException(e);
+		} finally {
+			conn.disconnect();
+			Authenticator.setDefault(null);
 		}
 	}
 
