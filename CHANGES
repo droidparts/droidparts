@@ -1,3 +1,9 @@
+0.8.7 /2012-10-21/:
+    * Changed RESTClient to return HTTPResponses with status code, headers & body.
+    * RESTClient now fully utilizes HttpURLConnection on API >= 10.
+    * Added isInjected() to Fragments.
+    * Misc fixes & backwards-incompatible changes. Muhaha.
+
 0.8.5 /2012-10-15/:
     * Renamed droidparts-modern to droidparts-modern-sherlock; added droidparts-modern-native.
     * Improved dependency injection speed.

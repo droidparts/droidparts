@@ -301,10 +301,4 @@ public final class PersistUtils implements SQL.DDL {
 		sb.append("(").append(Column.ID).append(") ON DELETE CASCADE");
 	}
 
-	//
-	@Deprecated
-	public static boolean gotNonNull(JSONObject obj, String key)
-			throws JSONException {
-		return hasNonNull(obj, key);
-	}
 }

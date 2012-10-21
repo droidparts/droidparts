@@ -83,13 +83,6 @@ public abstract class EntityCursorAdapter<EntityType extends Entity> extends
 
 	@Deprecated
 	public EntityCursorAdapter(Context ctx,
-			EntityManager<EntityType> entityManager,
-			Select<EntityType> selectBuilder) {
-		this(ctx, entityManager, selectBuilder.execute());
-	}
-
-	@Deprecated
-	public EntityCursorAdapter(Context ctx,
 			EntityManager<EntityType> entityManager, Cursor cursor) {
 		super(ctx, cursor);
 		this.entityManager = entityManager;

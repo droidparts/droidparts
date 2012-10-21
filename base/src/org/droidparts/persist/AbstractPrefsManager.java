@@ -95,16 +95,4 @@ public abstract class AbstractPrefsManager {
 		return prefs.edit().putString(key, val).commit();
 	}
 
-	//
-
-	@Deprecated
-	protected boolean getBoolean(int keyResId, int defValueResId) {
-		return readBoolean(keyResId, defValueResId);
-	}
-
-	@Deprecated
-	protected String getString(int keyResId, int defValueResId) {
-		return readString(keyResId, defValueResId);
-	}
-
 }

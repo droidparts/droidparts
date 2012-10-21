@@ -49,9 +49,4 @@ public class ArrayAdapter<T> extends android.widget.ArrayAdapter<T> {
 		}
 	}
 
-	//
-	@Deprecated
-	public void reset(List<T> list) {
-		changeData(list);
-	}
 }

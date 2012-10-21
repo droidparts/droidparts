@@ -86,15 +86,4 @@ public abstract class AbstractDBOpenHelper extends SQLiteOpenHelper implements
 		onOpenExtra(db);
 	}
 
-	//
-	@Deprecated
-	protected void dropAll(SQLiteDatabase db, boolean tables, boolean indexes) {
-		dropTables(db);
-	}
-
-	@Deprecated
-	protected void execQueries(SQLiteDatabase db, ArrayList<String> queries) {
-		executeStatements(db, queries);
-	}
-
 }
