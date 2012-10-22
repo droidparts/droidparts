@@ -46,13 +46,10 @@ public class RESTClient {
 
 	public RESTClient(Context ctx, String userAgent) {
 		this.ctx = ctx.getApplicationContext();
-		if (useHttpURLConnection()) {
-			httpClientWorker = null;
-			httpURLConnectionWorker = new HttpURLConnectionWorker(userAgent);
-		} else {
-			httpClientWorker = new HttpClientWorker(userAgent);
-			httpURLConnectionWorker = null;
-		}
+		httpClientWorker = useHttpURLConnection() ? null
+				: new HttpClientWorker(userAgent);
+		httpURLConnectionWorker = useHttpURLConnection() ? new HttpURLConnectionWorker(
+				userAgent) : null;
 		if (Build.VERSION.SDK_INT >= 14) {
 			setHttpResponseCacheEnabled(true);
 		}
