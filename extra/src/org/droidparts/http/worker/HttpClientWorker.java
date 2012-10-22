@@ -88,10 +88,10 @@ public class HttpClientWorker extends HTTPWorker<HttpResponse> {
 	}
 
 	@Override
-	public void authenticateBasic(String authUser, String authPassword) {
+	public void authenticateBasic(String user, String password) {
 		AuthScope authScope = new AuthScope(ANY_HOST, ANY_PORT);
 		UsernamePasswordCredentials credentials = new UsernamePasswordCredentials(
-				authUser, authPassword);
+				user, password);
 		httpClient.getCredentialsProvider().setCredentials(authScope,
 				credentials);
 	}

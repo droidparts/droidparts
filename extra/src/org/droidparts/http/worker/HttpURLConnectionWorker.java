@@ -83,11 +83,12 @@ public class HttpURLConnectionWorker extends HTTPWorker<HttpURLConnection> {
 	}
 
 	@Override
-	public void authenticateBasic(final String username, final String password) {
+	public void authenticateBasic(String user, String password) {
+		final PasswordAuthentication passAuth = new PasswordAuthentication(
+				user, password.toCharArray());
 		auth = new Authenticator() {
 			protected PasswordAuthentication getPasswordAuthentication() {
-				return new PasswordAuthentication(username,
-						password.toCharArray());
+				return passAuth;
 			}
 		};
 	}

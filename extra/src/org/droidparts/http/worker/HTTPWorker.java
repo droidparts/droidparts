@@ -47,7 +47,7 @@ public abstract class HTTPWorker<T> {
 
 	public abstract void authenticateBasic(String user, String password);
 
-	public final void setProxy(String proxy, String username, String password) {
+	public final void setProxy(String proxy, String user, String password) {
 		URL proxyUrl;
 		try {
 			proxyUrl = new URL(proxy);
@@ -55,7 +55,7 @@ public abstract class HTTPWorker<T> {
 			throw new IllegalArgumentException(e);
 		}
 		setProxy(proxyUrl.getProtocol(), proxyUrl.getHost(),
-				proxyUrl.getPort(), username, password);
+				proxyUrl.getPort(), user, password);
 	}
 
 	protected abstract void setProxy(String protocol, String host, int port,
