@@ -17,6 +17,7 @@ package org.droidparts.inject.injector;
 
 import static org.droidparts.reflect.util.ReflectionUtils.setFieldVal;
 import static org.droidparts.reflect.util.TypeHelper.isArray;
+import static org.droidparts.reflect.util.TypeHelper.isBoolean;
 import static org.droidparts.reflect.util.TypeHelper.isDrawable;
 import static org.droidparts.reflect.util.TypeHelper.isInteger;
 import static org.droidparts.reflect.util.TypeHelper.isString;
@@ -38,10 +39,12 @@ public class ResourceInjector {
 			Resources res = ctx.getResources();
 			Class<?> cls = field.getType();
 			Object val = null;
-			if (isString(cls)) {
-				val = res.getString(resId);
+			if (isBoolean(cls)) {
+				val = res.getBoolean(resId);
 			} else if (isInteger(cls)) {
 				val = res.getInteger(resId);
+			} else if (isString(cls)) {
+				val = res.getString(resId);
 			} else if (isDrawable(cls)) {
 				val = res.getDrawable(resId);
 			} else if (isArray(cls)) {
@@ -52,7 +55,8 @@ public class ResourceInjector {
 					val = res.getStringArray(resId);
 				}
 			} else {
-				L.e("Resource not supported yet: " + field.getType().getName());
+				L.e("Unsupported resource type '" + field.getType().getName()
+						+ "'.");
 			}
 			try {
 				setFieldVal(target, field, val);
