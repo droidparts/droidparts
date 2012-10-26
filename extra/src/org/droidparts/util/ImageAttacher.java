@@ -79,8 +79,8 @@ public class ImageAttacher {
 
 	public void attachImageCrossFaded(View placeholderView,
 			ImageView imageView, String imgUrl) {
-		setInvisible(placeholderView, false);
-		setInvisible(imageView, true);
+		setInvisible(false, placeholderView);
+		setInvisible(true, imageView);
 		addAndExecute(imageView,
 				new Pair<String, View>(imgUrl, placeholderView));
 	}
@@ -174,8 +174,8 @@ public class ImageAttacher {
 					ViewUtils.crossFade(placeholderView, imageView,
 							crossFadeAnimationDuration, null);
 				} else {
-					setInvisible(imageView, false);
-					setInvisible(placeholderView, true);
+					setInvisible(false, imageView);
+					setInvisible(true, placeholderView);
 				}
 			}
 		}

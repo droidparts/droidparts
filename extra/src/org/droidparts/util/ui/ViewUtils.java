@@ -35,12 +35,16 @@ import android.widget.EditText;
 
 public class ViewUtils {
 
-	public static void setInvisible(View view, boolean invisible) {
-		view.setVisibility(invisible ? INVISIBLE : VISIBLE);
+	public static void setInvisible(boolean invisible, View... views) {
+		for (View view : views) {
+			view.setVisibility(invisible ? INVISIBLE : VISIBLE);
+		}
 	}
 
-	public static void setGone(View view, boolean gone) {
-		view.setVisibility(gone ? GONE : VISIBLE);
+	public static void setGone(boolean gone, View... views) {
+		for (View view : views) {
+			view.setVisibility(gone ? GONE : VISIBLE);
+		}
 	}
 
 	public static void crossFade(final View visibleViewFrom,
@@ -53,8 +57,8 @@ public class ViewUtils {
 		animTo.setAnimationListener(new AnimationListenerAdapter() {
 			@Override
 			public void onAnimationEnd(Animation animation) {
-				setInvisible(visibleViewFrom, true);
-				setInvisible(invisibleViewTo, false);
+				setInvisible(true, visibleViewFrom);
+				setInvisible(false, invisibleViewTo);
 				if (onAnimationEnd != null) {
 					onAnimationEnd.run();
 				}
@@ -99,6 +103,18 @@ public class ViewUtils {
 		} catch (Exception e) {
 			L.e(e);
 		}
+	}
+
+	//
+
+	@Deprecated
+	public static void setInvisible(View view, boolean invisible) {
+		setInvisible(invisible, view);
+	}
+
+	@Deprecated
+	public static void setGone(View view, boolean gone) {
+		setGone(gone, view);
 	}
 
 }
