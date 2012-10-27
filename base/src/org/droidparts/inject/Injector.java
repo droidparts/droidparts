@@ -17,6 +17,7 @@ package org.droidparts.inject;
 
 import org.droidparts.inject.injector.DependencyInjector;
 import org.droidparts.inject.injector.InjectorDelegate;
+import org.droidparts.util.L;
 
 import android.app.Activity;
 import android.app.Dialog;
@@ -34,7 +35,7 @@ public class Injector {
 	private final InjectorDelegate delegate;
 
 	static class Holder {
-		static final Injector INJECTOR = new Injector(new InjectorDelegate());
+		static final Injector INJECTOR = new Injector();
 	}
 
 	public static Injector get() {
@@ -95,8 +96,17 @@ public class Injector {
 		delegate.inject(ctx, view, target);
 	}
 
-	protected Injector(InjectorDelegate delegate) {
-		this.delegate = delegate;
+	private Injector() {
+		InjectorDelegate fragmentsDelegate = null;
+		try {
+			fragmentsDelegate = (InjectorDelegate) Class.forName(
+					"org.droidparts.inject.injector.FragmentsInjectorDelegate")
+					.newInstance();
+		} catch (Exception e) {
+			L.v(e);
+		}
+		delegate = (fragmentsDelegate != null) ? fragmentsDelegate
+				: new InjectorDelegate();
 	}
 
 	private static void setContext(Context ctx) {

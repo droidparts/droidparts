@@ -15,7 +15,7 @@
  */
 package org.droidparts.fragment;
 
-import org.droidparts.inject.FragmentsInjector;
+import org.droidparts.inject.Injector;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -32,7 +32,7 @@ public class ListFragment extends SherlockListFragment {
 	public final View onCreateView(LayoutInflater inflater,
 			ViewGroup container, Bundle savedInstanceState) {
 		View view = onCreateView(savedInstanceState, inflater, container);
-		FragmentsInjector.get().inject(view, this);
+		Injector.get().inject(view, this);
 		injected = true;
 		return view;
 	}

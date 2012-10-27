@@ -16,7 +16,7 @@
 package org.droidparts.activity;
 
 import org.droidparts.R;
-import org.droidparts.inject.FragmentsInjector;
+import org.droidparts.inject.Injector;
 import org.droidparts.inject.Injectable;
 
 import android.os.Bundle;
@@ -41,7 +41,7 @@ public abstract class FragmentActivity extends SherlockFragmentActivity
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		onPreInject();
-		FragmentsInjector.get().inject(this);
+		Injector.get().inject(this);
 	}
 
 	@Override

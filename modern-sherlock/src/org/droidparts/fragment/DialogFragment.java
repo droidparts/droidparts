@@ -15,7 +15,7 @@
  */
 package org.droidparts.fragment;
 
-import org.droidparts.inject.FragmentsInjector;
+import org.droidparts.inject.Injector;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -35,10 +35,10 @@ public class DialogFragment extends SherlockDialogFragment {
 	@Override
 	public final View onCreateView(LayoutInflater inflater,
 			ViewGroup container, Bundle savedInstanceState) {
-		FragmentsInjector.get().inject(getDialog(), this);
+		Injector.get().inject(getDialog(), this);
 		View view = onCreateView(savedInstanceState, inflater, container);
 		if (view != null) {
-			FragmentsInjector.get().inject(view, this);
+			Injector.get().inject(view, this);
 		}
 		injected = true;
 		return view;
