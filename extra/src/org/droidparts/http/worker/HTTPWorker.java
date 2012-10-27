@@ -20,14 +20,9 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import android.os.Build;
+import org.droidparts.http.CookieJar;
 
 public abstract class HTTPWorker<T> {
-
-	public static boolean useHttpURLConnection() {
-		// http://android-developers.blogspot.com/2011/09/androids-http-clients.html
-		return Build.VERSION.SDK_INT >= 10;
-	}
 
 	protected static final int SOCKET_OPERATION_TIMEOUT = 60 * 1000;
 
@@ -57,6 +52,8 @@ public abstract class HTTPWorker<T> {
 		setProxy(proxyUrl.getProtocol(), proxyUrl.getHost(),
 				proxyUrl.getPort(), user, password);
 	}
+
+	public abstract void setCookieJar(CookieJar cookieJar);
 
 	protected abstract void setProxy(String protocol, String host, int port,
 			String user, String password);

@@ -46,6 +46,7 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.params.HttpConnectionParams;
 import org.apache.http.params.HttpParams;
 import org.apache.http.params.HttpProtocolParams;
+import org.droidparts.http.CookieJar;
 import org.droidparts.http.HTTPException;
 import org.droidparts.http.HTTPResponse;
 import org.droidparts.util.L;
@@ -71,6 +72,11 @@ public class HttpClientWorker extends HTTPWorker<HttpResponse> {
 		if (userAgent != null) {
 			HttpProtocolParams.setUserAgent(params, userAgent);
 		}
+	}
+
+	@Override
+	public void setCookieJar(CookieJar cookieJar) {
+		httpClient.setCookieStore(cookieJar);
 	}
 
 	@Override

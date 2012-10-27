@@ -25,12 +25,14 @@ import java.io.File;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.Authenticator;
+import java.net.CookieHandler;
 import java.net.HttpURLConnection;
 import java.net.InetSocketAddress;
 import java.net.PasswordAuthentication;
 import java.net.Proxy;
 import java.net.URL;
 
+import org.droidparts.http.CookieJar;
 import org.droidparts.http.HTTPException;
 import org.droidparts.http.HTTPResponse;
 import org.droidparts.util.L;
@@ -70,6 +72,11 @@ public class HttpURLConnectionWorker extends HTTPWorker<HttpURLConnection> {
 
 	public HttpURLConnectionWorker(String userAgent) {
 		super(userAgent);
+	}
+
+	@Override
+	public void setCookieJar(CookieJar cookieJar) {
+		CookieHandler.setDefault(cookieJar);
 	}
 
 	@Override

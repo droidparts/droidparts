@@ -15,7 +15,6 @@
  */
 package org.droidparts.http;
 
-import static org.droidparts.http.worker.HTTPWorker.useHttpURLConnection;
 import static org.droidparts.http.worker.HttpURLConnectionWorker.DELETE;
 import static org.droidparts.http.worker.HttpURLConnectionWorker.GET;
 import static org.droidparts.http.worker.HttpURLConnectionWorker.POST;
@@ -40,9 +39,11 @@ import android.util.Pair;
 public class RESTClient {
 
 	private final Context ctx;
-
 	private final HttpClientWorker httpClientWorker;
 	private final HttpURLConnectionWorker httpURLConnectionWorker;
+	private static volatile CookieJar cookieJar;
+
+	private boolean forceApacheHttpClient = false;
 
 	public RESTClient(Context ctx, String userAgent) {
 		this.ctx = ctx.getApplicationContext();
@@ -50,13 +51,26 @@ public class RESTClient {
 				: new HttpClientWorker(userAgent);
 		httpURLConnectionWorker = useHttpURLConnection() ? new HttpURLConnectionWorker(
 				userAgent) : null;
+		if (cookieJar == null) {
+			cookieJar = new CookieJar(ctx);
+		}
 		if (Build.VERSION.SDK_INT >= 14) {
 			setHttpResponseCacheEnabled(true);
 		}
+		setCookieCacheEnabled(true, false);
+	}
+
+	public void forceApacheHttpClient(boolean force) {
+		forceApacheHttpClient = force;
 	}
 
 	public void setHttpResponseCacheEnabled(boolean enabled) {
 		HttpURLConnectionWorker.setHttpResponseCacheEnabled(ctx, enabled);
+	}
+
+	public void setCookieCacheEnabled(boolean enabled, boolean persistent) {
+		cookieJar.setPersistent(persistent);
+		getWorker().setCookieJar(enabled ? cookieJar : null);
 	}
 
 	public void addHeader(String key, String value) {
@@ -158,5 +172,11 @@ public class RESTClient {
 		HTTPWorker<?> worker = (httpClientWorker != null) ? httpClientWorker
 				: httpURLConnectionWorker;
 		return worker;
+	}
+
+	private boolean useHttpURLConnection() {
+		// http://android-developers.blogspot.com/2011/09/androids-http-clients.html
+		boolean recentAndroid = Build.VERSION.SDK_INT >= 10;
+		return recentAndroid && !forceApacheHttpClient;
 	}
 }
