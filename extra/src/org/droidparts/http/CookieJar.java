@@ -33,17 +33,21 @@ import org.apache.http.cookie.CookieOrigin;
 import org.apache.http.cookie.CookieSpec;
 import org.apache.http.cookie.MalformedCookieException;
 import org.apache.http.cookie.SM;
+import org.apache.http.impl.cookie.BasicClientCookie;
 import org.apache.http.impl.cookie.BrowserCompatSpec;
 import org.apache.http.message.BasicHeader;
 import org.droidparts.util.L;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
 
 public class CookieJar extends CookieHandler implements CookieStore {
 
 	private final CookieSpec cookieSpec;
 	private final SharedPreferences prefs;
+
+	private boolean persistCookies;
 
 	public CookieJar(Context ctx) {
 		cookieSpec = new BrowserCompatSpec();
@@ -52,7 +56,11 @@ public class CookieJar extends CookieHandler implements CookieStore {
 	}
 
 	public void setPersistent(boolean persistent) {
-		// TODO
+		persistCookies = persistent;
+		if (persistCookies) {
+			cookies.clear();
+			restoreCookies();
+		}
 	}
 
 	// HttpURLConnection
@@ -98,11 +106,17 @@ public class CookieJar extends CookieHandler implements CookieStore {
 			}
 		}
 		cookies.add(cookie);
+		if (persistCookies) {
+			persistCookies();
+		}
 	}
 
 	@Override
 	public void clear() {
 		cookies.clear();
+		if (persistCookies) {
+			persistCookies();
+		}
 	}
 
 	@Override
@@ -115,6 +129,9 @@ public class CookieJar extends CookieHandler implements CookieStore {
 				purged = true;
 			}
 		}
+		if (persistCookies && purged) {
+			persistCookies();
+		}
 		return purged;
 	}
 
@@ -123,24 +140,9 @@ public class CookieJar extends CookieHandler implements CookieStore {
 		return Collections.unmodifiableList(cookies);
 	}
 
-	//
+	// Custom
 
 	private final ArrayList<Cookie> cookies = new ArrayList<Cookie>();
-
-	private boolean isEqual(Cookie first, Cookie second) {
-		boolean equal = first.getName().equals(second.getName())
-				&& first.getValue().equals(second.getValue())
-				&& first.getDomain().equals(second.getDomain())
-				&& first.getPath().equals(second.getPath());
-		return equal;
-	}
-
-	private boolean isSuitable(URI uri, Cookie cookie) {
-		// TODO
-		boolean suitable = uri.getHost().equals(cookie.getDomain())
-				&& uri.getPath().startsWith(cookie.getPath());
-		return suitable;
-	}
 
 	private List<Cookie> parseCookies(URI uri, List<String> cookieHeaders) {
 		ArrayList<Cookie> cookies = new ArrayList<Cookie>();
@@ -157,6 +159,65 @@ public class CookieJar extends CookieHandler implements CookieStore {
 			}
 		}
 		return cookies;
+	}
+
+	private void persistCookies() {
+		Editor editor = prefs.edit();
+		editor.clear();
+		for (int i = 0; i < cookies.size(); i++) {
+			editor.putString(String.valueOf(i), toString(cookies.get(i)));
+		}
+		editor.commit();
+	}
+
+	private void restoreCookies() {
+		for (int i = 0; i < Integer.MAX_VALUE; i++) {
+			String str = prefs.getString(String.valueOf(i), null);
+			if (str == null) {
+				return;
+			} else {
+				cookies.add(fromString(str));
+			}
+		}
+	}
+
+	private static String toString(Cookie cookie) {
+		StringBuilder sb = new StringBuilder();
+		sb.append(cookie.getName());
+		sb.append(SEP);
+		sb.append(cookie.getValue());
+		sb.append(SEP);
+		sb.append(cookie.getDomain());
+		sb.append(SEP);
+		sb.append(cookie.getPath());
+		sb.append(SEP);
+		sb.append(cookie.getExpiryDate().getTime());
+		return sb.toString();
+	}
+
+	private static Cookie fromString(String str) {
+		String[] parts = str.split(SEP);
+		BasicClientCookie cookie = new BasicClientCookie(parts[0], parts[1]);
+		cookie.setDomain(parts[2]);
+		cookie.setPath(parts[3]);
+		cookie.setExpiryDate(new Date(Long.valueOf(parts[4])));
+		return cookie;
+	}
+
+	private static final String SEP = ";";
+
+	private static boolean isEqual(Cookie first, Cookie second) {
+		boolean equal = first.getName().equals(second.getName())
+				&& first.getValue().equals(second.getValue())
+				&& first.getDomain().equals(second.getDomain())
+				&& first.getPath().equals(second.getPath());
+		return equal;
+	}
+
+	private static boolean isSuitable(URI uri, Cookie cookie) {
+		boolean suitable = uri.getHost().equals(cookie.getDomain())
+				&& uri.getPath().startsWith(cookie.getPath());
+		return suitable;
 	}
 
 }
