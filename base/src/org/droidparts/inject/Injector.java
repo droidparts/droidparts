@@ -31,29 +31,22 @@ import android.view.View;
  */
 public class Injector {
 
-	private static Context ctx;
-	private final InjectorDelegate delegate;
-
-	static class Holder {
-		static final Injector INJECTOR = new Injector();
+	public static Context getApplicationContext() {
+		return appCtx;
 	}
 
 	public static Injector get() {
 		return Holder.INJECTOR;
 	}
 
-	public static Context getApplicationContext() {
-		return ctx;
-	}
-
 	public void setUp(Context ctx) {
 		setContext(ctx);
-		InjectorDelegate.setUp(Injector.ctx);
+		InjectorDelegate.setUp(appCtx);
 	}
 
 	public void tearDown() {
 		InjectorDelegate.tearDown();
-		ctx = null;
+		appCtx = null;
 	}
 
 	public <T> T getDependency(Context ctx, Class<T> cls) {
@@ -61,17 +54,10 @@ public class Injector {
 		return DependencyInjector.getDependency(ctx, cls);
 	}
 
-	public void inject(Object target) {
-		if (ctx != null) {
-			delegate.inject(ctx, null, target);
-		} else {
-			throw new IllegalStateException("No context provided.");
-		}
-	}
-
-	public void inject(Context ctx, Object target) {
-		setContext(ctx);
-		delegate.inject(ctx, null, target);
+	public void inject(Activity act) {
+		setContext(act);
+		View root = act.findViewById(android.R.id.content).getRootView();
+		delegate.inject(act, root, act);
 	}
 
 	public void inject(Service serv) {
@@ -79,10 +65,9 @@ public class Injector {
 		delegate.inject(serv, null, serv);
 	}
 
-	public void inject(Activity act) {
-		setContext(act);
-		View root = act.findViewById(android.R.id.content).getRootView();
-		delegate.inject(act, root, act);
+	public void inject(Context ctx, Object target) {
+		setContext(ctx);
+		delegate.inject(ctx, null, target);
 	}
 
 	public void inject(Dialog dialog, Object target) {
@@ -94,6 +79,15 @@ public class Injector {
 		Context ctx = view.getContext();
 		setContext(ctx);
 		delegate.inject(ctx, view, target);
+	}
+
+	//
+
+	private static volatile Context appCtx;
+	private final InjectorDelegate delegate;
+
+	static class Holder {
+		static final Injector INJECTOR = new Injector();
 	}
 
 	private Injector() {
@@ -110,8 +104,8 @@ public class Injector {
 	}
 
 	private static void setContext(Context ctx) {
-		if (Injector.ctx == null) {
-			Injector.ctx = ctx.getApplicationContext();
+		if (appCtx == null) {
+			appCtx = ctx.getApplicationContext();
 		}
 	}
 
