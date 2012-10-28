@@ -17,6 +17,7 @@ package org.droidparts.http.worker;
 
 import static org.apache.http.auth.AuthScope.ANY_HOST;
 import static org.apache.http.auth.AuthScope.ANY_PORT;
+import static org.apache.http.client.params.CookiePolicy.BROWSER_COMPATIBILITY;
 import static org.apache.http.conn.params.ConnRoutePNames.DEFAULT_PROXY;
 import static org.droidparts.contract.Constants.BUFFER_SIZE;
 import static org.droidparts.contract.Constants.UTF8;
@@ -69,6 +70,7 @@ public class HttpClientWorker extends HTTPWorker<HttpResponse> {
 				SOCKET_OPERATION_TIMEOUT);
 		HttpConnectionParams.setSoTimeout(params, SOCKET_OPERATION_TIMEOUT);
 		HttpConnectionParams.setSocketBufferSize(params, BUFFER_SIZE);
+		HttpClientParams.setCookiePolicy(params, BROWSER_COMPATIBILITY);
 		if (userAgent != null) {
 			HttpProtocolParams.setUserAgent(params, userAgent);
 		}

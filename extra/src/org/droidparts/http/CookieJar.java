@@ -98,14 +98,16 @@ public class CookieJar extends CookieHandler implements CookieStore {
 
 	@Override
 	public void addCookie(Cookie cookie) {
+		L.d("Got a cookie: " + cookie);
 		for (Iterator<Cookie> it = cookies.iterator(); it.hasNext();) {
 			Cookie c = it.next();
 			if (isEqual(cookie, c)) {
 				it.remove();
-				break;
 			}
 		}
-		cookies.add(cookie);
+		if (!cookie.isExpired(new Date())) {
+			cookies.add(cookie);
+		}
 		if (persistCookies) {
 			persistCookies();
 		}
@@ -137,6 +139,7 @@ public class CookieJar extends CookieHandler implements CookieStore {
 
 	@Override
 	public List<Cookie> getCookies() {
+		L.d("Cookie count: " + cookies.size());
 		return Collections.unmodifiableList(cookies);
 	}
 
@@ -208,7 +211,6 @@ public class CookieJar extends CookieHandler implements CookieStore {
 
 	private static boolean isEqual(Cookie first, Cookie second) {
 		boolean equal = first.getName().equals(second.getName())
-				&& first.getValue().equals(second.getValue())
 				&& first.getDomain().equals(second.getDomain())
 				&& first.getPath().equals(second.getPath());
 		return equal;

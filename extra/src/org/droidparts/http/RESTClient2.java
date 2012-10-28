@@ -34,6 +34,11 @@ public class RESTClient2 extends RESTClient {
 		super(ctx, userAgent);
 	}
 
+	public RESTClient2(Context ctx, String userAgent,
+			boolean forceApacheHttpClient) {
+		super(ctx, userAgent, forceApacheHttpClient);
+	}
+
 	public JSONObject getJSONObject(String uri) throws HTTPException {
 		String resp = get(uri).body;
 		try {
