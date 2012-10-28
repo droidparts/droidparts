@@ -16,13 +16,18 @@
 package org.droidparts.http;
 
 import static android.content.Context.MODE_PRIVATE;
+import static java.util.Collections.singletonList;
+import static java.util.Collections.singletonMap;
+import static java.util.Collections.unmodifiableList;
+import static org.droidparts.util.Strings.join;
 
 import java.io.IOException;
 import java.net.CookieHandler;
 import java.net.URI;
 import java.util.ArrayList;
-import java.util.Collections;
+import java.util.Collection;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -69,13 +74,11 @@ public class CookieJar extends CookieHandler implements CookieStore {
 	public Map<String, List<String>> get(URI uri,
 			Map<String, List<String>> requestHeaders) throws IOException {
 		clearExpired(new Date());
-		List<String> cookies = new ArrayList<String>();
-		for (Cookie cookie : getCookies()) {
-			if (isSuitable(uri, cookie)) {
-				cookies.add(cookie.getName() + "=" + cookie.getValue());
-			}
+		ArrayList<String> cookies = new ArrayList<String>();
+		for (Cookie cookie : getCookies(uri)) {
+			cookies.add(cookie.getName() + "=" + cookie.getValue());
 		}
-		return Collections.singletonMap(SM.COOKIE, cookies);
+		return singletonMap(SM.COOKIE, singletonList(join(cookies, SEP, null)));
 	}
 
 	@Override
@@ -140,7 +143,7 @@ public class CookieJar extends CookieHandler implements CookieStore {
 	@Override
 	public List<Cookie> getCookies() {
 		L.d("Cookie count: " + cookies.size());
-		return Collections.unmodifiableList(cookies);
+		return unmodifiableList(cookies);
 	}
 
 	// Custom
@@ -162,6 +165,27 @@ public class CookieJar extends CookieHandler implements CookieStore {
 			}
 		}
 		return cookies;
+	}
+
+	private Collection<Cookie> getCookies(URI uri) {
+		HashMap<String, Cookie> map = new HashMap<String, Cookie>();
+		for (Cookie cookie : getCookies()) {
+			boolean suitable = uri.getHost().equals(cookie.getDomain())
+					&& uri.getPath().startsWith(cookie.getPath());
+			if (suitable) {
+				boolean put = true;
+				if (map.containsKey(cookie.getName())) {
+					Cookie otherCookie = map.get(cookie.getName());
+					boolean betterMatchingPath = cookie.getPath().length() > otherCookie
+							.getPath().length();
+					put = betterMatchingPath;
+				}
+				if (put) {
+					map.put(cookie.getName(), cookie);
+				}
+			}
+		}
+		return map.values();
 	}
 
 	private void persistCookies() {
@@ -214,12 +238,6 @@ public class CookieJar extends CookieHandler implements CookieStore {
 				&& first.getDomain().equals(second.getDomain())
 				&& first.getPath().equals(second.getPath());
 		return equal;
-	}
-
-	private static boolean isSuitable(URI uri, Cookie cookie) {
-		boolean suitable = uri.getHost().equals(cookie.getDomain())
-				&& uri.getPath().startsWith(cookie.getPath());
-		return suitable;
 	}
 
 }
