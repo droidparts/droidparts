@@ -63,7 +63,6 @@ public class RESTClient {
 		if (Build.VERSION.SDK_INT >= 14) {
 			setHttpResponseCacheEnabled(true);
 		}
-		setCookieCacheEnabled(true, false);
 	}
 
 	public void setHttpResponseCacheEnabled(boolean enabled) {
