@@ -1,3 +1,7 @@
+0.8.9 /2012-11-09/:
+    * We have cookies too: cookie cache for RESTClient.
+    * Injector cleanup.
+
 0.8.8 /2012-10-27/:
     * Changed setInvisible(), setGone() methods to support multiple Views at once.
     * Added a workaround for a common AsyncTask bug.
