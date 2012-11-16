@@ -25,6 +25,7 @@ import static org.droidparts.reflect.util.TypeHelper.isArray;
 import static org.droidparts.reflect.util.TypeHelper.isBoolean;
 import static org.droidparts.reflect.util.TypeHelper.isByte;
 import static org.droidparts.reflect.util.TypeHelper.isCollection;
+import static org.droidparts.reflect.util.TypeHelper.isEntity;
 import static org.droidparts.reflect.util.TypeHelper.isFloat;
 import static org.droidparts.reflect.util.TypeHelper.isInteger;
 import static org.droidparts.reflect.util.TypeHelper.isLong;
@@ -178,7 +179,7 @@ public final class FieldSpecBuilder {
 		String name = ann.name;
 		if (isEmpty(name)) {
 			name = field.getName();
-			if (!name.endsWith(ID_SUFFIX)) {
+			if (isEntity(field.getType()) && !name.endsWith(ID_SUFFIX)) {
 				name += ID_SUFFIX;
 			}
 		}
@@ -187,7 +188,8 @@ public final class FieldSpecBuilder {
 
 	private static final String ID_SUFFIX = "_id";
 
-	private static void sanitizeFields(ArrayList<FieldSpec<ColumnAnn>> columnSpecs) {
+	private static void sanitizeFields(
+			ArrayList<FieldSpec<ColumnAnn>> columnSpecs) {
 		for (FieldSpec<ColumnAnn> spec : columnSpecs) {
 			if (spec.ann.nullable) {
 				Class<?> fieldType = spec.field.getType();
