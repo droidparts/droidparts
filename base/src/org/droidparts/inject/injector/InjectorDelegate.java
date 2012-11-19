@@ -52,7 +52,7 @@ public class InjectorDelegate {
 			boolean success = inject(ctx, root, target, spec.ann, spec.field);
 			if (!success) {
 				L.e("Failed to inject field '" + spec.field.getName() + "' in "
-						+ cls.getSimpleName() + ".");
+						+ cls.getName() + ".");
 			}
 		}
 		long end = System.currentTimeMillis() - start;
