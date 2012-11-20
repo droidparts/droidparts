@@ -92,8 +92,8 @@ public class DependencyInjector {
 					}
 					return val;
 				} catch (Exception e) {
-					L.d(e);
 					L.e("No valid dependency method for " + cls.getName());
+					L.d(e);
 				}
 			}
 		}
@@ -124,8 +124,8 @@ public class DependencyInjector {
 					.newInstance(ctx.getApplicationContext());
 			return adp;
 		} catch (Exception e) {
-			L.d(e);
 			L.e("Not a valid DroidParts dependency provider: " + className);
+			L.d(e);
 			return null;
 		}
 	}
