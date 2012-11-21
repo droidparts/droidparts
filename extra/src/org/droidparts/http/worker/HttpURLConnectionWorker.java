@@ -48,7 +48,7 @@ public class HttpURLConnectionWorker extends HTTPWorker<HttpURLConnection> {
 	public static final String DELETE = "DELETE";
 
 	private Proxy proxy;
-	private Authenticator auth;
+	private Authenticator basicAuthenticator;
 
 	// ICS+
 	public static void setHttpResponseCacheEnabled(Context ctx, boolean enabled) {
@@ -90,20 +90,21 @@ public class HttpURLConnectionWorker extends HTTPWorker<HttpURLConnection> {
 	}
 
 	@Override
-	public void authenticateBasic(String user, String password) {
-		final PasswordAuthentication passAuth = new PasswordAuthentication(
-				user, password.toCharArray());
-		auth = new Authenticator() {
+	public void authenticateBasic(final String user, final String password) {
+		basicAuthenticator = new Authenticator() {
+
+			@Override
 			protected PasswordAuthentication getPasswordAuthentication() {
-				return passAuth;
+				return new PasswordAuthentication(user, password.toCharArray());
 			}
+
 		};
 	}
 
 	public HttpURLConnection getConnection(String urlStr, String requestMethod)
 			throws HTTPException {
-		if (auth != null) {
-			Authenticator.setDefault(auth);
+		if (basicAuthenticator != null) {
+			Authenticator.setDefault(basicAuthenticator);
 		}
 		try {
 			URL url = new URL(urlStr);
