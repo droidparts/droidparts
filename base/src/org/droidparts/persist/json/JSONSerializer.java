@@ -95,7 +95,7 @@ public class JSONSerializer<ModelType extends Model> {
 		return model;
 	}
 
-	public final JSONArray serialize(Collection<ModelType> items)
+	public JSONArray serialize(Collection<ModelType> items)
 			throws JSONException {
 		JSONArray arr = new JSONArray();
 		for (ModelType item : items) {
@@ -104,8 +104,7 @@ public class JSONSerializer<ModelType extends Model> {
 		return arr;
 	}
 
-	public final ArrayList<ModelType> deserialize(JSONArray arr)
-			throws JSONException {
+	public ArrayList<ModelType> deserialize(JSONArray arr) throws JSONException {
 		ArrayList<ModelType> list = new ArrayList<ModelType>();
 		for (int i = 0; i < arr.length(); i++) {
 			list.add(deserialize(arr.getJSONObject(i)));
