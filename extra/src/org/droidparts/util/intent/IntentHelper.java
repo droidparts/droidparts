@@ -15,12 +15,17 @@
  */
 package org.droidparts.util.intent;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.droidparts.util.L;
 import org.droidparts.util.ui.AbstractDialogFactory;
 
 import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
+import android.content.pm.ResolveInfo;
 
 public class IntentHelper {
 
@@ -46,6 +51,27 @@ public class IntentHelper {
 			L.e(e);
 			new AbstractDialogFactory(ctx).showErrorToast();
 		}
+	}
+
+	public ActivityInfo[] getIntentHandlers(Intent intent,
+			String... optionalPackageNames) {
+		List<ResolveInfo> list = ctx.getPackageManager().queryIntentActivities(
+				intent, 0);
+		ArrayList<ActivityInfo> activities = new ArrayList<ActivityInfo>();
+		for (ResolveInfo ri : list) {
+			ActivityInfo ai = ri.activityInfo;
+			if (optionalPackageNames.length > 0) {
+				for (String pkgName : optionalPackageNames) {
+					if (ai.packageName.startsWith(pkgName)) {
+						activities.add(ai);
+						break;
+					}
+				}
+			} else {
+				activities.add(ai);
+			}
+		}
+		return activities.toArray(new ActivityInfo[activities.size()]);
 	}
 
 }
