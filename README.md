@@ -9,17 +9,8 @@ is a carefully crafted Android framework that includes:
 * *RESTClient* for GETting, PUTting, POSTing, DELETing & InputStream-getting, also speaks JSON.
 * *ImageAttacher* to asynchronously attach images to ImageViews, cross fade support.
 * Numerous *Utils*.
-* Support for *Fragments* in cooperation with [ActionBarSherlock][1].
+* Support for *Fragments*, both native and [ActionBarSherlock][1]-based.
 
-Getting Started
----------------
-User Guide is available at http://droidparts.org.
-Please check out a couple of sample apps under /sample.
-
-Contributing
-------------
-* Pull Requests are preferred over Issues.
-* Please use http://stackoverflow.com/tags/droidparts for questions.
-
+The **User Guide** is available at http://droidparts.org.
 
  [1]: https://github.com/JakeWharton/ActionBarSherlock
