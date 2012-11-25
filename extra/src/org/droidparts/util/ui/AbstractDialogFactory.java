@@ -16,9 +16,6 @@
 package org.droidparts.util.ui;
 
 import static android.widget.Toast.LENGTH_SHORT;
-
-import org.droidparts.R;
-
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.widget.Toast;
@@ -34,7 +31,7 @@ public class AbstractDialogFactory {
 	}
 
 	public void showErrorToast() {
-		showToast(R.string.error);
+		showToast("Error");
 	}
 
 	public void showToast(int msgResId, Object... formatArgs) {
