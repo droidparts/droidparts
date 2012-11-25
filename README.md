@@ -11,6 +11,8 @@ is a carefully crafted Android framework that includes:
 * Numerous *Utils*.
 * Support for *Fragments*, both native and [ActionBarSherlock][1]-based.
 
-The **User Guide** is available at http://droidparts.org.
+Documentation
+-------------
+is available at http://droidparts.org.
 
  [1]: https://github.com/JakeWharton/ActionBarSherlock
