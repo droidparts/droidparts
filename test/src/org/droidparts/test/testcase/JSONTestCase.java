@@ -5,8 +5,8 @@ import static org.droidparts.util.Strings.join;
 
 import java.util.ArrayList;
 
-import org.droidparts.R;
 import org.droidparts.persist.json.JSONSerializer;
+import org.droidparts.test.R;
 import org.droidparts.test.model.Album;
 import org.droidparts.test.model.Nested;
 import org.droidparts.test.model.Primitives;
