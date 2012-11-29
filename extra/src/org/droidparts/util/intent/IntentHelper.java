@@ -53,23 +53,12 @@ public class IntentHelper {
 		}
 	}
 
-	public ActivityInfo[] getIntentHandlers(Intent intent,
-			String... optionalPackageNames) {
+	public ActivityInfo[] getIntentHandlers(Intent intent) {
 		List<ResolveInfo> list = ctx.getPackageManager().queryIntentActivities(
 				intent, 0);
 		ArrayList<ActivityInfo> activities = new ArrayList<ActivityInfo>();
 		for (ResolveInfo ri : list) {
-			ActivityInfo ai = ri.activityInfo;
-			if (optionalPackageNames.length > 0) {
-				for (String pkgName : optionalPackageNames) {
-					if (ai.packageName.startsWith(pkgName)) {
-						activities.add(ai);
-						break;
-					}
-				}
-			} else {
-				activities.add(ai);
-			}
+			activities.add(ri.activityInfo);
 		}
 		return activities.toArray(new ActivityInfo[activities.size()]);
 	}

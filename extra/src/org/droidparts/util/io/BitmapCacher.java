@@ -41,7 +41,7 @@ public class BitmapCacher {
 	}
 
 	public boolean saveToCache(String name, Bitmap bm) {
-		File file = new File(cacheDir, getFileName(name));
+		File file = getCachedFile(name);
 		BufferedOutputStream bos = null;
 		try {
 			bos = new BufferedOutputStream(new FileOutputStream(file),
@@ -57,7 +57,7 @@ public class BitmapCacher {
 	}
 
 	public Bitmap readFromCache(String name) {
-		File file = new File(cacheDir, getFileName(name));
+		File file = getCachedFile(name);
 		if (file.exists()) {
 			BufferedInputStream bis = null;
 			try {
@@ -88,8 +88,8 @@ public class BitmapCacher {
 		}
 	}
 
-	private static String getFileName(String name) {
-		return HashCalc.getMD5(name);
+	public File getCachedFile(String name) {
+		return new File(cacheDir, HashCalc.getMD5(name));
 	}
 
 }

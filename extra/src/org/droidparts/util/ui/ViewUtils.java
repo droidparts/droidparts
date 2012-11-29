@@ -105,16 +105,4 @@ public class ViewUtils {
 		}
 	}
 
-	//
-
-	@Deprecated
-	public static void setInvisible(View view, boolean invisible) {
-		setInvisible(invisible, view);
-	}
-
-	@Deprecated
-	public static void setGone(View view, boolean gone) {
-		setGone(gone, view);
-	}
-
 }

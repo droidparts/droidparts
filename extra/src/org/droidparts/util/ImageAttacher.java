@@ -93,6 +93,10 @@ public class ImageAttacher {
 		L.e(e);
 	}
 
+	protected BitmapCacher getBitmapCacher() {
+		return bitmapCacher;
+	}
+
 	private void addAndExecute(ImageView view, Pair<String, View> pair) {
 		data.put(view, pair);
 		executorService.execute(fetchAndAttachRunnable);
