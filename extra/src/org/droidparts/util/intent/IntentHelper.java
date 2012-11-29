@@ -57,8 +57,10 @@ public class IntentHelper {
 		List<ResolveInfo> list = ctx.getPackageManager().queryIntentActivities(
 				intent, 0);
 		ArrayList<ActivityInfo> activities = new ArrayList<ActivityInfo>();
-		for (ResolveInfo ri : list) {
-			activities.add(ri.activityInfo);
+		if (list != null) {
+			for (ResolveInfo ri : list) {
+				activities.add(ri.activityInfo);
+			}
 		}
 		return activities.toArray(new ActivityInfo[activities.size()]);
 	}
