@@ -39,7 +39,6 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <jdk>c:\Program Files\Java\jdk1.7.0</jdk>
     </properties>
 
     <modules>
