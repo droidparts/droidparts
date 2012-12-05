@@ -1,61 +1,56 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-	<modelVersion>4.0.0</modelVersion>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
 
-	<parent>
-		<groupId>org.droidparts</groupId>
-		<artifactId>droidparts-parent</artifactId>
-		<version>1.0-SNAPSHOT</version>
-	</parent>
+    <parent>
+        <groupId>org.droidparts</groupId>
+        <artifactId>droidparts-parent</artifactId>
+        <version>1.0-SNAPSHOT</version>
+    </parent>
 
-	<artifactId>legacy</artifactId>
-	<name>DroidParts Legacy</name>
-	<description>Legacy</description>
+    <artifactId>legacy</artifactId>
+    <name>DroidParts Legacy</name>
+    <description>Legacy</description>
     <packaging>apklib</packaging>
 
-     <dependencies>
-            <dependency>
-                <groupId>android</groupId>
-                <artifactId>android</artifactId>
-                <version>2.2_r3</version>
-                <scope>provided</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.droidparts</groupId>
-                <artifactId>base</artifactId>
-                <version>${version}</version>
-            </dependency>
+    <dependencies>
+        <dependency>
+            <groupId>android</groupId>
+            <artifactId>android</artifactId>
+            <version>2.2_r3</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.droidparts</groupId>
+            <artifactId>base</artifactId>
+            <version>${version}</version>
+        </dependency>
     </dependencies>
 
-	<build>
+    <build>
         <sourceDirectory>src</sourceDirectory>
-		<plugins>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-compiler-plugin</artifactId>
-				<configuration>
-					<source>1.5</source>
-					<target>1.5</target>
-					<compilerArgument>-proc:none</compilerArgument>
-                    <verbose>true</verbose>  
-                    <fork>true</fork>  
-                    <executable>${jdk}/bin/javac</executable>  
-				</configuration>
-			</plugin>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>1.5</source>
+                    <target>1.5</target>
+                    <compilerArgument>-proc:none</compilerArgument>
+                </configuration>
+            </plugin>
             <plugin>
                 <groupId>com.jayway.maven.plugins.android.generation2</groupId>
                 <artifactId>android-maven-plugin</artifactId>
                 <inherited>true</inherited>
                 <extensions>true</extensions>
-                    <configuration>
-<!--                             <sign>
-                                <debug>false</debug>
-                            </sign>
-                            <proguard>
-                                <skip>false</skip>
-                            </proguard>
- -->                </configuration>
+                <configuration>
+                    <!--<proguard>-->
+                        <!--<skip>false</skip>-->
+                    <!--</proguard>-->
+                </configuration>
             </plugin>
-		</plugins>
-	</build>
+        </plugins>
+    </build>
 </project>
