@@ -44,11 +44,11 @@
 
     <modules>
         <module>base</module>
-<!--         <module>extra</module>
+        <module>extra</module>
         <module>legacy</module>
         <module>modern-native</module>
         <module>modern-sherlock</module>
- -->    </modules>
+    </modules>
 
     <dependencyManagement>
         <dependencies>
