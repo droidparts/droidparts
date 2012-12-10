@@ -171,8 +171,10 @@ public class HttpURLConnectionWorker extends HTTPWorker<HttpURLConnection> {
 		try {
 			conn.connect();
 			int respCode = conn.getResponseCode();
-			if (respCode >= 400) {
-				String respBody = readAndCloseInputStream(conn.getInputStream());
+			if (isErrorResponseCode(respCode)) {
+				InputStream is = (conn.getErrorStream() != null) ? conn
+						.getErrorStream() : conn.getInputStream();
+				String respBody = readAndCloseInputStream(is);
 				conn.disconnect();
 				throw new HTTPException(respCode, respBody);
 			}

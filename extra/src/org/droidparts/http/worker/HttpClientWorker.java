@@ -152,33 +152,10 @@ public class HttpClientWorker extends HTTPWorker<HttpResponse> {
 		}
 	}
 
-	private static InputStream getUnpackedInputStream(HttpEntity entity)
-			throws HTTPException {
-		try {
-			InputStream is = entity.getContent();
-			Header contentEncodingHeader = entity.getContentEncoding();
-			if (contentEncodingHeader != null) {
-				String contentEncoding = contentEncodingHeader.getValue();
-				L.d("Content-Encoding: " + contentEncoding);
-				if (isNotEmpty(contentEncoding)) {
-					contentEncoding = contentEncoding.toLowerCase();
-					if (contentEncoding.contains("gzip")) {
-						return new GZIPInputStream(is);
-					} else if (contentEncoding.contains("deflate")) {
-						return new InflaterInputStream(is);
-					}
-				}
-			}
-			return is;
-		} catch (Exception e) {
-			throw new HTTPException(e);
-		}
-	}
-
 	private static int getResponseCodeOrThrow(HttpResponse resp)
 			throws HTTPException {
 		int respCode = resp.getStatusLine().getStatusCode();
-		if (respCode >= 400) {
+		if (isErrorResponseCode(respCode)) {
 			String respBody = getResponseBodyAndConsume(resp);
 			throw new HTTPException(respCode, respBody);
 		}
@@ -211,6 +188,29 @@ public class HttpClientWorker extends HTTPWorker<HttpResponse> {
 			} catch (Exception e) {
 				L.d(e);
 			}
+		}
+	}
+
+	private static InputStream getUnpackedInputStream(HttpEntity entity)
+			throws HTTPException {
+		try {
+			InputStream is = entity.getContent();
+			Header contentEncodingHeader = entity.getContentEncoding();
+			if (contentEncodingHeader != null) {
+				String contentEncoding = contentEncodingHeader.getValue();
+				L.d("Content-Encoding: " + contentEncoding);
+				if (isNotEmpty(contentEncoding)) {
+					contentEncoding = contentEncoding.toLowerCase();
+					if (contentEncoding.contains("gzip")) {
+						return new GZIPInputStream(is);
+					} else if (contentEncoding.contains("deflate")) {
+						return new InflaterInputStream(is);
+					}
+				}
+			}
+			return is;
+		} catch (Exception e) {
+			throw new HTTPException(e);
 		}
 	}
 

@@ -55,6 +55,10 @@ public abstract class HTTPWorker<T> {
 
 	public abstract void setCookieJar(CookieJar cookieJar);
 
+	protected static final boolean isErrorResponseCode(int responseCode) {
+		return responseCode >= 400;
+	}
+
 	protected abstract void setProxy(String protocol, String host, int port,
 			String user, String password);
 
