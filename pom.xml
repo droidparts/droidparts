@@ -14,8 +14,8 @@
     <packaging>pom</packaging>
 
     <name>DroidParts Parent</name>
-    <description>Android framework that saves keystrokes</description>
-    <url>http://http://droidparts.org</url>
+    <description>A carefully crafted Android framework.</description>
+    <url>http://droidparts.org</url>
 
     <inceptionYear>2012</inceptionYear>
 
