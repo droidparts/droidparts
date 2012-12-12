@@ -15,8 +15,6 @@
  */
 package org.droidparts.http.worker;
 
-import static org.apache.http.auth.AuthScope.ANY_HOST;
-import static org.apache.http.auth.AuthScope.ANY_PORT;
 import static org.apache.http.client.params.CookiePolicy.BROWSER_COMPATIBILITY;
 import static org.apache.http.conn.params.ConnRoutePNames.DEFAULT_PROXY;
 import static org.droidparts.contract.Constants.BUFFER_SIZE;
@@ -97,10 +95,9 @@ public class HttpClientWorker extends HTTPWorker<HttpResponse> {
 
 	@Override
 	public void authenticateBasic(String user, String password) {
-		AuthScope authScope = new AuthScope(ANY_HOST, ANY_PORT);
 		UsernamePasswordCredentials credentials = new UsernamePasswordCredentials(
 				user, password);
-		httpClient.getCredentialsProvider().setCredentials(authScope,
+		httpClient.getCredentialsProvider().setCredentials(AuthScope.ANY,
 				credentials);
 	}
 
