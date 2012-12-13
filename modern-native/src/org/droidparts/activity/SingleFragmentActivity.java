@@ -20,6 +20,8 @@ import org.droidparts.R;
 import android.app.Fragment;
 import android.app.FragmentTransaction;
 import android.os.Bundle;
+import android.view.ViewGroup;
+import android.widget.FrameLayout;
 
 public abstract class SingleFragmentActivity<F extends Fragment> extends
 		FragmentActivity {
@@ -28,7 +30,12 @@ public abstract class SingleFragmentActivity<F extends Fragment> extends
 
 	@Override
 	public void onPreInject() {
-		setContentView(R.layout.activity_single_fragment);
+		FrameLayout fl = new FrameLayout(this);
+		fl.setLayoutParams(new ViewGroup.LayoutParams(
+				ViewGroup.LayoutParams.FILL_PARENT,
+				ViewGroup.LayoutParams.FILL_PARENT));
+		fl.setId(R.id.content_view);
+		setContentView(fl);
 	}
 
 	@Override
@@ -36,7 +43,7 @@ public abstract class SingleFragmentActivity<F extends Fragment> extends
 		super.onCreate(savedInstanceState);
 		fragment = onCreateFragment();
 		FragmentTransaction ft = getFragmentManager().beginTransaction();
-		ft.add(R.id.view_content, fragment);
+		ft.add(R.id.content_view, fragment);
 		ft.commit();
 	}
 
