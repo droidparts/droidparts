@@ -20,7 +20,7 @@ import static org.droidparts.util.Strings.join;
 import org.droidparts.annotation.inject.InjectBundleExtra;
 import org.droidparts.annotation.inject.InjectDependency;
 import org.droidparts.annotation.inject.InjectView;
-import org.droidparts.fragment.DialogFragment;
+import org.droidparts.fragment.sherlock.DialogFragment;
 import org.droidparts.gram.R;
 import org.droidparts.gram.model.Image;
 import org.droidparts.gram.persist.PrefsManager;

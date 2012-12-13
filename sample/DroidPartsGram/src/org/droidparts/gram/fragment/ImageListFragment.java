@@ -17,7 +17,7 @@ package org.droidparts.gram.fragment;
 
 import org.droidparts.annotation.inject.InjectParentActivity;
 import org.droidparts.contract.AlterableContent;
-import org.droidparts.fragment.ListFragment;
+import org.droidparts.fragment.sherlock.ListFragment;
 import org.droidparts.gram.adapter.ImageListAdapter;
 
 import android.view.View;
