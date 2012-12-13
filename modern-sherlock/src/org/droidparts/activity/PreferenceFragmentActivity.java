@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License. 
  */
-package org.droidparts.activity.sherlock;
+package org.droidparts.activity;
 
 import org.droidparts.inject.Injectable;
 import org.droidparts.inject.Injector;
@@ -26,7 +26,7 @@ import android.preference.PreferenceScreen;
 
 import com.actionbarsherlock.app.SherlockPreferenceActivity;
 
-public class PreferenceActivity extends SherlockPreferenceActivity
+public class PreferenceFragmentActivity extends SherlockPreferenceActivity
 		implements Injectable {
 
 	@Override

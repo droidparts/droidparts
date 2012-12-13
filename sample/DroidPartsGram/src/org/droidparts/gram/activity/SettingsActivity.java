@@ -17,7 +17,7 @@ package org.droidparts.gram.activity;
 
 import static org.droidparts.util.Strings.join;
 
-import org.droidparts.activity.sherlock.PreferenceActivity;
+import org.droidparts.activity.PreferenceFragmentActivity;
 import org.droidparts.gram.R;
 import org.droidparts.preference.MultiSelectListPreference;
 
@@ -29,7 +29,7 @@ import android.preference.Preference.OnPreferenceChangeListener;
 
 import com.actionbarsherlock.view.MenuItem;
 
-public class SettingsActivity extends PreferenceActivity implements
+public class SettingsActivity extends PreferenceFragmentActivity implements
 		OnPreferenceChangeListener {
 
 	public static Intent getIntent(Context ctx) {
