@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License. 
  */
-package org.droidparts.fragment;
+package org.droidparts.fragment.sherlock;
 
 import org.droidparts.inject.Injector;
 

@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License. 
  */
-package org.droidparts.activity;
+package org.droidparts.activity.sherlock;
 
 import org.droidparts.R;
 import org.droidparts.inject.Injector;
