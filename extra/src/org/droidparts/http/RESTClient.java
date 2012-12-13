@@ -45,11 +45,16 @@ public class RESTClient {
 	private final HttpURLConnectionWorker httpURLConnectionWorker;
 	private static volatile CookieJar cookieJar;
 
+	public RESTClient(Context ctx) {
+		this(ctx, "DroidParts (" + Build.MANUFACTURER + "; " + Build.MODEL
+				+ "; " + Build.VERSION.RELEASE + ")");
+	}
+
 	public RESTClient(Context ctx, String userAgent) {
 		this(ctx, userAgent, false);
 	}
 
-	public RESTClient(Context ctx, String userAgent,
+	protected RESTClient(Context ctx, String userAgent,
 			boolean forceApacheHttpClient) {
 		this.ctx = ctx.getApplicationContext();
 		this.forceApacheHttpClient = forceApacheHttpClient;

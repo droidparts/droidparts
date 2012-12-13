@@ -62,6 +62,7 @@ public class HttpClientWorker extends HTTPWorker<HttpResponse> {
 		super(userAgent);
 		httpClient = new DefaultHttpClient();
 		HttpParams params = httpClient.getParams();
+		HttpProtocolParams.setUserAgent(params, userAgent);
 		HttpConnectionParams.setStaleCheckingEnabled(params, false);
 		HttpClientParams.setRedirecting(params, false);
 		HttpConnectionParams.setConnectionTimeout(params,
@@ -69,9 +70,6 @@ public class HttpClientWorker extends HTTPWorker<HttpResponse> {
 		HttpConnectionParams.setSoTimeout(params, SOCKET_OPERATION_TIMEOUT);
 		HttpConnectionParams.setSocketBufferSize(params, BUFFER_SIZE);
 		HttpClientParams.setCookiePolicy(params, BROWSER_COMPATIBILITY);
-		if (userAgent != null) {
-			HttpProtocolParams.setUserAgent(params, userAgent);
-		}
 	}
 
 	@Override
