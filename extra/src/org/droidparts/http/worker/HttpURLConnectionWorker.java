@@ -120,9 +120,7 @@ public class HttpURLConnectionWorker extends HTTPWorker<HttpURLConnection> {
 				}
 			}
 			conn.setRequestMethod(requestMethod);
-			if (userAgent != null) {
-				conn.setRequestProperty("http.agent", userAgent);
-			}
+			conn.setRequestProperty("http.agent", userAgent);
 			if (PUT.equals(requestMethod) || POST.equals(requestMethod)) {
 				conn.setDoOutput(true);
 			}

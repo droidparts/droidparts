@@ -30,6 +30,10 @@ public class RESTClient2 extends RESTClient {
 	private static final String APPLICATION_JSON = "application/json";
 	private static final String APPLICATION_FORM_DATA = "application/x-www-form-urlencoded";
 
+	public RESTClient2(Context ctx) {
+		super(ctx);
+	}
+
 	public RESTClient2(Context ctx, String userAgent) {
 		super(ctx, userAgent);
 	}
