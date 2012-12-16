@@ -24,9 +24,11 @@ import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.Authenticator;
 import java.net.CookieHandler;
 import java.net.HttpURLConnection;
 import java.net.InetSocketAddress;
+import java.net.PasswordAuthentication;
 import java.net.Proxy;
 import java.net.URL;
 
@@ -51,6 +53,7 @@ public class HttpURLConnectionWorker extends HTTPWorker<HttpURLConnection> {
 
 	private Proxy proxy;
 	private String basicAuthStr;
+	private Authenticator basicAuthenticator;
 
 	// ICS+
 	public static void setHttpResponseCacheEnabled(Context ctx, boolean enabled) {
@@ -95,6 +98,14 @@ public class HttpURLConnectionWorker extends HTTPWorker<HttpURLConnection> {
 	public void authenticateBasic(final String user, final String password) {
 		basicAuthStr = Base64.encodeToString(
 				(user + ":" + password).getBytes(), Base64.DEFAULT);
+		basicAuthenticator = new Authenticator() {
+
+			@Override
+			protected PasswordAuthentication getPasswordAuthentication() {
+				return new PasswordAuthentication(user, password.toCharArray());
+			}
+
+		};
 	}
 
 	public HttpURLConnection getConnection(String urlStr, String requestMethod)
@@ -112,12 +123,16 @@ public class HttpURLConnectionWorker extends HTTPWorker<HttpURLConnection> {
 					conn.addRequestProperty(key, val);
 				}
 			}
-			conn.setRequestMethod(requestMethod);
 			conn.setRequestProperty("http.agent", userAgent);
 			if (basicAuthStr != null) {
-				conn.setRequestProperty("Authorization", "Basic "
-						+ basicAuthStr);
+				Authenticator.setDefault(basicAuthenticator);
+				// XXX wtf?!
+				if (Build.VERSION.SDK_INT > 10) {
+					conn.setRequestProperty("Authorization", "Basic "
+							+ basicAuthStr);
+				}
 			}
+			conn.setRequestMethod(requestMethod);
 			if (PUT.equals(requestMethod) || POST.equals(requestMethod)) {
 				conn.setDoOutput(true);
 			}
@@ -200,6 +215,7 @@ public class HttpURLConnectionWorker extends HTTPWorker<HttpURLConnection> {
 			throw new HTTPException(e);
 		} finally {
 			conn.disconnect();
+			Authenticator.setDefault(null);
 		}
 	}
 
