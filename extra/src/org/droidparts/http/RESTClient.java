@@ -45,16 +45,17 @@ public class RESTClient {
 	private final HttpURLConnectionWorker httpURLConnectionWorker;
 	private static volatile CookieJar cookieJar;
 
+	public static String getDefaultUserAgent(String nameHint) {
+		return ((nameHint != null) ? nameHint : " DroidParts.org")
+				+ " (Android " + Build.VERSION.RELEASE + "; " + Build.MODEL
+				+ " Build/" + Build.ID + ")";
+	}
+
 	public RESTClient(Context ctx) {
-		this(ctx, "DroidParts (" + Build.MANUFACTURER + "; " + Build.MODEL
-				+ "; " + Build.VERSION.RELEASE + ")");
+		this(ctx, getDefaultUserAgent(null), false);
 	}
 
-	public RESTClient(Context ctx, String userAgent) {
-		this(ctx, userAgent, false);
-	}
-
-	protected RESTClient(Context ctx, String userAgent,
+	public RESTClient(Context ctx, String userAgent,
 			boolean forceApacheHttpClient) {
 		this.ctx = ctx.getApplicationContext();
 		this.forceApacheHttpClient = forceApacheHttpClient;

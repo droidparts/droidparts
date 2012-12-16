@@ -34,10 +34,6 @@ public class RESTClient2 extends RESTClient {
 		super(ctx);
 	}
 
-	public RESTClient2(Context ctx, String userAgent) {
-		super(ctx, userAgent);
-	}
-
 	public RESTClient2(Context ctx, String userAgent,
 			boolean forceApacheHttpClient) {
 		super(ctx, userAgent, forceApacheHttpClient);

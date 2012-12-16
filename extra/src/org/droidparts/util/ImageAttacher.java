@@ -49,8 +49,7 @@ public class ImageAttacher {
 	private int crossFadeAnimationDuration = 400;
 
 	public ImageAttacher(Context ctx) {
-		this(ctx, Executors.newSingleThreadExecutor(),
-				new RESTClient(ctx, null));
+		this(ctx, Executors.newSingleThreadExecutor(), new RESTClient(ctx));
 	}
 
 	public ImageAttacher(Context ctx, ExecutorService executorService,

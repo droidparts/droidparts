@@ -20,7 +20,6 @@ import org.droidparts.http.HTTPResponse;
 import org.droidparts.http.RESTClient;
 import org.droidparts.http.RESTClient2;
 
-import android.content.Context;
 import android.test.AndroidTestCase;
 
 public class RESTClientTestCase extends AndroidTestCase {
@@ -36,7 +35,8 @@ public class RESTClientTestCase extends AndroidTestCase {
 	}
 
 	public void testHttpBasicAuthLegacy() {
-		RESTClient2 client = new LegacyRESTClient(getContext());
+		RESTClient2 client = new RESTClient2(getContext(),
+				RESTClient.getDefaultUserAgent(null), true);
 		testUnauthenticated(client);
 		testAuthenticatedWrongCredentials(client);
 		testAuthenticated(client);
@@ -69,14 +69,6 @@ public class RESTClientTestCase extends AndroidTestCase {
 		} catch (HTTPException e) {
 			assertNull(e);
 		}
-	}
-
-	static class LegacyRESTClient extends RESTClient2 {
-
-		public LegacyRESTClient(Context ctx) {
-			super(ctx, "DroidParts", true);
-		}
-
 	}
 
 }

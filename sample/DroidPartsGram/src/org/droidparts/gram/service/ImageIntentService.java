@@ -61,7 +61,7 @@ public class ImageIntentService extends SimpleIntentService {
 	@Override
 	public void onCreate() {
 		super.onCreate();
-		restClient = new RESTClient2(this, Instagram.USER_AGENT);
+		restClient = new RESTClient2(this);
 	}
 
 	@Override
