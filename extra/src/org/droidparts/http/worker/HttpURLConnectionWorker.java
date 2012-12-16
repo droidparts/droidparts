@@ -37,13 +37,9 @@ import org.droidparts.http.HTTPException;
 import org.droidparts.http.HTTPResponse;
 import org.droidparts.util.L;
 
-import android.annotation.TargetApi;
 import android.content.Context;
-import android.os.Build;
-import android.util.Base64;
 import android.util.Pair;
 
-@TargetApi(Build.VERSION_CODES.FROYO)
 public class HttpURLConnectionWorker extends HTTPWorker<HttpURLConnection> {
 
 	public static final String GET = "GET";
@@ -52,8 +48,7 @@ public class HttpURLConnectionWorker extends HTTPWorker<HttpURLConnection> {
 	public static final String DELETE = "DELETE";
 
 	private Proxy proxy;
-	private String basicAuthStr;
-	private Authenticator basicAuthenticator;
+	private PasswordAuthentication passAuth;
 
 	// ICS+
 	public static void setHttpResponseCacheEnabled(Context ctx, boolean enabled) {
@@ -96,16 +91,7 @@ public class HttpURLConnectionWorker extends HTTPWorker<HttpURLConnection> {
 
 	@Override
 	public void authenticateBasic(final String user, final String password) {
-		basicAuthStr = Base64.encodeToString(
-				(user + ":" + password).getBytes(), Base64.DEFAULT);
-		basicAuthenticator = new Authenticator() {
-
-			@Override
-			protected PasswordAuthentication getPasswordAuthentication() {
-				return new PasswordAuthentication(user, password.toCharArray());
-			}
-
-		};
+		passAuth = new PasswordAuthentication(user, password.toCharArray());
 	}
 
 	public HttpURLConnection getConnection(String urlStr, String requestMethod)
@@ -124,13 +110,8 @@ public class HttpURLConnectionWorker extends HTTPWorker<HttpURLConnection> {
 				}
 			}
 			conn.setRequestProperty("http.agent", userAgent);
-			if (basicAuthStr != null) {
-				Authenticator.setDefault(basicAuthenticator);
-				// XXX wtf?!
-				if (Build.VERSION.SDK_INT > 10) {
-					conn.setRequestProperty("Authorization", "Basic "
-							+ basicAuthStr);
-				}
+			if (passAuth != null) {
+				Authenticator.setDefault(new FixedAuthenticator(passAuth));
 			}
 			conn.setRequestMethod(requestMethod);
 			if (PUT.equals(requestMethod) || POST.equals(requestMethod)) {
@@ -215,8 +196,26 @@ public class HttpURLConnectionWorker extends HTTPWorker<HttpURLConnection> {
 			throw new HTTPException(e);
 		} finally {
 			conn.disconnect();
-			Authenticator.setDefault(null);
 		}
+	}
+
+	private static class FixedAuthenticator extends Authenticator {
+
+		private PasswordAuthentication passAuth;
+
+		public FixedAuthenticator(PasswordAuthentication passAuth) {
+			this.passAuth = passAuth;
+		}
+
+		@Override
+		protected PasswordAuthentication getPasswordAuthentication() {
+			try {
+				return passAuth;
+			} finally {
+				passAuth = null;
+			}
+		}
+
 	}
 
 }
