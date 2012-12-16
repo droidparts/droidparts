@@ -36,7 +36,7 @@ public class RESTClientTestCase extends AndroidTestCase {
 
 	public void testHttpBasicAuthLegacy() {
 		RESTClient2 client = new RESTClient2(getContext(),
-				RESTClient.getDefaultUserAgent(null), true);
+				RESTClient.getUserAgent(null), true);
 		testUnauthenticated(client);
 		testAuthenticatedWrongCredentials(client);
 		testAuthenticated(client);

@@ -45,14 +45,14 @@ public class RESTClient {
 	private final HttpURLConnectionWorker httpURLConnectionWorker;
 	private static volatile CookieJar cookieJar;
 
-	public static String getDefaultUserAgent(String nameHint) {
+	public static String getUserAgent(String nameHint) {
 		return ((nameHint != null) ? nameHint : " DroidParts.org")
 				+ " (Android " + Build.VERSION.RELEASE + "; " + Build.MODEL
 				+ " Build/" + Build.ID + ")";
 	}
 
 	public RESTClient(Context ctx) {
-		this(ctx, getDefaultUserAgent(null), false);
+		this(ctx, getUserAgent(null), false);
 	}
 
 	public RESTClient(Context ctx, String userAgent,
