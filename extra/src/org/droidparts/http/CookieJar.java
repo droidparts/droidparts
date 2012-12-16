@@ -217,8 +217,11 @@ public class CookieJar extends CookieHandler implements CookieStore {
 		sb.append(cookie.getDomain());
 		sb.append(SEP);
 		sb.append(cookie.getPath());
-		sb.append(SEP);
-		sb.append(cookie.getExpiryDate().getTime());
+		Date expiryDate = cookie.getExpiryDate();
+		if (expiryDate != null) {
+			sb.append(SEP);
+			sb.append(expiryDate.getTime());
+		}
 		return sb.toString();
 	}
 
@@ -227,7 +230,9 @@ public class CookieJar extends CookieHandler implements CookieStore {
 		BasicClientCookie cookie = new BasicClientCookie(parts[0], parts[1]);
 		cookie.setDomain(parts[2]);
 		cookie.setPath(parts[3]);
-		cookie.setExpiryDate(new Date(Long.valueOf(parts[4])));
+		if (parts.length == 5) {
+			cookie.setExpiryDate(new Date(Long.valueOf(parts[4])));
+		}
 		return cookie;
 	}
 

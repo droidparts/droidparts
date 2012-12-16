@@ -24,11 +24,9 @@ import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.net.Authenticator;
 import java.net.CookieHandler;
 import java.net.HttpURLConnection;
 import java.net.InetSocketAddress;
-import java.net.PasswordAuthentication;
 import java.net.Proxy;
 import java.net.URL;
 
@@ -37,9 +35,13 @@ import org.droidparts.http.HTTPException;
 import org.droidparts.http.HTTPResponse;
 import org.droidparts.util.L;
 
+import android.annotation.TargetApi;
 import android.content.Context;
+import android.os.Build;
+import android.util.Base64;
 import android.util.Pair;
 
+@TargetApi(Build.VERSION_CODES.FROYO)
 public class HttpURLConnectionWorker extends HTTPWorker<HttpURLConnection> {
 
 	public static final String GET = "GET";
@@ -48,7 +50,7 @@ public class HttpURLConnectionWorker extends HTTPWorker<HttpURLConnection> {
 	public static final String DELETE = "DELETE";
 
 	private Proxy proxy;
-	private Authenticator basicAuthenticator;
+	private String basicAuthStr;
 
 	// ICS+
 	public static void setHttpResponseCacheEnabled(Context ctx, boolean enabled) {
@@ -91,21 +93,12 @@ public class HttpURLConnectionWorker extends HTTPWorker<HttpURLConnection> {
 
 	@Override
 	public void authenticateBasic(final String user, final String password) {
-		basicAuthenticator = new Authenticator() {
-
-			@Override
-			protected PasswordAuthentication getPasswordAuthentication() {
-				return new PasswordAuthentication(user, password.toCharArray());
-			}
-
-		};
+		basicAuthStr = Base64.encodeToString(
+				(user + ":" + password).getBytes(), Base64.DEFAULT);
 	}
 
 	public HttpURLConnection getConnection(String urlStr, String requestMethod)
 			throws HTTPException {
-		if (basicAuthenticator != null) {
-			Authenticator.setDefault(basicAuthenticator);
-		}
 		try {
 			URL url = new URL(urlStr);
 			HttpURLConnection conn;
@@ -121,6 +114,10 @@ public class HttpURLConnectionWorker extends HTTPWorker<HttpURLConnection> {
 			}
 			conn.setRequestMethod(requestMethod);
 			conn.setRequestProperty("http.agent", userAgent);
+			if (basicAuthStr != null) {
+				conn.setRequestProperty("Authorization", "Basic "
+						+ basicAuthStr);
+			}
 			if (PUT.equals(requestMethod) || POST.equals(requestMethod)) {
 				conn.setDoOutput(true);
 			}
@@ -203,7 +200,6 @@ public class HttpURLConnectionWorker extends HTTPWorker<HttpURLConnection> {
 			throw new HTTPException(e);
 		} finally {
 			conn.disconnect();
-			Authenticator.setDefault(null);
 		}
 	}
 
