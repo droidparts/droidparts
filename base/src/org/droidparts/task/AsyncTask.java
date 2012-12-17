@@ -18,6 +18,7 @@ package org.droidparts.task;
 import org.droidparts.inject.Injector;
 import org.droidparts.task.listener.AsyncTaskProgressListener;
 import org.droidparts.task.listener.AsyncTaskResultListener;
+import org.droidparts.util.L;
 
 import android.content.Context;
 import android.util.Pair;
@@ -53,7 +54,11 @@ public abstract class AsyncTask<Params, Progress, Result> extends
 		Result res = null;
 		Exception ex = null;
 		try {
+			long start = System.currentTimeMillis();
 			res = executeInBackground(params);
+			long end = System.currentTimeMillis();
+			L.d(String.format("Executed %s in %d ms.", getClass()
+					.getSimpleName(), (end - start)));
 		} catch (Exception e) {
 			ex = e;
 		}

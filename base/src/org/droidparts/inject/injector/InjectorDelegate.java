@@ -55,8 +55,9 @@ public class InjectorDelegate {
 						+ cls.getName() + ".");
 			}
 		}
-		long end = System.currentTimeMillis() - start;
-		L.d(String.format("Injected on %s in %d ms.", cls.getSimpleName(), end));
+		long end = System.currentTimeMillis();
+		L.d(String.format("Injected on %s in %d ms.", cls.getSimpleName(),
+				(end - start)));
 	}
 
 	protected boolean inject(Context ctx, View root, Object target, Ann<?> ann,
