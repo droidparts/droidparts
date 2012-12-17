@@ -21,6 +21,7 @@ import static org.droidparts.util.PersistUtils.buildPlaceholders;
 import static org.droidparts.util.PersistUtils.toWhereArgs;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import org.droidparts.contract.DB;
 import org.droidparts.contract.SQL;
@@ -125,8 +126,14 @@ public abstract class Statement<EntityType extends Entity> implements SQL {
 	}
 
 	private void errArgs(Is operator, int num) {
-		L.e("Invalid number of agruments for " + operator.str + ": " + num
-				+ ".");
+		L.e("Invalid number of agruments for '" + operator + "': " + num + ".");
+	}
+
+	@Override
+	public String toString() {
+		Pair<String, String[]> sel = getSelection();
+		return " on table '" + tableName + "', selection: '" + sel.first
+				+ "', selectionArgs: '" + Arrays.toString(sel.second) + "'";
 	}
 
 }

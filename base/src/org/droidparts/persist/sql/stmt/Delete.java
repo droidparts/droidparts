@@ -15,8 +15,6 @@
  */
 package org.droidparts.persist.sql.stmt;
 
-import java.util.Arrays;
-
 import org.droidparts.model.Entity;
 import org.droidparts.util.L;
 
@@ -49,9 +47,7 @@ public class Delete<EntityType extends Entity> extends Statement<EntityType> {
 
 	public int execute() {
 		Pair<String, String[]> selection = getSelection();
-		L.d("DELETE on table '" + tableName + "', selection: '"
-				+ selection.first + "', selectionArgs: '"
-				+ Arrays.toString(selection.second) + "'.");
+		L.d(toString());
 		int rowCount = 0;
 		try {
 			rowCount = db.delete(tableName, selection.first, selection.second);
@@ -60,6 +56,11 @@ public class Delete<EntityType extends Entity> extends Statement<EntityType> {
 			L.d(e);
 		}
 		return rowCount;
+	}
+
+	@Override
+	public String toString() {
+		return "DELETE" + super.toString() + ".";
 	}
 
 }

@@ -37,4 +37,9 @@ public enum Is {
 		this.str = str;
 	}
 
+	@Override
+	public String toString() {
+		return "IS " + super.toString();
+	}
+
 }

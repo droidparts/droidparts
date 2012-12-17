@@ -97,14 +97,14 @@ public class Select<EntityType extends Entity> extends Statement<EntityType> {
 
 	public Cursor execute() {
 		buildArgs();
-		logArgs("SELECT");
+		L.d(describe("SELECT"));
 		return db.query(distinct, tableName, columns, selection.first,
 				selection.second, groupByStr, having, orderByStr, limitStr);
 	}
 
 	public int count() {
 		buildArgs();
-		logArgs("COUNT");
+		L.d(describe("COUNT"));
 		return getRowCount(db, distinct, tableName, columns, selection.first,
 				selection.second, groupByStr, having, orderByStr, limitStr);
 	}
@@ -143,12 +143,16 @@ public class Select<EntityType extends Entity> extends Statement<EntityType> {
 		}
 	}
 
-	private void logArgs(String prefix) {
-		L.d(prefix + " on table '" + tableName + ", distinct: '" + distinct
-				+ "', columns: '" + Arrays.toString(columns)
-				+ "', selection: '" + selection.first + "', selectionArgs: '"
-				+ Arrays.toString(selection.second) + "', groupBy: '"
-				+ groupByStr + "', having: '" + having + "', orderBy: '"
-				+ orderByStr + "', limit: '" + limitStr + "'.");
+	private String describe(String prefix) {
+		return prefix + super.toString() + ", columns: '"
+				+ Arrays.toString(columns) + "', orderBy: '" + orderByStr
+				+ "', groupBy: '" + groupByStr + "', having: '" + having
+				+ "', distinct: '" + distinct + "', limit: '" + limitStr + "'.";
+	}
+
+	@Override
+	public String toString() {
+		buildArgs();
+		return describe("SELECT");
 	}
 }
