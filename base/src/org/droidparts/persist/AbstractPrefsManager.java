@@ -91,6 +91,10 @@ public abstract class AbstractPrefsManager {
 		return prefs.edit().putInt(key, val).commit();
 	}
 
+	protected boolean saveLong(String key, long val) {
+		return prefs.edit().putLong(key, val).commit();
+	}
+
 	protected boolean saveString(String key, String val) {
 		return prefs.edit().putString(key, val).commit();
 	}
