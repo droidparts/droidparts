@@ -94,7 +94,7 @@ public class Injector {
 		InjectorDelegate modernDelegate = null;
 		try {
 			modernDelegate = (InjectorDelegate) Class.forName(
-					"org.droidparts.inject.injector.ModernInjectorDelegate")
+					"org.droidparts.inject.injector.FragmentsInjectorDelegate")
 					.newInstance();
 		} catch (Exception e) {
 			L.v(e);
