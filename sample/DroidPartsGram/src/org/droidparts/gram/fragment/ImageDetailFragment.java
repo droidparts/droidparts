@@ -20,7 +20,7 @@ import static org.droidparts.util.Strings.join;
 import org.droidparts.annotation.inject.InjectBundleExtra;
 import org.droidparts.annotation.inject.InjectDependency;
 import org.droidparts.annotation.inject.InjectView;
-import org.droidparts.fragment.DialogFragment;
+import org.droidparts.fragment.sherlock.SherlockDialogFragment;
 import org.droidparts.gram.R;
 import org.droidparts.gram.model.Image;
 import org.droidparts.gram.persist.PrefsManager;
@@ -33,7 +33,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-public class ImageDetailFragment extends DialogFragment {
+public class ImageDetailFragment extends SherlockDialogFragment {
 
 	private static final String EXTRA_IMAGE = "img";
 

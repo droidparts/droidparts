@@ -15,7 +15,7 @@
  */
 package org.droidparts.gram.activity;
 
-import org.droidparts.activity.SingleFragmentActivity;
+import org.droidparts.activity.sherlock.SherlockSingleFragmentActivity;
 import org.droidparts.annotation.inject.InjectDependency;
 import org.droidparts.gram.R;
 import org.droidparts.gram.adapter.ImageListAdapter;
@@ -33,7 +33,7 @@ import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
 
 public class PopularImageListActivity extends
-		SingleFragmentActivity<ImageListFragment> implements
+		SherlockSingleFragmentActivity<ImageListFragment> implements
 		ImageListFragment.Listener {
 
 	@InjectDependency

@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
-    
-    <item type="id" name="content_view"/>
-    <dimen name="ab_btn_min_width">56dp</dimen>
-
-</resources>

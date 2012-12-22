@@ -17,13 +17,13 @@ package org.droidparts.gram.fragment;
 
 import org.droidparts.annotation.inject.InjectParentActivity;
 import org.droidparts.contract.AlterableContent;
-import org.droidparts.fragment.ListFragment;
+import org.droidparts.fragment.sherlock.SherlockListFragment;
 import org.droidparts.gram.adapter.ImageListAdapter;
 
 import android.view.View;
 import android.widget.ListView;
 
-public class ImageListFragment extends ListFragment implements
+public class ImageListFragment extends SherlockListFragment implements
 		AlterableContent<ImageListAdapter> {
 
 	public static interface Listener {
