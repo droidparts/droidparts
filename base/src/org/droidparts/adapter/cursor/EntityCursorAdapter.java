@@ -39,7 +39,7 @@ public abstract class EntityCursorAdapter<EntityType extends Entity> extends
 	}
 
 	public void changeData(Select<EntityType> select) {
-		changeCursor(select.execute());
+		changeCursor((select != null) ? select.execute() : null);
 	}
 
 	@Override
