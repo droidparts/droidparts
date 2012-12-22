@@ -91,15 +91,15 @@ public class Injector {
 	}
 
 	private Injector() {
-		InjectorDelegate modernDelegate = null;
+		InjectorDelegate fragmentsDelegate = null;
 		try {
-			modernDelegate = (InjectorDelegate) Class.forName(
+			fragmentsDelegate = (InjectorDelegate) Class.forName(
 					"org.droidparts.inject.injector.FragmentsInjectorDelegate")
 					.newInstance();
 		} catch (Exception e) {
 			L.v(e);
 		}
-		delegate = (modernDelegate != null) ? modernDelegate
+		delegate = (fragmentsDelegate != null) ? fragmentsDelegate
 				: new InjectorDelegate();
 	}
 
