@@ -15,21 +15,34 @@
  */
 package org.droidparts.util;
 
-import org.droidparts.R;
-
 import android.app.Activity;
 import android.content.Context;
-import android.view.LayoutInflater;
+import android.content.res.Configuration;
+import android.os.Build;
+import android.util.TypedValue;
+import android.view.Gravity;
 import android.view.View;
-import android.view.ViewGroup.LayoutParams;
 import android.widget.FrameLayout;
+import android.widget.FrameLayout.LayoutParams;
+import android.widget.ProgressBar;
 
 public class SecretFragmentsUtil {
 
 	public static View fragmentActivityBuildLoadingIndicator(Context ctx) {
-		FrameLayout view = (FrameLayout) LayoutInflater.from(ctx).inflate(
-				R.layout.view_ab_loading_indicator, null);
-		return view;
+		boolean large = (ctx.getResources().getConfiguration().screenLayout & Configuration.SCREENLAYOUT_SIZE_MASK) > Configuration.SCREENLAYOUT_SIZE_NORMAL;
+		boolean fresh = Build.VERSION.SDK_INT > Build.VERSION_CODES.GINGERBREAD_MR1;
+		int px = (large && fresh) ? 64 : 56;
+		FrameLayout fl = new FrameLayout(ctx);
+		fl.setMinimumWidth(dpToPx(ctx, px));
+		ProgressBar pb = new ProgressBar(ctx);
+		px = dpToPx(ctx, 32);
+		fl.addView(pb, new LayoutParams(px, px, Gravity.CENTER));
+		return fl;
+	}
+
+	private static int dpToPx(Context ctx, int val) {
+		return (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,
+				val, ctx.getResources().getDisplayMetrics());
 	}
 
 	protected static final int CONTENT_VIEW_ID = 140584;
