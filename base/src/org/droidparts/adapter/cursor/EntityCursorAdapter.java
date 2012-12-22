@@ -79,13 +79,4 @@ public abstract class EntityCursorAdapter<EntityType extends Entity> extends
 		return success;
 	}
 
-	//
-
-	@Deprecated
-	public EntityCursorAdapter(Context ctx,
-			EntityManager<EntityType> entityManager, Cursor cursor) {
-		super(ctx, cursor);
-		this.entityManager = entityManager;
-	}
-
 }
