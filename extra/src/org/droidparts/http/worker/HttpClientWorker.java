@@ -52,7 +52,7 @@ import org.droidparts.util.io.IOUtils;
 import android.util.Pair;
 
 // For API < 10
-public class HttpClientWorker extends HTTPWorker<HttpResponse> {
+public class HttpClientWorker extends HTTPWorker {
 
 	private final DefaultHttpClient httpClient;
 

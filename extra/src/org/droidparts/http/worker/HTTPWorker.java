@@ -20,7 +20,7 @@ import java.util.HashMap;
 
 import org.droidparts.http.CookieJar;
 
-public abstract class HTTPWorker<T> {
+public abstract class HTTPWorker {
 
 	protected static final int SOCKET_OPERATION_TIMEOUT = 60 * 1000;
 

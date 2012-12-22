@@ -165,8 +165,8 @@ public class RESTClient {
 
 	//
 
-	protected final HTTPWorker<?> getWorker() {
-		HTTPWorker<?> worker = (httpClientWorker != null) ? httpClientWorker
+	protected final HTTPWorker getWorker() {
+		HTTPWorker worker = (httpClientWorker != null) ? httpClientWorker
 				: httpURLConnectionWorker;
 		return worker;
 	}

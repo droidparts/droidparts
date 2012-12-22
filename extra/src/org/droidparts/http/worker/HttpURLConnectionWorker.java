@@ -38,7 +38,7 @@ import org.droidparts.util.L;
 import android.content.Context;
 import android.util.Pair;
 
-public class HttpURLConnectionWorker extends HTTPWorker<HttpURLConnection> {
+public class HttpURLConnectionWorker extends HTTPWorker {
 
 	public static final String GET = "GET";
 	public static final String PUT = "PUT";
