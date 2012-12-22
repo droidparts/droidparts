@@ -16,7 +16,6 @@
 package org.droidparts.http.worker;
 
 import static org.droidparts.contract.Constants.UTF8;
-import static org.droidparts.util.Strings.isNotEmpty;
 import static org.droidparts.util.io.IOUtils.readAndCloseInputStream;
 import static org.droidparts.util.io.IOUtils.silentlyClose;
 
@@ -27,7 +26,6 @@ import java.io.OutputStream;
 import java.net.Authenticator;
 import java.net.CookieHandler;
 import java.net.HttpURLConnection;
-import java.net.InetSocketAddress;
 import java.net.PasswordAuthentication;
 import java.net.Proxy;
 import java.net.URL;
@@ -80,18 +78,12 @@ public class HttpURLConnectionWorker extends HTTPWorker<HttpURLConnection> {
 	}
 
 	@Override
-	protected void setProxy(String protocol, String host, int port,
-			String user, String password) {
-		proxy = new Proxy(Proxy.Type.HTTP, new InetSocketAddress(host, port));
-		if (isNotEmpty(user) && isNotEmpty(password)) {
-			// FIXME
-			authenticateBasic(user, password);
-		}
+	public void authenticateBasic(String user, String password) {
+		passAuth = new PasswordAuthentication(user, password.toCharArray());
 	}
 
-	@Override
-	public void authenticateBasic(final String user, final String password) {
-		passAuth = new PasswordAuthentication(user, password.toCharArray());
+	public void setProxy(Proxy proxy) {
+		this.proxy = proxy;
 	}
 
 	public HttpURLConnection getConnection(String urlStr, String requestMethod)

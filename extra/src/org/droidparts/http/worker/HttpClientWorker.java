@@ -16,7 +16,6 @@
 package org.droidparts.http.worker;
 
 import static org.apache.http.client.params.CookiePolicy.BROWSER_COMPATIBILITY;
-import static org.apache.http.conn.params.ConnRoutePNames.DEFAULT_PROXY;
 import static org.droidparts.contract.Constants.BUFFER_SIZE;
 import static org.droidparts.contract.Constants.UTF8;
 import static org.droidparts.util.Strings.isNotEmpty;
@@ -33,7 +32,6 @@ import java.util.zip.InflaterInputStream;
 
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
-import org.apache.http.HttpHost;
 import org.apache.http.HttpResponse;
 import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.UsernamePasswordCredentials;
@@ -78,25 +76,15 @@ public class HttpClientWorker extends HTTPWorker<HttpResponse> {
 	}
 
 	@Override
-	protected void setProxy(String protocol, String host, int port,
-			String user, String password) {
-		HttpHost proxyHost = new HttpHost(host, port, protocol);
-		httpClient.getParams().setParameter(DEFAULT_PROXY, proxyHost);
-		if (isNotEmpty(user) && isNotEmpty(password)) {
-			AuthScope authScope = new AuthScope(host, port);
-			UsernamePasswordCredentials credentials = new UsernamePasswordCredentials(
-					user, password);
-			httpClient.getCredentialsProvider().setCredentials(authScope,
-					credentials);
-		}
-	}
-
-	@Override
 	public void authenticateBasic(String user, String password) {
 		UsernamePasswordCredentials credentials = new UsernamePasswordCredentials(
 				user, password);
 		httpClient.getCredentialsProvider().setCredentials(AuthScope.ANY,
 				credentials);
+	}
+
+	public DefaultHttpClient getHttpClient() {
+		return httpClient;
 	}
 
 	public static StringEntity buildStringEntity(String contentType, String data)

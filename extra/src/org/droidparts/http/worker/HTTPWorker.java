@@ -15,8 +15,6 @@
  */
 package org.droidparts.http.worker;
 
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -40,26 +38,12 @@ public abstract class HTTPWorker<T> {
 		headers.get(key).add(val);
 	}
 
-	public abstract void authenticateBasic(String user, String password);
-
-	public final void setProxy(String proxy, String user, String password) {
-		URL proxyUrl;
-		try {
-			proxyUrl = new URL(proxy);
-		} catch (MalformedURLException e) {
-			throw new IllegalArgumentException(e);
-		}
-		setProxy(proxyUrl.getProtocol(), proxyUrl.getHost(),
-				proxyUrl.getPort(), user, password);
-	}
-
 	public abstract void setCookieJar(CookieJar cookieJar);
+
+	public abstract void authenticateBasic(String user, String password);
 
 	protected static final boolean isErrorResponseCode(int responseCode) {
 		return responseCode >= 400;
 	}
-
-	protected abstract void setProxy(String protocol, String host, int port,
-			String user, String password);
 
 }

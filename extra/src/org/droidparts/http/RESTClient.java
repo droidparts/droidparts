@@ -38,7 +38,6 @@ import android.util.Pair;
 
 public class RESTClient {
 
-	private final Context ctx;
 	private final boolean forceApacheHttpClient;
 
 	private final HttpClientWorker httpClientWorker;
@@ -57,7 +56,6 @@ public class RESTClient {
 
 	public RESTClient(Context ctx, String userAgent,
 			boolean forceApacheHttpClient) {
-		this.ctx = ctx.getApplicationContext();
 		this.forceApacheHttpClient = forceApacheHttpClient;
 		httpClientWorker = useHttpURLConnection() ? null
 				: new HttpClientWorker(userAgent);
@@ -67,12 +65,8 @@ public class RESTClient {
 			cookieJar = new CookieJar(ctx);
 		}
 		if (Build.VERSION.SDK_INT >= 14) {
-			setHttpResponseCacheEnabled(true);
+			HttpURLConnectionWorker.setHttpResponseCacheEnabled(ctx, true);
 		}
-	}
-
-	public void setHttpResponseCacheEnabled(boolean enabled) {
-		HttpURLConnectionWorker.setHttpResponseCacheEnabled(ctx, enabled);
 	}
 
 	public void setCookieCacheEnabled(boolean enabled, boolean persistent) {
@@ -82,10 +76,6 @@ public class RESTClient {
 
 	public void addHeader(String key, String value) {
 		getWorker().addHeader(key, value);
-	}
-
-	public void setProxy(String proxy, String username, String password) {
-		getWorker().setProxy(proxy, username, password);
 	}
 
 	public void authenticateBasic(String username, String password) {
@@ -175,7 +165,7 @@ public class RESTClient {
 
 	//
 
-	private HTTPWorker<?> getWorker() {
+	protected final HTTPWorker<?> getWorker() {
 		HTTPWorker<?> worker = (httpClientWorker != null) ? httpClientWorker
 				: httpURLConnectionWorker;
 		return worker;
