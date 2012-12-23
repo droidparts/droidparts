@@ -92,7 +92,7 @@ public class ImageAttacher {
 		L.e(e);
 	}
 
-	protected BitmapCacher getBitmapCacher() {
+	protected final BitmapCacher getBitmapCacher() {
 		return bitmapCacher;
 	}
 
@@ -111,8 +111,7 @@ public class ImageAttacher {
 		if (bm == null) {
 			BufferedInputStream bis = null;
 			try {
-				bis = new BufferedInputStream(
-						restClient.getInputStream(fileUrl).second);
+				bis = restClient.getInputStream(fileUrl).second;
 				bm = BitmapFactory.decodeStream(bis);
 			} finally {
 				silentlyClose(bis);
