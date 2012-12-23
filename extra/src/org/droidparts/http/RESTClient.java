@@ -23,6 +23,7 @@ import static org.droidparts.http.worker.HttpURLConnectionWorker.PUT;
 import java.io.BufferedInputStream;
 import java.net.HttpURLConnection;
 
+import org.apache.http.auth.AuthScope;
 import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
@@ -79,7 +80,12 @@ public class RESTClient {
 	}
 
 	public void authenticateBasic(String username, String password) {
-		getWorker().authenticateBasic(username, password);
+		authenticateBasic(username, password, AuthScope.ANY);
+	}
+
+	public void authenticateBasic(String username, String password,
+			AuthScope scope) {
+		getWorker().authenticateBasic(username, password, scope);
 	}
 
 	//

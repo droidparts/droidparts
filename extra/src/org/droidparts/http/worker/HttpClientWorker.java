@@ -71,11 +71,10 @@ public class HttpClientWorker extends HTTPWorker {
 	}
 
 	@Override
-	public void authenticateBasic(String user, String password) {
+	public void authenticateBasic(String user, String password, AuthScope scope) {
 		UsernamePasswordCredentials credentials = new UsernamePasswordCredentials(
 				user, password);
-		httpClient.getCredentialsProvider().setCredentials(AuthScope.ANY,
-				credentials);
+		httpClient.getCredentialsProvider().setCredentials(scope, credentials);
 	}
 
 	public DefaultHttpClient getHttpClient() {

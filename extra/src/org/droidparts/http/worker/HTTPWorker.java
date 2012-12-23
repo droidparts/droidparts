@@ -18,6 +18,7 @@ package org.droidparts.http.worker;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import org.apache.http.auth.AuthScope;
 import org.droidparts.http.CookieJar;
 
 public abstract class HTTPWorker {
@@ -40,7 +41,8 @@ public abstract class HTTPWorker {
 
 	public abstract void setCookieJar(CookieJar cookieJar);
 
-	public abstract void authenticateBasic(String user, String password);
+	public abstract void authenticateBasic(String user, String password,
+			AuthScope scope);
 
 	protected static final boolean isErrorResponseCode(int responseCode) {
 		return responseCode >= 400;
