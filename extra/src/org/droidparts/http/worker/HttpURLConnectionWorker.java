@@ -161,10 +161,12 @@ public class HttpURLConnectionWorker extends HTTPWorker {
 				throw new HTTPException(respCode, is.readAndClose());
 			}
 			return respCode;
+		} catch (HTTPException e) {
+			throw e;
 		} catch (Exception e) {
-			throw (e instanceof HTTPException) ? (HTTPException) e
-					: new HTTPException(e);
+			throw new HTTPException(e);
 		}
+
 	}
 
 	private void setupBasicAuth() {
