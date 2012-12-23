@@ -41,7 +41,7 @@ public class HTTPInputStream extends BufferedInputStream {
 					.getInputStream();
 			is = getUnpackedInputStream(conn.getContentEncoding(), is);
 			return new HTTPInputStream(is, conn, null);
-		} catch (IOException e) {
+		} catch (Exception e) {
 			throw new HTTPException(e);
 		}
 	}
@@ -54,7 +54,7 @@ public class HTTPInputStream extends BufferedInputStream {
 			Header ce = entity.getContentEncoding();
 			is = getUnpackedInputStream(ce != null ? ce.getValue() : null, is);
 			return new HTTPInputStream(is, null, entity);
-		} catch (IOException e) {
+		} catch (Exception e) {
 			throw new HTTPException(e);
 		}
 	}
