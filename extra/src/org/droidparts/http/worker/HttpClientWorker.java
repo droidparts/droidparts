@@ -18,17 +18,13 @@ package org.droidparts.http.worker;
 import static org.apache.http.client.params.CookiePolicy.BROWSER_COMPATIBILITY;
 import static org.droidparts.contract.Constants.BUFFER_SIZE;
 import static org.droidparts.contract.Constants.UTF8;
-import static org.droidparts.util.Strings.isNotEmpty;
 
 import java.io.BufferedInputStream;
-import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.zip.GZIPInputStream;
-import java.util.zip.InflaterInputStream;
 
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
@@ -47,7 +43,6 @@ import org.droidparts.http.CookieJar;
 import org.droidparts.http.HTTPException;
 import org.droidparts.http.HTTPResponse;
 import org.droidparts.util.L;
-import org.droidparts.util.io.IOUtils;
 
 import android.util.Pair;
 
@@ -104,7 +99,7 @@ public class HttpClientWorker extends HTTPWorker {
 		HttpResponse resp = getHttpResponse(req);
 		response.code = getResponseCodeOrThrow(resp);
 		response.headers = getHeaders(resp);
-		response.body = getResponseBodyAndConsume(resp);
+		response.body = HTTPInputStream.getInstance(resp).readAndClose();
 		return response;
 	}
 
@@ -115,9 +110,8 @@ public class HttpClientWorker extends HTTPWorker {
 		HttpEntity entity = resp.getEntity();
 		// 2G limit
 		int contentLength = (int) entity.getContentLength();
-		ConsumingInputStream cis = new ConsumingInputStream(
-				getUnpackedInputStream(entity), entity);
-		return new Pair<Integer, BufferedInputStream>(contentLength, cis);
+		HTTPInputStream is = HTTPInputStream.getInstance(resp);
+		return new Pair<Integer, BufferedInputStream>(contentLength, is);
 	}
 
 	private HttpResponse getHttpResponse(HttpUriRequest req)
@@ -139,7 +133,7 @@ public class HttpClientWorker extends HTTPWorker {
 			throws HTTPException {
 		int respCode = resp.getStatusLine().getStatusCode();
 		if (isErrorResponseCode(respCode)) {
-			String respBody = getResponseBodyAndConsume(resp);
+			String respBody = HTTPInputStream.getInstance(resp).readAndClose();
 			throw new HTTPException(respCode, respBody);
 		}
 		return respCode;
@@ -155,46 +149,6 @@ public class HttpClientWorker extends HTTPWorker {
 			headers.get(name).add(header.getValue());
 		}
 		return headers;
-	}
-
-	private static String getResponseBodyAndConsume(HttpResponse resp)
-			throws HTTPException {
-		HttpEntity entity = resp.getEntity();
-		InputStream is = getUnpackedInputStream(entity);
-		try {
-			return IOUtils.readAndCloseInputStream(is);
-		} catch (Exception e) {
-			throw new HTTPException(e);
-		} finally {
-			try {
-				resp.getEntity().consumeContent();
-			} catch (Exception e) {
-				L.d(e);
-			}
-		}
-	}
-
-	private static InputStream getUnpackedInputStream(HttpEntity entity)
-			throws HTTPException {
-		try {
-			InputStream is = entity.getContent();
-			Header contentEncodingHeader = entity.getContentEncoding();
-			if (contentEncodingHeader != null) {
-				String contentEncoding = contentEncodingHeader.getValue();
-				L.d("Content-Encoding: " + contentEncoding);
-				if (isNotEmpty(contentEncoding)) {
-					contentEncoding = contentEncoding.toLowerCase();
-					if (contentEncoding.contains("gzip")) {
-						return new GZIPInputStream(is);
-					} else if (contentEncoding.contains("deflate")) {
-						return new InflaterInputStream(is);
-					}
-				}
-			}
-			return is;
-		} catch (Exception e) {
-			throw new HTTPException(e);
-		}
 	}
 
 }
