@@ -1,3 +1,15 @@
+0.9.5 /2012-12-25/:
+    * 'modern-sherlock' & 'modern-native' modules got merged into 'fragments' module & also received pure
+      'android-support-v4.jar' base classes.
+      To migrate, change imports for Activities & Fragments. New package name suffixes: 'sherlock' = ActionBarSherlock,
+      'stock' = Android 3.0+ native implementation, 'support' = Android Support Package.
+      Also notice the 'sherlock-support-v4-stub.jar_' file in the libs folder.
+    * RESTClient lost proxy support but now provides access to underlying HTTPWorkers for fine-tuning.
+    * RESTClient now supports setting a AuthScope for HTTP Basic Authentication.
+    * Fixed RESTClient not requesting GZIP when using HttpURLConnectionWorker.
+    * Removed 'legacy' module & Loader subclasses.
+    * DroidParts now doesn't use any xml resources. Which means it can be used as pure .jars placed in the libs folder.
+
 0.9.3 /2012-12-16/:
     * Mavenized. Thanks to @emartynov.
     * RESTClient tweaks & fixes.
