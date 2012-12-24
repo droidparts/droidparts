@@ -15,10 +15,9 @@
  */
 package org.droidparts.util;
 
+import static android.graphics.Color.TRANSPARENT;
 import static org.droidparts.contract.Constants.BUFFER_SIZE;
 import static org.droidparts.util.io.IOUtils.silentlyClose;
-import static org.droidparts.util.ui.ViewUtils.crossFade;
-import static org.droidparts.util.ui.ViewUtils.setInvisible;
 
 import java.io.BufferedInputStream;
 import java.io.ByteArrayOutputStream;
@@ -33,6 +32,10 @@ import org.droidparts.util.io.BitmapCacher;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.Drawable;
+import android.graphics.drawable.TransitionDrawable;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Pair;
@@ -54,7 +57,7 @@ public class ImageAttacher {
 	private final BitmapCacher bitmapCacher;
 
 	private Reshaper reshaper;
-	int crossFadeAnimationDuration = 400;
+	int crossFadeMillis = 0;
 
 	final ConcurrentHashMap<ImageView, Long> currWIP = new ConcurrentHashMap<ImageView, Long>();
 	volatile Handler handler;
@@ -78,7 +81,7 @@ public class ImageAttacher {
 	}
 
 	public void setCrossFadeDuration(int millisec) {
-		this.crossFadeAnimationDuration = millisec;
+		this.crossFadeMillis = millisec;
 	}
 
 	public void setReshaper(Reshaper reshaper) {
@@ -88,31 +91,28 @@ public class ImageAttacher {
 	//
 
 	public void attachImage(ImageView imageView, String imgUrl) {
-		addAndExecute(null, imageView, imgUrl);
-	}
-
-	public void attachImageCrossFaded(View placeholderView,
-			ImageView imageView, String imgUrl) {
-		setInvisible(false, placeholderView);
-		setInvisible(true, imageView);
-		addAndExecute(placeholderView, imageView, imgUrl);
+		long time = System.nanoTime();
+		currWIP.put(imageView, time);
+		Runnable r = new FetchAndCacheBitmapRunnable(this, imageView, imgUrl,
+				time);
+		executor.remove(r);
+		executor.execute(r);
 	}
 
 	public Bitmap getImage(String imgUrl) {
-		return getCachedOrFetchAndCache(null, null, imgUrl);
+		return getCachedOrFetchAndCache(null, imgUrl);
 	}
 
 	//
 
-	protected void onFetchProgressChanged(View placeholderView, View imageView,
-			String url, int kBTotal, int kBReceived) {
-		L.d(String.format("Fetched %d of %d kB for %s.", kBReceived, kBTotal,
-				url));
+	protected void onFetchProgressChanged(View imageView, String imgUrl,
+			int kBTotal, int kBReceived) {
+		L.d(String.format("Fetched %d of %d kB from %s.", kBReceived, kBTotal,
+				imgUrl));
 	}
 
-	protected void onFetchFailure(View placeholderView, ImageView imageView,
-			String url, Exception e) {
-		L.w(e);
+	protected void onFetchFailed(View imageView, String imgUrl, Exception e) {
+		L.w("Failed to fetch " + imgUrl);
 	}
 
 	//
@@ -128,17 +128,7 @@ public class ImageAttacher {
 		return bc;
 	}
 
-	private void addAndExecute(View placeholderView, ImageView view, String url) {
-		long time = System.nanoTime();
-		currWIP.put(view, time);
-		Runnable r = new FetchAndCacheBitmapRunnable(this, placeholderView,
-				view, url, time);
-		executor.remove(r);
-		executor.execute(r);
-	}
-
-	private Bitmap getCachedOrFetchAndCache(View placeholderView,
-			ImageView imageView, String imgUrl) {
+	private Bitmap getCachedOrFetchAndCache(ImageView imageView, String imgUrl) {
 		Bitmap bm = null;
 		boolean saveToCache = false;
 		boolean reshape = true;
@@ -168,14 +158,14 @@ public class ImageAttacher {
 				while ((bytesRead = bis.read(buffer)) != -1) {
 					baos.write(buffer, 0, bytesRead);
 					bytesReadTotal += bytesRead;
-					onFetchProgressChanged(placeholderView, imageView, imgUrl,
-							kBTotal, bytesReadTotal / 1024);
+					onFetchProgressChanged(imageView, imgUrl, kBTotal,
+							bytesReadTotal / 1024);
 				}
 				byte[] data = baos.toByteArray();
 				bm = BitmapFactory.decodeByteArray(data, 0, data.length);
 			} catch (Exception e) {
+				onFetchFailed(imageView, imgUrl, e);
 				L.d(e);
-				onFetchFailure(placeholderView, imageView, imgUrl, e);
 			} finally {
 				silentlyClose(bis, baos);
 			}
@@ -198,11 +188,9 @@ public class ImageAttacher {
 
 	static abstract class ImageViewWorkerRunnable implements Runnable {
 
-		protected final View placeholderView;
 		protected final ImageView imageView;
 
-		public ImageViewWorkerRunnable(View placeholderView, ImageView imageView) {
-			this.placeholderView = placeholderView;
+		public ImageViewWorkerRunnable(ImageView imageView) {
 			this.imageView = imageView;
 		}
 
@@ -230,9 +218,8 @@ public class ImageAttacher {
 		private final long submitted;
 
 		public FetchAndCacheBitmapRunnable(ImageAttacher imageAttacher,
-				View placeholderView, ImageView imageView, String imgUrl,
-				long submitted) {
-			super(placeholderView, imageView);
+				ImageView imageView, String imgUrl, long submitted) {
+			super(imageView);
 			this.ia = imageAttacher;
 			this.imgUrl = imgUrl;
 			this.submitted = submitted;
@@ -241,13 +228,11 @@ public class ImageAttacher {
 
 		@Override
 		public void run() {
-			Bitmap bm = ia.getCachedOrFetchAndCache(placeholderView, imageView,
-					imgUrl);
+			Bitmap bm = ia.getCachedOrFetchAndCache(imageView, imgUrl);
 			if (bm != null && (ia.currWIP.get(imageView) == submitted)) {
 				ia.currWIP.remove(imageView);
-				AttachBitmapRunnable r = new AttachBitmapRunnable(
-						placeholderView, imageView, bm,
-						ia.crossFadeAnimationDuration);
+				AttachBitmapRunnable r = new AttachBitmapRunnable(imageView,
+						bm, ia.crossFadeMillis);
 				boolean success = ia.handler.post(r);
 				// a hack
 				while (!success) {
@@ -267,26 +252,29 @@ public class ImageAttacher {
 	static class AttachBitmapRunnable extends ImageViewWorkerRunnable {
 
 		private final Bitmap bitmap;
-		private final int crossFadeAnimationDuration;
+		private final int crossFadeMillis;
 
-		public AttachBitmapRunnable(View placeholderView, ImageView imageView,
-				Bitmap bitmap, int crossFadeAnimationDuration) {
-			super(placeholderView, imageView);
+		public AttachBitmapRunnable(ImageView imageView, Bitmap bitmap,
+				int crossFadeMillis) {
+			super(imageView);
 			this.bitmap = bitmap;
-			this.crossFadeAnimationDuration = crossFadeAnimationDuration;
+			this.crossFadeMillis = crossFadeMillis;
 		}
 
 		@Override
 		public void run() {
-			imageView.setImageBitmap(bitmap);
-			if (placeholderView != null) {
-				if (crossFadeAnimationDuration > 0) {
-					crossFade(placeholderView, imageView,
-							crossFadeAnimationDuration, null);
-				} else {
-					setInvisible(false, imageView);
-					setInvisible(true, placeholderView);
+			if (crossFadeMillis > 0) {
+				Drawable prevDrawable = imageView.getDrawable();
+				if (prevDrawable == null) {
+					prevDrawable = new ColorDrawable(TRANSPARENT);
 				}
+				TransitionDrawable transitionDrawable = new TransitionDrawable(
+						new Drawable[] { prevDrawable,
+								new BitmapDrawable(bitmap) });
+				imageView.setImageDrawable(transitionDrawable);
+				transitionDrawable.startTransition(crossFadeMillis);
+			} else {
+				imageView.setImageBitmap(bitmap);
 			}
 		}
 
