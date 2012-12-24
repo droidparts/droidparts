@@ -38,14 +38,13 @@ import android.widget.ImageView;
 
 public class ImageAttacher {
 
-	private final BitmapCacher bitmapCacher;
 	private final ThreadPoolExecutor executor;
 	private final RESTClient restClient;
-	private volatile Handler handler;
+	private final BitmapCacher bitmapCacher;
 
-	private final ConcurrentHashMap<ImageView, Long> currWIP = new ConcurrentHashMap<ImageView, Long>();
-
-	private int crossFadeAnimationDuration = 400;
+	final ConcurrentHashMap<ImageView, Long> currWIP = new ConcurrentHashMap<ImageView, Long>();
+	int crossFadeAnimationDuration = 400;
+	volatile Handler handler;
 
 	public ImageAttacher(Context ctx) {
 		this(ctx, (ThreadPoolExecutor) Executors.newFixedThreadPool(1),
@@ -54,17 +53,14 @@ public class ImageAttacher {
 
 	public ImageAttacher(Context ctx, ThreadPoolExecutor executor,
 			RESTClient restClient) {
-		this(
-				new AppUtils(ctx).getExternalCacheDir() != null ? new BitmapCacher(
-						new File(new AppUtils(ctx).getExternalCacheDir(), "img"))
-						: null, executor, restClient);
+		this(executor, restClient, getBitmapCacher(ctx));
 	}
 
-	public ImageAttacher(BitmapCacher bitmapCacher,
-			ThreadPoolExecutor executor, RESTClient restClient) {
-		this.bitmapCacher = bitmapCacher;
+	public ImageAttacher(ThreadPoolExecutor executor, RESTClient restClient,
+			BitmapCacher bitmapCacher) {
 		this.executor = executor;
 		this.restClient = restClient;
+		this.bitmapCacher = bitmapCacher;
 		handler = new Handler(Looper.getMainLooper());
 	}
 
@@ -81,27 +77,6 @@ public class ImageAttacher {
 		setInvisible(false, placeholderView);
 		setInvisible(true, imageView);
 		addAndExecute(placeholderView, imageView, imgUrl);
-	}
-
-	protected Bitmap onSuccess(ImageView imageView, String url, Bitmap bm) {
-		return bm;
-	}
-
-	protected void onFailure(ImageView imageView, String url, Exception e) {
-		L.e(e);
-	}
-
-	protected BitmapCacher getBitmapCacher() {
-		return bitmapCacher;
-	}
-
-	private void addAndExecute(View placeholderView, ImageView view, String url) {
-		long time = System.nanoTime();
-		currWIP.put(view, time);
-		Runnable r = new FetchAndCacheBitmapRunnable(placeholderView, view,
-				url, time);
-		executor.remove(r);
-		executor.execute(r);
 	}
 
 	public Bitmap getCachedOrFetchAndCache(String fileUrl) throws Exception {
@@ -125,6 +100,33 @@ public class ImageAttacher {
 			}
 		}
 		return bm;
+	}
+
+	protected Bitmap onSuccess(ImageView imageView, String url, Bitmap bm) {
+		return bm;
+	}
+
+	protected void onFailure(ImageView imageView, String url, Exception e) {
+		L.w(e);
+	}
+
+	protected static BitmapCacher getBitmapCacher(Context ctx) {
+		File externalCacheDir = new AppUtils(ctx).getExternalCacheDir();
+		return (externalCacheDir != null) ? new BitmapCacher(new File(
+				externalCacheDir, "img")) : null;
+	}
+
+	protected BitmapCacher getBitmapCacher() {
+		return bitmapCacher;
+	}
+
+	private void addAndExecute(View placeholderView, ImageView view, String url) {
+		long time = System.nanoTime();
+		currWIP.put(view, time);
+		Runnable r = new FetchAndCacheBitmapRunnable(this, placeholderView,
+				view, url, time);
+		executor.remove(r);
+		executor.execute(r);
 	}
 
 	//
@@ -156,15 +158,17 @@ public class ImageAttacher {
 		}
 	}
 
-	// TODO make static
-	class FetchAndCacheBitmapRunnable extends ImageViewWorkerRunnable {
+	static class FetchAndCacheBitmapRunnable extends ImageViewWorkerRunnable {
 
+		private final ImageAttacher ia;
 		private final String fileUrl;
 		private final long submitted;
 
-		public FetchAndCacheBitmapRunnable(View placeholderView,
-				ImageView imageView, String fileUrl, long submitted) {
+		public FetchAndCacheBitmapRunnable(ImageAttacher imageAttacher,
+				View placeholderView, ImageView imageView, String fileUrl,
+				long submitted) {
 			super(placeholderView, imageView);
+			this.ia = imageAttacher;
 			this.fileUrl = fileUrl;
 			this.submitted = submitted;
 
@@ -174,21 +178,21 @@ public class ImageAttacher {
 		public void run() {
 			Bitmap bm = null;
 			try {
-				bm = getCachedOrFetchAndCache(fileUrl);
+				bm = ia.getCachedOrFetchAndCache(fileUrl);
 			} catch (Exception e) {
-				onFailure(imageView, fileUrl, e);
+				ia.onFailure(imageView, fileUrl, e);
 			}
-			if (bm != null && (currWIP.get(imageView) == submitted)) {
-				currWIP.remove(imageView);
-				bm = onSuccess(imageView, fileUrl, bm);
+			if (bm != null && (ia.currWIP.get(imageView) == submitted)) {
+				ia.currWIP.remove(imageView);
+				bm = ia.onSuccess(imageView, fileUrl, bm);
 				AttachBitmapRunnable r = new AttachBitmapRunnable(
 						placeholderView, imageView, bm,
-						crossFadeAnimationDuration);
-				boolean success = handler.post(r);
+						ia.crossFadeAnimationDuration);
+				boolean success = ia.handler.post(r);
 				// a hack
 				while (!success) {
-					handler = new Handler(Looper.getMainLooper());
-					success = handler.post(r);
+					ia.handler = new Handler(Looper.getMainLooper());
+					success = ia.handler.post(r);
 				}
 			}
 		}
@@ -202,7 +206,7 @@ public class ImageAttacher {
 
 	static class AttachBitmapRunnable extends ImageViewWorkerRunnable {
 
-		protected final Bitmap bitmap;
+		private final Bitmap bitmap;
 		private final int crossFadeAnimationDuration;
 
 		public AttachBitmapRunnable(View placeholderView, ImageView imageView,
