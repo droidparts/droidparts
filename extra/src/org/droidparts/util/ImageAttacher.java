@@ -116,10 +116,6 @@ public class ImageAttacher {
 				externalCacheDir, "img")) : null;
 	}
 
-	protected BitmapCacher getBitmapCacher() {
-		return bitmapCacher;
-	}
-
 	private void addAndExecute(View placeholderView, ImageView view, String url) {
 		long time = System.nanoTime();
 		currWIP.put(view, time);
