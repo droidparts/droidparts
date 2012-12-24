@@ -15,11 +15,13 @@
  */
 package org.droidparts.util;
 
+import static org.droidparts.contract.Constants.BUFFER_SIZE;
 import static org.droidparts.util.io.IOUtils.silentlyClose;
 import static org.droidparts.util.ui.ViewUtils.crossFade;
 import static org.droidparts.util.ui.ViewUtils.setInvisible;
 
 import java.io.BufferedInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executors;
@@ -33,6 +35,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Handler;
 import android.os.Looper;
+import android.util.Pair;
 import android.view.View;
 import android.widget.ImageView;
 
@@ -79,41 +82,76 @@ public class ImageAttacher {
 		addAndExecute(placeholderView, imageView, imgUrl);
 	}
 
-	public Bitmap getCachedOrFetchAndCache(String fileUrl) throws Exception {
-
+	public Bitmap getCachedOrFetchAndCache(View placeholderView,
+			ImageView imageView, String imgUrl) {
 		Bitmap bm = null;
+		boolean saveToCache = false;
+
 		if (bitmapCacher != null) {
-			bm = bitmapCacher.readFromCache(fileUrl);
+			bm = bitmapCacher.readFromCache(imgUrl);
 		}
 
 		if (bm == null) {
+			saveToCache = true;
+			int bytesReadTotal = 0;
+			byte[] buffer = new byte[BUFFER_SIZE];
 			BufferedInputStream bis = null;
+			ByteArrayOutputStream baos = new ByteArrayOutputStream();
 			try {
-				bis = restClient.getInputStream(fileUrl).second;
-				bm = BitmapFactory.decodeStream(bis);
+				Pair<Integer, BufferedInputStream> resp = restClient
+						.getInputStream(imgUrl);
+				int kBTotal = resp.first / 1024;
+				bis = resp.second;
+				int bytesRead;
+				while ((bytesRead = bis.read(buffer)) != -1) {
+					baos.write(buffer, 0, bytesRead);
+					bytesReadTotal += bytesRead;
+					onFetchProgressChanged(placeholderView, imgUrl, kBTotal,
+							bytesReadTotal / 1024);
+				}
+				byte[] data = baos.toByteArray();
+				bm = BitmapFactory.decodeByteArray(data, 0, data.length);
+			} catch (Exception e) {
+				L.d(e);
+				onFailure(imageView, imgUrl, e);
 			} finally {
-				silentlyClose(bis);
-			}
-
-			if (bitmapCacher != null && bm != null) {
-				bitmapCacher.saveToCache(fileUrl, bm);
+				silentlyClose(bis, baos);
 			}
 		}
+
+		if (bm != null) {
+			if (bitmapCacher != null && saveToCache) {
+				bitmapCacher.saveToCache(imgUrl, bm);
+			}
+			bm = onSuccess(imageView, imgUrl, bm);
+		}
+
 		return bm;
 	}
 
-	protected Bitmap onSuccess(ImageView imageView, String url, Bitmap bm) {
-		return bm;
+	protected void onFetchProgressChanged(View backgroundView, String url,
+			int kBTotal, int kBReceived) {
+		L.d(String.format("Fetched %d of %d kB for %s.", kBReceived, kBTotal,
+				url));
 	}
 
 	protected void onFailure(ImageView imageView, String url, Exception e) {
 		L.w(e);
 	}
 
+	protected Bitmap onSuccess(ImageView imageView, String url, Bitmap bm) {
+		return bm;
+	}
+
 	protected static BitmapCacher getBitmapCacher(Context ctx) {
 		File externalCacheDir = new AppUtils(ctx).getExternalCacheDir();
-		return (externalCacheDir != null) ? new BitmapCacher(new File(
-				externalCacheDir, "img")) : null;
+		BitmapCacher bc = null;
+		if (externalCacheDir != null) {
+			bc = new BitmapCacher(new File(externalCacheDir, "img"));
+		} else {
+			L.w("External cache dir null. Forgot 'android.permission.WRITE_EXTERNAL_STORAGE' permission?");
+		}
+		return bc;
 	}
 
 	private void addAndExecute(View placeholderView, ImageView view, String url) {
@@ -157,30 +195,25 @@ public class ImageAttacher {
 	static class FetchAndCacheBitmapRunnable extends ImageViewWorkerRunnable {
 
 		private final ImageAttacher ia;
-		private final String fileUrl;
+		private final String imgUrl;
 		private final long submitted;
 
 		public FetchAndCacheBitmapRunnable(ImageAttacher imageAttacher,
-				View placeholderView, ImageView imageView, String fileUrl,
+				View placeholderView, ImageView imageView, String imgUrl,
 				long submitted) {
 			super(placeholderView, imageView);
 			this.ia = imageAttacher;
-			this.fileUrl = fileUrl;
+			this.imgUrl = imgUrl;
 			this.submitted = submitted;
 
 		}
 
 		@Override
 		public void run() {
-			Bitmap bm = null;
-			try {
-				bm = ia.getCachedOrFetchAndCache(fileUrl);
-			} catch (Exception e) {
-				ia.onFailure(imageView, fileUrl, e);
-			}
+			Bitmap bm = ia.getCachedOrFetchAndCache(placeholderView, imageView,
+					imgUrl);
 			if (bm != null && (ia.currWIP.get(imageView) == submitted)) {
 				ia.currWIP.remove(imageView);
-				bm = ia.onSuccess(imageView, fileUrl, bm);
 				AttachBitmapRunnable r = new AttachBitmapRunnable(
 						placeholderView, imageView, bm,
 						ia.crossFadeAnimationDuration);
@@ -195,7 +228,7 @@ public class ImageAttacher {
 
 		@Override
 		public String toString() {
-			return getClass().getSimpleName() + ": " + fileUrl;
+			return getClass().getSimpleName() + ": " + imgUrl;
 		}
 
 	}
