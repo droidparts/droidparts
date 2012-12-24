@@ -24,6 +24,9 @@ import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.util.Comparator;
+import java.util.Iterator;
+import java.util.TreeMap;
 
 import org.droidparts.util.L;
 import org.droidparts.util.crypto.HashCalc;
@@ -79,17 +82,33 @@ public class BitmapCacher {
 		}
 	}
 
-	public void purgeCache(long lastAccessedBefore) {
+	public void purgeCache(int targetSizeMB) {
+		TreeMap<Long, File> map = new TreeMap<Long, File>(reverseComparator);
+		final long targetSize = targetSizeMB * 1024 * 1024;
+		long size = 0;
 		for (File f : IOUtils.getFileList(cacheDir, null)) {
-			if (lastAccessedBefore <= 0
-					|| f.lastModified() < lastAccessedBefore) {
-				f.delete();
-			}
+			map.put(f.lastModified(), f);
+			size += f.length();
+		}
+		L.d("Cache size " + (size / 1024 / 1024) + "MB.");
+		Iterator<Long> it = map.keySet().iterator();
+		while ((size > targetSize) && it.hasNext()) {
+			File f = map.get(it.next());
+			size -= f.length();
+			f.delete();
 		}
 	}
 
-	public File getCachedFile(String name) {
+	private File getCachedFile(String name) {
 		return new File(cacheDir, HashCalc.getMD5(name));
 	}
+
+	private static final Comparator<Long> reverseComparator = new Comparator<Long>() {
+
+		@Override
+		public int compare(Long lhs, Long rhs) {
+			return (int) (lhs - rhs);
+		}
+	};
 
 }

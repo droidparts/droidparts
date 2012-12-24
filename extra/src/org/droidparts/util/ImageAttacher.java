@@ -88,6 +88,10 @@ public class ImageAttacher {
 		this.reshaper = reshaper;
 	}
 
+	public BitmapCacher getBitmapCacher() {
+		return bitmapCacher;
+	}
+
 	//
 
 	public void attachImage(ImageView imageView, String imgUrl) {
