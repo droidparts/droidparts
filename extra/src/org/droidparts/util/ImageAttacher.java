@@ -71,6 +71,8 @@ public class ImageAttacher {
 		this.crossFadeAnimationDuration = millisec;
 	}
 
+	//
+
 	public void attachImage(ImageView imageView, String imgUrl) {
 		addAndExecute(null, imageView, imgUrl);
 	}
@@ -82,7 +84,49 @@ public class ImageAttacher {
 		addAndExecute(placeholderView, imageView, imgUrl);
 	}
 
-	public Bitmap getCachedOrFetchAndCache(View placeholderView,
+	public Bitmap getImage(String imgUrl) {
+		return getCachedOrFetchAndCache(null, null, imgUrl);
+	}
+
+	//
+
+	protected void onFetchProgressChanged(View backgroundView, String url,
+			int kBTotal, int kBReceived) {
+		L.d(String.format("Fetched %d of %d kB for %s.", kBReceived, kBTotal,
+				url));
+	}
+
+	protected void onFailure(ImageView imageView, String url, Exception e) {
+		L.w(e);
+	}
+
+	protected Bitmap onSuccess(ImageView imageView, String url, Bitmap bm) {
+		return bm;
+	}
+
+	//
+
+	protected static BitmapCacher getBitmapCacher(Context ctx) {
+		File externalCacheDir = new AppUtils(ctx).getExternalCacheDir();
+		BitmapCacher bc = null;
+		if (externalCacheDir != null) {
+			bc = new BitmapCacher(new File(externalCacheDir, "img"));
+		} else {
+			L.w("External cache dir null. Forgot 'android.permission.WRITE_EXTERNAL_STORAGE' permission?");
+		}
+		return bc;
+	}
+
+	private void addAndExecute(View placeholderView, ImageView view, String url) {
+		long time = System.nanoTime();
+		currWIP.put(view, time);
+		Runnable r = new FetchAndCacheBitmapRunnable(this, placeholderView,
+				view, url, time);
+		executor.remove(r);
+		executor.execute(r);
+	}
+
+	private Bitmap getCachedOrFetchAndCache(View placeholderView,
 			ImageView imageView, String imgUrl) {
 		Bitmap bm = null;
 		boolean saveToCache = false;
@@ -127,40 +171,6 @@ public class ImageAttacher {
 		}
 
 		return bm;
-	}
-
-	protected void onFetchProgressChanged(View backgroundView, String url,
-			int kBTotal, int kBReceived) {
-		L.d(String.format("Fetched %d of %d kB for %s.", kBReceived, kBTotal,
-				url));
-	}
-
-	protected void onFailure(ImageView imageView, String url, Exception e) {
-		L.w(e);
-	}
-
-	protected Bitmap onSuccess(ImageView imageView, String url, Bitmap bm) {
-		return bm;
-	}
-
-	protected static BitmapCacher getBitmapCacher(Context ctx) {
-		File externalCacheDir = new AppUtils(ctx).getExternalCacheDir();
-		BitmapCacher bc = null;
-		if (externalCacheDir != null) {
-			bc = new BitmapCacher(new File(externalCacheDir, "img"));
-		} else {
-			L.w("External cache dir null. Forgot 'android.permission.WRITE_EXTERNAL_STORAGE' permission?");
-		}
-		return bc;
-	}
-
-	private void addAndExecute(View placeholderView, ImageView view, String url) {
-		long time = System.nanoTime();
-		currWIP.put(view, time);
-		Runnable r = new FetchAndCacheBitmapRunnable(this, placeholderView,
-				view, url, time);
-		executor.remove(r);
-		executor.execute(r);
 	}
 
 	//
