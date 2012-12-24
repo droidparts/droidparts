@@ -41,7 +41,7 @@ public class ImageAttacher {
 	private final BitmapCacher bitmapCacher;
 	private final ThreadPoolExecutor executor;
 	private final RESTClient restClient;
-	private Handler handler;
+	private volatile Handler handler;
 
 	private final ConcurrentHashMap<ImageView, Long> currWIP = new ConcurrentHashMap<ImageView, Long>();
 
@@ -185,7 +185,8 @@ public class ImageAttacher {
 						placeholderView, imageView, bm,
 						crossFadeAnimationDuration);
 				boolean success = handler.post(r);
-				if (!success) {
+				// a hack
+				while (!success) {
 					handler = new Handler(Looper.getMainLooper());
 					success = handler.post(r);
 				}
