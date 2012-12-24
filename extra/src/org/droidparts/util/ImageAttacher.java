@@ -41,12 +41,22 @@ import android.widget.ImageView;
 
 public class ImageAttacher {
 
+	public interface Reshaper {
+
+		String getId();
+
+		Bitmap reshape(Bitmap bm);
+
+	}
+
 	private final ThreadPoolExecutor executor;
 	private final RESTClient restClient;
 	private final BitmapCacher bitmapCacher;
 
-	final ConcurrentHashMap<ImageView, Long> currWIP = new ConcurrentHashMap<ImageView, Long>();
+	private Reshaper reshaper;
 	int crossFadeAnimationDuration = 400;
+
+	final ConcurrentHashMap<ImageView, Long> currWIP = new ConcurrentHashMap<ImageView, Long>();
 	volatile Handler handler;
 
 	public ImageAttacher(Context ctx) {
@@ -71,6 +81,10 @@ public class ImageAttacher {
 		this.crossFadeAnimationDuration = millisec;
 	}
 
+	public void setReshaper(Reshaper reshaper) {
+		this.reshaper = reshaper;
+	}
+
 	//
 
 	public void attachImage(ImageView imageView, String imgUrl) {
@@ -90,18 +104,15 @@ public class ImageAttacher {
 
 	//
 
-	protected void onFetchProgressChanged(View backgroundView, String url,
-			int kBTotal, int kBReceived) {
+	protected void onFetchProgressChanged(View placeholderView, View imageView,
+			String url, int kBTotal, int kBReceived) {
 		L.d(String.format("Fetched %d of %d kB for %s.", kBReceived, kBTotal,
 				url));
 	}
 
-	protected void onFailure(ImageView imageView, String url, Exception e) {
+	protected void onFetchFailure(View placeholderView, ImageView imageView,
+			String url, Exception e) {
 		L.w(e);
-	}
-
-	protected Bitmap onSuccess(ImageView imageView, String url, Bitmap bm) {
-		return bm;
 	}
 
 	//
@@ -130,9 +141,16 @@ public class ImageAttacher {
 			ImageView imageView, String imgUrl) {
 		Bitmap bm = null;
 		boolean saveToCache = false;
-
+		boolean reshape = true;
 		if (bitmapCacher != null) {
-			bm = bitmapCacher.readFromCache(imgUrl);
+			if (reshaper != null) {
+				bm = bitmapCacher.readFromCache(imgUrl + reshaper.getId());
+			}
+			if (bm != null) {
+				reshape = false;
+			} else {
+				bm = bitmapCacher.readFromCache(imgUrl);
+			}
 		}
 
 		if (bm == null) {
@@ -150,14 +168,14 @@ public class ImageAttacher {
 				while ((bytesRead = bis.read(buffer)) != -1) {
 					baos.write(buffer, 0, bytesRead);
 					bytesReadTotal += bytesRead;
-					onFetchProgressChanged(placeholderView, imgUrl, kBTotal,
-							bytesReadTotal / 1024);
+					onFetchProgressChanged(placeholderView, imageView, imgUrl,
+							kBTotal, bytesReadTotal / 1024);
 				}
 				byte[] data = baos.toByteArray();
 				bm = BitmapFactory.decodeByteArray(data, 0, data.length);
 			} catch (Exception e) {
 				L.d(e);
-				onFailure(imageView, imgUrl, e);
+				onFetchFailure(placeholderView, imageView, imgUrl, e);
 			} finally {
 				silentlyClose(bis, baos);
 			}
@@ -165,9 +183,12 @@ public class ImageAttacher {
 
 		if (bm != null) {
 			if (bitmapCacher != null && saveToCache) {
+				if (reshaper != null && reshape) {
+					imgUrl += reshaper.getId();
+					bm = reshaper.reshape(bm);
+				}
 				bitmapCacher.saveToCache(imgUrl, bm);
 			}
-			bm = onSuccess(imageView, imgUrl, bm);
 		}
 
 		return bm;
