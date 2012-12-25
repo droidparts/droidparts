@@ -17,6 +17,7 @@ package org.droidparts.util.io;
 
 import static android.graphics.Bitmap.CompressFormat.PNG;
 import static org.droidparts.contract.Constants.BUFFER_SIZE;
+import static org.droidparts.util.io.IOUtils.getFileList;
 import static org.droidparts.util.io.IOUtils.silentlyClose;
 
 import java.io.BufferedInputStream;
@@ -105,7 +106,7 @@ public class BitmapCache {
 		if (lruCache != null) {
 			lruCache.evictAll();
 		}
-		for (File f : getAllCachedFiles()) {
+		for (File f : getFileList(cacheDir)) {
 			if (timestamp <= 0 || f.lastModified() < timestamp) {
 				f.delete();
 			}
@@ -120,7 +121,7 @@ public class BitmapCache {
 				reverseComparator);
 		final long targetSize = sizeMb * 1024 * 1024;
 		long size = 0;
-		for (File file : getAllCachedFiles()) {
+		for (File file : getFileList(cacheDir)) {
 			Long modified = file.lastModified();
 			ArrayList<File> files = map.get(modified);
 			if (files == null) {
@@ -164,10 +165,6 @@ public class BitmapCache {
 		} else {
 			return null;
 		}
-	}
-
-	private ArrayList<File> getAllCachedFiles() {
-		return IOUtils.getFileList(cacheDir, null);
 	}
 
 	private static final Comparator<Long> reverseComparator = new Comparator<Long>() {
