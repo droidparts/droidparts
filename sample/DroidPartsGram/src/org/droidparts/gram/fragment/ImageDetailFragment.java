@@ -24,7 +24,7 @@ import org.droidparts.fragment.sherlock.DialogFragment;
 import org.droidparts.gram.R;
 import org.droidparts.gram.model.Image;
 import org.droidparts.gram.persist.PrefsManager;
-import org.droidparts.net.ImageAttacher;
+import org.droidparts.net.ImageFetcher;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -68,7 +68,7 @@ public class ImageDetailFragment extends DialogFragment {
 	public void onActivityCreated(Bundle bundle) {
 		super.onActivityCreated(bundle);
 		getDialog().setTitle(img.captionText);
-		new ImageAttacher(getActivity()).attachImage(imgView, img.imageUrl);
+		new ImageFetcher(getActivity()).attachImage(imgView, img.imageUrl);
 		if (prefsManager.isShowDetailFilter()) {
 			filterView.setText(img.filter.name);
 		}

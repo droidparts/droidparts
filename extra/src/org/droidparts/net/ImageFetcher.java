@@ -48,7 +48,7 @@ import android.util.Pair;
 import android.view.View;
 import android.widget.ImageView;
 
-public class ImageAttacher {
+public class ImageFetcher {
 
 	public static int MEMORY_CACHE_DISABLED = 0;
 	public static int MEMORY_CACHE_DEFAULT_PERCENT = 20;
@@ -68,7 +68,7 @@ public class ImageAttacher {
 	int crossFadeMillis = 0;
 	int maxMemoryCacheItemSize;
 
-	public ImageAttacher(Context ctx) {
+	public ImageFetcher(Context ctx) {
 		handler = new Handler(Looper.getMainLooper());
 		cacheExecutor = (ThreadPoolExecutor) Executors.newFixedThreadPool(1);
 		setExecutor((ThreadPoolExecutor) Executors.newFixedThreadPool(1));
@@ -306,11 +306,11 @@ public class ImageAttacher {
 
 	static class ReadFromCacheRunnable extends ImageViewRunnable {
 
-		protected final ImageAttacher ia;
+		protected final ImageFetcher ia;
 		protected final String imgUrl;
 		protected final long submitted;
 
-		public ReadFromCacheRunnable(ImageAttacher imageAttacher,
+		public ReadFromCacheRunnable(ImageFetcher imageAttacher,
 				ImageView imageView, String imgUrl, long submitted) {
 			super(imageView);
 			this.ia = imageAttacher;
@@ -336,7 +336,7 @@ public class ImageAttacher {
 
 	static class FetchAndCacheRunnable extends ReadFromCacheRunnable {
 
-		public FetchAndCacheRunnable(ImageAttacher imageAttacher,
+		public FetchAndCacheRunnable(ImageFetcher imageAttacher,
 				ImageView imageView, String imgUrl, long submitted) {
 			super(imageAttacher, imageView, imgUrl, submitted);
 		}

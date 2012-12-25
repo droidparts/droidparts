@@ -21,7 +21,7 @@ import org.droidparts.adapter.cursor.EntityCursorAdapter;
 import org.droidparts.adapter.tag.IconText2Tag;
 import org.droidparts.gram.R;
 import org.droidparts.gram.model.Image;
-import org.droidparts.net.ImageAttacher;
+import org.droidparts.net.ImageFetcher;
 import org.droidparts.persist.sql.stmt.Select;
 
 import android.content.Context;
@@ -34,13 +34,13 @@ import android.view.ViewGroup;
 
 public class ImageListAdapter extends EntityCursorAdapter<Image> {
 
-	private final ImageAttacher imageAttacher;
+	private final ImageFetcher imageFetcher;
 	private final Drawable placeholderDrawable;
 
 	public ImageListAdapter(Context ctx, Select<Image> select) {
 		super(ctx, Image.class, select);
-		imageAttacher = new ImageAttacher(ctx);
-		imageAttacher.setCrossFadeDuration(400);
+		imageFetcher = new ImageFetcher(ctx);
+		imageFetcher.setCrossFadeDuration(400);
 		placeholderDrawable = ctx.getResources().getDrawable(
 				R.drawable.ic_launcher);
 	}
@@ -60,7 +60,7 @@ public class ImageListAdapter extends EntityCursorAdapter<Image> {
 		tag.text1.setText(item.captionText);
 		tag.text2.setText(buildDescription(item));
 		tag.icon.setImageDrawable(placeholderDrawable);
-		imageAttacher.attachImage(tag.icon, item.thumbnailUrl);
+		imageFetcher.attachImage(tag.icon, item.thumbnailUrl);
 	}
 
 	private Spanned buildDescription(Image img) {
