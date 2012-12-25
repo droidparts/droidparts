@@ -22,7 +22,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.content.Context;
-import android.graphics.Bitmap;
 
 public final class MiscUtils {
 
@@ -44,19 +43,6 @@ public final class MiscUtils {
 		String[] valuesArr = ctx.getResources().getStringArray(valuesArrId);
 		int idx = Arrays.asList(keysArr).indexOf(key);
 		return (idx != -1) ? valuesArr[idx] : null;
-	}
-
-	public static Bitmap scaleBitmap(Bitmap bm, int maxSidePx) {
-		float w = bm.getWidth();
-		float h = bm.getHeight();
-		if (w > h) {
-			h = (maxSidePx / w) * h;
-			w = maxSidePx;
-		} else {
-			w = (maxSidePx / h) * w;
-			h = maxSidePx;
-		}
-		return Bitmap.createScaledBitmap(bm, (int) w, (int) h, true);
 	}
 
 }

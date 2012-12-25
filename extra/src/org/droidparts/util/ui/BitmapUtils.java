@@ -13,18 +13,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License. 
  */
-package org.droidparts.util.io;
+package org.droidparts.util.ui;
 
 import android.graphics.Bitmap;
 
-public interface BitmapLruCache {
+public final class BitmapUtils {
 
-	Bitmap put(String key, Bitmap value);
+	public static int getSize(Bitmap bm) {
+		return bm.getRowBytes() * bm.getHeight();
+	}
 
-	Bitmap get(String key);
-
-	Bitmap remove(String key);
-
-	void evictAll();
+	public static Bitmap scaleBitmap(Bitmap bm, int maxSidePx) {
+		float w = bm.getWidth();
+		float h = bm.getHeight();
+		if (w > h) {
+			h = (maxSidePx / w) * h;
+			w = maxSidePx;
+		} else {
+			w = (maxSidePx / h) * w;
+			h = maxSidePx;
+		}
+		return Bitmap.createScaledBitmap(bm, (int) w, (int) h, true);
+	}
 
 }

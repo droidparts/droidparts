@@ -21,8 +21,8 @@ import org.droidparts.adapter.cursor.EntityCursorAdapter;
 import org.droidparts.adapter.tag.IconText2Tag;
 import org.droidparts.gram.R;
 import org.droidparts.gram.model.Image;
+import org.droidparts.net.ImageAttacher;
 import org.droidparts.persist.sql.stmt.Select;
-import org.droidparts.util.ImageAttacher;
 
 import android.content.Context;
 import android.database.Cursor;

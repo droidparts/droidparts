@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License. 
  */
-package org.droidparts.util.io;
+package org.droidparts.net.cache;
 
 import static android.graphics.Bitmap.CompressFormat.PNG;
 import static org.droidparts.contract.Constants.BUFFER_SIZE;
@@ -36,64 +36,46 @@ import org.droidparts.util.crypto.HashCalc;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 
-public class BitmapCache {
+public class BitmapDiskCache {
 
 	private final File cacheDir;
-	private BitmapLruCache lruCache;
 
-	public BitmapCache(File cacheDir, int inMemoryCacheBytes) {
+	public BitmapDiskCache(File cacheDir) {
 		this.cacheDir = cacheDir;
-		if (cacheDir != null) {
-			cacheDir.mkdirs();
-		}
-		if (inMemoryCacheBytes > 0) {
-			initLruCache(inMemoryCacheBytes);
-		}
+		cacheDir.mkdirs();
 	}
 
 	public boolean put(String key, Bitmap bm) {
-		if (lruCache != null) {
-			lruCache.put(key, bm);
-		}
 		File file = getCachedFile(key);
-		if (file == null) {
+		BufferedOutputStream bos = null;
+		try {
+			bos = new BufferedOutputStream(new FileOutputStream(file),
+					BUFFER_SIZE);
+			bm.compress(PNG, 100, bos);
+			return true;
+		} catch (Exception e) {
+			L.e(e);
 			return false;
-		} else {
-			BufferedOutputStream bos = null;
-			try {
-				bos = new BufferedOutputStream(new FileOutputStream(file),
-						BUFFER_SIZE);
-				bm.compress(PNG, 100, bos);
-				return true;
-			} catch (Exception e) {
-				L.e(e);
-				return false;
-			} finally {
-				silentlyClose(bos);
-			}
+		} finally {
+			silentlyClose(bos);
 		}
 	}
 
 	public Bitmap get(String key) {
 		Bitmap bm = null;
-		if (lruCache != null) {
-			bm = lruCache.get(key);
-		}
-		if (bm == null) {
-			File file = getCachedFile(key);
-			if (file != null && file.exists()) {
-				BufferedInputStream bis = null;
-				try {
-					bis = new BufferedInputStream(new FileInputStream(file),
-							BUFFER_SIZE);
-					bm = BitmapFactory.decodeStream(bis);
-					// only after successful restore
-					file.setLastModified(System.currentTimeMillis());
-				} catch (Exception e) {
-					L.w(e);
-				} finally {
-					silentlyClose(bis);
-				}
+		File file = getCachedFile(key);
+		if (file.exists()) {
+			BufferedInputStream bis = null;
+			try {
+				bis = new BufferedInputStream(new FileInputStream(file),
+						BUFFER_SIZE);
+				bm = BitmapFactory.decodeStream(bis);
+				// only after successful restore
+				file.setLastModified(System.currentTimeMillis());
+			} catch (Exception e) {
+				L.w(e);
+			} finally {
+				silentlyClose(bis);
 			}
 		}
 		if (bm == null) {
@@ -103,9 +85,6 @@ public class BitmapCache {
 	}
 
 	public void purgeFilesAccessedBefore(long timestamp) {
-		if (lruCache != null) {
-			lruCache.evictAll();
-		}
 		for (File f : getFileList(cacheDir)) {
 			if (timestamp <= 0 || f.lastModified() < timestamp) {
 				f.delete();
@@ -114,9 +93,6 @@ public class BitmapCache {
 	}
 
 	public void trimToSize(int sizeMb) {
-		if (lruCache != null) {
-			lruCache.evictAll();
-		}
 		TreeMap<Long, ArrayList<File>> map = new TreeMap<Long, ArrayList<File>>(
 				reverseComparator);
 		final long targetSize = sizeMb * 1024 * 1024;
@@ -141,30 +117,8 @@ public class BitmapCache {
 		}
 	}
 
-	private void initLruCache(int maxBytes) {
-		try {
-			lruCache = (BitmapLruCache) Class
-					.forName("org.droidparts.util.io.StockBitmapLruCache")
-					.getConstructor(int.class).newInstance(maxBytes);
-			L.i("Using stock LruCache.");
-		} catch (Throwable t) {
-			try {
-				lruCache = (BitmapLruCache) Class
-						.forName("org.droidparts.util.io.SupportBitmapLruCache")
-						.getConstructor(int.class).newInstance(maxBytes);
-				L.i("Using Support Package LruCache.");
-			} catch (Throwable tr) {
-				L.i("LruCache not available.");
-			}
-		}
-	}
-
 	private File getCachedFile(String key) {
-		if (cacheDir != null) {
-			return new File(cacheDir, HashCalc.getMD5(key));
-		} else {
-			return null;
-		}
+		return new File(cacheDir, HashCalc.getMD5(key));
 	}
 
 	private static final Comparator<Long> reverseComparator = new Comparator<Long>() {

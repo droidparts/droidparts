@@ -13,12 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License. 
  */
-package org.droidparts.util;
+package org.droidparts.net;
 
 import static android.content.Context.ACTIVITY_SERVICE;
 import static android.graphics.Color.TRANSPARENT;
 import static org.droidparts.contract.Constants.BUFFER_SIZE;
 import static org.droidparts.util.io.IOUtils.silentlyClose;
+import static org.droidparts.util.ui.BitmapUtils.getSize;
 
 import java.io.BufferedInputStream;
 import java.io.ByteArrayOutputStream;
@@ -28,7 +29,10 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadPoolExecutor;
 
 import org.droidparts.http.RESTClient;
-import org.droidparts.util.io.BitmapCache;
+import org.droidparts.net.cache.BitmapCache;
+import org.droidparts.net.cache.BitmapDiskCache;
+import org.droidparts.util.AppUtils;
+import org.droidparts.util.L;
 
 import android.app.ActivityManager;
 import android.content.Context;
@@ -48,6 +52,7 @@ public class ImageAttacher {
 
 	public static int MEMORY_CACHE_DISABLED = 0;
 	public static int MEMORY_CACHE_DEFAULT_PERCENT = 20;
+	public static int MEMORY_CACHE_DEFAULT_MAX_ITEM_SIZE = 512 * 1024;
 
 	public interface Reshaper {
 
@@ -57,46 +62,93 @@ public class ImageAttacher {
 
 	}
 
-	private final ThreadPoolExecutor cacheExecutor;
-	private final RESTClient restClient;
-	private final BitmapCache bitmapCache;
+	private ThreadPoolExecutor cacheExecutor;
+	private RESTClient restClient;
+
+	private BitmapCache memoryCache;
+	private BitmapDiskCache diskCache;
 
 	final ConcurrentHashMap<ImageView, Long> currWIP = new ConcurrentHashMap<ImageView, Long>();
-	final ThreadPoolExecutor fetchExecutor;
+	ThreadPoolExecutor fetchExecutor;
 	volatile Handler handler;
 
 	private Reshaper reshaper;
 	int crossFadeMillis = 0;
+	int maxMemoryCacheItemSize;
 
 	public ImageAttacher(Context ctx) {
-		this(ctx, MEMORY_CACHE_DEFAULT_PERCENT);
-	}
-
-	public ImageAttacher(Context ctx, int memoryCachePercent) {
-		this((ThreadPoolExecutor) Executors.newFixedThreadPool(1),
-				new RESTClient(ctx), getDefaultBitmapCache(ctx,
-						memoryCachePercent));
-	}
-
-	public ImageAttacher(ThreadPoolExecutor executor, RESTClient restClient,
-			BitmapCache bitmapCache) {
-		this.fetchExecutor = executor;
-		this.restClient = restClient;
-		this.bitmapCache = bitmapCache;
-		cacheExecutor = (ThreadPoolExecutor) Executors.newFixedThreadPool(1);
 		handler = new Handler(Looper.getMainLooper());
+		cacheExecutor = (ThreadPoolExecutor) Executors.newFixedThreadPool(1);
+		setExecutor((ThreadPoolExecutor) Executors.newFixedThreadPool(1));
+		setRESTClient(new RESTClient(ctx));
+		//
+		File cacheDir = new AppUtils(ctx).getExternalCacheDir();
+		if (cacheDir != null) {
+			File imgCacheDir = (cacheDir == null) ? null : new File(cacheDir,
+					"img");
+			setDiskCache(new BitmapDiskCache(imgCacheDir));
+		} else {
+			L.w("External cache dir null. Lacking 'android.permission.WRITE_EXTERNAL_STORAGE' permission?");
+		}
+		//
+		setMemoryCachePercent(ctx, MEMORY_CACHE_DEFAULT_PERCENT);
+		setMaxMemoryCacheItemSize(MEMORY_CACHE_DEFAULT_MAX_ITEM_SIZE);
 	}
 
-	public void setCrossFadeDuration(int millisec) {
-		this.crossFadeMillis = millisec;
+	public void setExecutor(ThreadPoolExecutor exec) {
+		this.fetchExecutor = exec;
+	}
+
+	public void setRESTClient(RESTClient client) {
+		this.restClient = client;
+	}
+
+	public void setDiskCache(BitmapDiskCache cache) {
+		diskCache = cache;
+	}
+
+	public BitmapDiskCache getDiskCache() {
+		return diskCache;
+	}
+
+	public boolean setMemoryCachePercent(Context ctx, int percent) {
+		int maxBytes = 0;
+		if (percent != MEMORY_CACHE_DISABLED) {
+			int maxAvailableMemory = ((ActivityManager) ctx
+					.getSystemService(ACTIVITY_SERVICE)).getMemoryClass();
+			maxBytes = (int) (maxAvailableMemory * ((float) percent / 100)) * 1024 * 1024;
+		}
+		try {
+			memoryCache = (BitmapCache) Class
+					.forName("org.droidparts.net.cache.StockBitmapLruCache")
+					.getConstructor(int.class).newInstance(maxBytes);
+			L.i("Using stock LruCache.");
+			return true;
+		} catch (Throwable t) {
+			try {
+				memoryCache = (BitmapCache) Class
+						.forName(
+								"org.droidparts.net.cache.SupportBitmapLruCache")
+						.getConstructor(int.class).newInstance(maxBytes);
+				L.i("Using Support Package LruCache.");
+				return true;
+			} catch (Throwable tr) {
+				L.i("LruCache not available.");
+				return false;
+			}
+		}
+	}
+
+	public void setMaxMemoryCacheItemSize(int bytes) {
+		this.maxMemoryCacheItemSize = bytes;
 	}
 
 	public void setReshaper(Reshaper reshaper) {
 		this.reshaper = reshaper;
 	}
 
-	public BitmapCache getBitmapCache() {
-		return bitmapCache;
+	public void setCrossFadeDuration(int millisec) {
+		this.crossFadeMillis = millisec;
 	}
 
 	//
@@ -137,41 +189,6 @@ public class ImageAttacher {
 
 	//
 
-	protected static BitmapCache getDefaultBitmapCache(Context ctx,
-			int memoryCachePercent) {
-		//
-		File cacheDir = new AppUtils(ctx).getExternalCacheDir();
-		File imgCacheDir = null;
-		if (cacheDir != null) {
-			imgCacheDir = (cacheDir == null) ? null : new File(cacheDir, "img");
-		} else {
-			L.w("External cache dir null. Lacking 'android.permission.WRITE_EXTERNAL_STORAGE' permission?");
-		}
-		//
-		int maxMemoryBytes = 0;
-		if (memoryCachePercent != MEMORY_CACHE_DISABLED) {
-			int maxAvailableMemory = ((ActivityManager) ctx
-					.getSystemService(ACTIVITY_SERVICE)).getMemoryClass();
-			maxMemoryBytes = (int) (maxAvailableMemory * ((float) memoryCachePercent / 100)) * 1024 * 1024;
-		}
-		//
-		return new BitmapCache(imgCacheDir, maxMemoryBytes);
-	}
-
-	Bitmap getCached(String imgUrl) {
-		Bitmap bm = null;
-		if (reshaper != null) {
-			bm = bitmapCache.get(imgUrl + reshaper.getId());
-		}
-		if (bm == null) {
-			bm = bitmapCache.get(imgUrl);
-			if (bm != null && reshaper != null) {
-				bm = reshaper.reshape(bm);
-			}
-		}
-		return bm;
-	}
-
 	Bitmap fetch(ImageView imageView, String imgUrl) {
 		int bytesReadTotal = 0;
 		byte[] buffer = new byte[BUFFER_SIZE];
@@ -201,20 +218,69 @@ public class ImageAttacher {
 		}
 	}
 
-	boolean putToCache(String imgUrl, Bitmap bm) {
-		if (reshaper != null) {
-			imgUrl += reshaper.getId();
-			bm = reshaper.reshape(bm);
-		}
-		return bitmapCache.put(imgUrl, bm);
-	}
-
 	void runOnUiThread(Runnable r) {
 		boolean success = handler.post(r);
 		// a hack
 		while (!success) {
 			handler = new Handler(Looper.getMainLooper());
 			success = handler.post(r);
+		}
+	}
+
+	Bitmap getCached(String imgUrl) {
+		String key = getKey(imgUrl);
+		Bitmap bm = null;
+		if (reshaper != null) {
+			if (memoryCache != null) {
+				bm = memoryCache.get(key);
+			}
+			if (bm == null) {
+				if (diskCache != null) {
+					bm = diskCache.get(key);
+				}
+				if (bm != null) {
+					cacheToMemory(key, bm);
+				}
+			}
+		}
+		if (bm == null) {
+			if (memoryCache != null) {
+				bm = memoryCache.get(key);
+			}
+			if (bm == null) {
+				if (diskCache != null) {
+					bm = diskCache.get(imgUrl);
+				}
+				if (bm != null) {
+					if (reshaper != null) {
+						bm = reshaper.reshape(bm);
+					}
+					cacheToMemory(key, bm);
+				}
+			}
+		}
+		return bm;
+	}
+
+	Bitmap putToCache(String imgUrl, Bitmap bm) {
+		if (reshaper != null) {
+			bm = reshaper.reshape(bm);
+		}
+		String key = getKey(imgUrl);
+		cacheToMemory(key, bm);
+		if (diskCache != null) {
+			diskCache.put(key, bm);
+		}
+		return bm;
+	}
+
+	private String getKey(String imgUrl) {
+		return (reshaper == null) ? imgUrl : (imgUrl + reshaper.getId());
+	}
+
+	private void cacheToMemory(String key, Bitmap bm) {
+		if (memoryCache != null && getSize(bm) < maxMemoryCacheItemSize) {
+			memoryCache.put(key, bm);
 		}
 	}
 

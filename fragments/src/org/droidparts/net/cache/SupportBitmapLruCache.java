@@ -13,13 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License. 
  */
-package org.droidparts.util.io;
+package org.droidparts.net.cache;
 
 import android.graphics.Bitmap;
 import android.support.v4.util.LruCache;
 
 public class SupportBitmapLruCache extends LruCache<String, Bitmap> implements
-		BitmapLruCache {
+		BitmapCache {
 
 	public SupportBitmapLruCache(int maxSize) {
 		super(maxSize);

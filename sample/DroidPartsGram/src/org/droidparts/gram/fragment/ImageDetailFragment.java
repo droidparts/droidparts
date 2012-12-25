@@ -24,7 +24,7 @@ import org.droidparts.fragment.sherlock.DialogFragment;
 import org.droidparts.gram.R;
 import org.droidparts.gram.model.Image;
 import org.droidparts.gram.persist.PrefsManager;
-import org.droidparts.util.ImageAttacher;
+import org.droidparts.net.ImageAttacher;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
