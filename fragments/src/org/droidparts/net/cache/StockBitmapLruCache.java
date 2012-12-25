@@ -19,7 +19,7 @@ import android.graphics.Bitmap;
 import android.util.LruCache;
 
 public class StockBitmapLruCache extends LruCache<String, Bitmap> implements
-		BitmapCache {
+		BitmapLruCache {
 
 	public StockBitmapLruCache(int maxSize) {
 		super(maxSize);

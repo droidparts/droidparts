@@ -29,7 +29,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadPoolExecutor;
 
 import org.droidparts.http.RESTClient;
-import org.droidparts.net.cache.BitmapCache;
+import org.droidparts.net.cache.BitmapLruCache;
 import org.droidparts.net.cache.BitmapDiskCache;
 import org.droidparts.util.AppUtils;
 import org.droidparts.util.L;
@@ -65,7 +65,7 @@ public class ImageAttacher {
 	private ThreadPoolExecutor cacheExecutor;
 	private RESTClient restClient;
 
-	private BitmapCache memoryCache;
+	private BitmapLruCache memoryCache;
 	private BitmapDiskCache diskCache;
 
 	final ConcurrentHashMap<ImageView, Long> currWIP = new ConcurrentHashMap<ImageView, Long>();
@@ -86,13 +86,21 @@ public class ImageAttacher {
 		if (cacheDir != null) {
 			File imgCacheDir = (cacheDir == null) ? null : new File(cacheDir,
 					"img");
-			setDiskCache(new BitmapDiskCache(imgCacheDir));
+			setDiskCacheDir(imgCacheDir);
 		} else {
 			L.w("External cache dir null. Lacking 'android.permission.WRITE_EXTERNAL_STORAGE' permission?");
 		}
 		//
 		setMemoryCachePercent(ctx, MEMORY_CACHE_DEFAULT_PERCENT);
 		setMaxMemoryCacheItemSize(MEMORY_CACHE_DEFAULT_MAX_ITEM_SIZE);
+	}
+
+	public void setReshaper(Reshaper reshaper) {
+		this.reshaper = reshaper;
+	}
+
+	public void setCrossFadeDuration(int millisec) {
+		this.crossFadeMillis = millisec;
 	}
 
 	public void setExecutor(ThreadPoolExecutor exec) {
@@ -103,12 +111,8 @@ public class ImageAttacher {
 		this.restClient = client;
 	}
 
-	public void setDiskCache(BitmapDiskCache cache) {
-		diskCache = cache;
-	}
-
-	public BitmapDiskCache getDiskCache() {
-		return diskCache;
+	public void setDiskCacheDir(File dir) {
+		diskCache = (dir == null) ? null : new BitmapDiskCache(dir);
 	}
 
 	public boolean setMemoryCachePercent(Context ctx, int percent) {
@@ -119,14 +123,14 @@ public class ImageAttacher {
 			maxBytes = (int) (maxAvailableMemory * ((float) percent / 100)) * 1024 * 1024;
 		}
 		try {
-			memoryCache = (BitmapCache) Class
+			memoryCache = (BitmapLruCache) Class
 					.forName("org.droidparts.net.cache.StockBitmapLruCache")
 					.getConstructor(int.class).newInstance(maxBytes);
 			L.i("Using stock LruCache.");
 			return true;
 		} catch (Throwable t) {
 			try {
-				memoryCache = (BitmapCache) Class
+				memoryCache = (BitmapLruCache) Class
 						.forName(
 								"org.droidparts.net.cache.SupportBitmapLruCache")
 						.getConstructor(int.class).newInstance(maxBytes);
@@ -143,12 +147,8 @@ public class ImageAttacher {
 		this.maxMemoryCacheItemSize = bytes;
 	}
 
-	public void setReshaper(Reshaper reshaper) {
-		this.reshaper = reshaper;
-	}
-
-	public void setCrossFadeDuration(int millisec) {
-		this.crossFadeMillis = millisec;
+	public BitmapDiskCache getDiskCache() {
+		return diskCache;
 	}
 
 	//
