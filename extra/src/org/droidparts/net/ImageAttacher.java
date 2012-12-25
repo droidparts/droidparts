@@ -29,8 +29,8 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadPoolExecutor;
 
 import org.droidparts.http.RESTClient;
-import org.droidparts.net.cache.BitmapLruCache;
 import org.droidparts.net.cache.BitmapDiskCache;
+import org.droidparts.net.cache.BitmapLruCache;
 import org.droidparts.util.AppUtils;
 import org.droidparts.util.L;
 
@@ -52,7 +52,7 @@ public class ImageAttacher {
 
 	public static int MEMORY_CACHE_DISABLED = 0;
 	public static int MEMORY_CACHE_DEFAULT_PERCENT = 20;
-	public static int MEMORY_CACHE_DEFAULT_MAX_ITEM_SIZE = 512 * 1024;
+	public static int MEMORY_CACHE_DEFAULT_MAX_ITEM_SIZE = 256 * 1024;
 
 	private ThreadPoolExecutor cacheExecutor;
 	private RESTClient restClient;
@@ -267,7 +267,8 @@ public class ImageAttacher {
 	}
 
 	private String getKey(String imgUrl) {
-		return (reshaper == null) ? imgUrl : (imgUrl + reshaper.getReshaperId());
+		return (reshaper == null) ? imgUrl
+				: (imgUrl + reshaper.getReshaperId());
 	}
 
 	private void cacheToMemory(String key, Bitmap bm) {
