@@ -54,14 +54,6 @@ public class ImageAttacher {
 	public static int MEMORY_CACHE_DEFAULT_PERCENT = 20;
 	public static int MEMORY_CACHE_DEFAULT_MAX_ITEM_SIZE = 512 * 1024;
 
-	public interface Reshaper {
-
-		String getId();
-
-		Bitmap reshape(Bitmap bm);
-
-	}
-
 	private ThreadPoolExecutor cacheExecutor;
 	private RESTClient restClient;
 
@@ -72,7 +64,7 @@ public class ImageAttacher {
 	ThreadPoolExecutor fetchExecutor;
 	volatile Handler handler;
 
-	private Reshaper reshaper;
+	private BitmapReshaper reshaper;
 	int crossFadeMillis = 0;
 	int maxMemoryCacheItemSize;
 
@@ -95,7 +87,7 @@ public class ImageAttacher {
 		setMaxMemoryCacheItemSize(MEMORY_CACHE_DEFAULT_MAX_ITEM_SIZE);
 	}
 
-	public void setReshaper(Reshaper reshaper) {
+	public void setBitmapReshaper(BitmapReshaper reshaper) {
 		this.reshaper = reshaper;
 	}
 
@@ -275,7 +267,7 @@ public class ImageAttacher {
 	}
 
 	private String getKey(String imgUrl) {
-		return (reshaper == null) ? imgUrl : (imgUrl + reshaper.getId());
+		return (reshaper == null) ? imgUrl : (imgUrl + reshaper.getReshaperId());
 	}
 
 	private void cacheToMemory(String key, Bitmap bm) {
