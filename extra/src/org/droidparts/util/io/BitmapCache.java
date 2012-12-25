@@ -26,7 +26,6 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.Comparator;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.TreeMap;
 
@@ -167,7 +166,7 @@ public class BitmapCache {
 		}
 	}
 
-	private HashSet<File> getAllCachedFiles() {
+	private ArrayList<File> getAllCachedFiles() {
 		return IOUtils.getFileList(cacheDir, null);
 	}
 

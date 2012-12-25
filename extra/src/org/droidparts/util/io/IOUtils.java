@@ -30,7 +30,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.nio.channels.FileChannel;
-import java.util.HashSet;
+import java.util.ArrayList;
 
 import org.droidparts.util.L;
 
@@ -80,8 +80,8 @@ public class IOUtils {
 		}
 	}
 
-	public static HashSet<File> getFileList(File dir, String fileExtension) {
-		final HashSet<File> files = new HashSet<File>();
+	public static ArrayList<File> getFileList(File dir, String fileExtension) {
+		final ArrayList<File> files = new ArrayList<File>();
 		for (File file : dir.listFiles()) {
 			if (file.isFile()) {
 				if (fileExtension == null) {
