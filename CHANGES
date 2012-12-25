@@ -7,7 +7,7 @@
     * RESTClient lost proxy support but now provides access to underlying HTTPWorkers for fine-tuning.
     * RESTClient now supports setting a AuthScope for HTTP Basic Authentication.
     * Fixed RESTClient not requesting GZIP when using HttpURLConnectionWorker.
-    * Reworked ImageAttacher.
+    * Reworked ImageAttacher. BitmapCache will now use LruCache if available.
     * Removed 'legacy' module & Loader subclasses.
     * DroidParts now doesn't use any xml resources. Which means it can be used as pure .jars placed in the libs folder.
 
