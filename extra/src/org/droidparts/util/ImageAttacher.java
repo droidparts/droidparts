@@ -242,7 +242,8 @@ public class ImageAttacher {
 		@Override
 		public void run() {
 			Bitmap bm = ia.getCachedOrFetchAndCache(imageView, imgUrl);
-			if (bm != null && (ia.currWIP.get(imageView) == submitted)) {
+			Long timestamp = ia.currWIP.get(imageView);
+			if (bm != null && timestamp != null && timestamp == submitted) {
 				ia.currWIP.remove(imageView);
 				AttachBitmapRunnable r = new AttachBitmapRunnable(imageView,
 						bm, ia.crossFadeMillis);
