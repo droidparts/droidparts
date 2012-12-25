@@ -24,6 +24,7 @@ import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.TreeMap;
@@ -83,19 +84,27 @@ public class BitmapCacher {
 	}
 
 	public void purgeCache(int targetSizeMB) {
-		TreeMap<Long, File> map = new TreeMap<Long, File>(reverseComparator);
+		TreeMap<Long, ArrayList<File>> map = new TreeMap<Long, ArrayList<File>>(
+				reverseComparator);
 		final long targetSize = targetSizeMB * 1024 * 1024;
 		long size = 0;
-		for (File f : IOUtils.getFileList(cacheDir, null)) {
-			map.put(f.lastModified(), f);
-			size += f.length();
+		for (File file : IOUtils.getFileList(cacheDir, null)) {
+			Long modified = file.lastModified();
+			ArrayList<File> files = map.get(modified);
+			if (files == null) {
+				files = new ArrayList<File>();
+				map.put(modified, files);
+			}
+			files.add(file);
+			size += file.length();
 		}
-		L.d("Cache size " + (size / 1024 / 1024) + "MB.");
+		L.i(String.format("Cache size: %.2f MB.", (float) size / 1024 / 1024));
 		Iterator<Long> it = map.keySet().iterator();
 		while ((size > targetSize) && it.hasNext()) {
-			File f = map.get(it.next());
-			size -= f.length();
-			f.delete();
+			for (File file : map.get(it.next())) {
+				size -= file.length();
+				file.delete();
+			}
 		}
 	}
 
