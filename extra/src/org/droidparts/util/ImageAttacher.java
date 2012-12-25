@@ -46,6 +46,9 @@ import android.widget.ImageView;
 
 public class ImageAttacher {
 
+	public static int MEMORY_CACHE_DISABLED = 0;
+	public static int MEMORY_CACHE_DEFAULT_PERCENT = 20;
+
 	public interface Reshaper {
 
 		String getId();
@@ -66,13 +69,13 @@ public class ImageAttacher {
 	int crossFadeMillis = 0;
 
 	public ImageAttacher(Context ctx) {
-		this(ctx, -1);
+		this(ctx, MEMORY_CACHE_DEFAULT_PERCENT);
 	}
 
-	public ImageAttacher(Context ctx, int maxInMemoryCacheMB) {
+	public ImageAttacher(Context ctx, int memoryCachePercent) {
 		this((ThreadPoolExecutor) Executors.newFixedThreadPool(1),
 				new RESTClient(ctx), getDefaultBitmapCache(ctx,
-						maxInMemoryCacheMB));
+						memoryCachePercent));
 	}
 
 	public ImageAttacher(ThreadPoolExecutor executor, RESTClient restClient,
@@ -135,7 +138,7 @@ public class ImageAttacher {
 	//
 
 	protected static BitmapCache getDefaultBitmapCache(Context ctx,
-			int maxInMemoryCacheMB) {
+			int memoryCachePercent) {
 		//
 		File cacheDir = new AppUtils(ctx).getExternalCacheDir();
 		File imgCacheDir = null;
@@ -145,14 +148,14 @@ public class ImageAttacher {
 			L.w("External cache dir null. Lacking 'android.permission.WRITE_EXTERNAL_STORAGE' permission?");
 		}
 		//
-		if (maxInMemoryCacheMB == -1) {
-			int memClass = ((ActivityManager) ctx
+		int maxMemoryBytes = 0;
+		if (memoryCachePercent != MEMORY_CACHE_DISABLED) {
+			int maxAvailableMemory = ((ActivityManager) ctx
 					.getSystemService(ACTIVITY_SERVICE)).getMemoryClass();
-			maxInMemoryCacheMB = memClass / 8;
+			maxMemoryBytes = (int) (maxAvailableMemory * ((float) memoryCachePercent / 100)) * 1024 * 1024;
 		}
-		int maxMemeoryBytes = maxInMemoryCacheMB * 1024 * 1024;
 		//
-		return new BitmapCache(imgCacheDir, maxMemeoryBytes);
+		return new BitmapCache(imgCacheDir, maxMemoryBytes);
 	}
 
 	Bitmap getCached(String imgUrl) {
