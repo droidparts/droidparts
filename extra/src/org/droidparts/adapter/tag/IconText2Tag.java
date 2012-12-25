@@ -17,13 +17,12 @@ package org.droidparts.adapter.tag;
 
 import org.droidparts.annotation.inject.InjectView;
 
-import android.R;
 import android.view.View;
 import android.widget.ImageView;
 
 public class IconText2Tag extends Text2Tag {
 
-	@InjectView(R.id.icon)
+	@InjectView(android.R.id.icon)
 	public ImageView icon;
 
 	public IconText2Tag(View view) {

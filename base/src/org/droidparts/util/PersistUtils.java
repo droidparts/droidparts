@@ -126,7 +126,7 @@ public final class PersistUtils implements SQL.DDL {
 		StringBuilder sb = new StringBuilder();
 		for (int i = 0; i < count; i++) {
 			if (i != 0) {
-				sb.append(SQL.DDL.SEPARATOR);
+				sb.append(SEPARATOR);
 			}
 			sb.append("?");
 		}

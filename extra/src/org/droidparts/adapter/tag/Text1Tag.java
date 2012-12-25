@@ -17,13 +17,12 @@ package org.droidparts.adapter.tag;
 
 import org.droidparts.annotation.inject.InjectView;
 
-import android.R;
 import android.view.View;
 import android.widget.TextView;
 
 public class Text1Tag extends AdapterTag {
 
-	@InjectView(R.id.text1)
+	@InjectView(android.R.id.text1)
 	public TextView text1;
 
 	public Text1Tag(View view) {
