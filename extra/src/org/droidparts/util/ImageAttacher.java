@@ -15,6 +15,7 @@
  */
 package org.droidparts.util;
 
+import static android.content.Context.ACTIVITY_SERVICE;
 import static android.graphics.Color.TRANSPARENT;
 import static org.droidparts.contract.Constants.BUFFER_SIZE;
 import static org.droidparts.util.io.IOUtils.silentlyClose;
@@ -27,8 +28,9 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadPoolExecutor;
 
 import org.droidparts.http.RESTClient;
-import org.droidparts.util.io.BitmapCacher;
+import org.droidparts.util.io.BitmapCache;
 
+import android.app.ActivityManager;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -54,7 +56,7 @@ public class ImageAttacher {
 
 	private final ThreadPoolExecutor executor;
 	private final RESTClient restClient;
-	private final BitmapCacher bitmapCacher;
+	private final BitmapCache bitmapCache;
 
 	private Reshaper reshaper;
 	int crossFadeMillis = 0;
@@ -63,20 +65,20 @@ public class ImageAttacher {
 	volatile Handler handler;
 
 	public ImageAttacher(Context ctx) {
-		this(ctx, (ThreadPoolExecutor) Executors.newFixedThreadPool(1),
-				new RESTClient(ctx));
+		this(ctx, -1);
 	}
 
-	public ImageAttacher(Context ctx, ThreadPoolExecutor executor,
-			RESTClient restClient) {
-		this(executor, restClient, getBitmapCacher(ctx));
+	public ImageAttacher(Context ctx, int maxInMemoryCacheMB) {
+		this((ThreadPoolExecutor) Executors.newFixedThreadPool(1),
+				new RESTClient(ctx), getDefaultBitmapCache(ctx,
+						maxInMemoryCacheMB));
 	}
 
 	public ImageAttacher(ThreadPoolExecutor executor, RESTClient restClient,
-			BitmapCacher bitmapCacher) {
+			BitmapCache bitmapCache) {
 		this.executor = executor;
 		this.restClient = restClient;
-		this.bitmapCacher = bitmapCacher;
+		this.bitmapCache = bitmapCache;
 		handler = new Handler(Looper.getMainLooper());
 	}
 
@@ -88,8 +90,8 @@ public class ImageAttacher {
 		this.reshaper = reshaper;
 	}
 
-	public BitmapCacher getBitmapCacher() {
-		return bitmapCacher;
+	public BitmapCache getBitmapCache() {
+		return bitmapCache;
 	}
 
 	//
@@ -111,8 +113,9 @@ public class ImageAttacher {
 
 	protected void onFetchProgressChanged(View imageView, String imgUrl,
 			int kBTotal, int kBReceived) {
-		L.d(String.format("Fetched %d of %d kB from %s.", kBReceived, kBTotal,
-				imgUrl));
+		// L.d(String.format("Fetched %d of %d kB from %s.", kBReceived,
+		// kBTotal,
+		// imgUrl));
 	}
 
 	protected void onFetchFailed(View imageView, String imgUrl, Exception e) {
@@ -121,30 +124,38 @@ public class ImageAttacher {
 
 	//
 
-	protected static BitmapCacher getBitmapCacher(Context ctx) {
-		File externalCacheDir = new AppUtils(ctx).getExternalCacheDir();
-		BitmapCacher bc = null;
-		if (externalCacheDir != null) {
-			bc = new BitmapCacher(new File(externalCacheDir, "img"));
+	protected static BitmapCache getDefaultBitmapCache(Context ctx,
+			int maxInMemoryCacheMB) {
+		//
+		File cacheDir = new AppUtils(ctx).getExternalCacheDir();
+		File imgCacheDir = null;
+		if (cacheDir != null) {
+			imgCacheDir = (cacheDir == null) ? null : new File(cacheDir, "img");
 		} else {
-			L.w("External cache dir null. Forgot 'android.permission.WRITE_EXTERNAL_STORAGE' permission?");
+			L.w("External cache dir null. Lacking 'android.permission.WRITE_EXTERNAL_STORAGE' permission?");
 		}
-		return bc;
+		//
+		if (maxInMemoryCacheMB == -1) {
+			int memClass = ((ActivityManager) ctx
+					.getSystemService(ACTIVITY_SERVICE)).getMemoryClass();
+			maxInMemoryCacheMB = memClass / 8;
+		}
+		int maxMemeoryBytes = maxInMemoryCacheMB * 1024 * 1024;
+		//
+		return new BitmapCache(imgCacheDir, maxMemeoryBytes);
 	}
 
 	private Bitmap getCachedOrFetchAndCache(ImageView imageView, String imgUrl) {
 		Bitmap bm = null;
 		boolean saveToCache = false;
 		boolean reshape = true;
-		if (bitmapCacher != null) {
-			if (reshaper != null) {
-				bm = bitmapCacher.readFromCache(imgUrl + reshaper.getId());
-			}
-			if (bm != null) {
-				reshape = false;
-			} else {
-				bm = bitmapCacher.readFromCache(imgUrl);
-			}
+		if (reshaper != null) {
+			bm = bitmapCache.get(imgUrl + reshaper.getId());
+		}
+		if (bm != null) {
+			reshape = false;
+		} else {
+			bm = bitmapCache.get(imgUrl);
 		}
 
 		if (bm == null) {
@@ -175,14 +186,12 @@ public class ImageAttacher {
 			}
 		}
 
-		if (bm != null) {
-			if (bitmapCacher != null && saveToCache) {
-				if (reshaper != null && reshape) {
-					imgUrl += reshaper.getId();
-					bm = reshaper.reshape(bm);
-				}
-				bitmapCacher.saveToCache(imgUrl, bm);
+		if (bm != null && saveToCache) {
+			if (reshaper != null && reshape) {
+				imgUrl += reshaper.getId();
+				bm = reshaper.reshape(bm);
 			}
+			bitmapCache.put(imgUrl, bm);
 		}
 
 		return bm;
