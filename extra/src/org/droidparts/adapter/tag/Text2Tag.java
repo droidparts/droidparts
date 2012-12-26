@@ -22,7 +22,7 @@ import android.widget.TextView;
 
 public class Text2Tag extends Text1Tag {
 
-	@InjectView(android.R.id.text2)
+	@InjectView(id = android.R.id.text2)
 	public TextView text2;
 
 	public Text2Tag(View view) {

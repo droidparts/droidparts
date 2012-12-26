@@ -31,7 +31,7 @@ public class SupportFragmentInjector {
 	static boolean inject(Object fragmentActivityObj, InjectFragmentAnn ann,
 			Field field) {
 		FragmentActivity fragmentActivity = (FragmentActivity) fragmentActivityObj;
-		int fragmentId = ann.value;
+		int fragmentId = ann.id;
 		if (fragmentId == 0) {
 			fragmentId = ResourceUtils.getResourceId(fragmentActivity,
 					field.getName());

@@ -25,6 +25,6 @@ import java.lang.annotation.Target;
 @Target(FIELD)
 public @interface InjectFragment {
 
-	int value() default 0;
+	int id() default 0;
 
 }

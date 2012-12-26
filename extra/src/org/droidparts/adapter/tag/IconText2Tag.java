@@ -22,7 +22,7 @@ import android.widget.ImageView;
 
 public class IconText2Tag extends Text2Tag {
 
-	@InjectView(android.R.id.icon)
+	@InjectView(id = android.R.id.icon)
 	public ImageView icon;
 
 	public IconText2Tag(View view) {

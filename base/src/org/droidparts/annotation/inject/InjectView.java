@@ -25,6 +25,8 @@ import java.lang.annotation.Target;
 @Target(FIELD)
 public @interface InjectView {
 
-	int value() default 0;
+	int id() default 0;
+
+	boolean click() default false;
 
 }

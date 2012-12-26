@@ -32,7 +32,7 @@ public class EntryListAsJSONActivity extends Activity implements
 		return intent;
 	}
 
-	@InjectView(R.id.text)
+	@InjectView(id = R.id.text)
 	private TextView textView;
 
 	@InjectDependency

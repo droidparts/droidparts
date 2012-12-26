@@ -19,10 +19,12 @@ import org.droidparts.annotation.inject.InjectView;
 
 public final class InjectViewAnn extends InjectAnn<InjectView> {
 
-	public final int value;
+	public final int id;
+	public final boolean click;
 
 	public InjectViewAnn(InjectView annotation) {
 		super(InjectView.class);
-		value = annotation.value();
+		id = annotation.id();
+		click = annotation.click();
 	}
 }

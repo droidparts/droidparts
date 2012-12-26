@@ -36,9 +36,9 @@ public class EntryListActivity extends ListActivity implements OnClickListener {
 
 	private EntryListAdapter adapter;
 
-	@InjectView(R.id.button_add)
+	@InjectView(id = R.id.button_add, click = true)
 	private Button addButton;
-	@InjectView
+	@InjectView(click = true)
 	private Button toJsonButton;
 
 	@Override
@@ -51,8 +51,6 @@ public class EntryListActivity extends ListActivity implements OnClickListener {
 		super.onCreate(savedInstanceState);
 		adapter = new EntryListAdapter(this, new EntryManager(this).select());
 		setListAdapter(adapter);
-		addButton.setOnClickListener(this);
-		toJsonButton.setOnClickListener(this);
 	}
 
 	@Override

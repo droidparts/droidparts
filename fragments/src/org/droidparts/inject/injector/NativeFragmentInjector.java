@@ -31,7 +31,7 @@ public class NativeFragmentInjector {
 	static boolean inject(Object fragmentActivityObj, InjectFragmentAnn ann,
 			Field field) {
 		Activity fragmentActivity = (Activity) fragmentActivityObj;
-		int fragmentId = ann.value;
+		int fragmentId = ann.id;
 		if (fragmentId == 0) {
 			fragmentId = ResourceUtils.getResourceId(fragmentActivity,
 					field.getName());

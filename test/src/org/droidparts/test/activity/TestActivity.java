@@ -12,7 +12,7 @@ public class TestActivity extends Activity {
 	@InjectResource(R.string.test_string)
 	public String testString;
 
-	@InjectView(R.id.view_text)
+	@InjectView(id = R.id.view_text)
 	public TextView textView;
 
 	@Override

@@ -51,11 +51,11 @@ public class ImageDetailFragment extends DialogFragment {
 	@InjectBundleExtra(key = EXTRA_IMAGE)
 	private Image img;
 
-	@InjectView(R.id.view_img)
+	@InjectView(id = R.id.view_img)
 	private ImageView imgView;
-	@InjectView(R.id.view_filter)
+	@InjectView(id = R.id.view_filter)
 	private TextView filterView;
-	@InjectView(R.id.view_tags)
+	@InjectView(id = R.id.view_tags)
 	private TextView tagsView;
 
 	@Override

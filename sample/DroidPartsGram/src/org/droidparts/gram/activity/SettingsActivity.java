@@ -18,6 +18,7 @@ package org.droidparts.gram.activity;
 import static org.droidparts.util.Strings.join;
 
 import org.droidparts.activity.sherlock.PreferenceActivity;
+import org.droidparts.annotation.inject.InjectView;
 import org.droidparts.gram.R;
 import org.droidparts.preference.MultiSelectListPreference;
 
@@ -36,16 +37,18 @@ public class SettingsActivity extends PreferenceActivity implements
 		return new Intent(ctx, SettingsActivity.class);
 	}
 
+	@InjectView(id = R.string.pref_show_detail, click = true)
 	private MultiSelectListPreference showDetailPref;
+
+	@Override
+	public void onPreInject() {
+		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+		addPreferencesFromResource(R.xml.preferences);
+	}
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-		addPreferencesFromResource(R.xml.preferences);
-		//
-		showDetailPref = (MultiSelectListPreference) findPreference(getString(R.string.pref_show_detail));
-		showDetailPref.setOnPreferenceChangeListener(this);
 		onPreferenceChange(showDetailPref, null);
 	}
 
