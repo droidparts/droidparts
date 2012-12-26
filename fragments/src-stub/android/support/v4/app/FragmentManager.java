@@ -1,0 +1,1 @@
+package android.support.v4.app;import org.droidparts.Stub;public class FragmentManager {	public Fragment findFragmentById(int id) {		throw new Stub();	}	public Fragment findFragmentByTag(String tag) {		throw new Stub();	}	public FragmentTransaction beginTransaction() {		throw new Stub();	}}

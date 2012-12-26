@@ -1,0 +1,1 @@
+package com.actionbarsherlock.view;import org.droidparts.Stub;import android.view.View;public class MenuItem {	public void setActionView(View v) {		throw new Stub();	}}

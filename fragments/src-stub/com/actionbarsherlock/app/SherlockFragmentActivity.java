@@ -1,0 +1,1 @@
+package com.actionbarsherlock.app;import org.droidparts.Stub;import android.support.v4.app.FragmentActivity;public class SherlockFragmentActivity extends FragmentActivity {	public void setSupportProgressBarIndeterminateVisibility(boolean visible) {		throw new Stub();	}	public ActionBar getSupportActionBar() {		throw new Stub();	}}

@@ -1,0 +1,1 @@
+package com.actionbarsherlock.app;import android.support.v4.app.ListFragment;public class SherlockListFragment extends ListFragment {}

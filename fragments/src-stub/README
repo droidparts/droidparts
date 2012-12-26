@@ -1,0 +1,1 @@
+These stub classes are only required if AcitonBarSherlock & android-support-v4.jar are not available at compile time.

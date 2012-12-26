@@ -1,0 +1,1 @@
+package android.support.v4.app;import org.droidparts.Stub;import android.app.Activity;import android.os.Bundle;public class FragmentActivity extends Activity {	protected void onCreate(Bundle savedInstanceState) {		throw new Stub();	}	public FragmentManager getSupportFragmentManager() {		throw new Stub();	}}
