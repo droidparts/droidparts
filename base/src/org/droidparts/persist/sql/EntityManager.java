@@ -45,6 +45,7 @@ import java.io.ByteArrayOutputStream;
 import java.lang.reflect.Field;
 import java.util.Collection;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.UUID;
 
@@ -70,8 +71,18 @@ public class EntityManager<EntityType extends Entity> extends
 
 	public static <EntityType extends Entity> EntityManager<EntityType> getInstance(
 			Context ctx, Class<EntityType> cls) {
-		return new EntityManager<EntityType>(ctx, (Class<EntityType>) cls);
+		@SuppressWarnings("unchecked")
+		EntityManager<EntityType> manager = (EntityManager<EntityType>) cache
+				.get(cls);
+		if (manager == null) {
+			manager = new EntityManager<EntityType>(ctx,
+					(Class<EntityType>) cls);
+			cache.put(cls, manager);
+		}
+		return manager;
 	}
+
+	private static final HashMap<Class<?>, EntityManager<?>> cache = new HashMap<Class<?>, EntityManager<?>>();
 
 	// ASCII RS (record separator), '|' for readability
 	private static final String SEP = "|" + (char) 30;
