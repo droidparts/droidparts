@@ -19,12 +19,12 @@ import org.droidparts.annotation.inject.InjectBundleExtra;
 
 public final class InjectBundleExtraAnn extends InjectAnn<InjectBundleExtra> {
 
-	public final String value;
+	public final String key;
 	public final boolean optional;
 
 	public InjectBundleExtraAnn(InjectBundleExtra annotation) {
 		super(InjectBundleExtra.class);
-		value = annotation.value();
+		key = annotation.key();
 		optional = annotation.optional();
 	}
 }

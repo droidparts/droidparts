@@ -40,7 +40,7 @@ public class EntryListAsJSONActivity extends Activity implements
 	@InjectDependency
 	private AbstractDialogFactory dialogFactory;
 
-	@InjectBundleExtra(EXTRA_ARR_STR)
+	@InjectBundleExtra(key = EXTRA_ARR_STR)
 	private ArrayList<Entry> entries;
 
 	@Override

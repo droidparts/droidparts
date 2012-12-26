@@ -28,10 +28,8 @@ public class BundleExtraInjector {
 
 	static boolean inject(Context ctx, Bundle data, InjectBundleExtraAnn ann,
 			Object target, Field field) {
-		String key = ann.value;
-		boolean optional = ann.optional;
-		Object val = data.get(key);
-		if (val == null && optional) {
+		Object val = data.get(ann.key);
+		if (val == null && ann.optional) {
 			return true;
 		} else {
 			try {

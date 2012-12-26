@@ -25,7 +25,7 @@ import java.lang.annotation.Target;
 @Target(FIELD)
 public @interface InjectBundleExtra {
 
-	String value();
+	String key();
 
 	boolean optional() default false;
 

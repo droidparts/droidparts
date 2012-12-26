@@ -48,7 +48,7 @@ public class ImageDetailFragment extends DialogFragment {
 	@InjectDependency
 	private PrefsManager prefsManager;
 
-	@InjectBundleExtra(EXTRA_IMAGE)
+	@InjectBundleExtra(key = EXTRA_IMAGE)
 	private Image img;
 
 	@InjectView(R.id.view_img)
