@@ -58,13 +58,6 @@ public class InjectorDelegate {
 		long end = System.currentTimeMillis();
 		L.d(String.format("Injected on %s in %d ms.", cls.getSimpleName(),
 				(end - start)));
-		if ("EntityManager".equals(cls.getSimpleName())) {
-			try {
-				throw new Exception();
-			} catch (Exception e) {
-				L.wtf(e);
-			}
-		}
 	}
 
 	protected boolean inject(Context ctx, View root, Object target, Ann<?> ann,
