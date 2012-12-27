@@ -71,7 +71,7 @@ public class InjectorDelegate {
 		Class<?> annType = ann.getClass();
 		Object val = null;
 		if (annType == InjectDependencyAnn.class) {
-			val = DependencyProvider.getVal(ctx, field);
+			val = DependencyProvider.getVal(ctx, field.getType());
 		} else if (annType == InjectBundleExtraAnn.class) {
 			Bundle data = getIntentExtras(target);
 			val = BundleExtraProvider.getVal((InjectBundleExtraAnn) ann, data);

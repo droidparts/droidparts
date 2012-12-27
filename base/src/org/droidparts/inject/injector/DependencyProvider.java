@@ -18,7 +18,6 @@ package org.droidparts.inject.injector;
 import static android.content.pm.PackageManager.GET_META_DATA;
 
 import java.lang.reflect.Constructor;
-import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 
@@ -61,14 +60,9 @@ public class DependencyProvider {
 		dependencyProvider = null;
 	}
 
-	static Object getVal(Context ctx, Field field) throws Exception {
-		init(ctx);
-		Object val = getDependency(ctx, field.getType());
-		return val;
-	}
-
 	@SuppressWarnings("unchecked")
-	public static <T> T getDependency(Context ctx, Class<T> cls) {
+	public static <T> T getVal(Context ctx, Class<T> cls)
+			throws RuntimeException {
 		init(ctx);
 		T val = null;
 		if (dependencyProvider != null) {

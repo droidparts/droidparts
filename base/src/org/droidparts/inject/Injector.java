@@ -52,7 +52,7 @@ public class Injector {
 	public <T> T getDependency(Context ctx, Class<T> cls)
 			throws RuntimeException {
 		setContext(ctx);
-		return DependencyProvider.getDependency(ctx, cls);
+		return DependencyProvider.getVal(ctx, cls);
 	}
 
 	public void inject(Activity act) {
