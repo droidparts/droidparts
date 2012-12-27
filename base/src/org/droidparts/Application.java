@@ -16,6 +16,7 @@
 package org.droidparts;
 
 import org.droidparts.inject.Injector;
+import org.droidparts.reflect.util.ReflectionUtils;
 
 public class Application extends android.app.Application {
 
@@ -25,23 +26,14 @@ public class Application extends android.app.Application {
 		Injector inj = Injector.get();
 		inj.setUp(this);
 		inj.inject(this, this);
-		//
-		asyncTaskHack();
+		// http://code.google.com/p/android/issues/detail?id=20915
+		ReflectionUtils.classForName("android.os.AsyncTask");
 	}
 
 	@Override
 	public void onTerminate() {
 		// XXX doesn't get called
 		Injector.get().tearDown();
-	}
-
-	// http://code.google.com/p/android/issues/detail?id=20915
-	private void asyncTaskHack() {
-		try {
-			Class.forName("android.os.AsyncTask");
-		} catch (ClassNotFoundException e) {
-			// pass
-		}
 	}
 
 }
