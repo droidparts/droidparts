@@ -20,10 +20,10 @@ import org.droidparts.annotation.inject.InjectSystemService;
 public final class InjectSystemServiceAnn extends
 		InjectAnn<InjectSystemService> {
 
-	public final String value;
+	public final String name;
 
 	public InjectSystemServiceAnn(InjectSystemService annotation) {
 		super(InjectSystemService.class);
-		value = annotation.value();
+		name = annotation.value();
 	}
 }

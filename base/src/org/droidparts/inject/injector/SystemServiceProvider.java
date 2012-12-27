@@ -48,7 +48,7 @@ public class SystemServiceProvider {
 
 	static Object getVal(Context ctx, InjectSystemServiceAnn ann, Field field)
 			throws Exception {
-		String serviceName = ann.value;
+		String serviceName = ann.name;
 		String name = isEmpty(serviceName) ? serviceRegistry.get(field
 				.getType()) : serviceName;
 		if (name == null) {

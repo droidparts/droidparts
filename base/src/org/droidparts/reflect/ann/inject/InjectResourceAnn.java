@@ -19,10 +19,10 @@ import org.droidparts.annotation.inject.InjectResource;
 
 public final class InjectResourceAnn extends InjectAnn<InjectResource> {
 
-	public final int value;
+	public final int id;
 
 	public InjectResourceAnn(InjectResource annotation) {
 		super(InjectResource.class);
-		value = annotation.value();
+		id = annotation.value();
 	}
 }

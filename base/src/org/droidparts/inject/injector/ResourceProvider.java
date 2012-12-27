@@ -32,24 +32,23 @@ public class ResourceProvider {
 
 	static Object getVal(Context ctx, InjectResourceAnn ann, Field field)
 			throws Exception {
-		int resId = ann.value;
 		Resources res = ctx.getResources();
 		Class<?> cls = field.getType();
 		Object val = null;
 		if (isBoolean(cls)) {
-			val = res.getBoolean(resId);
+			val = res.getBoolean(ann.id);
 		} else if (isInteger(cls)) {
-			val = res.getInteger(resId);
+			val = res.getInteger(ann.id);
 		} else if (isString(cls)) {
-			val = res.getString(resId);
+			val = res.getString(ann.id);
 		} else if (isDrawable(cls)) {
-			val = res.getDrawable(resId);
+			val = res.getDrawable(ann.id);
 		} else if (isArray(cls)) {
 			Class<?> type = cls.getComponentType();
 			if (isInteger(type)) {
-				val = res.getIntArray(resId);
+				val = res.getIntArray(ann.id);
 			} else if (isString(type)) {
-				val = res.getStringArray(resId);
+				val = res.getStringArray(ann.id);
 			}
 		}
 		if (val == null) {
