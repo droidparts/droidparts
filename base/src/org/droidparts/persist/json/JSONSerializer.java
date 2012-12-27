@@ -65,16 +65,15 @@ public class JSONSerializer<ModelType extends Model> {
 	// ASCII GS (group separator), '->' for readability
 	public static final String __ = "->" + (char) 29;
 
-	public static <ModelType extends Model> JSONSerializer<ModelType> getInstance(
-			Context ctx, Class<ModelType> cls) {
-		return new JSONSerializer<ModelType>(ctx, cls);
-	}
-
 	private final Context ctx;
 	private final Class<? extends Model> cls;
 
 	public JSONSerializer(Context ctx, Class<ModelType> cls) {
+		this(cls, ctx);
 		Injector.get().inject(ctx, this);
+	}
+
+	private JSONSerializer(Class<ModelType> cls, Context ctx) {
 		this.ctx = ctx.getApplicationContext();
 		this.cls = cls;
 	}
@@ -144,8 +143,7 @@ public class JSONSerializer<ModelType extends Model> {
 		} else if (isByteArray(valType)) {
 			obj.put(key, val);
 		} else if (isModel(valType)) {
-			JSONObject obj2 = getInstance(ctx, dirtyCast(valType)).serialize(
-					(Model) val);
+			JSONObject obj2 = subSerializer(valType).serialize((Model) val);
 			obj.put(key, obj2);
 		} else if (isArray(valType) || isCollection(valType)) {
 			ArrayList<Object> list = new ArrayList<Object>();
@@ -160,8 +158,7 @@ public class JSONSerializer<ModelType extends Model> {
 			if (list.size() > 0) {
 				Class<?> itemCls = list.get(0).getClass();
 				if (isModel(itemCls)) {
-					JSONSerializer serializer = getInstance(ctx,
-							dirtyCast(itemCls));
+					JSONSerializer serializer = subSerializer(itemCls);
 					jArr = serializer.serialize(list);
 				} else {
 					for (Object o : list) {
@@ -196,8 +193,7 @@ public class JSONSerializer<ModelType extends Model> {
 		if (isByteArray(fieldType)) {
 			return jsonVal;
 		} else if (isModel(fieldType)) {
-			return getInstance(ctx, dirtyCast(fieldType)).deserialize(
-					(JSONObject) jsonVal);
+			return subSerializer(fieldType).deserialize((JSONObject) jsonVal);
 		} else if (isArray(fieldType) || isCollection(fieldType)) {
 			JSONArray jArr = (jsonVal instanceof JSONArray) ? (JSONArray) jsonVal
 					: new JSONArray(strVal);
@@ -211,7 +207,7 @@ public class JSONSerializer<ModelType extends Model> {
 			}
 			JSONSerializer serializer = null;
 			if (isModel(multiFieldArgType)) {
-				serializer = getInstance(ctx, dirtyCast(multiFieldArgType));
+				serializer = subSerializer(multiFieldArgType);
 			}
 			for (int i = 0; i < jArr.length(); i++) {
 				Object obj = jArr.get(i);
@@ -315,10 +311,9 @@ public class JSONSerializer<ModelType extends Model> {
 		}
 	}
 
-	private Class<Model> dirtyCast(Class<?> cls) {
-		@SuppressWarnings("unchecked")
-		Class<Model> cls2 = (Class<Model>) cls;
-		return cls2;
+	@SuppressWarnings("unchecked")
+	private JSONSerializer<Model> subSerializer(Class<?> cls) {
+		return new JSONSerializer<Model>(ctx, (Class<Model>) cls);
 	}
 
 	private void throwIfRequired(FieldSpec<KeyAnn> spec) throws JSONException {

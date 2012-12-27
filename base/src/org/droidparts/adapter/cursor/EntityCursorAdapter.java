@@ -35,7 +35,7 @@ public abstract class EntityCursorAdapter<EntityType extends Entity> extends
 	public EntityCursorAdapter(Context ctx, Class<EntityType> entityCls,
 			Select<EntityType> select) {
 		super(ctx, (select != null) ? select.execute() : null);
-		this.entityManager = EntityManager.getInstance(ctx, entityCls);
+		this.entityManager = new EntityManager<EntityType>(ctx, entityCls);
 	}
 
 	public void changeData(Select<EntityType> select) {

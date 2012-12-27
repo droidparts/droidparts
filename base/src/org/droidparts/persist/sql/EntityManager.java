@@ -68,11 +68,6 @@ import android.graphics.BitmapFactory;
 public class EntityManager<EntityType extends Entity> extends
 		AbstractEntityManager<EntityType> {
 
-	public static <EntityType extends Entity> EntityManager<EntityType> getInstance(
-			Context ctx, Class<EntityType> cls) {
-		return new EntityManager<EntityType>(ctx, (Class<EntityType>) cls);
-	}
-
 	// ASCII RS (record separator), '|' for readability
 	private static final String SEP = "|" + (char) 30;
 
@@ -83,9 +78,14 @@ public class EntityManager<EntityType extends Entity> extends
 	private final Class<? extends EntityType> cls;
 
 	public EntityManager(Context ctx, Class<EntityType> cls) {
+		this(ctx, cls, null);
 		Injector.get().inject(ctx, this);
+	}
+
+	private EntityManager(Context ctx, Class<EntityType> cls, SQLiteDatabase db) {
 		this.ctx = ctx.getApplicationContext();
 		this.cls = cls;
+		this.db = db;
 	}
 
 	public void fillEagerForeignKeys(EntityType item) {
@@ -121,8 +121,7 @@ public class EntityManager<EntityType extends Entity> extends
 				EntityType foreignEntity = ReflectionUtils.getFieldVal(item,
 						spec.field);
 				if (foreignEntity != null) {
-					Object obj = getInstance(ctx,
-							dirtyCast(spec.field.getType())).read(
+					Object obj = subManager(spec.field).read(
 							foreignEntity.id);
 					setFieldVal(item, spec.field, obj);
 				}
@@ -158,8 +157,7 @@ public class EntityManager<EntityType extends Entity> extends
 				EntityType foreignEntity = ReflectionUtils.getFieldVal(item,
 						spec.field);
 				if (foreignEntity != null) {
-					getInstance(ctx, dirtyCast(spec.field.getType()))
-							.createOrUpdate(foreignEntity);
+					subManager(spec.field).createOrUpdate(foreignEntity);
 				}
 			}
 		}
@@ -292,10 +290,9 @@ public class EntityManager<EntityType extends Entity> extends
 		}
 	}
 
-	private Class<Entity> dirtyCast(Class<?> cls) {
-		@SuppressWarnings("unchecked")
-		Class<Entity> cls2 = (Class<Entity>) cls;
-		return cls2;
+	@SuppressWarnings("unchecked")
+	private EntityManager<Entity> subManager(Field field) {
+		return new EntityManager<Entity>(ctx, (Class<Entity>) field.getType(),
+				db);
 	}
-
 }
