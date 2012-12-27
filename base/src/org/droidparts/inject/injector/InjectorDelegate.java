@@ -57,14 +57,13 @@ public class InjectorDelegate {
 				}
 			} catch (Throwable e) {
 				L.e("Failed to inject field '" + spec.field.getName() + "' in "
-						+ cls.getName() + ".");
-				L.w(e.getMessage());
+						+ cls.getSimpleName() + ", cause: " + e.getMessage()
+						+ ".");
 				L.d(e);
 			}
 		}
-		long end = System.currentTimeMillis();
 		L.d(String.format("Injected on %s in %d ms.", cls.getSimpleName(),
-				(end - start)));
+				(System.currentTimeMillis() - start)));
 	}
 
 	protected Object getVal(Context ctx, View root, Object target, Ann<?> ann,
@@ -79,14 +78,14 @@ public class InjectorDelegate {
 		} else if (annType == InjectResourceAnn.class) {
 			val = ResourceProvider.getVal(ctx, (InjectResourceAnn) ann, field);
 		} else if (annType == InjectSystemServiceAnn.class) {
-			val = SystemServiceProvider.getVal(ctx, (InjectSystemServiceAnn) ann,
-					field);
+			val = SystemServiceProvider.getVal(ctx,
+					(InjectSystemServiceAnn) ann, field);
 		} else if (annType == InjectViewAnn.class) {
 			if (root == null) {
 				throw new IllegalArgumentException("Null View.");
 			}
-			val = ViewAndPreferenceProvider.getVal(ctx, root, (InjectViewAnn) ann,
-					target, field);
+			val = ViewAndPreferenceProvider.getVal(ctx, root,
+					(InjectViewAnn) ann, target, field);
 		}
 		return val;
 	}

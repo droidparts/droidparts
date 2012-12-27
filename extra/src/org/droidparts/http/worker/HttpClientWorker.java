@@ -42,7 +42,6 @@ import org.apache.http.params.HttpProtocolParams;
 import org.droidparts.http.CookieJar;
 import org.droidparts.http.HTTPException;
 import org.droidparts.http.HTTPResponse;
-import org.droidparts.util.L;
 
 import android.util.Pair;
 
@@ -88,7 +87,6 @@ public class HttpClientWorker extends HTTPWorker {
 			entity.setContentType(contentType);
 			return entity;
 		} catch (UnsupportedEncodingException e) {
-			L.e(e);
 			throw new HTTPException(e);
 		}
 	}

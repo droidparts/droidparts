@@ -28,9 +28,15 @@ import android.view.View;
 
 public class ViewAndPreferenceProvider {
 
-	static Object getVal(Context ctx, View root, InjectViewAnn ann, Object target,
-			Field field) throws Exception {
+	static Object getVal(Context ctx, View rootView, InjectViewAnn ann,
+			Object target, Field field) throws Exception {
 		boolean isView = View.class.isAssignableFrom(field.getType());
+		boolean isPreference = Preference.class.isAssignableFrom(field
+				.getType());
+		if (!isView && !isPreference) {
+			throw new Exception("Not a View or Preference '"
+					+ field.getType().getName() + "'.");
+		}
 		int viewOrPrefId = ann.id;
 		if (viewOrPrefId == 0) {
 			String fieldName = field.getName();
@@ -42,14 +48,12 @@ public class ViewAndPreferenceProvider {
 		}
 		Object val;
 		if (isView) {
-			val = root.findViewById(viewOrPrefId);
+			val = rootView.findViewById(viewOrPrefId);
 		} else {
 			val = ((PreferenceActivity) ctx).findPreference(ctx
 					.getText(viewOrPrefId));
 		}
-		if (val == null) {
-			throw new Exception("View or Preference not found: " + ann.id);
-		} else {
+		if (val != null) {
 			if (ann.click) {
 				if (isView) {
 					if (target instanceof View.OnClickListener) {
@@ -73,6 +77,9 @@ public class ViewAndPreferenceProvider {
 				}
 			}
 			return val;
+		} else {
+			throw new Exception("View or Preference widh id " + viewOrPrefId
+					+ " not found.");
 		}
 	}
 }

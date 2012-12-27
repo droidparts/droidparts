@@ -34,7 +34,7 @@ public abstract class AbstractDBOpenHelper2 extends AbstractDBOpenHelper {
 
 	public void copyDBTo(File fileOrDirTo) throws Exception {
 		if (dbFilePath == null) {
-			throw new IllegalStateException("Copy in-memory db? No way!");
+			throw new IllegalArgumentException("Copy in-memory db? No way!");
 		}
 		File fileFrom = new File(dbFilePath);
 		if (fileFrom.exists()) {

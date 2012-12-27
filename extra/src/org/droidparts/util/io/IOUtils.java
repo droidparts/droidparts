@@ -40,7 +40,7 @@ public class IOUtils {
 		try {
 			return URLEncoder.encode(str, UTF8);
 		} catch (UnsupportedEncodingException e) {
-			throw new AssertionError("failed to encode");
+			throw new IllegalArgumentException("failed to encode", e);
 		}
 	}
 
@@ -48,7 +48,7 @@ public class IOUtils {
 		try {
 			return URLDecoder.decode(str, UTF8);
 		} catch (UnsupportedEncodingException e) {
-			throw new AssertionError("failed to decode");
+			throw new IllegalArgumentException("failed to decode", e);
 		}
 	}
 

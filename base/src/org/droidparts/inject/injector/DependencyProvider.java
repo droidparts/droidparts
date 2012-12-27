@@ -73,19 +73,17 @@ public class DependencyProvider {
 		T val = null;
 		if (dependencyProvider != null) {
 			Method method = methodRegistry.get(cls);
-			if (method != null) {
-				try {
-					int paramCount = method.getGenericParameterTypes().length;
-					if (paramCount == 0) {
-						val = (T) method.invoke(dependencyProvider);
-					} else {
-						val = (T) method.invoke(dependencyProvider, ctx);
-					}
-				} catch (Exception e) {
-					L.d(e);
-					throw new RuntimeException(
-							"No valid dependency method for " + cls.getName());
+			try {
+				int paramCount = method.getGenericParameterTypes().length;
+				if (paramCount == 0) {
+					val = (T) method.invoke(dependencyProvider);
+				} else {
+					val = (T) method.invoke(dependencyProvider, ctx);
 				}
+			} catch (Exception e) {
+				throw new RuntimeException(
+						"No valid DependencyProvider method for "
+								+ cls.getName() + ".", e);
 			}
 		}
 		return val;
