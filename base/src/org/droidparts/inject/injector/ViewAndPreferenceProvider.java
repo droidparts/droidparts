@@ -15,8 +15,6 @@
  */
 package org.droidparts.inject.injector;
 
-import static org.droidparts.reflect.util.ReflectionUtils.setFieldVal;
-
 import java.lang.reflect.Field;
 
 import org.droidparts.reflect.ann.inject.InjectViewAnn;
@@ -28,10 +26,10 @@ import android.preference.Preference;
 import android.preference.PreferenceActivity;
 import android.view.View;
 
-public class ViewOrPreferenceInjector {
+public class ViewAndPreferenceProvider {
 
-	static boolean inject(Context ctx, View root, InjectViewAnn ann,
-			Object target, Field field) {
+	static Object getVal(Context ctx, View root, InjectViewAnn ann, Object target,
+			Field field) throws Exception {
 		boolean isView = View.class.isAssignableFrom(field.getType());
 		int viewOrPrefId = ann.id;
 		if (viewOrPrefId == 0) {
@@ -42,44 +40,39 @@ public class ViewOrPreferenceInjector {
 				viewOrPrefId = ResourceUtils.getStringId(ctx, fieldName);
 			}
 		}
-		if (viewOrPrefId != 0) {
-			Object val;
-			if (isView) {
-				val = root.findViewById(viewOrPrefId);
-			} else {
-				// XXX
-				val = ((PreferenceActivity) ctx).findPreference(ctx
-						.getText(viewOrPrefId));
-			}
-			try {
-				setFieldVal(target, field, val);
-			} catch (IllegalArgumentException e) {
-				// swallow
-				return false;
-			}
+		Object val;
+		if (isView) {
+			val = root.findViewById(viewOrPrefId);
+		} else {
+			val = ((PreferenceActivity) ctx).findPreference(ctx
+					.getText(viewOrPrefId));
+		}
+		if (val == null) {
+			throw new Exception("View or Preference not found: " + ann.id);
+		} else {
 			if (ann.click) {
 				if (isView) {
 					if (target instanceof View.OnClickListener) {
 						((View) val)
 								.setOnClickListener((View.OnClickListener) target);
 					} else {
-						L.d("Failed to set onClickListener");
+						L.w("Failed to set onClickListener");
 					}
 				} else {
 					Preference pref = (Preference) val;
 					if (target instanceof Preference.OnPreferenceClickListener) {
 						pref.setOnPreferenceClickListener((Preference.OnPreferenceClickListener) target);
 					} else {
-						L.d("Failed to set onPreferenceClickListener");
+						L.w("Failed to set onPreferenceClickListener");
 					}
 					if (target instanceof Preference.OnPreferenceChangeListener) {
 						pref.setOnPreferenceChangeListener((Preference.OnPreferenceChangeListener) target);
 					} else {
-						L.d("Failed to set onPreferenceClickListener");
+						L.w("Failed to set onPreferenceClickListener");
 					}
 				}
 			}
+			return val;
 		}
-		return true;
 	}
 }

@@ -15,25 +15,19 @@
  */
 package org.droidparts.inject.injector;
 
-import static org.droidparts.reflect.util.ReflectionUtils.setFieldVal;
+import org.droidparts.reflect.ann.inject.InjectBundleExtraAnn;
 
-import java.lang.reflect.Field;
+import android.os.Bundle;
 
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
+public class BundleExtraProvider {
 
-public class SupportParentActivityInjector {
-
-	static boolean inject(Object fragmentObj, Field field) {
-		Fragment fragment = (Fragment) fragmentObj;
-		FragmentActivity activity = fragment.getActivity();
-		try {
-			setFieldVal(fragment, field, activity);
-			return true;
-		} catch (IllegalArgumentException e) {
-			// swallow
+	static Object getVal(InjectBundleExtraAnn ann, Bundle data) throws Exception {
+		Object val = data.get(ann.key);
+		if (val == null && !ann.optional) {
+			throw new Exception("Bundle missing required key: " + ann.key);
+		} else {
+			return val;
 		}
-		return false;
 	}
 
 }

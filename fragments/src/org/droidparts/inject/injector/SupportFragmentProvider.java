@@ -15,41 +15,30 @@
  */
 package org.droidparts.inject.injector;
 
-import static org.droidparts.reflect.util.ReflectionUtils.setFieldVal;
-
 import java.lang.reflect.Field;
 
 import org.droidparts.reflect.ann.inject.InjectFragmentAnn;
 import org.droidparts.util.inner.ResourceUtils;
 
-import android.app.Activity;
-import android.app.Fragment;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
 
-public class NativeFragmentInjector {
+public class SupportFragmentProvider {
 
-	static boolean inject(Object fragmentActivityObj, InjectFragmentAnn ann,
+	static Object getVal(Object fragmentActivityObj, InjectFragmentAnn ann,
 			Field field) {
-		Activity fragmentActivity = (Activity) fragmentActivityObj;
+		FragmentActivity fragmentActivity = (FragmentActivity) fragmentActivityObj;
 		int fragmentId = ann.id;
 		if (fragmentId == 0) {
 			fragmentId = ResourceUtils.getResourceId(fragmentActivity,
 					field.getName());
 		}
-		if (fragmentId != 0) {
-			Fragment fragment = fragmentActivity.getFragmentManager()
-					.findFragmentById(fragmentId);
-			try {
-				setFieldVal(fragmentActivity, field, fragment);
-				return true;
-			} catch (IllegalArgumentException e) {
-				// swallow
-			}
-		}
-		return false;
+		return fragmentActivity.getSupportFragmentManager().findFragmentById(
+				fragmentId);
 	}
 
-	public static Bundle getIntentExtras(Object obj) {
+	static Bundle getIntentExtras(Object obj) {
 		if (obj instanceof Fragment) {
 			return ((Fragment) obj).getArguments();
 		} else {

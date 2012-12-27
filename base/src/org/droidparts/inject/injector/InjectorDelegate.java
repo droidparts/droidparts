@@ -16,6 +16,7 @@
 package org.droidparts.inject.injector;
 
 import static org.droidparts.reflect.FieldSpecBuilder.getInjectSpecs;
+import static org.droidparts.reflect.util.ReflectionUtils.setFieldVal;
 
 import java.lang.reflect.Field;
 
@@ -38,21 +39,27 @@ import android.view.View;
 public class InjectorDelegate {
 
 	public static void setUp(Context ctx) {
-		DependencyInjector.init(ctx);
+		DependencyProvider.init(ctx);
 	}
 
 	public static void tearDown() {
-		DependencyInjector.tearDown();
+		DependencyProvider.tearDown();
 	}
 
 	public final void inject(Context ctx, View root, Object target) {
 		long start = System.currentTimeMillis();
 		final Class<?> cls = target.getClass();
 		for (FieldSpec<InjectAnn<?>> spec : getInjectSpecs(cls)) {
-			boolean success = inject(ctx, root, target, spec.ann, spec.field);
-			if (!success) {
+			try {
+				Object val = getVal(ctx, root, target, spec.ann, spec.field);
+				if (val != null) {
+					setFieldVal(target, spec.field, val);
+				}
+			} catch (Throwable e) {
 				L.e("Failed to inject field '" + spec.field.getName() + "' in "
 						+ cls.getName() + ".");
+				L.w(e.getMessage());
+				L.d(e);
 			}
 		}
 		long end = System.currentTimeMillis();
@@ -60,29 +67,28 @@ public class InjectorDelegate {
 				(end - start)));
 	}
 
-	protected boolean inject(Context ctx, View root, Object target, Ann<?> ann,
-			Field field) {
+	protected Object getVal(Context ctx, View root, Object target, Ann<?> ann,
+			Field field) throws Exception {
 		Class<?> annType = ann.getClass();
-		boolean success = false;
+		Object val = null;
 		if (annType == InjectDependencyAnn.class) {
-			success = DependencyInjector.inject(ctx, target, field);
+			val = DependencyProvider.getVal(ctx, field);
 		} else if (annType == InjectBundleExtraAnn.class) {
 			Bundle data = getIntentExtras(target);
-			success = BundleExtraInjector.inject(ctx, data,
-					(InjectBundleExtraAnn) ann, target, field);
+			val = BundleExtraProvider.getVal((InjectBundleExtraAnn) ann, data);
 		} else if (annType == InjectResourceAnn.class) {
-			success = ResourceInjector.inject(ctx, (InjectResourceAnn) ann,
-					target, field);
+			val = ResourceProvider.getVal(ctx, (InjectResourceAnn) ann, field);
 		} else if (annType == InjectSystemServiceAnn.class) {
-			success = SystemServiceInjector.inject(ctx,
-					(InjectSystemServiceAnn) ann, target, field);
+			val = SystemServiceProvider.getVal(ctx, (InjectSystemServiceAnn) ann,
+					field);
 		} else if (annType == InjectViewAnn.class) {
-			if (root != null) {
-				success = ViewOrPreferenceInjector.inject(ctx, root,
-						(InjectViewAnn) ann, target, field);
+			if (root == null) {
+				throw new IllegalArgumentException("Null View.");
 			}
+			val = ViewAndPreferenceProvider.getVal(ctx, root, (InjectViewAnn) ann,
+					target, field);
 		}
-		return success;
+		return val;
 	}
 
 	protected Bundle getIntentExtras(Object obj) {

@@ -15,31 +15,13 @@
  */
 package org.droidparts.inject.injector;
 
-import static org.droidparts.reflect.util.ReflectionUtils.setFieldVal;
+import android.support.v4.app.Fragment;
 
-import java.lang.reflect.Field;
+public class SupportParentActivityProvider {
 
-import org.droidparts.reflect.ann.inject.InjectBundleExtraAnn;
-
-import android.content.Context;
-import android.os.Bundle;
-
-public class BundleExtraInjector {
-
-	static boolean inject(Context ctx, Bundle data, InjectBundleExtraAnn ann,
-			Object target, Field field) {
-		Object val = data.get(ann.key);
-		if (val == null && ann.optional) {
-			return true;
-		} else {
-			try {
-				setFieldVal(target, field, val);
-				return true;
-			} catch (IllegalArgumentException e) {
-				// swallow
-			}
-		}
-		return false;
+	static Object getVal(Object fragmentObj) {
+		Fragment fragment = (Fragment) fragmentObj;
+		return fragment.getActivity();
 	}
 
 }

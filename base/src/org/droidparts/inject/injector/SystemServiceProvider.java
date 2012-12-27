@@ -15,7 +15,6 @@
  */
 package org.droidparts.inject.injector;
 
-import static org.droidparts.reflect.util.ReflectionUtils.setFieldVal;
 import static org.droidparts.util.Strings.isEmpty;
 
 import java.lang.reflect.Field;
@@ -45,21 +44,18 @@ import android.view.LayoutInflater;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 
-public class SystemServiceInjector {
+public class SystemServiceProvider {
 
-	static boolean inject(Context ctx, InjectSystemServiceAnn ann,
-			Object target, Field field) {
+	static Object getVal(Context ctx, InjectSystemServiceAnn ann, Field field)
+			throws Exception {
 		String serviceName = ann.value;
 		String name = isEmpty(serviceName) ? serviceRegistry.get(field
 				.getType()) : serviceName;
-		Object serv = ctx.getSystemService(name);
-		try {
-			setFieldVal(target, field, serv);
-			return true;
-		} catch (IllegalArgumentException e) {
-			// swallow
+		if (name == null) {
+			throw new Exception("Unknown service: " + name);
+		} else {
+			return ctx.getSystemService(name);
 		}
-		return false;
 	}
 
 	private static final HashMap<Class<?>, String> serviceRegistry = new HashMap<Class<?>, String>();

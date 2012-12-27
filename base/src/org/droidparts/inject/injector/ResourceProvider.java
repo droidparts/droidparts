@@ -15,7 +15,6 @@
  */
 package org.droidparts.inject.injector;
 
-import static org.droidparts.reflect.util.ReflectionUtils.setFieldVal;
 import static org.droidparts.reflect.util.TypeHelper.isArray;
 import static org.droidparts.reflect.util.TypeHelper.isBoolean;
 import static org.droidparts.reflect.util.TypeHelper.isDrawable;
@@ -25,46 +24,39 @@ import static org.droidparts.reflect.util.TypeHelper.isString;
 import java.lang.reflect.Field;
 
 import org.droidparts.reflect.ann.inject.InjectResourceAnn;
-import org.droidparts.util.L;
 
 import android.content.Context;
 import android.content.res.Resources;
 
-public class ResourceInjector {
+public class ResourceProvider {
 
-	static boolean inject(Context ctx, InjectResourceAnn ann, Object target,
-			Field field) {
+	static Object getVal(Context ctx, InjectResourceAnn ann, Field field)
+			throws Exception {
 		int resId = ann.value;
-		if (resId != 0) {
-			Resources res = ctx.getResources();
-			Class<?> cls = field.getType();
-			Object val = null;
-			if (isBoolean(cls)) {
-				val = res.getBoolean(resId);
-			} else if (isInteger(cls)) {
-				val = res.getInteger(resId);
-			} else if (isString(cls)) {
-				val = res.getString(resId);
-			} else if (isDrawable(cls)) {
-				val = res.getDrawable(resId);
-			} else if (isArray(cls)) {
-				Class<?> type = cls.getComponentType();
-				if (isInteger(type)) {
-					val = res.getIntArray(resId);
-				} else if (isString(type)) {
-					val = res.getStringArray(resId);
-				}
-			} else {
-				L.e("Unsupported resource type '" + field.getType().getName()
-						+ "'.");
-			}
-			try {
-				setFieldVal(target, field, val);
-				return true;
-			} catch (IllegalArgumentException e) {
-				// swallow
+		Resources res = ctx.getResources();
+		Class<?> cls = field.getType();
+		Object val = null;
+		if (isBoolean(cls)) {
+			val = res.getBoolean(resId);
+		} else if (isInteger(cls)) {
+			val = res.getInteger(resId);
+		} else if (isString(cls)) {
+			val = res.getString(resId);
+		} else if (isDrawable(cls)) {
+			val = res.getDrawable(resId);
+		} else if (isArray(cls)) {
+			Class<?> type = cls.getComponentType();
+			if (isInteger(type)) {
+				val = res.getIntArray(resId);
+			} else if (isString(type)) {
+				val = res.getStringArray(resId);
 			}
 		}
-		return false;
+		if (val == null) {
+			throw new Exception("Unsupported resource type '" + cls.getName()
+					+ "'.");
+		} else {
+			return val;
+		}
 	}
 }

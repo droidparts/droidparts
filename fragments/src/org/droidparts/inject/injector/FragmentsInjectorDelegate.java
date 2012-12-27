@@ -29,38 +29,38 @@ import android.view.View;
 public class FragmentsInjectorDelegate extends InjectorDelegate {
 
 	@Override
-	protected boolean inject(Context ctx, View root, Object target, Ann<?> ann,
-			Field field) {
-		boolean success = false;
+	protected Object getVal(Context ctx, View root, Object target, Ann<?> ann,
+			Field field) throws Exception {
+		boolean handled = false;
 		Class<?> annType = ann.getClass();
+		Object val = null;
 		if (annType == InjectFragmentAnn.class) {
+			handled = true;
 			if (useSupport()) {
-				success = SupportFragmentInjector.inject(target,
+				val = SupportFragmentProvider.getVal(target,
 						(InjectFragmentAnn) ann, field);
 			} else {
-				success = NativeFragmentInjector.inject(target,
+				val = NativeFragmentProvider.getVal(target,
 						(InjectFragmentAnn) ann, field);
 			}
 		} else if (annType == InjectParentActivityAnn.class) {
+			handled = true;
 			if (useSupport()) {
-				success = SupportParentActivityInjector.inject(target, field);
+				val = SupportParentActivityProvider.getVal(target);
 			} else {
-				success = NativeParentActivityInjector.inject(target, field);
+				val = NativeParentActivityProvider.getVal(target);
 			}
 		}
-		if (!success) {
-			success = super.inject(ctx, root, target, ann, field);
-		}
-		return success;
+		return handled ? val : super.getVal(ctx, root, target, ann, field);
 	}
 
 	@Override
 	protected Bundle getIntentExtras(Object obj) {
 		Bundle data;
 		if (useSupport()) {
-			data = SupportFragmentInjector.getIntentExtras(obj);
+			data = SupportFragmentProvider.getIntentExtras(obj);
 		} else {
-			data = NativeFragmentInjector.getIntentExtras(obj);
+			data = NativeFragmentProvider.getIntentExtras(obj);
 		}
 		return (data != null) ? data : super.getIntentExtras(obj);
 	}

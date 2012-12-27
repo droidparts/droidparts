@@ -15,7 +15,7 @@
  */
 package org.droidparts.inject;
 
-import org.droidparts.inject.injector.DependencyInjector;
+import org.droidparts.inject.injector.DependencyProvider;
 import org.droidparts.inject.injector.InjectorDelegate;
 import org.droidparts.util.L;
 
@@ -49,9 +49,10 @@ public class Injector {
 		appCtx = null;
 	}
 
-	public <T> T getDependency(Context ctx, Class<T> cls) {
+	public <T> T getDependency(Context ctx, Class<T> cls)
+			throws RuntimeException {
 		setContext(ctx);
-		return DependencyInjector.getDependency(ctx, cls);
+		return DependencyProvider.getDependency(ctx, cls);
 	}
 
 	public void inject(Activity act) {

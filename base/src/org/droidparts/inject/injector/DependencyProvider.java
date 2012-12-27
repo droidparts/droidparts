@@ -16,7 +16,6 @@
 package org.droidparts.inject.injector;
 
 import static android.content.pm.PackageManager.GET_META_DATA;
-import static org.droidparts.reflect.util.ReflectionUtils.setFieldVal;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
@@ -31,7 +30,7 @@ import android.content.Context;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 
-public class DependencyInjector {
+public class DependencyProvider {
 
 	private static volatile boolean inited = false;
 	private static AbstractDependencyProvider dependencyProvider;
@@ -39,7 +38,7 @@ public class DependencyInjector {
 
 	static void init(Context ctx) {
 		if (!inited) {
-			synchronized (DependencyInjector.class) {
+			synchronized (DependencyProvider.class) {
 				if (!inited) {
 					dependencyProvider = getDependencyProvider(ctx);
 					if (dependencyProvider != null) {
@@ -62,27 +61,19 @@ public class DependencyInjector {
 		dependencyProvider = null;
 	}
 
-	static boolean inject(Context ctx, Object target, Field field) {
+	static Object getVal(Context ctx, Field field) throws Exception {
 		init(ctx);
 		Object val = getDependency(ctx, field.getType());
-		if (val != null) {
-			try {
-				setFieldVal(target, field, val);
-				return true;
-			} catch (IllegalArgumentException e) {
-				// swallow
-			}
-		}
-		return false;
+		return val;
 	}
 
 	@SuppressWarnings("unchecked")
 	public static <T> T getDependency(Context ctx, Class<T> cls) {
 		init(ctx);
+		T val = null;
 		if (dependencyProvider != null) {
 			Method method = methodRegistry.get(cls);
 			if (method != null) {
-				T val = null;
 				try {
 					int paramCount = method.getGenericParameterTypes().length;
 					if (paramCount == 0) {
@@ -90,14 +81,14 @@ public class DependencyInjector {
 					} else {
 						val = (T) method.invoke(dependencyProvider, ctx);
 					}
-					return val;
 				} catch (Exception e) {
-					L.e("No valid dependency method for " + cls.getName());
 					L.d(e);
+					throw new RuntimeException(
+							"No valid dependency method for " + cls.getName());
 				}
 			}
 		}
-		return null;
+		return val;
 	}
 
 	private static AbstractDependencyProvider getDependencyProvider(Context ctx) {

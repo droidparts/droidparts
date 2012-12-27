@@ -15,25 +15,35 @@
  */
 package org.droidparts.inject.injector;
 
-import static org.droidparts.reflect.util.ReflectionUtils.setFieldVal;
-
 import java.lang.reflect.Field;
+
+import org.droidparts.reflect.ann.inject.InjectFragmentAnn;
+import org.droidparts.util.inner.ResourceUtils;
 
 import android.app.Activity;
 import android.app.Fragment;
+import android.os.Bundle;
 
-public class NativeParentActivityInjector {
+public class NativeFragmentProvider {
 
-	static boolean inject(Object fragmentObj, Field field) {
-		Fragment fragment = (Fragment) fragmentObj;
-		Activity activity = fragment.getActivity();
-		try {
-			setFieldVal(fragment, field, activity);
-			return true;
-		} catch (IllegalArgumentException e) {
-			// swallow
+	static Object getVal(Object fragmentActivityObj, InjectFragmentAnn ann,
+			Field field) {
+		Activity fragmentActivity = (Activity) fragmentActivityObj;
+		int fragmentId = ann.id;
+		if (fragmentId == 0) {
+			fragmentId = ResourceUtils.getResourceId(fragmentActivity,
+					field.getName());
 		}
-		return false;
+		return fragmentActivity.getFragmentManager().findFragmentById(
+				fragmentId);
+	}
+
+	static Bundle getIntentExtras(Object obj) {
+		if (obj instanceof Fragment) {
+			return ((Fragment) obj).getArguments();
+		} else {
+			return null;
+		}
 	}
 
 }
