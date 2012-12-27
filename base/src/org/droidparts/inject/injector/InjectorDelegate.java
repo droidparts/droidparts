@@ -39,11 +39,11 @@ import android.view.View;
 public class InjectorDelegate {
 
 	public static void setUp(Context ctx) {
-		DependencyProvider.init(ctx);
+		DependencyReader.init(ctx);
 	}
 
 	public static void tearDown() {
-		DependencyProvider.tearDown();
+		DependencyReader.tearDown();
 	}
 
 	public final void inject(Context ctx, View root, Object target) {
@@ -71,20 +71,20 @@ public class InjectorDelegate {
 		Class<?> annType = ann.getClass();
 		Object val = null;
 		if (annType == InjectDependencyAnn.class) {
-			val = DependencyProvider.getVal(ctx, field.getType());
+			val = DependencyReader.getVal(ctx, field.getType());
 		} else if (annType == InjectBundleExtraAnn.class) {
 			Bundle data = getIntentExtras(target);
-			val = BundleExtraProvider.getVal((InjectBundleExtraAnn) ann, data);
+			val = BundleExtraReader.getVal((InjectBundleExtraAnn) ann, data);
 		} else if (annType == InjectResourceAnn.class) {
-			val = ResourceProvider.getVal(ctx, (InjectResourceAnn) ann, field);
+			val = ResourceReader.getVal(ctx, (InjectResourceAnn) ann, field);
 		} else if (annType == InjectSystemServiceAnn.class) {
-			val = SystemServiceProvider.getVal(ctx,
+			val = SystemServiceReader.getVal(ctx,
 					(InjectSystemServiceAnn) ann, field);
 		} else if (annType == InjectViewAnn.class) {
 			if (root == null) {
 				throw new IllegalArgumentException("Null View.");
 			}
-			val = ViewAndPreferenceProvider.getVal(ctx, root,
+			val = ViewAndPreferenceReader.getVal(ctx, root,
 					(InjectViewAnn) ann, target, field);
 		}
 		return val;

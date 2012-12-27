@@ -24,7 +24,7 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 
-public class SupportFragmentProvider {
+public class SupportFragmentReader {
 
 	static Object getVal(Object fragmentActivityObj, InjectFragmentAnn ann,
 			Field field) {

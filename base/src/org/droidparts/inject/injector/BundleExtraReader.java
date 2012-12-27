@@ -15,13 +15,19 @@
  */
 package org.droidparts.inject.injector;
 
-import android.support.v4.app.Fragment;
+import org.droidparts.reflect.ann.inject.InjectBundleExtraAnn;
 
-public class SupportParentActivityProvider {
+import android.os.Bundle;
 
-	static Object getVal(Object fragmentObj) {
-		Fragment fragment = (Fragment) fragmentObj;
-		return fragment.getActivity();
+public class BundleExtraReader {
+
+	static Object getVal(InjectBundleExtraAnn ann, Bundle data) throws Exception {
+		Object val = data.get(ann.key);
+		if (val == null && !ann.optional) {
+			throw new Exception("Bundle missing required key: " + ann.key);
+		} else {
+			return val;
+		}
 	}
 
 }

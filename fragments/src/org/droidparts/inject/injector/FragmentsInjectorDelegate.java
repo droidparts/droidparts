@@ -37,18 +37,18 @@ public class FragmentsInjectorDelegate extends InjectorDelegate {
 		if (annType == InjectFragmentAnn.class) {
 			handled = true;
 			if (useSupport()) {
-				val = SupportFragmentProvider.getVal(target,
+				val = SupportFragmentReader.getVal(target,
 						(InjectFragmentAnn) ann, field);
 			} else {
-				val = NativeFragmentProvider.getVal(target,
+				val = NativeFragmentReader.getVal(target,
 						(InjectFragmentAnn) ann, field);
 			}
 		} else if (annType == InjectParentActivityAnn.class) {
 			handled = true;
 			if (useSupport()) {
-				val = SupportParentActivityProvider.getVal(target);
+				val = SupportParentActivityReader.getVal(target);
 			} else {
-				val = NativeParentActivityProvider.getVal(target);
+				val = NativeParentActivityReader.getVal(target);
 			}
 		}
 		return handled ? val : super.getVal(ctx, root, target, ann, field);
@@ -58,9 +58,9 @@ public class FragmentsInjectorDelegate extends InjectorDelegate {
 	protected Bundle getIntentExtras(Object obj) {
 		Bundle data;
 		if (useSupport()) {
-			data = SupportFragmentProvider.getIntentExtras(obj);
+			data = SupportFragmentReader.getIntentExtras(obj);
 		} else {
-			data = NativeFragmentProvider.getIntentExtras(obj);
+			data = NativeFragmentReader.getIntentExtras(obj);
 		}
 		return (data != null) ? data : super.getIntentExtras(obj);
 	}

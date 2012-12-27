@@ -26,7 +26,7 @@ import android.preference.Preference;
 import android.preference.PreferenceActivity;
 import android.view.View;
 
-public class ViewAndPreferenceProvider {
+public class ViewAndPreferenceReader {
 
 	static Object getVal(Context ctx, View rootView, InjectViewAnn ann,
 			Object target, Field field) throws Exception {

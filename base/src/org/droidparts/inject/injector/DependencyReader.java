@@ -29,7 +29,7 @@ import android.content.Context;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 
-public class DependencyProvider {
+public class DependencyReader {
 
 	private static volatile boolean inited = false;
 	private static AbstractDependencyProvider dependencyProvider;
@@ -37,7 +37,7 @@ public class DependencyProvider {
 
 	static void init(Context ctx) {
 		if (!inited) {
-			synchronized (DependencyProvider.class) {
+			synchronized (DependencyReader.class) {
 				if (!inited) {
 					dependencyProvider = getDependencyProvider(ctx);
 					if (dependencyProvider != null) {

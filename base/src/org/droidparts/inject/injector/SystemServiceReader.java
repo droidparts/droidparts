@@ -44,7 +44,7 @@ import android.view.LayoutInflater;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 
-public class SystemServiceProvider {
+public class SystemServiceReader {
 
 	static Object getVal(Context ctx, InjectSystemServiceAnn ann, Field field)
 			throws Exception {

@@ -15,7 +15,7 @@
  */
 package org.droidparts.inject;
 
-import org.droidparts.inject.injector.DependencyProvider;
+import org.droidparts.inject.injector.DependencyReader;
 import org.droidparts.inject.injector.InjectorDelegate;
 import org.droidparts.util.L;
 
@@ -52,7 +52,7 @@ public class Injector {
 	public <T> T getDependency(Context ctx, Class<T> cls)
 			throws RuntimeException {
 		setContext(ctx);
-		return DependencyProvider.getVal(ctx, cls);
+		return DependencyReader.getVal(ctx, cls);
 	}
 
 	public void inject(Activity act) {

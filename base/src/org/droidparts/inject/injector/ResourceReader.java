@@ -28,7 +28,7 @@ import org.droidparts.reflect.ann.inject.InjectResourceAnn;
 import android.content.Context;
 import android.content.res.Resources;
 
-public class ResourceProvider {
+public class ResourceReader {
 
 	static Object getVal(Context ctx, InjectResourceAnn ann, Field field)
 			throws Exception {
