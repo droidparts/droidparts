@@ -74,14 +74,14 @@ public abstract class TabbedFragmentActivity extends FragmentActivity {
 		setCurrentTab(savedInstanceState.getInt(CURR_TAB, 0));
 	}
 
-	public void addTab(ActionBar.Tab tab, Fragment... fragments) {
-		addTab(fragmentsOnTab.size(), tab, fragments);
+	public void addTab(ActionBar.Tab tab, Fragment... tabFragments) {
+		addTab(fragmentsOnTab.size(), tab, tabFragments);
 	}
 
-	public void addTab(int position, ActionBar.Tab tab, Fragment... fragments) {
+	public void addTab(int position, ActionBar.Tab tab, Fragment... tabFragments) {
 		tab.setTabListener(tabListener);
 		getActionBar().addTab(tab, position);
-		fragmentsOnTab.add(position, fragments);
+		fragmentsOnTab.add(position, tabFragments);
 		FragmentTransaction ft = getFragmentManager().beginTransaction();
 		showFragmentsForCurrentTab(ft);
 		ft.commit();
