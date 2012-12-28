@@ -31,11 +31,12 @@ public class DialogFragment extends android.app.DialogFragment {
 	@Override
 	public final View onCreateView(LayoutInflater inflater,
 			ViewGroup container, Bundle savedInstanceState) {
-		Injector.get().inject(getDialog(), this);
 		View view = onCreateView(savedInstanceState, inflater, container);
 		if (view != null) {
 			Injector.get().inject(view, this);
 			injected = true;
+		} else {
+			Injector.get().inject(getDialog(), this);
 		}
 		return view;
 	}
@@ -50,7 +51,8 @@ public class DialogFragment extends android.app.DialogFragment {
 	}
 
 	public void show(Activity activity) {
-		SecretFragmentsStockUtil.dialogFragmentShowDialogFragment(activity, this);
+		SecretFragmentsStockUtil.dialogFragmentShowDialogFragment(activity,
+				this);
 	}
 
 }

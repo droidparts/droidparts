@@ -24,18 +24,18 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-public class DialogFragment extends
-		android.support.v4.app.DialogFragment {
+public class DialogFragment extends android.support.v4.app.DialogFragment {
 
 	private boolean injected;
 
 	@Override
 	public final View onCreateView(LayoutInflater inflater,
 			ViewGroup container, Bundle savedInstanceState) {
-		Injector.get().inject(getDialog(), this);
 		View view = onCreateView(savedInstanceState, inflater, container);
 		if (view != null) {
 			Injector.get().inject(view, this);
+		} else {
+			Injector.get().inject(getDialog(), this);
 		}
 		injected = true;
 		return view;
@@ -51,7 +51,8 @@ public class DialogFragment extends
 	}
 
 	public void show(FragmentActivity activity) {
-		SecretFragmentsSupportUtil.dialogFragmentShowDialogFragment(activity, this);
+		SecretFragmentsSupportUtil.dialogFragmentShowDialogFragment(activity,
+				this);
 	}
 
 }
