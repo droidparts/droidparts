@@ -19,6 +19,7 @@ import org.droidparts.inject.Injectable;
 import org.droidparts.inject.Injector;
 import org.droidparts.util.SecretFragmentsStockUtil;
 
+import android.app.Fragment;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
@@ -60,8 +61,9 @@ public abstract class FragmentActivity extends android.app.Activity implements
 		setActionBarLoadingIndicatorVisible(isLoading);
 	}
 
-	public void setFragmentVisible(int fragmentId, boolean visible) {
-		SecretFragmentsStockUtil.fragmentActivitySetFragmentVisible(this, fragmentId, visible);
+	public void setFragmentVisible(boolean visible, Fragment... fragments) {
+		SecretFragmentsStockUtil.fragmentActivitySetFragmentVisible(this,
+				visible, fragments);
 	}
 
 }

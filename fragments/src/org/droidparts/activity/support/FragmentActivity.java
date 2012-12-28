@@ -20,6 +20,7 @@ import org.droidparts.inject.Injector;
 import org.droidparts.util.SecretFragmentsSupportUtil;
 
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 
 public abstract class FragmentActivity extends
 		android.support.v4.app.FragmentActivity implements Injectable {
@@ -35,9 +36,9 @@ public abstract class FragmentActivity extends
 	public void onPreInject() {
 	}
 
-	public void setFragmentVisible(int fragmentId, boolean visible) {
-		SecretFragmentsSupportUtil.fragmentActivitySetFragmentVisible(this, fragmentId,
-				visible);
+	public void setFragmentVisible(boolean visible, Fragment... fragments) {
+		SecretFragmentsSupportUtil.fragmentActivitySetFragmentVisible(this,
+				visible, fragments);
 	}
 
 }

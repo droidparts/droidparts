@@ -24,18 +24,17 @@ import android.app.FragmentTransaction;
 public class SecretFragmentsStockUtil extends SecretFragmentsUtil {
 
 	public static void fragmentActivitySetFragmentVisible(
-			Activity fragmentActivity, int fragmentId, boolean visible) {
+			Activity fragmentActivity, boolean visible, Fragment... fragments) {
 		FragmentManager fm = fragmentActivity.getFragmentManager();
-		Fragment f = fm.findFragmentById(fragmentId);
-		if (f != null) {
-			FragmentTransaction ft = fm.beginTransaction();
+		FragmentTransaction ft = fm.beginTransaction();
+		for (Fragment fragment : fragments) {
 			if (visible) {
-				ft.show(f);
+				ft.show(fragment);
 			} else {
-				ft.hide(f);
+				ft.hide(fragment);
 			}
-			ft.commit();
 		}
+		ft.commit();
 	}
 
 	public static void singleFragmentActivityAddFragmentToContentView(

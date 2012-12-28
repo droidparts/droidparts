@@ -20,6 +20,7 @@ import org.droidparts.inject.Injector;
 import org.droidparts.util.SecretFragmentsSupportUtil;
 
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.view.View;
 
 import com.actionbarsherlock.view.MenuItem;
@@ -62,9 +63,9 @@ public abstract class FragmentActivity extends
 		setActionBarLoadingIndicatorVisible(isLoading);
 	}
 
-	public void setFragmentVisible(int fragmentId, boolean visible) {
-		SecretFragmentsSupportUtil.fragmentActivitySetFragmentVisible(this, fragmentId,
-				visible);
+	public void setFragmentVisible(boolean visible, Fragment... fragments) {
+		SecretFragmentsSupportUtil.fragmentActivitySetFragmentVisible(this,
+				visible, fragments);
 	}
 
 }
