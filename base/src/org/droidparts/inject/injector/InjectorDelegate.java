@@ -56,13 +56,12 @@ public class InjectorDelegate {
 					setFieldVal(target, spec.field, val);
 				}
 			} catch (Throwable e) {
-				L.e("Failed to inject field '" + spec.field.getName() + "' in "
-						+ cls.getSimpleName() + ", cause: " + e.getMessage()
-						+ ".");
+				L.w("Failed to inject " + cls.getSimpleName() + "#"
+						+ spec.field.getName() + ": " + e.getMessage());
 				L.d(e);
 			}
 		}
-		L.d(String.format("Injected on %s in %d ms.", cls.getSimpleName(),
+		L.i(String.format("Injected on %s in %d ms.", cls.getSimpleName(),
 				(System.currentTimeMillis() - start)));
 	}
 
@@ -78,8 +77,8 @@ public class InjectorDelegate {
 		} else if (annType == InjectResourceAnn.class) {
 			val = ResourceReader.getVal(ctx, (InjectResourceAnn) ann, field);
 		} else if (annType == InjectSystemServiceAnn.class) {
-			val = SystemServiceReader.getVal(ctx,
-					(InjectSystemServiceAnn) ann, field);
+			val = SystemServiceReader.getVal(ctx, (InjectSystemServiceAnn) ann,
+					field);
 		} else if (annType == InjectViewAnn.class) {
 			if (root == null) {
 				throw new IllegalArgumentException("Null View.");

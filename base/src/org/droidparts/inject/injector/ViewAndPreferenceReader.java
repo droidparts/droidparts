@@ -78,8 +78,7 @@ public class ViewAndPreferenceReader {
 			}
 			return val;
 		} else {
-			throw new Exception("View or Preference widh id " + viewOrPrefId
-					+ " not found.");
+			throw new Exception("View or Preference not found for id.");
 		}
 	}
 }
