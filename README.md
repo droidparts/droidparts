@@ -6,8 +6,10 @@ is a carefully crafted Android framework that includes:
 * *JSON* (de)serialization.
 * Improved *AsyncTasks* with Exceptions, progress & result reporting.
 * Better *logger* (log any object without a tag).
-* *RESTClient* for GETting, PUTting, POSTing, DELETing & InputStream-getting, also speaks JSON.
-* *ImageAttacher* to asynchronously attach images to ImageViews, cross fade support.
+* *RESTClient* for GETting, PUTting, POSTing, DELETing & InputStream-getting,
+also speaks JSON.
+* *ImageFetcher* to asynchronously attach images to ImageViews, with
+caching, cross-fade & transformation support.
 * Numerous *Utils*.
 * Support for *Fragments*, both native and [ActionBarSherlock][1]-based.
 
