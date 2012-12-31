@@ -60,19 +60,22 @@ public class ViewAndPreferenceReader {
 						((View) val)
 								.setOnClickListener((View.OnClickListener) target);
 					} else {
-						L.w("Failed to set onClickListener");
+						L.w("Failed to set OnClickListener");
 					}
 				} else {
+					boolean done = false;
 					Preference pref = (Preference) val;
 					if (target instanceof Preference.OnPreferenceClickListener) {
 						pref.setOnPreferenceClickListener((Preference.OnPreferenceClickListener) target);
-					} else {
-						L.w("Failed to set onPreferenceClickListener");
+						done = true;
 					}
 					if (target instanceof Preference.OnPreferenceChangeListener) {
 						pref.setOnPreferenceChangeListener((Preference.OnPreferenceChangeListener) target);
-					} else {
-						L.w("Failed to set onPreferenceChangeListener");
+						done = true;
+					}
+					if (!done) {
+						L.w("Failed to set OnPreferenceClickListener or OnPreferenceChangeListener.");
+
 					}
 				}
 			}
