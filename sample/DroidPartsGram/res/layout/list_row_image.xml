@@ -12,6 +12,7 @@
         android:layout_centerVertical="true"
         android:layout_gravity="center"
         android:layout_marginRight="8dp"
+        android:scaleType="fitXY"
         android:background="@android:color/white"
         android:padding="2dp" />
 
