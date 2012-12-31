@@ -10,8 +10,8 @@
     </parent>
 
     <artifactId>fragments</artifactId>
-    <name>DroidParts Fragments</name>
-    <description>Fragments</description>
+    <name>droidparts-fragments</name>
+    <description>DroidParts Fragments</description>
     <packaging>apklib</packaging>
 
     <dependencies>
@@ -24,6 +24,11 @@
         <dependency>
             <groupId>org.droidparts</groupId>
             <artifactId>base</artifactId>
+            <version>${version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.droidparts</groupId>
+            <artifactId>extra</artifactId>
             <version>${version}</version>
         </dependency>
     </dependencies>
@@ -46,12 +51,9 @@
                 <inherited>true</inherited>
                 <extensions>true</extensions>
                 <configuration>
-                    <!--<proguard>-->
-                        <!--<config>proguard-droidparts.cfg</config>-->
-                        <!--<skip>false</skip>-->
-                    <!--</proguard>-->
                 </configuration>
             </plugin>
         </plugins>
     </build>
+
 </project>

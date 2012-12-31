@@ -10,8 +10,8 @@
     </parent>
 
     <artifactId>base</artifactId>
-    <name>DroidParts Base</name>
-    <description>Base</description>
+    <name>droidparts-base</name>
+    <description>DroidParts Base</description>
     <packaging>apklib</packaging>
 
     <dependencies>
@@ -22,7 +22,6 @@
             <scope>provided</scope>
         </dependency>
     </dependencies>
-
 
     <build>
         <sourceDirectory>src</sourceDirectory>
@@ -46,6 +45,7 @@
                         <!--<debug>false</debug>-->
                     <!--</sign>-->
                     <!--<proguard>-->
+                    	<!--<config>proguard-droidparts.cfg</config>-->
                         <!--<skip>false</skip>-->
                     <!--</proguard>-->
                 </configuration>

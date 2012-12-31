@@ -10,8 +10,8 @@
     </parent>
 
     <artifactId>extra</artifactId>
-    <name>DroidParts Extra</name>
-    <description>Extra</description>
+    <name>droidparts-extra</name>
+    <description>DroidParts Extra</description>
     <packaging>apklib</packaging>
 
     <dependencies>
@@ -46,11 +46,9 @@
                 <inherited>true</inherited>
                 <extensions>true</extensions>
                 <configuration>
-                    <!--<proguard>-->
-                        <!--<skip>false</skip>-->
-                    <!--</proguard>-->
                 </configuration>
             </plugin>
         </plugins>
     </build>
+
 </project>

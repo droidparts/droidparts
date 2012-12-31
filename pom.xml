@@ -9,45 +9,50 @@
     </parent>
 
     <groupId>org.droidparts</groupId>
-    <artifactId>droidparts-parent</artifactId>
+    <artifactId>parent</artifactId>
     <version>1.0-SNAPSHOT</version>
     <packaging>pom</packaging>
 
-    <name>DroidParts Parent</name>
+    <name>DroidParts (Parent)</name>
     <description>A carefully crafted Android framework.</description>
     <url>http://droidparts.org</url>
-
-    <inceptionYear>2012</inceptionYear>
-
-    <licenses>
-        <license>
-            <name>Apache 2</name>
-            <distribution>repo</distribution>
-            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
-        </license>
-    </licenses>
-
+    <inceptionYear>2011</inceptionYear>
+    
+    <modules>
+        <module>base</module>
+        <module>extra</module>
+        <module>fragments</module>
+    </modules>
+    
+    <scm>
+        <connection>scm:git:git@github.com:yanchenko/droidparts.git</connection>
+        <developerConnection>scm:git:git@github.com:yanchenko/droidparts.git</developerConnection>
+        <url>https://github.com/yanchenko/droidparts</url>
+    </scm>
+    
     <developers>
         <developer>
             <id>yanchenko</id>
             <name>Alex Yanchenko</name>
+            <email>alex@yanchenko.com</email>
+            <timezone>2</timezone>
             <roles>
-                <role>Owner</role>
+                <role>developer</role>
             </roles>
         </developer>
     </developers>
 
+    <licenses>
+        <license>
+            <name>Apache 2</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
-
-    <modules>
-        <module>base</module>
-        <module>extra</module>
-        <module>legacy</module>
-        <module>modern-native</module>
-        <module>modern-sherlock</module>
-    </modules>
 
     <dependencyManagement>
         <dependencies>
@@ -112,12 +117,6 @@
         </pluginManagement>
     </build>
 
-    <scm>
-        <connection>scm:git:git@github.com:yanchenko/droidparts.git</connection>
-        <developerConnection>scm:git:git@github.com:yanchenko/droidparts.git</developerConnection>
-        <url>https://github.com/yanchenko/droidparts</url>
-    </scm>
-
     <profiles>
         <profile>
             <id>release-sign-artifacts</id>
@@ -147,6 +146,5 @@
             </build>
         </profile>
     </profiles>
-
 
 </project>
