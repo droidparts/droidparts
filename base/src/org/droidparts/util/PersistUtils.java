@@ -155,7 +155,7 @@ public final class PersistUtils implements SQL.DDL {
 			db.setTransactionSuccessful();
 			return result;
 		} catch (Exception e) {
-			L.e(e.getMessage());
+			L.w(e.getMessage());
 			L.d(e);
 			return null;
 		} finally {

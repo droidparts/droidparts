@@ -50,7 +50,7 @@ public class AndroidMarketHelper {
 			Intent intent = new Intent(ACTION_VIEW, Uri.parse(query));
 			ctx.startActivity(intent);
 		} catch (ActivityNotFoundException e) {
-			L.e(e);
+			L.w(e);
 			new AbstractDialogFactory(ctx).showErrorToast();
 		}
 	}

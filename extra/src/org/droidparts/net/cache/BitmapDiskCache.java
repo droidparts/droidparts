@@ -54,7 +54,7 @@ public class BitmapDiskCache {
 			bm.compress(PNG, 100, bos);
 			return true;
 		} catch (Exception e) {
-			L.e(e);
+			L.w(e);
 			return false;
 		} finally {
 			silentlyClose(bos);

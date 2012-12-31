@@ -29,6 +29,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
+import android.annotation.TargetApi;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -56,11 +57,12 @@ public class AppUtils {
 			verName = ctx.getPackageManager().getPackageInfo(
 					ctx.getPackageName(), 0).versionName;
 		} catch (NameNotFoundException e) {
-			L.e(e);
+			L.w(e);
 		}
 		return verName;
 	}
 
+	@TargetApi(8)
 	public File getExternalCacheDir() {
 		if (Build.VERSION.SDK_INT > 7) {
 			File dir = ctx.getExternalCacheDir();

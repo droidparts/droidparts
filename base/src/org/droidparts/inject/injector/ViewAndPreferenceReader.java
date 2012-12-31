@@ -72,7 +72,7 @@ public class ViewAndPreferenceReader {
 					if (target instanceof Preference.OnPreferenceChangeListener) {
 						pref.setOnPreferenceChangeListener((Preference.OnPreferenceChangeListener) target);
 					} else {
-						L.w("Failed to set onPreferenceClickListener");
+						L.w("Failed to set onPreferenceChangeListener");
 					}
 				}
 			}

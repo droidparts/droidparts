@@ -101,7 +101,7 @@ public class ViewUtils {
 					"OVER_SCROLL_NEVER").get(view);
 			m.invoke(view, OVER_SCROLL_NEVER);
 		} catch (Exception e) {
-			L.e(e);
+			L.w(e);
 		}
 	}
 

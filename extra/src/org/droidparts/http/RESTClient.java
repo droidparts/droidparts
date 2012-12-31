@@ -91,7 +91,7 @@ public class RESTClient {
 	//
 
 	public HTTPResponse get(String uri) throws HTTPException {
-		L.d("GET on " + uri);
+		L.i("GET on " + uri);
 		HTTPResponse response;
 		if (useHttpURLConnection()) {
 			HttpURLConnection conn = httpURLConnectionWorker.getConnection(uri,
@@ -107,7 +107,7 @@ public class RESTClient {
 
 	public HTTPResponse post(String uri, String contentType, String data)
 			throws HTTPException {
-		L.d("POST on " + uri + ", data: " + data);
+		L.i("POST on " + uri + ", data: " + data);
 		HTTPResponse response;
 		if (useHttpURLConnection()) {
 			HttpURLConnection conn = httpURLConnectionWorker.getConnection(uri,
@@ -125,7 +125,7 @@ public class RESTClient {
 
 	public HTTPResponse put(String uri, String contentType, String data)
 			throws HTTPException {
-		L.d("PUT on " + uri + ", data: " + data);
+		L.i("PUT on " + uri + ", data: " + data);
 		HTTPResponse response;
 		if (useHttpURLConnection()) {
 			HttpURLConnection conn = httpURLConnectionWorker.getConnection(uri,
@@ -142,7 +142,7 @@ public class RESTClient {
 	}
 
 	public HTTPResponse delete(String uri) throws HTTPException {
-		L.d("DELETE on " + uri);
+		L.i("DELETE on " + uri);
 		HTTPResponse response;
 		if (useHttpURLConnection()) {
 			HttpURLConnection conn = httpURLConnectionWorker.getConnection(uri,
@@ -158,7 +158,7 @@ public class RESTClient {
 
 	public Pair<Integer, BufferedInputStream> getInputStream(String uri)
 			throws HTTPException {
-		L.d("InputStream on " + uri);
+		L.i("InputStream on " + uri);
 		Pair<Integer, BufferedInputStream> resp = null;
 		if (useHttpURLConnection()) {
 			resp = httpURLConnectionWorker.getInputStream(uri);

@@ -48,7 +48,7 @@ public class IntentHelper {
 		try {
 			ctx.startActivity(intent);
 		} catch (ActivityNotFoundException e) {
-			L.e(e);
+			L.w(e);
 			new AbstractDialogFactory(ctx).showErrorToast();
 		}
 	}

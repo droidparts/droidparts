@@ -98,7 +98,8 @@ public class Injector {
 					"org.droidparts.inject.injector.FragmentsInjectorDelegate")
 					.newInstance();
 		} catch (Exception e) {
-			L.v(e);
+			L.i("FragmentsInjectorDelegate not available.");
+			L.d(e);
 		}
 		delegate = (fragmentsDelegate != null) ? fragmentsDelegate
 				: new InjectorDelegate();

@@ -61,8 +61,8 @@ public class InjectorDelegate {
 				L.d(e);
 			}
 		}
-		L.i(String.format("Injected on %s in %d ms.", cls.getSimpleName(),
-				(System.currentTimeMillis() - start)));
+		L.i("Injected into " + cls.getSimpleName() + " in "
+				+ (System.currentTimeMillis() - start) + " ms.");
 	}
 
 	protected Object getVal(Context ctx, View root, Object target, Ann<?> ann,

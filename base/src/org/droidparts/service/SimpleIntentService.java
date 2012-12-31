@@ -71,7 +71,7 @@ public abstract class SimpleIntentService extends IntentService {
 			f.setAccessible(true);
 			mHandler = (Handler) f.get(this);
 		} catch (Exception e) {
-			L.e(e);
+			L.w(e);
 		}
 	}
 
@@ -93,7 +93,7 @@ public abstract class SimpleIntentService extends IntentService {
 				resultReceiver.send(RESULT_OK, data);
 			}
 		} catch (Exception e) {
-			L.e(e);
+			L.d(e);
 			if (resultReceiver != null) {
 				data.putSerializable(EXTRA_EXCEPTION, e);
 				resultReceiver.send(RESULT_CANCELED, data);

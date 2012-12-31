@@ -66,7 +66,7 @@ public class HttpURLConnectionWorker extends HTTPWorker {
 				}
 			}
 		} catch (Exception e) {
-			L.e(e);
+			L.i(e);
 		}
 	}
 
