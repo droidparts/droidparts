@@ -23,26 +23,7 @@ import java.util.HashMap;
 import org.droidparts.reflect.ann.inject.InjectSystemServiceAnn;
 import org.droidparts.util.L;
 
-import android.accessibilityservice.AccessibilityService;
-import android.app.ActivityManager;
-import android.app.AlarmManager;
-import android.app.KeyguardManager;
-import android.app.NotificationManager;
-import android.app.SearchManager;
-import android.app.WallpaperManager;
 import android.content.Context;
-import android.hardware.SensorManager;
-import android.location.LocationManager;
-import android.media.AudioManager;
-import android.net.ConnectivityManager;
-import android.net.wifi.WifiManager;
-import android.os.PowerManager;
-import android.os.Vibrator;
-import android.telephony.TelephonyManager;
-import android.text.ClipboardManager;
-import android.view.LayoutInflater;
-import android.view.WindowManager;
-import android.view.inputmethod.InputMethodManager;
 
 public class SystemServiceReader {
 
@@ -61,53 +42,62 @@ public class SystemServiceReader {
 	private static final HashMap<Class<?>, String> serviceRegistry = new HashMap<Class<?>, String>();
 
 	static {
-		serviceRegistry.put(AccessibilityService.class,
-				Context.ACCESSIBILITY_SERVICE);
-		serviceRegistry.put(ActivityManager.class, Context.ACTIVITY_SERVICE);
-		serviceRegistry.put(AlarmManager.class, Context.ALARM_SERVICE);
-		serviceRegistry.put(AudioManager.class, Context.AUDIO_SERVICE);
-		serviceRegistry.put(ClipboardManager.class, Context.CLIPBOARD_SERVICE);
-		serviceRegistry.put(ConnectivityManager.class,
-				Context.CONNECTIVITY_SERVICE);
-		serviceRegistry.put(InputMethodManager.class,
-				Context.INPUT_METHOD_SERVICE);
-		serviceRegistry.put(KeyguardManager.class, Context.KEYGUARD_SERVICE);
-		serviceRegistry.put(LayoutInflater.class,
-				Context.LAYOUT_INFLATER_SERVICE);
-		serviceRegistry.put(LocationManager.class, Context.LOCATION_SERVICE);
-		serviceRegistry.put(NotificationManager.class,
-				Context.NOTIFICATION_SERVICE);
-		serviceRegistry.put(PowerManager.class, Context.POWER_SERVICE);
-		serviceRegistry.put(SearchManager.class, Context.SEARCH_SERVICE);
-		serviceRegistry.put(SensorManager.class, Context.SENSOR_SERVICE);
-		serviceRegistry.put(TelephonyManager.class, Context.TELEPHONY_SERVICE);
-		serviceRegistry.put(Vibrator.class, Context.VIBRATOR_SERVICE);
-		serviceRegistry.put(WallpaperManager.class, Context.WALLPAPER_SERVICE);
-		serviceRegistry.put(WifiManager.class, Context.WIFI_SERVICE);
-		serviceRegistry.put(WindowManager.class, Context.WINDOW_SERVICE);
+		HashMap<String, String> map = new HashMap<String, String>();
+		map.put("power", "android.os.PowerManager");
+		map.put("window", "android.view.WindowManager");
+		map.put("layout_inflater", "android.view.LayoutInflater");
+		map.put("account", "android.accounts.AccountManager");
+		map.put("activity", "android.app.ActivityManager");
+		map.put("alarm", "android.app.AlarmManager");
+		map.put("notification", "android.app.NotificationManager");
+		map.put("accessibility",
+				"android.view.accessibility.AccessibilityManager");
+		map.put("keyguard", "android.app.KeyguardManager");
+		map.put("location", "android.location.LocationManager");
+		map.put("country_detector", "android.location.CountryDetector");
+		map.put("search", "android.app.SearchManager");
+		map.put("sensor", "android.hardware.SensorManager");
+		map.put("storage", "android.os.storage.StorageManager");
+		map.put("wallpaper", "android.app.WallpaperManager");
+		map.put("vibrator", "android.os.Vibrator");
+		map.put("statusbar", "android.app.StatusBarManager");
+		map.put("connectivity", "android.net.ConnectivityManager");
+		map.put("throttle", "android.net.ThrottleManager");
+		map.put("updatelock", "android.os.IUpdateLock");
+		map.put("wifi", "android.net.wifi.WifiManager");
+		map.put("wifip2p", "android.net.wifi.p2p.WifiP2pManager");
+		map.put("servicediscovery", "android.net.nsd.NsdManager");
+		map.put("audio", "android.media.AudioManager");
+		map.put("media_router", "android.media.MediaRouter");
+		map.put("phone", "android.telephony.TelephonyManager");
+		map.put("clipboard", "android.text.ClipboardManager");
+		map.put("input_method", "android.view.inputmethod.InputMethodManager");
+		map.put("textservices", "android.view.textservice.TextServicesManager");
+		map.put("appwidget", "android.appwidget.AppWidgetManager");
+		map.put("backup", "android.app.backup.IBackupManager");
+		map.put("dropbox", "android.os.DropBoxManager");
+		map.put("device_policy", "android.app.admin.DevicePolicyManager");
+		map.put("uimode", "android.app.UiModeManager");
+		map.put("download", "android.app.DownloadManager");
+		map.put("nfc", "android.nfc.NfcManager");
+		map.put("bluetooth", "android.bluetooth.BluetoothAdapter");
+		map.put("sip", "android.net.sip.SipManager");
+		map.put("usb", "android.hardware.usb.UsbManager");
+		map.put("serial", "android.hardware.SerialManager");
+		map.put("input", "android.hardware.input.InputManager");
+		map.put("display", "android.hardware.display.DisplayManager");
+		map.put("scheduling_policy", "android.os.SchedulingPolicyService");
+		map.put("user", "android.os.UserManager");
 
-		HashMap<String, String> postAPI7 = new HashMap<String, String>();
-		postAPI7.put("android.accounts.AccountManager", "account");
-		postAPI7.put("android.app.admin.DevicePolicyManager", "device_policy");
-		postAPI7.put("android.app.DownloadManager", "download");
-		postAPI7.put("android.os.DropBoxManager", "dropbox");
-		postAPI7.put("android.nfc.NfcManager", "nfc");
-		postAPI7.put("android.os.storage.StorageManager", "storage");
-		postAPI7.put("android.view.textservice.TextServicesManager",
-				"textservices");
-		postAPI7.put("android.app.UiModeManager", "uimode");
-		postAPI7.put("android.hardware.usb.UsbManager", "usb");
-		postAPI7.put("android.net.wifi.p2p.WifiP2pManager", "wifip2p");
-
-		for (String clsName : postAPI7.keySet()) {
+		for (String serviceName : map.keySet()) {
+			String clsName = map.get(serviceName);
 			try {
 				Class<?> cls = Class.forName(clsName);
-				serviceRegistry.put(cls, postAPI7.get(clsName));
+				serviceRegistry.put(cls, serviceName);
 			} catch (ClassNotFoundException e) {
-				L.d(clsName + " not present.");
+				L.i(clsName + " service not available.");
 			}
 		}
-
 	}
 
 }
