@@ -1,6 +1,6 @@
 DroidParts
 ----------
-is a carefully crafted Android framework that includes:
+a carefully crafted Android framework that includes:
 * *DI* - dependency injection for Views, resources, etc.
 * *SQLite* object-relational mapping.
 * *JSON* (de)serialization.
@@ -11,10 +11,10 @@ also speaks JSON.
 * *ImageFetcher* to asynchronously attach images to ImageViews, with
 caching, cross-fade & transformation support.
 * Numerous *Utils*.
-* Support for *Fragments*, both native and [ActionBarSherlock][1]-based.
+* Support for *Fragments*: native, support-v4 and [ActionBarSherlock][1]-backed.
 
 Documentation
 -------------
-is available at http://droidparts.org.
+available at http://droidparts.org.
 
  [1]: https://github.com/JakeWharton/ActionBarSherlock

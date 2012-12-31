@@ -1,3 +1,6 @@
+1.0 /2012-12-31/:
+    * Oh yeah! (:
+
 0.9.7 /2012-12-28/:
     * InjectView, InjectFragment, InjectBundleExtra annotations arguments changed.
     * EntityManager & JSONSerializer lost factory methods.
