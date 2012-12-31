@@ -75,7 +75,6 @@ public class ViewAndPreferenceReader {
 					}
 					if (!done) {
 						L.w("Failed to set OnPreferenceClickListener or OnPreferenceChangeListener.");
-
 					}
 				}
 			}
