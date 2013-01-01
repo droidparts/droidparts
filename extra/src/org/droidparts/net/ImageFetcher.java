@@ -176,7 +176,9 @@ public class ImageFetcher {
 	}
 
 	protected void onFetchFailed(View imageView, String imgUrl, Exception e) {
-		L.w("Failed to fetch " + imgUrl);
+	}
+
+	protected void onBitmapAttached(ImageView imageView) {
 	}
 
 	//
@@ -202,6 +204,7 @@ public class ImageFetcher {
 			Bitmap bm = BitmapFactory.decodeByteArray(data, 0, data.length);
 			return bm;
 		} catch (Exception e) {
+			L.w("Failed to fetch " + imgUrl);
 			L.d(e);
 			onFetchFailed(imageView, imgUrl, e);
 			return null;
@@ -281,9 +284,11 @@ public class ImageFetcher {
 
 	static abstract class ImageViewRunnable implements Runnable {
 
+		protected final ImageFetcher imageFetcher;
 		protected final ImageView imageView;
 
-		public ImageViewRunnable(ImageView imageView) {
+		public ImageViewRunnable(ImageFetcher imageFetcher, ImageView imageView) {
+			this.imageFetcher = imageFetcher;
 			this.imageView = imageView;
 		}
 
@@ -306,53 +311,51 @@ public class ImageFetcher {
 
 	static class ReadFromCacheRunnable extends ImageViewRunnable {
 
-		protected final ImageFetcher ia;
 		protected final String imgUrl;
 		protected final long submitted;
 
-		public ReadFromCacheRunnable(ImageFetcher imageAttacher,
+		public ReadFromCacheRunnable(ImageFetcher imageFetcher,
 				ImageView imageView, String imgUrl, long submitted) {
-			super(imageView);
-			this.ia = imageAttacher;
+			super(imageFetcher, imageView);
 			this.imgUrl = imgUrl;
 			this.submitted = submitted;
 		}
 
 		@Override
 		public void run() {
-			Bitmap bm = ia.getCached(imgUrl);
+			Bitmap bm = imageFetcher.getCached(imgUrl);
 			if (bm == null) {
-				FetchAndCacheRunnable r = new FetchAndCacheRunnable(ia,
-						imageView, imgUrl, submitted);
-				ia.fetchExecutor.execute(r);
+				FetchAndCacheRunnable r = new FetchAndCacheRunnable(
+						imageFetcher, imageView, imgUrl, submitted);
+				imageFetcher.fetchExecutor.execute(r);
 			} else {
-				ia.currWIP.remove(imageView);
-				SetBitmapRunnable r = new SetBitmapRunnable(imageView, bm,
-						ia.crossFadeMillis);
-				ia.runOnUiThread(r);
+				imageFetcher.currWIP.remove(imageView);
+				SetBitmapRunnable r = new SetBitmapRunnable(imageFetcher,
+						imageView, bm, imageFetcher.crossFadeMillis);
+				imageFetcher.runOnUiThread(r);
 			}
 		}
 	}
 
 	static class FetchAndCacheRunnable extends ReadFromCacheRunnable {
 
-		public FetchAndCacheRunnable(ImageFetcher imageAttacher,
+		public FetchAndCacheRunnable(ImageFetcher imageFetcher,
 				ImageView imageView, String imgUrl, long submitted) {
-			super(imageAttacher, imageView, imgUrl, submitted);
+			super(imageFetcher, imageView, imgUrl, submitted);
 		}
 
 		@Override
 		public void run() {
-			Bitmap bm = ia.fetch(imageView, imgUrl);
+			Bitmap bm = imageFetcher.fetch(imageView, imgUrl);
 			if (bm != null) {
-				ia.putToCache(imgUrl, bm);
+				imageFetcher.putToCache(imgUrl, bm);
 				//
-				Long timestamp = ia.currWIP.get(imageView);
+				Long timestamp = imageFetcher.currWIP.get(imageView);
 				if (timestamp != null && timestamp == submitted) {
-					ia.currWIP.remove(imageView);
-					SetBitmapRunnable r = new SetBitmapRunnable(imageView, bm,
-							ia.crossFadeMillis);
-					ia.runOnUiThread(r);
+					imageFetcher.currWIP.remove(imageView);
+					SetBitmapRunnable r = new SetBitmapRunnable(imageFetcher,
+							imageView, bm, imageFetcher.crossFadeMillis);
+					imageFetcher.runOnUiThread(r);
 				}
 			}
 		}
@@ -369,15 +372,16 @@ public class ImageFetcher {
 		private final Bitmap bitmap;
 		private final int crossFadeMillis;
 
-		public SetBitmapRunnable(ImageView imageView, Bitmap bitmap,
-				int crossFadeMillis) {
-			super(imageView);
+		public SetBitmapRunnable(ImageFetcher imageFetcher,
+				ImageView imageView, Bitmap bitmap, int crossFadeMillis) {
+			super(imageFetcher, imageView);
 			this.bitmap = bitmap;
 			this.crossFadeMillis = crossFadeMillis;
 		}
 
 		@Override
 		public void run() {
+			imageFetcher.onBitmapAttached(imageView);
 			if (crossFadeMillis > 0) {
 				Drawable prevDrawable = imageView.getDrawable();
 				if (prevDrawable == null) {
