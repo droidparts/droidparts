@@ -178,7 +178,7 @@ public class ImageFetcher {
 	protected void onFetchFailed(View imageView, String imgUrl, Exception e) {
 	}
 
-	protected void onBitmapAttached(ImageView imageView) {
+	protected void onBitmapWillBeSet(ImageView imageView) {
 	}
 
 	//
@@ -381,7 +381,7 @@ public class ImageFetcher {
 
 		@Override
 		public void run() {
-			imageFetcher.onBitmapAttached(imageView);
+			imageFetcher.onBitmapWillBeSet(imageView);
 			if (crossFadeMillis > 0) {
 				Drawable prevDrawable = imageView.getDrawable();
 				if (prevDrawable == null) {
