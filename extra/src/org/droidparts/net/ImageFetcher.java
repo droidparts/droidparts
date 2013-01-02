@@ -177,7 +177,7 @@ public class ImageFetcher {
 	protected void onFetchFailed(ImageView imageView, String imgUrl, Exception e) {
 	}
 
-	protected void onBitmapWillBeSet(ImageView imageView) {
+	protected void onImageWillBeSet(ImageView imageView) {
 	}
 
 	//
@@ -380,15 +380,16 @@ public class ImageFetcher {
 
 		@Override
 		public void run() {
-			imageFetcher.onBitmapWillBeSet(imageView);
+			imageFetcher.onImageWillBeSet(imageView);
 			if (crossFadeMillis > 0) {
 				Drawable prevDrawable = imageView.getDrawable();
 				if (prevDrawable == null) {
 					prevDrawable = new ColorDrawable(TRANSPARENT);
 				}
+				Drawable drawable = new BitmapDrawable(
+						imageView.getResources(), bitmap);
 				TransitionDrawable transitionDrawable = new TransitionDrawable(
-						new Drawable[] { prevDrawable,
-								new BitmapDrawable(bitmap) });
+						new Drawable[] { prevDrawable, drawable });
 				imageView.setImageDrawable(transitionDrawable);
 				transitionDrawable.startTransition(crossFadeMillis);
 			} else {
