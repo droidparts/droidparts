@@ -45,7 +45,6 @@ import android.graphics.drawable.TransitionDrawable;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Pair;
-import android.view.View;
 import android.widget.ImageView;
 
 public class ImageFetcher {
@@ -56,13 +55,13 @@ public class ImageFetcher {
 
 	private ThreadPoolExecutor cacheExecutor;
 	private RESTClient restClient;
+	private Handler handler;
 
 	private BitmapLruCache memoryCache;
 	private BitmapDiskCache diskCache;
 
 	final ConcurrentHashMap<ImageView, Long> currWIP = new ConcurrentHashMap<ImageView, Long>();
 	ThreadPoolExecutor fetchExecutor;
-	volatile Handler handler;
 
 	private BitmapReshaper reshaper;
 	int crossFadeMillis = 0;
@@ -168,20 +167,29 @@ public class ImageFetcher {
 
 	//
 
-	protected void onFetchProgressChanged(View imageView, String imgUrl,
+	protected void onFetchProgressChanged(ImageView imageView, String imgUrl,
 			int kBTotal, int kBReceived) {
 		// L.d(String.format("Fetched %d of %d kB from %s.", kBReceived,
 		// kBTotal,
 		// imgUrl));
 	}
 
-	protected void onFetchFailed(View imageView, String imgUrl, Exception e) {
+	protected void onFetchFailed(ImageView imageView, String imgUrl, Exception e) {
 	}
 
 	protected void onBitmapWillBeSet(ImageView imageView) {
 	}
 
 	//
+
+	protected final void runOnUiThread(Runnable r) {
+		boolean success = handler.post(r);
+		// a hack
+		while (!success) {
+			handler = new Handler(Looper.getMainLooper());
+			success = handler.post(r);
+		}
+	}
 
 	Bitmap fetch(ImageView imageView, String imgUrl) {
 		int bytesReadTotal = 0;
@@ -210,15 +218,6 @@ public class ImageFetcher {
 			return null;
 		} finally {
 			silentlyClose(bis, baos);
-		}
-	}
-
-	void runOnUiThread(Runnable r) {
-		boolean success = handler.post(r);
-		// a hack
-		while (!success) {
-			handler = new Handler(Looper.getMainLooper());
-			success = handler.post(r);
 		}
 	}
 
