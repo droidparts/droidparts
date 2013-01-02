@@ -386,10 +386,10 @@ public class ImageFetcher {
 				if (prevDrawable == null) {
 					prevDrawable = new ColorDrawable(TRANSPARENT);
 				}
-				Drawable drawable = new BitmapDrawable(
+				Drawable nextDrawable = new BitmapDrawable(
 						imageView.getResources(), bitmap);
 				TransitionDrawable transitionDrawable = new TransitionDrawable(
-						new Drawable[] { prevDrawable, drawable });
+						new Drawable[] { prevDrawable, nextDrawable });
 				imageView.setImageDrawable(transitionDrawable);
 				transitionDrawable.startTransition(crossFadeMillis);
 			} else {
