@@ -95,7 +95,7 @@ public class BitmapDiskCache {
 
 	public void purgeFilesAccessedBefore(long timestamp) {
 		for (File f : getFileList(cacheDir)) {
-			if (timestamp <= 0 || f.lastModified() < timestamp) {
+			if (f.lastModified() < timestamp) {
 				f.delete();
 			}
 		}

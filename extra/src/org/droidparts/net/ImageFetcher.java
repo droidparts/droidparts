@@ -102,8 +102,8 @@ public class ImageFetcher {
 
 	public void purgeFilesOlderThan(int hours) {
 		if (diskCache != null) {
-			final long timestamp = (hours > 0) ? System.currentTimeMillis()
-					- hours * 60 * 60 * 1000 : 0;
+			final long timestamp = System.currentTimeMillis() - hours * 60 * 60
+					* 1000;
 			cacheExecutor.execute(new Runnable() {
 
 				@Override
