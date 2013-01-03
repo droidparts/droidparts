@@ -16,18 +16,31 @@
 package org.droidparts.net.cache;
 
 import static android.content.Context.ACTIVITY_SERVICE;
+import static org.droidparts.util.ui.BitmapUtils.getSize;
 
 import org.droidparts.util.L;
 
 import android.app.ActivityManager;
 import android.content.Context;
+import android.graphics.Bitmap;
 
-public final class BitmapMemoryCache {
+public final class BitmapMemoryCache implements BitmapLruCache {
 
-	protected static final int CACHE_DISABLED = 0;
+	public static final int CACHE_DISABLED = 0;
+	public static final int MEMORY_CACHE_DEFAULT_PERCENT = 20;
+	public static final int MEMORY_CACHE_DEFAULT_MAX_ITEM_SIZE = 256 * 1024;
 
-	public static BitmapLruCache getInstance(Context ctx, int percent) {
-		BitmapLruCache cache = null;
+	public static BitmapMemoryCache getDefault(Context ctx) {
+		return new BitmapMemoryCache(ctx, MEMORY_CACHE_DEFAULT_PERCENT,
+				MEMORY_CACHE_DEFAULT_MAX_ITEM_SIZE);
+	}
+
+	private BitmapLruCache cache;
+	private final int memoryCacheMaxItemSize;
+
+	public BitmapMemoryCache(Context ctx, int percent,
+			int memoryCacheMaxItemSize) {
+		this.memoryCacheMaxItemSize = memoryCacheMaxItemSize;
 		if (percent > CACHE_DISABLED) {
 			int maxBytes = 0;
 			int maxAvailableMemory = ((ActivityManager) ctx
@@ -50,7 +63,39 @@ public final class BitmapMemoryCache {
 				}
 			}
 		}
-		return cache;
+	}
+
+	@Override
+	public Bitmap put(String key, Bitmap bm) {
+		if (cache != null && getSize(bm) < memoryCacheMaxItemSize) {
+			bm = cache.put(key, bm);
+		}
+		return bm;
+	}
+
+	@Override
+	public Bitmap get(String key) {
+		Bitmap bm = null;
+		if (cache != null) {
+			bm = cache.get(key);
+		}
+		return bm;
+	}
+
+	@Override
+	public Bitmap remove(String key) {
+		Bitmap bm = null;
+		if (cache != null) {
+			bm = cache.remove(key);
+		}
+		return bm;
+	}
+
+	@Override
+	public void evictAll() {
+		if (cache != null) {
+			cache.evictAll();
+		}
 	}
 
 }

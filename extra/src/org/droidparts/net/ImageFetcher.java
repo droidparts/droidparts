@@ -18,7 +18,6 @@ package org.droidparts.net;
 import static android.graphics.Color.TRANSPARENT;
 import static org.droidparts.contract.Constants.BUFFER_SIZE;
 import static org.droidparts.util.io.IOUtils.silentlyClose;
-import static org.droidparts.util.ui.BitmapUtils.getSize;
 
 import java.io.BufferedInputStream;
 import java.io.ByteArrayOutputStream;
@@ -28,7 +27,6 @@ import java.util.concurrent.ThreadPoolExecutor;
 
 import org.droidparts.http.RESTClient;
 import org.droidparts.net.cache.BitmapDiskCache;
-import org.droidparts.net.cache.BitmapLruCache;
 import org.droidparts.net.cache.BitmapMemoryCache;
 import org.droidparts.util.L;
 
@@ -46,16 +44,12 @@ import android.widget.ImageView;
 
 public class ImageFetcher {
 
-	protected static final int MEMORY_CACHE_DEFAULT_PERCENT = 20;
-	protected static final int MEMORY_CACHE_DEFAULT_MAX_ITEM_SIZE = 256 * 1024;
-
 	final ThreadPoolExecutor cacheExecutor;
 	final ThreadPoolExecutor fetchExecutor;
 	private final RESTClient restClient;
 
-	private final BitmapLruCache memoryCache;
+	private final BitmapMemoryCache memoryCache;
 	private final BitmapDiskCache diskCache;
-	final int memoryCacheMaxItemSize;
 
 	int crossFadeMillis = 0;
 	private ImageReshaper reshaper;
@@ -66,20 +60,17 @@ public class ImageFetcher {
 
 	public ImageFetcher(Context ctx) {
 		this(ctx, (ThreadPoolExecutor) Executors.newFixedThreadPool(1),
-				new RESTClient(ctx), BitmapDiskCache.getDefault(ctx),
-				BitmapMemoryCache
-						.getInstance(ctx, MEMORY_CACHE_DEFAULT_PERCENT),
-				MEMORY_CACHE_DEFAULT_MAX_ITEM_SIZE);
+				new RESTClient(ctx), BitmapMemoryCache.getDefault(ctx),
+				BitmapDiskCache.getDefault(ctx));
 	}
 
 	protected ImageFetcher(Context ctx, ThreadPoolExecutor fetchExecutor,
-			RESTClient restClient, BitmapDiskCache diskCache,
-			BitmapLruCache memoryCache, int memoryCacheMaxItemSize) {
+			RESTClient restClient, BitmapMemoryCache memoryCache,
+			BitmapDiskCache diskCache) {
 		this.fetchExecutor = fetchExecutor;
 		this.restClient = restClient;
-		this.diskCache = diskCache;
 		this.memoryCache = memoryCache;
-		this.memoryCacheMaxItemSize = memoryCacheMaxItemSize;
+		this.diskCache = diskCache;
 		handler = new Handler(Looper.getMainLooper());
 		cacheExecutor = (ThreadPoolExecutor) Executors.newFixedThreadPool(1);
 	}
@@ -200,7 +191,9 @@ public class ImageFetcher {
 					bm = diskCache.get(key);
 				}
 				if (bm != null) {
-					cacheToMemory(key, bm);
+					if (memoryCache != null) {
+						memoryCache.put(key, bm);
+					}
 				}
 			}
 		}
@@ -216,7 +209,9 @@ public class ImageFetcher {
 					if (reshaper != null) {
 						bm = reshaper.reshape(bm);
 					}
-					cacheToMemory(key, bm);
+					if (memoryCache != null) {
+						memoryCache.put(key, bm);
+					}
 				}
 			}
 		}
@@ -228,7 +223,9 @@ public class ImageFetcher {
 			bm = reshaper.reshape(bm);
 		}
 		String key = getCacheKey(imgUrl);
-		cacheToMemory(key, bm);
+		if (memoryCache != null) {
+			memoryCache.put(key, bm);
+		}
 		if (diskCache != null) {
 			diskCache.put(key, bm);
 		}
@@ -237,12 +234,6 @@ public class ImageFetcher {
 
 	private String getCacheKey(String imgUrl) {
 		return (reshaper == null) ? imgUrl : (imgUrl + reshaper.getId());
-	}
-
-	private void cacheToMemory(String key, Bitmap bm) {
-		if (memoryCache != null && getSize(bm) < memoryCacheMaxItemSize) {
-			memoryCache.put(key, bm);
-		}
 	}
 
 	private void runOnUiThread(Runnable r) {

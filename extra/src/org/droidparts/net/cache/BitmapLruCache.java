@@ -19,7 +19,7 @@ import android.graphics.Bitmap;
 
 public interface BitmapLruCache {
 
-	Bitmap put(String key, Bitmap value);
+	Bitmap put(String key, Bitmap bm);
 
 	Bitmap get(String key);
 
