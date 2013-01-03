@@ -100,7 +100,7 @@ public class ImageFetcher {
 		this.progressListener = progressListener;
 	}
 
-	public void purgeFilesOlderThan(int hours) {
+	public void clearCacheOlderThan(int hours) {
 		if (diskCache != null) {
 			final long timestamp = System.currentTimeMillis() - hours * 60 * 60
 					* 1000;
