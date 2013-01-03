@@ -24,7 +24,7 @@ import android.app.ActivityManager;
 import android.content.Context;
 import android.graphics.Bitmap;
 
-public final class BitmapMemoryCache implements BitmapLruCache {
+public final class BitmapMemoryCache {
 
 	public static final int CACHE_DISABLED = 0;
 	public static final int MEMORY_CACHE_DEFAULT_PERCENT = 20;
@@ -65,37 +65,21 @@ public final class BitmapMemoryCache implements BitmapLruCache {
 		}
 	}
 
-	@Override
-	public Bitmap put(String key, Bitmap bm) {
+	public boolean put(String key, Bitmap bm) {
+		boolean put = false;
 		if (cache != null && getSize(bm) < memoryCacheMaxItemSize) {
-			bm = cache.put(key, bm);
+			cache.put(key, bm);
+			put = true;
 		}
-		return bm;
+		return put;
 	}
 
-	@Override
 	public Bitmap get(String key) {
 		Bitmap bm = null;
 		if (cache != null) {
 			bm = cache.get(key);
 		}
 		return bm;
-	}
-
-	@Override
-	public Bitmap remove(String key) {
-		Bitmap bm = null;
-		if (cache != null) {
-			bm = cache.remove(key);
-		}
-		return bm;
-	}
-
-	@Override
-	public void evictAll() {
-		if (cache != null) {
-			cache.evictAll();
-		}
 	}
 
 }
