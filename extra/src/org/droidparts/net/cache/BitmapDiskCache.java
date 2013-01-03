@@ -25,18 +25,27 @@ import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.Iterator;
-import java.util.TreeMap;
 
+import org.droidparts.util.AppUtils;
 import org.droidparts.util.L;
 import org.droidparts.util.crypto.HashCalc;
 
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 
 public class BitmapDiskCache {
+
+	public static BitmapDiskCache getDefault(Context ctx) {
+		BitmapDiskCache cache = null;
+		File cacheDir = new AppUtils(ctx).getExternalCacheDir();
+		if (cacheDir != null) {
+			cache = new BitmapDiskCache(new File(cacheDir, "image_cache"));
+		} else {
+			L.w("External cache dir null. Lacking 'android.permission.WRITE_EXTERNAL_STORAGE' permission?");
+		}
+		return cache;
+	}
 
 	private final File cacheDir;
 
@@ -92,41 +101,8 @@ public class BitmapDiskCache {
 		}
 	}
 
-	public void trimToSize(int sizeMb) {
-		TreeMap<Long, ArrayList<File>> map = new TreeMap<Long, ArrayList<File>>(
-				reverseComparator);
-		final long targetSize = sizeMb * 1024 * 1024;
-		long size = 0;
-		for (File file : getFileList(cacheDir)) {
-			Long modified = file.lastModified();
-			ArrayList<File> files = map.get(modified);
-			if (files == null) {
-				files = new ArrayList<File>();
-				map.put(modified, files);
-			}
-			files.add(file);
-			size += file.length();
-		}
-		L.i(String.format("Cache size: %.2f MB.", (float) size / 1024 / 1024));
-		Iterator<Long> it = map.keySet().iterator();
-		while ((size > targetSize) && it.hasNext()) {
-			for (File file : map.get(it.next())) {
-				size -= file.length();
-				file.delete();
-			}
-		}
-	}
-
 	private File getCachedFile(String key) {
 		return new File(cacheDir, HashCalc.getMD5(key));
 	}
-
-	private static final Comparator<Long> reverseComparator = new Comparator<Long>() {
-
-		@Override
-		public int compare(Long lhs, Long rhs) {
-			return (int) (lhs - rhs);
-		}
-	};
 
 }
