@@ -171,7 +171,7 @@ public class ImageFetcher {
 
 	//
 
-	protected final void runOnUiThread(Runnable r) {
+	private void runOnUiThread(Runnable r) {
 		boolean success = handler.post(r);
 		// a hack
 		while (!success) {
@@ -180,7 +180,7 @@ public class ImageFetcher {
 		}
 	}
 
-	Bitmap fetch(ImageView imageView, String imgUrl) {
+	Bitmap fetch(final ImageView imageView, final String imgUrl) {
 		int bytesReadTotal = 0;
 		byte[] buffer = new byte[BUFFER_SIZE];
 		BufferedInputStream bis = null;
@@ -188,25 +188,38 @@ public class ImageFetcher {
 		try {
 			Pair<Integer, BufferedInputStream> resp = restClient
 					.getInputStream(imgUrl);
-			int kBTotal = resp.first / 1024;
+			final int kBTotal = resp.first / 1024;
 			bis = resp.second;
 			int bytesRead;
 			while ((bytesRead = bis.read(buffer)) != -1) {
 				baos.write(buffer, 0, bytesRead);
 				bytesReadTotal += bytesRead;
 				if (listener != null) {
-					listener.onFetchProgressChanged(imageView, imgUrl, kBTotal,
-							bytesReadTotal / 1024);
+					final int kBReceived = bytesReadTotal / 1024;
+					runOnUiThread(new Runnable() {
+
+						@Override
+						public void run() {
+							listener.onFetchProgressChanged(imageView, imgUrl,
+									kBTotal, kBReceived);
+						}
+					});
 				}
 			}
 			byte[] data = baos.toByteArray();
 			Bitmap bm = BitmapFactory.decodeByteArray(data, 0, data.length);
 			return bm;
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			L.w("Failed to fetch " + imgUrl);
 			L.d(e);
 			if (listener != null) {
-				listener.onFetchFailed(imageView, imgUrl, e);
+				runOnUiThread(new Runnable() {
+
+					@Override
+					public void run() {
+						listener.onFetchFailed(imageView, imgUrl, e);
+					}
+				});
 			}
 			return null;
 		} finally {
