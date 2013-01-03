@@ -100,11 +100,12 @@ public class ImageFetcher {
 	private final BitmapDiskCache diskCache;
 	final int maxMemoryCacheItemSize;
 
-	final ConcurrentHashMap<ImageView, Long> currWIP = new ConcurrentHashMap<ImageView, Long>();
-
-	private Handler handler;
-	private BitmapReshaper reshaper;
 	int crossFadeMillis = 0;
+	private BitmapReshaper reshaper;
+	ProgressListener listener;
+
+	final ConcurrentHashMap<ImageView, Long> wip = new ConcurrentHashMap<ImageView, Long>();
+	private Handler handler;
 
 	public ImageFetcher(Context ctx) {
 		this(ctx, (ThreadPoolExecutor) Executors.newFixedThreadPool(1),
@@ -126,23 +127,30 @@ public class ImageFetcher {
 		this.maxMemoryCacheItemSize = maxMemoryCacheItemSize;
 	}
 
-	public BitmapDiskCache getDiskCache() {
-		return diskCache;
+	public void setCrossFadeDuration(int millisec) {
+		wip.clear();
+		this.crossFadeMillis = millisec;
 	}
 
 	public void setBitmapReshaper(BitmapReshaper reshaper) {
+		wip.clear();
 		this.reshaper = reshaper;
 	}
 
-	public void setCrossFadeDuration(int millisec) {
-		this.crossFadeMillis = millisec;
+	public void setProgressListener(ProgressListener listener) {
+		wip.clear();
+		this.listener = listener;
+	}
+
+	public BitmapDiskCache getDiskCache() {
+		return diskCache;
 	}
 
 	//
 
 	public void attachImage(ImageView imageView, String imgUrl) {
 		long submitted = System.nanoTime();
-		currWIP.put(imageView, submitted);
+		wip.put(imageView, submitted);
 		Runnable r = new ReadFromCacheRunnable(this, imageView, imgUrl,
 				submitted);
 		cacheExecutor.remove(r);
@@ -159,21 +167,6 @@ public class ImageFetcher {
 			putToCache(imgUrl, bm);
 		}
 		return bm;
-	}
-
-	//
-
-	protected void onFetchProgressChanged(ImageView imageView, String imgUrl,
-			int kBTotal, int kBReceived) {
-		// L.d(String.format("Fetched %d of %d kB from %s.", kBReceived,
-		// kBTotal,
-		// imgUrl));
-	}
-
-	protected void onFetchFailed(ImageView imageView, String imgUrl, Exception e) {
-	}
-
-	protected void onImageWillBeSet(ImageView imageView) {
 	}
 
 	//
@@ -201,8 +194,10 @@ public class ImageFetcher {
 			while ((bytesRead = bis.read(buffer)) != -1) {
 				baos.write(buffer, 0, bytesRead);
 				bytesReadTotal += bytesRead;
-				onFetchProgressChanged(imageView, imgUrl, kBTotal,
-						bytesReadTotal / 1024);
+				if (listener != null) {
+					listener.onFetchProgressChanged(imageView, imgUrl, kBTotal,
+							bytesReadTotal / 1024);
+				}
 			}
 			byte[] data = baos.toByteArray();
 			Bitmap bm = BitmapFactory.decodeByteArray(data, 0, data.length);
@@ -210,7 +205,9 @@ public class ImageFetcher {
 		} catch (Exception e) {
 			L.w("Failed to fetch " + imgUrl);
 			L.d(e);
-			onFetchFailed(imageView, imgUrl, e);
+			if (listener != null) {
+				listener.onFetchFailed(imageView, imgUrl, e);
+			}
 			return null;
 		} finally {
 			silentlyClose(bis, baos);
@@ -324,7 +321,7 @@ public class ImageFetcher {
 						imageFetcher, imageView, imgUrl, submitted);
 				imageFetcher.fetchExecutor.execute(r);
 			} else {
-				imageFetcher.currWIP.remove(imageView);
+				imageFetcher.wip.remove(imageView);
 				SetBitmapRunnable r = new SetBitmapRunnable(imageFetcher,
 						imageView, bm, imageFetcher.crossFadeMillis);
 				imageFetcher.runOnUiThread(r);
@@ -345,9 +342,9 @@ public class ImageFetcher {
 			if (bm != null) {
 				imageFetcher.putToCache(imgUrl, bm);
 				//
-				Long timestamp = imageFetcher.currWIP.get(imageView);
+				Long timestamp = imageFetcher.wip.get(imageView);
 				if (timestamp != null && timestamp == submitted) {
-					imageFetcher.currWIP.remove(imageView);
+					imageFetcher.wip.remove(imageView);
 					SetBitmapRunnable r = new SetBitmapRunnable(imageFetcher,
 							imageView, bm, imageFetcher.crossFadeMillis);
 					imageFetcher.runOnUiThread(r);
@@ -376,7 +373,9 @@ public class ImageFetcher {
 
 		@Override
 		public void run() {
-			imageFetcher.onImageWillBeSet(imageView);
+			if (imageFetcher.listener != null) {
+				imageFetcher.listener.onImageWillBeSet(imageView);
+			}
 			if (crossFadeMillis > 0) {
 				Drawable prevDrawable = imageView.getDrawable();
 				if (prevDrawable == null) {
