@@ -57,7 +57,8 @@ public class ImageFetcher {
 		File cacheDir = new AppUtils(ctx).getExternalCacheDir();
 		File imgCacheDir = null;
 		if (cacheDir != null) {
-			imgCacheDir = (cacheDir == null) ? null : new File(cacheDir, "img");
+			imgCacheDir = (cacheDir == null) ? null : new File(cacheDir,
+					"image_fetcher_cache");
 		} else {
 			L.w("External cache dir null. Lacking 'android.permission.WRITE_EXTERNAL_STORAGE' permission?");
 		}
@@ -194,8 +195,8 @@ public class ImageFetcher {
 
 						@Override
 						public void run() {
-							progressListener.onDownloadProgressChanged(imageView,
-									kBTotal, kBReceived);
+							progressListener.onDownloadProgressChanged(
+									imageView, kBTotal, kBReceived);
 						}
 					});
 				}
