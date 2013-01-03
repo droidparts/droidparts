@@ -26,6 +26,6 @@ public interface ImageProgressListener {
 
 	void onDownloadFailed(ImageView imageView, Exception e);
 
-	void onImageFetched(ImageView imageView);
+	void onTaskCompleted(ImageView imageView);
 
 }

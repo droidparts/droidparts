@@ -389,7 +389,7 @@ public class ImageFetcher {
 		@Override
 		public void run() {
 			if (imageFetcher.progressListener != null) {
-				imageFetcher.progressListener.onImageFetched(imageView);
+				imageFetcher.progressListener.onTaskCompleted(imageView);
 			}
 			if (crossFadeMillis > 0) {
 				Drawable prevDrawable = imageView.getDrawable();
