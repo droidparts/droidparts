@@ -49,41 +49,85 @@ import android.widget.ImageView;
 
 public class ImageFetcher {
 
-	public static int MEMORY_CACHE_DISABLED = 0;
-	public static int MEMORY_CACHE_DEFAULT_PERCENT = 20;
-	public static int MEMORY_CACHE_DEFAULT_MAX_ITEM_SIZE = 256 * 1024;
+	protected static final int MEMORY_CACHE_DISABLED = 0;
+	protected static final int MEMORY_CACHE_DEFAULT_PERCENT = 20;
+	protected static final int MEMORY_CACHE_DEFAULT_MAX_ITEM_SIZE = 256 * 1024;
 
-	private ThreadPoolExecutor cacheExecutor;
-	private RESTClient restClient;
-	private Handler handler;
-
-	private BitmapLruCache memoryCache;
-	private BitmapDiskCache diskCache;
-
-	final ConcurrentHashMap<ImageView, Long> currWIP = new ConcurrentHashMap<ImageView, Long>();
-	ThreadPoolExecutor fetchExecutor;
-
-	private BitmapReshaper reshaper;
-	int crossFadeMillis = 0;
-	int maxMemoryCacheItemSize;
-
-	public ImageFetcher(Context ctx) {
-		handler = new Handler(Looper.getMainLooper());
-		cacheExecutor = (ThreadPoolExecutor) Executors.newFixedThreadPool(1);
-		setExecutor((ThreadPoolExecutor) Executors.newFixedThreadPool(1));
-		setRESTClient(new RESTClient(ctx));
-		//
+	protected static File getDefaultFileCacheDir(Context ctx) {
 		File cacheDir = new AppUtils(ctx).getExternalCacheDir();
+		File imgCacheDir = null;
 		if (cacheDir != null) {
-			File imgCacheDir = (cacheDir == null) ? null : new File(cacheDir,
-					"img");
-			setDiskCacheDir(imgCacheDir);
+			imgCacheDir = (cacheDir == null) ? null : new File(cacheDir, "img");
 		} else {
 			L.w("External cache dir null. Lacking 'android.permission.WRITE_EXTERNAL_STORAGE' permission?");
 		}
-		//
-		setMemoryCachePercent(ctx, MEMORY_CACHE_DEFAULT_PERCENT);
-		setMaxMemoryCacheItemSize(MEMORY_CACHE_DEFAULT_MAX_ITEM_SIZE);
+		return imgCacheDir;
+	}
+
+	protected boolean setMemoryCachePercent(Context ctx, int percent) {
+		if (percent != MEMORY_CACHE_DISABLED) {
+			int maxBytes = 0;
+			int maxAvailableMemory = ((ActivityManager) ctx
+					.getSystemService(ACTIVITY_SERVICE)).getMemoryClass();
+			maxBytes = (int) (maxAvailableMemory * ((float) percent / 100)) * 1024 * 1024;
+			try {
+				memoryCache = (BitmapLruCache) Class
+						.forName("org.droidparts.net.cache.StockBitmapLruCache")
+						.getConstructor(int.class).newInstance(maxBytes);
+				L.i("Using stock LruCache.");
+				return true;
+			} catch (Throwable t) {
+				try {
+					memoryCache = (BitmapLruCache) Class
+							.forName(
+									"org.droidparts.net.cache.SupportBitmapLruCache")
+							.getConstructor(int.class).newInstance(maxBytes);
+					L.i("Using Support Package LruCache.");
+					return true;
+				} catch (Throwable tr) {
+					L.i("LruCache not available.");
+				}
+			}
+		}
+		return false;
+	}
+
+	final ThreadPoolExecutor cacheExecutor;
+	final ThreadPoolExecutor fetchExecutor;
+	private final RESTClient restClient;
+
+	private BitmapLruCache memoryCache;
+	private final BitmapDiskCache diskCache;
+	final int maxMemoryCacheItemSize;
+
+	final ConcurrentHashMap<ImageView, Long> currWIP = new ConcurrentHashMap<ImageView, Long>();
+
+	private Handler handler;
+	private BitmapReshaper reshaper;
+	int crossFadeMillis = 0;
+
+	public ImageFetcher(Context ctx) {
+		this(ctx, (ThreadPoolExecutor) Executors.newFixedThreadPool(1),
+				new RESTClient(ctx), getDefaultFileCacheDir(ctx),
+				MEMORY_CACHE_DEFAULT_PERCENT,
+				MEMORY_CACHE_DEFAULT_MAX_ITEM_SIZE);
+	}
+
+	protected ImageFetcher(Context ctx, ThreadPoolExecutor fetchExecutor,
+			RESTClient restClient, File fileCacheDir, int memoryCachePercent,
+			int maxMemoryCacheItemSize) {
+		handler = new Handler(Looper.getMainLooper());
+		cacheExecutor = (ThreadPoolExecutor) Executors.newFixedThreadPool(1);
+		this.fetchExecutor = fetchExecutor;
+		this.restClient = restClient;
+		this.diskCache = (fileCacheDir != null) ? new BitmapDiskCache(
+				fileCacheDir) : null;
+		setMemoryCachePercent(ctx, memoryCachePercent);
+		this.maxMemoryCacheItemSize = maxMemoryCacheItemSize;
+	}
+
+	public BitmapDiskCache getDiskCache() {
+		return diskCache;
 	}
 
 	public void setBitmapReshaper(BitmapReshaper reshaper) {
@@ -92,54 +136,6 @@ public class ImageFetcher {
 
 	public void setCrossFadeDuration(int millisec) {
 		this.crossFadeMillis = millisec;
-	}
-
-	public void setExecutor(ThreadPoolExecutor exec) {
-		this.fetchExecutor = exec;
-	}
-
-	public void setRESTClient(RESTClient client) {
-		this.restClient = client;
-	}
-
-	public void setDiskCacheDir(File dir) {
-		diskCache = (dir == null) ? null : new BitmapDiskCache(dir);
-	}
-
-	public boolean setMemoryCachePercent(Context ctx, int percent) {
-		int maxBytes = 0;
-		if (percent != MEMORY_CACHE_DISABLED) {
-			int maxAvailableMemory = ((ActivityManager) ctx
-					.getSystemService(ACTIVITY_SERVICE)).getMemoryClass();
-			maxBytes = (int) (maxAvailableMemory * ((float) percent / 100)) * 1024 * 1024;
-		}
-		try {
-			memoryCache = (BitmapLruCache) Class
-					.forName("org.droidparts.net.cache.StockBitmapLruCache")
-					.getConstructor(int.class).newInstance(maxBytes);
-			L.i("Using stock LruCache.");
-			return true;
-		} catch (Throwable t) {
-			try {
-				memoryCache = (BitmapLruCache) Class
-						.forName(
-								"org.droidparts.net.cache.SupportBitmapLruCache")
-						.getConstructor(int.class).newInstance(maxBytes);
-				L.i("Using Support Package LruCache.");
-				return true;
-			} catch (Throwable tr) {
-				L.i("LruCache not available.");
-				return false;
-			}
-		}
-	}
-
-	public void setMaxMemoryCacheItemSize(int bytes) {
-		this.maxMemoryCacheItemSize = bytes;
-	}
-
-	public BitmapDiskCache getDiskCache() {
-		return diskCache;
 	}
 
 	//
