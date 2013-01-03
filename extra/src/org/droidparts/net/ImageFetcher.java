@@ -101,8 +101,8 @@ public class ImageFetcher {
 	final int maxMemoryCacheItemSize;
 
 	int crossFadeMillis = 0;
-	private BitmapReshaper reshaper;
-	ProgressListener listener;
+	private ImageReshaper reshaper;
+	ImageProgressListener progressListener;
 
 	final ConcurrentHashMap<ImageView, Long> wip = new ConcurrentHashMap<ImageView, Long>();
 	private Handler handler;
@@ -132,14 +132,14 @@ public class ImageFetcher {
 		this.crossFadeMillis = millisec;
 	}
 
-	public void setBitmapReshaper(BitmapReshaper reshaper) {
+	public void setReshaper(ImageReshaper reshaper) {
 		wip.clear();
 		this.reshaper = reshaper;
 	}
 
-	public void setProgressListener(ProgressListener listener) {
+	public void setProgressListener(ImageProgressListener progressListener) {
 		wip.clear();
-		this.listener = listener;
+		this.progressListener = progressListener;
 	}
 
 	public BitmapDiskCache getDiskCache() {
@@ -149,6 +149,9 @@ public class ImageFetcher {
 	//
 
 	public void attachImage(ImageView imageView, String imgUrl) {
+		if (progressListener != null) {
+			progressListener.onTaskAdded(imageView);
+		}
 		long submitted = System.nanoTime();
 		wip.put(imageView, submitted);
 		Runnable r = new ReadFromCacheRunnable(this, imageView, imgUrl,
@@ -171,15 +174,6 @@ public class ImageFetcher {
 
 	//
 
-	private void runOnUiThread(Runnable r) {
-		boolean success = handler.post(r);
-		// a hack
-		while (!success) {
-			handler = new Handler(Looper.getMainLooper());
-			success = handler.post(r);
-		}
-	}
-
 	Bitmap fetch(final ImageView imageView, final String imgUrl) {
 		int bytesReadTotal = 0;
 		byte[] buffer = new byte[BUFFER_SIZE];
@@ -194,13 +188,13 @@ public class ImageFetcher {
 			while ((bytesRead = bis.read(buffer)) != -1) {
 				baos.write(buffer, 0, bytesRead);
 				bytesReadTotal += bytesRead;
-				if (listener != null) {
+				if (progressListener != null) {
 					final int kBReceived = bytesReadTotal / 1024;
 					runOnUiThread(new Runnable() {
 
 						@Override
 						public void run() {
-							listener.onFetchProgressChanged(imageView, imgUrl,
+							progressListener.onDownloadProgressChanged(imageView,
 									kBTotal, kBReceived);
 						}
 					});
@@ -212,12 +206,12 @@ public class ImageFetcher {
 		} catch (final Exception e) {
 			L.w("Failed to fetch " + imgUrl);
 			L.d(e);
-			if (listener != null) {
+			if (progressListener != null) {
 				runOnUiThread(new Runnable() {
 
 					@Override
 					public void run() {
-						listener.onFetchFailed(imageView, imgUrl, e);
+						progressListener.onDownloadFailed(imageView, e);
 					}
 				});
 			}
@@ -275,13 +269,21 @@ public class ImageFetcher {
 	}
 
 	private String getKey(String imgUrl) {
-		return (reshaper == null) ? imgUrl
-				: (imgUrl + reshaper.getReshaperId());
+		return (reshaper == null) ? imgUrl : (imgUrl + reshaper.getId());
 	}
 
 	private void cacheToMemory(String key, Bitmap bm) {
 		if (memoryCache != null && getSize(bm) < maxMemoryCacheItemSize) {
 			memoryCache.put(key, bm);
+		}
+	}
+
+	private void runOnUiThread(Runnable r) {
+		boolean success = handler.post(r);
+		// a hack
+		while (!success) {
+			handler = new Handler(Looper.getMainLooper());
+			success = handler.post(r);
 		}
 	}
 
@@ -386,8 +388,8 @@ public class ImageFetcher {
 
 		@Override
 		public void run() {
-			if (imageFetcher.listener != null) {
-				imageFetcher.listener.onImageWillBeSet(imageView);
+			if (imageFetcher.progressListener != null) {
+				imageFetcher.progressListener.onImageReceived(imageView);
 			}
 			if (crossFadeMillis > 0) {
 				Drawable prevDrawable = imageView.getDrawable();

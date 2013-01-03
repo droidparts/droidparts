@@ -17,9 +17,9 @@ package org.droidparts.net;
 
 import android.graphics.Bitmap;
 
-public interface BitmapReshaper {
+public interface ImageReshaper {
 
-	String getReshaperId();
+	String getId();
 
 	Bitmap reshape(Bitmap bm);
 
