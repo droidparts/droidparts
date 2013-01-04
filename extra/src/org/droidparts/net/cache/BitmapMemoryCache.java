@@ -30,9 +30,14 @@ public final class BitmapMemoryCache {
 	public static final int MEMORY_CACHE_DEFAULT_PERCENT = 20;
 	public static final int MEMORY_CACHE_DEFAULT_MAX_ITEM_SIZE = 256 * 1024;
 
-	public static BitmapMemoryCache getDefault(Context ctx) {
-		return new BitmapMemoryCache(ctx, MEMORY_CACHE_DEFAULT_PERCENT,
-				MEMORY_CACHE_DEFAULT_MAX_ITEM_SIZE);
+	private static BitmapMemoryCache instance;
+
+	public static BitmapMemoryCache getDefaultInstance(Context ctx) {
+		if (instance == null) {
+			instance = new BitmapMemoryCache(ctx, MEMORY_CACHE_DEFAULT_PERCENT,
+					MEMORY_CACHE_DEFAULT_MAX_ITEM_SIZE);
+		}
+		return instance;
 	}
 
 	private BitmapLruCache cache;

@@ -53,15 +53,15 @@ public class ImageFetcher {
 
 	int crossFadeMillis = 0;
 	private ImageReshaper reshaper;
-	ImageProgressListener progressListener;
+	ImageFetchListener fetchListener;
 
 	final ConcurrentHashMap<ImageView, Long> wip = new ConcurrentHashMap<ImageView, Long>();
 	private Handler handler;
 
 	public ImageFetcher(Context ctx) {
 		this(ctx, (ThreadPoolExecutor) Executors.newFixedThreadPool(1),
-				new RESTClient(ctx), BitmapMemoryCache.getDefault(ctx),
-				BitmapDiskCache.getDefault(ctx));
+				new RESTClient(ctx), BitmapMemoryCache.getDefaultInstance(ctx),
+				BitmapDiskCache.getDefaultInstance(ctx));
 	}
 
 	protected ImageFetcher(Context ctx, ThreadPoolExecutor fetchExecutor,
@@ -85,9 +85,9 @@ public class ImageFetcher {
 		this.reshaper = reshaper;
 	}
 
-	public void setProgressListener(ImageProgressListener progressListener) {
+	public void setFetchListener(ImageFetchListener fetchListener) {
 		wip.clear();
-		this.progressListener = progressListener;
+		this.fetchListener = fetchListener;
 	}
 
 	public void clearCacheOlderThan(int hours) {
@@ -107,8 +107,8 @@ public class ImageFetcher {
 	//
 
 	public void attachImage(ImageView imageView, String imgUrl) {
-		if (progressListener != null) {
-			progressListener.onTaskAdded(imageView);
+		if (fetchListener != null) {
+			fetchListener.onAdded(imageView);
 		}
 		long submitted = System.nanoTime();
 		wip.put(imageView, submitted);
@@ -146,14 +146,14 @@ public class ImageFetcher {
 			while ((bytesRead = bis.read(buffer)) != -1) {
 				baos.write(buffer, 0, bytesRead);
 				bytesReadTotal += bytesRead;
-				if (progressListener != null) {
+				if (fetchListener != null) {
 					final int kBReceived = bytesReadTotal / 1024;
 					runOnUiThread(new Runnable() {
 
 						@Override
 						public void run() {
-							progressListener.onDownloadProgressChanged(
-									imageView, kBTotal, kBReceived);
+							fetchListener.onDownloadProgressChanged(imageView,
+									kBTotal, kBReceived);
 						}
 					});
 				}
@@ -164,12 +164,12 @@ public class ImageFetcher {
 		} catch (final Exception e) {
 			L.w("Failed to fetch " + imgUrl);
 			L.d(e);
-			if (progressListener != null) {
+			if (fetchListener != null) {
 				runOnUiThread(new Runnable() {
 
 					@Override
 					public void run() {
-						progressListener.onDownloadFailed(imageView, e);
+						fetchListener.onDownloadFailed(imageView, e);
 					}
 				});
 			}
@@ -346,8 +346,8 @@ public class ImageFetcher {
 
 		@Override
 		public void run() {
-			if (imageFetcher.progressListener != null) {
-				imageFetcher.progressListener.onTaskCompleted(imageView);
+			if (imageFetcher.fetchListener != null) {
+				imageFetcher.fetchListener.onCompleted(imageView);
 			}
 			if (crossFadeMillis > 0) {
 				Drawable prevDrawable = imageView.getDrawable();

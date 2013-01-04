@@ -17,15 +17,15 @@ package org.droidparts.net;
 
 import android.widget.ImageView;
 
-public interface ImageProgressListener {
+public interface ImageFetchListener {
 
-	void onTaskAdded(ImageView imageView);
+	void onAdded(ImageView imageView);
 
 	void onDownloadProgressChanged(ImageView imageView, int kBTotal,
 			int kBReceived);
 
 	void onDownloadFailed(ImageView imageView, Exception e);
 
-	void onTaskCompleted(ImageView imageView);
+	void onCompleted(ImageView imageView);
 
 }

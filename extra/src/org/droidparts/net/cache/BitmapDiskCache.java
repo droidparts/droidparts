@@ -36,15 +36,19 @@ import android.graphics.BitmapFactory;
 
 public class BitmapDiskCache {
 
-	public static BitmapDiskCache getDefault(Context ctx) {
-		BitmapDiskCache cache = null;
-		File cacheDir = new AppUtils(ctx).getExternalCacheDir();
-		if (cacheDir != null) {
-			cache = new BitmapDiskCache(new File(cacheDir, "image_cache"));
-		} else {
-			L.w("External cache dir null. Lacking 'android.permission.WRITE_EXTERNAL_STORAGE' permission?");
+	private static BitmapDiskCache instance;
+
+	public static BitmapDiskCache getDefaultInstance(Context ctx) {
+		if (instance == null) {
+			File cacheDir = new AppUtils(ctx).getExternalCacheDir();
+			if (cacheDir != null) {
+				instance = new BitmapDiskCache(
+						new File(cacheDir, "image_cache"));
+			} else {
+				L.w("External cache dir null. Lacking 'android.permission.WRITE_EXTERNAL_STORAGE' permission?");
+			}
 		}
-		return cache;
+		return instance;
 	}
 
 	private final File cacheDir;
