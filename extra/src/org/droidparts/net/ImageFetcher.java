@@ -108,7 +108,7 @@ public class ImageFetcher {
 
 	public void attachImage(ImageView imageView, String imgUrl) {
 		if (fetchListener != null) {
-			fetchListener.onAdded(imageView);
+			fetchListener.onTaskAdded(imageView);
 		}
 		long submitted = System.nanoTime();
 		wip.put(imageView, submitted);
@@ -347,7 +347,7 @@ public class ImageFetcher {
 		@Override
 		public void run() {
 			if (imageFetcher.fetchListener != null) {
-				imageFetcher.fetchListener.onCompleted(imageView);
+				imageFetcher.fetchListener.onTaskCompleted(imageView);
 			}
 			if (crossFadeMillis > 0) {
 				Drawable prevDrawable = imageView.getDrawable();

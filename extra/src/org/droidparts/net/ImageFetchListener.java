@@ -19,13 +19,13 @@ import android.widget.ImageView;
 
 public interface ImageFetchListener {
 
-	void onAdded(ImageView imageView);
+	void onTaskAdded(ImageView imageView);
 
 	void onDownloadProgressChanged(ImageView imageView, int kBTotal,
 			int kBReceived);
 
 	void onDownloadFailed(ImageView imageView, Exception e);
 
-	void onCompleted(ImageView imageView);
+	void onTaskCompleted(ImageView imageView);
 
 }
