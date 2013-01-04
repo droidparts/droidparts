@@ -50,6 +50,13 @@ public abstract class AsyncTask<Params, Progress, Result> extends
 	}
 
 	@Override
+	protected void onCancelled() {
+		if (progressListener != null) {
+			progressListener.dismiss();
+		}
+	}
+
+	@Override
 	protected final Pair<Exception, Result> doInBackground(Params... params) {
 		Result res = null;
 		Exception ex = null;
@@ -62,13 +69,6 @@ public abstract class AsyncTask<Params, Progress, Result> extends
 			ex = e;
 		}
 		return new Pair<Exception, Result>(ex, res);
-	}
-
-	@Override
-	protected void onCancelled() {
-		if (progressListener != null) {
-			progressListener.dismiss();
-		}
 	}
 
 	@Override
