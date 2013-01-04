@@ -17,6 +17,10 @@ package org.droidparts.util;
 
 import static android.content.pm.ApplicationInfo.FLAG_DEBUGGABLE;
 import static android.content.pm.PackageManager.GET_META_DATA;
+import static org.droidparts.util.Strings.isEmpty;
+
+import java.io.PrintWriter;
+import java.io.StringWriter;
 
 import org.droidparts.contract.Constants.ManifestMeta;
 import org.droidparts.inject.Injector;
@@ -70,8 +74,18 @@ public class L {
 	private static void log(int priority, Object obj) {
 		boolean debug = isDebug();
 		if (debug || (!debug && priority >= getLogLevel())) {
-			String msg = (obj instanceof Exception) ? Log
-					.getStackTraceString((Exception) obj) : String.valueOf(obj);
+			String msg;
+			if (obj instanceof Throwable) {
+				Throwable t = (Throwable) obj;
+				StringWriter sw = new StringWriter();
+				t.printStackTrace(new PrintWriter(sw));
+				msg = sw.toString();
+			} else {
+				msg = String.valueOf(obj);
+				if (isEmpty(msg)) {
+					msg = "\"\"";
+				}
+			}
 			Log.println(priority, getTag(debug), msg);
 		}
 	}
