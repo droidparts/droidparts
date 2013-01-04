@@ -1,6 +1,7 @@
 1.0.5 /2013-01-05/:
     * Changed ProGuard config to preserve all annotated fields.
-    * ImageFetcher improvements.
+    * Numerous ImageFetcher improvements.
+    * AsyncTask, L fixes.
 
 1.0 /2012-12-31/:
     * Oh yeah! (:
