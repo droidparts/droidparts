@@ -26,53 +26,52 @@ import android.graphics.Bitmap;
 
 public final class BitmapMemoryCache {
 
-	public static final int CACHE_DISABLED = 0;
-	public static final int MEMORY_CACHE_DEFAULT_PERCENT = 20;
-	public static final int MEMORY_CACHE_DEFAULT_MAX_ITEM_SIZE = 256 * 1024;
+	private static final int DEFAULT_APP_MEMORY_PERCENT = 20;
+	private static final int DEFAULT_MAX_ITEM_SIZE = 256 * 1024;
 
 	private static BitmapMemoryCache instance;
 
 	public static BitmapMemoryCache getDefaultInstance(Context ctx) {
 		if (instance == null) {
-			instance = new BitmapMemoryCache(ctx, MEMORY_CACHE_DEFAULT_PERCENT,
-					MEMORY_CACHE_DEFAULT_MAX_ITEM_SIZE);
+			instance = new BitmapMemoryCache(ctx, DEFAULT_APP_MEMORY_PERCENT,
+					DEFAULT_MAX_ITEM_SIZE);
 		}
 		return instance;
 	}
 
 	private BitmapLruCache cache;
-	private final int memoryCacheMaxItemSize;
+	private final int maxItemSize;
 
-	public BitmapMemoryCache(Context ctx, int percent,
-			int memoryCacheMaxItemSize) {
-		this.memoryCacheMaxItemSize = memoryCacheMaxItemSize;
-		if (percent > CACHE_DISABLED) {
-			int maxBytes = 0;
-			int maxAvailableMemory = ((ActivityManager) ctx
-					.getSystemService(ACTIVITY_SERVICE)).getMemoryClass();
-			maxBytes = (int) (maxAvailableMemory * ((float) percent / 100)) * 1024 * 1024;
+	public BitmapMemoryCache(Context ctx, int appMemoryPercent, int maxItemSize) {
+		this.maxItemSize = maxItemSize;
+		int maxAvailableMemory = ((ActivityManager) ctx
+				.getSystemService(ACTIVITY_SERVICE)).getMemoryClass();
+		int maxBytes = (int) (maxAvailableMemory * ((float) appMemoryPercent / 100)) * 1024 * 1024;
+		try {
+			cache = (BitmapLruCache) Class
+					.forName("org.droidparts.net.cache.StockBitmapLruCache")
+					.getConstructor(int.class).newInstance(maxBytes);
+			L.i("Using stock LruCache.");
+		} catch (Throwable t) {
 			try {
 				cache = (BitmapLruCache) Class
-						.forName("org.droidparts.net.cache.StockBitmapLruCache")
+						.forName(
+								"org.droidparts.net.cache.SupportBitmapLruCache")
 						.getConstructor(int.class).newInstance(maxBytes);
-				L.i("Using stock LruCache.");
-			} catch (Throwable t) {
-				try {
-					cache = (BitmapLruCache) Class
-							.forName(
-									"org.droidparts.net.cache.SupportBitmapLruCache")
-							.getConstructor(int.class).newInstance(maxBytes);
-					L.i("Using Support Package LruCache.");
-				} catch (Throwable tr) {
-					L.i("LruCache not available.");
-				}
+				L.i("Using Support Package LruCache.");
+			} catch (Throwable tr) {
+				L.i("LruCache not available.");
 			}
 		}
 	}
 
+	public boolean isAvailable() {
+		return (cache != null);
+	}
+
 	public boolean put(String key, Bitmap bm) {
 		boolean put = false;
-		if (cache != null && getSize(bm) < memoryCacheMaxItemSize) {
+		if (isAvailable() && getSize(bm) <= maxItemSize) {
 			cache.put(key, bm);
 			put = true;
 		}
@@ -81,7 +80,7 @@ public final class BitmapMemoryCache {
 
 	public Bitmap get(String key) {
 		Bitmap bm = null;
-		if (cache != null) {
+		if (isAvailable()) {
 			bm = cache.get(key);
 		}
 		return bm;

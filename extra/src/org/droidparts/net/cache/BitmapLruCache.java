@@ -23,8 +23,4 @@ public interface BitmapLruCache {
 
 	Bitmap get(String key);
 
-	Bitmap remove(String key);
-
-	void evictAll();
-
 }

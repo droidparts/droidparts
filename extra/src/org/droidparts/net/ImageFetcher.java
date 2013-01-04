@@ -44,19 +44,20 @@ import android.widget.ImageView;
 
 public class ImageFetcher {
 
-	final ThreadPoolExecutor cacheExecutor;
-	final ThreadPoolExecutor fetchExecutor;
 	private final RESTClient restClient;
 
 	private final BitmapMemoryCache memoryCache;
 	private final BitmapDiskCache diskCache;
 
-	int crossFadeMillis = 0;
-	private ImageReshaper reshaper;
-	ImageFetchListener fetchListener;
+	final ThreadPoolExecutor cacheExecutor;
+	final ThreadPoolExecutor fetchExecutor;
 
 	final ConcurrentHashMap<ImageView, Long> wip = new ConcurrentHashMap<ImageView, Long>();
 	private Handler handler;
+
+	ImageFetchListener fetchListener;
+	private ImageReshaper reshaper;
+	int crossFadeMillis = 0;
 
 	public ImageFetcher(Context ctx) {
 		this(ctx, (ThreadPoolExecutor) Executors.newFixedThreadPool(1),
@@ -75,9 +76,9 @@ public class ImageFetcher {
 		cacheExecutor = (ThreadPoolExecutor) Executors.newFixedThreadPool(1);
 	}
 
-	public void setCrossFadeDuration(int millisec) {
+	public void setFetchListener(ImageFetchListener fetchListener) {
 		wip.clear();
-		this.crossFadeMillis = millisec;
+		this.fetchListener = fetchListener;
 	}
 
 	public void setReshaper(ImageReshaper reshaper) {
@@ -85,23 +86,9 @@ public class ImageFetcher {
 		this.reshaper = reshaper;
 	}
 
-	public void setFetchListener(ImageFetchListener fetchListener) {
+	public void setCrossFadeDuration(int millisec) {
 		wip.clear();
-		this.fetchListener = fetchListener;
-	}
-
-	public void clearCacheOlderThan(int hours) {
-		if (diskCache != null) {
-			final long timestamp = System.currentTimeMillis() - hours * 60 * 60
-					* 1000;
-			cacheExecutor.execute(new Runnable() {
-
-				@Override
-				public void run() {
-					diskCache.purgeFilesAccessedBefore(timestamp);
-				}
-			});
-		}
+		this.crossFadeMillis = millisec;
 	}
 
 	//
@@ -128,6 +115,22 @@ public class ImageFetcher {
 			putToCache(imgUrl, bm);
 		}
 		return bm;
+	}
+
+	//
+
+	public void clearCacheOlderThan(int hours) {
+		if (diskCache != null) {
+			final long timestamp = System.currentTimeMillis() - hours * 60 * 60
+					* 1000;
+			cacheExecutor.execute(new Runnable() {
+
+				@Override
+				public void run() {
+					diskCache.purgeFilesAccessedBefore(timestamp);
+				}
+			});
+		}
 	}
 
 	//
