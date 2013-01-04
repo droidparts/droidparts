@@ -73,13 +73,19 @@ public abstract class AsyncTask<Params, Progress, Result> extends
 
 	@Override
 	protected final void onPostExecute(Pair<Exception, Result> result) {
-		if (progressListener != null) {
-			progressListener.dismiss();
-		}
-		if (result.first != null) {
-			onFailurePostExecute(result.first);
-		} else {
-			onSuccessPostExecute(result.second);
+		// try-catch to avoid lifecycle-related crashes
+		try {
+			if (progressListener != null) {
+				progressListener.dismiss();
+			}
+			if (result.first != null) {
+				onFailurePostExecute(result.first);
+			} else {
+				onSuccessPostExecute(result.second);
+			}
+		} catch (Throwable t) {
+			L.w(t.getMessage());
+			L.d(t);
 		}
 	}
 
