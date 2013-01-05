@@ -65,12 +65,10 @@ public final class ReflectionUtils {
 		}
 	}
 
-	public static <InstanceType> InstanceType instantiate(Class<?> cls)
-			throws IllegalArgumentException {
+	public static <InstanceType> InstanceType instantiate(
+			Class<InstanceType> cls) throws IllegalArgumentException {
 		try {
-			@SuppressWarnings("unchecked")
-			InstanceType instance = (InstanceType) cls.newInstance();
-			return instance;
+			return cls.newInstance();
 		} catch (Exception e) {
 			throw new IllegalArgumentException(e);
 		}

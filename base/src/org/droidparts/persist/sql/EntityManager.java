@@ -75,7 +75,7 @@ public class EntityManager<EntityType extends Entity> extends
 	private SQLiteDatabase db;
 
 	protected final Context ctx;
-	private final Class<? extends EntityType> cls;
+	private final Class<EntityType> cls;
 
 	public EntityManager(Context ctx, Class<EntityType> cls) {
 		this(ctx, cls, null);
@@ -118,11 +118,10 @@ public class EntityManager<EntityType extends Entity> extends
 		for (FieldSpec<ColumnAnn> spec : getTableColumnSpecs(cls)) {
 			if (isEntity(spec.field.getType())
 					&& (fillAll || columnNameSet.contains(spec.ann.name))) {
-				EntityType foreignEntity = ReflectionUtils.getFieldVal(item,
+				Entity foreignEntity = ReflectionUtils.getFieldVal(item,
 						spec.field);
 				if (foreignEntity != null) {
-					Object obj = subManager(spec.field).read(
-							foreignEntity.id);
+					Object obj = subManager(spec.field).read(foreignEntity.id);
 					setFieldVal(item, spec.field, obj);
 				}
 			}
@@ -154,7 +153,7 @@ public class EntityManager<EntityType extends Entity> extends
 	protected void createOrUpdateForeignKeys(EntityType item) {
 		for (FieldSpec<ColumnAnn> spec : getTableColumnSpecs(cls)) {
 			if (isEntity(spec.field.getType())) {
-				EntityType foreignEntity = ReflectionUtils.getFieldVal(item,
+				Entity foreignEntity = ReflectionUtils.getFieldVal(item,
 						spec.field);
 				if (foreignEntity != null) {
 					subManager(spec.field).createOrUpdate(foreignEntity);
@@ -268,7 +267,8 @@ public class EntityManager<EntityType extends Entity> extends
 			return instantiateEnum(fieldType, cursor.getString(columnIndex));
 		} else if (isEntity(fieldType)) {
 			long id = cursor.getLong(columnIndex);
-			EntityType entity = instantiate(fieldType);
+			@SuppressWarnings("unchecked")
+			Entity entity = instantiate((Class<Entity>) fieldType);
 			entity.id = id;
 			return entity;
 		} else if (isArray(fieldType) || isCollection(fieldType)) {

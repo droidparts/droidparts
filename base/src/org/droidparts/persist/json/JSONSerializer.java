@@ -66,7 +66,7 @@ public class JSONSerializer<ModelType extends Model> {
 	public static final String __ = "->" + (char) 29;
 
 	private final Context ctx;
-	private final Class<? extends Model> cls;
+	private final Class<ModelType> cls;
 
 	public JSONSerializer(Context ctx, Class<ModelType> cls) {
 		this(cls, ctx);
@@ -172,7 +172,6 @@ public class JSONSerializer<ModelType extends Model> {
 		}
 	}
 
-	@SuppressWarnings("rawtypes")
 	protected Object readFromJSON(Field field, Class<?> multiFieldArgType,
 			Object jsonVal) throws Exception {
 		Class<?> fieldType = field.getType();
@@ -203,9 +202,11 @@ public class JSONSerializer<ModelType extends Model> {
 			if (isArr) {
 				arr = new Object[jArr.length()];
 			} else {
-				coll = instantiate(fieldType);
+				@SuppressWarnings("unchecked")
+				Class<? extends Collection<Object>> cl = (Class<? extends Collection<Object>>) fieldType;
+				coll = instantiate(cl);
 			}
-			JSONSerializer serializer = null;
+			JSONSerializer<Model> serializer = null;
 			if (isModel(multiFieldArgType)) {
 				serializer = subSerializer(multiFieldArgType);
 			}

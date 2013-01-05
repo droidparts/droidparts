@@ -290,9 +290,8 @@ public final class PersistUtils implements SQL.DDL {
 
 	private static void appendForeignKeyDef(FieldSpec<ColumnAnn> spec,
 			StringBuilder sb) {
-		@SuppressWarnings("unchecked")
-		Class<? extends Entity> entityType = (Class<? extends Entity>) spec.field
-				.getType();
+		Class<? extends Entity> entityType = spec.field.getType().asSubclass(
+				Entity.class);
 		String foreignTableName = getTableName(entityType);
 		sb.append("FOREIGN KEY(");
 		sb.append(spec.ann.name);
