@@ -15,8 +15,6 @@
  */
 package org.droidparts.util;
 
-import static android.content.pm.ApplicationInfo.FLAG_DEBUGGABLE;
-import static android.content.pm.PackageManager.GET_META_DATA;
 import static org.droidparts.util.Strings.isEmpty;
 
 import java.io.PrintWriter;
@@ -32,16 +30,6 @@ import android.os.Bundle;
 import android.util.Log;
 
 public class L {
-
-	private static final String TAG = "DroidParts";
-
-	private static final int VERBOSE = Log.VERBOSE;
-	private static final int DEBUG = Log.DEBUG;
-	private static final int INFO = Log.INFO;
-	private static final int WARN = Log.WARN;
-	private static final int ERROR = Log.ERROR;
-	private static final int ASSERT = Log.ASSERT;
-	private static final int DISABLE = 1024;
 
 	public static void v(Object obj) {
 		log(VERBOSE, obj);
@@ -71,14 +59,25 @@ public class L {
 		log(ASSERT, "WTF");
 	}
 
+	private static final String TAG = "DroidParts";
+
+	private static final int VERBOSE = Log.VERBOSE;
+	private static final int DEBUG = Log.DEBUG;
+	private static final int INFO = Log.INFO;
+	private static final int WARN = Log.WARN;
+	private static final int ERROR = Log.ERROR;
+	private static final int ASSERT = Log.ASSERT;
+	private static final int DISABLE = 1024;
+
+	private static final int DEFAULT = DISABLE;
+
 	private static void log(int priority, Object obj) {
 		boolean debug = isDebug();
 		if (debug || (!debug && priority >= getLogLevel())) {
 			String msg;
 			if (obj instanceof Throwable) {
-				Throwable t = (Throwable) obj;
 				StringWriter sw = new StringWriter();
-				t.printStackTrace(new PrintWriter(sw));
+				((Throwable) obj).printStackTrace(new PrintWriter(sw));
 				msg = sw.toString();
 			} else {
 				msg = String.valueOf(obj);
@@ -94,49 +93,50 @@ public class L {
 		if (_debug == null) {
 			Context ctx = Injector.getApplicationContext();
 			if (ctx != null) {
-				ApplicationInfo appInfo = ctx.getApplicationInfo();
-				_debug = (appInfo.flags & FLAG_DEBUGGABLE) != 0;
+				_debug = (ctx.getApplicationInfo().flags & ApplicationInfo.FLAG_DEBUGGABLE) != 0;
 			}
 		}
-		boolean debug = (_debug == null) ? true : _debug;
-		return debug;
+		return (_debug != null) ? _debug : true;
 	}
 
 	private static int getLogLevel() {
 		if (_logLevel == 0) {
 			Context ctx = Injector.getApplicationContext();
 			if (ctx != null) {
-				PackageManager pm = ctx.getPackageManager();
 				String logLevelStr = null;
 				try {
-					Bundle metaData = pm.getApplicationInfo(
-							ctx.getPackageName(), GET_META_DATA).metaData;
-					logLevelStr = metaData.getString(ManifestMeta.LOG_LEVEL);
+					Bundle metaData = ctx.getPackageManager()
+							.getApplicationInfo(ctx.getPackageName(),
+									PackageManager.GET_META_DATA).metaData;
+					logLevelStr = metaData.getString(ManifestMeta.LOG_LEVEL)
+							.toLowerCase().trim();
 				} catch (Exception e) {
-					Log.d(TAG, "", e);
+					// pass
 				}
-				if (ManifestMeta.DISABLE.equalsIgnoreCase(logLevelStr)) {
-					_logLevel = DISABLE;
-				} else if (ManifestMeta.VERBOSE.equalsIgnoreCase(logLevelStr)) {
+				if (ManifestMeta.VERBOSE.equals(logLevelStr)) {
 					_logLevel = VERBOSE;
-				} else if (ManifestMeta.DEBUG.equalsIgnoreCase(logLevelStr)) {
+				} else if (ManifestMeta.DEBUG.equals(logLevelStr)) {
 					_logLevel = DEBUG;
-				} else if (ManifestMeta.INFO.equalsIgnoreCase(logLevelStr)) {
+				} else if (ManifestMeta.INFO.equals(logLevelStr)) {
 					_logLevel = INFO;
-				} else if (ManifestMeta.WARN.equalsIgnoreCase(logLevelStr)) {
+				} else if (ManifestMeta.WARN.equals(logLevelStr)) {
 					_logLevel = WARN;
-				} else if (ManifestMeta.ERROR.equalsIgnoreCase(logLevelStr)) {
+				} else if (ManifestMeta.ERROR.equals(logLevelStr)) {
 					_logLevel = ERROR;
-				} else if (ManifestMeta.ASSERT.equalsIgnoreCase(logLevelStr)) {
+				} else if (ManifestMeta.ASSERT.equals(logLevelStr)) {
 					_logLevel = ASSERT;
-				} else {
+				} else if (ManifestMeta.DISABLE.equals(logLevelStr)) {
 					_logLevel = DISABLE;
+				} else {
+					_logLevel = DEFAULT;
 					Log.i(TAG,
-							"No <meta-data android:name=\"droidparts_log_level\" android:value=\"...\"/> in AndroidManifest.xml. Logging disabled.");
+							"No valid <meta-data android:name=\""
+									+ ManifestMeta.LOG_LEVEL
+									+ "\" android:value=\"...\"/> in AndroidManifest.xml. Logging disabled.");
 				}
 			}
 		}
-		return (_logLevel != 0) ? _logLevel : DISABLE;
+		return (_logLevel != 0) ? _logLevel : DEFAULT;
 	}
 
 	private static String getTag(boolean debug) {
@@ -158,7 +158,7 @@ public class L {
 					_tag = ctx.getPackageName();
 				}
 			}
-			return (_tag != null) ? _tag : "";
+			return (_tag != null) ? _tag : TAG;
 		}
 	}
 
