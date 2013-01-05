@@ -112,7 +112,7 @@ public class ImageFetcher {
 			bm = fetch(null, imgUrl);
 		}
 		if (bm != null) {
-			putToCache(imgUrl, bm);
+			bm = reshapeAndCache(imgUrl, bm);
 		}
 		return bm;
 	}
@@ -221,7 +221,7 @@ public class ImageFetcher {
 		return bm;
 	}
 
-	Bitmap putToCache(String imgUrl, Bitmap bm) {
+	Bitmap reshapeAndCache(String imgUrl, Bitmap bm) {
 		if (reshaper != null) {
 			bm = reshaper.reshape(bm);
 		}
@@ -316,7 +316,7 @@ public class ImageFetcher {
 		public void run() {
 			Bitmap bm = imageFetcher.fetch(imageView, imgUrl);
 			if (bm != null) {
-				imageFetcher.putToCache(imgUrl, bm);
+				bm = imageFetcher.reshapeAndCache(imgUrl, bm);
 				//
 				Long timestamp = imageFetcher.wip.get(imageView);
 				if (timestamp != null && timestamp == submitted) {
