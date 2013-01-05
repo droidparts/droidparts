@@ -33,10 +33,14 @@ public abstract class HTTPWorker {
 	}
 
 	public void addHeader(String key, String val) {
-		if (!headers.containsKey(key)) {
-			headers.put(key, new ArrayList<String>());
+		if (val != null) {
+			if (!headers.containsKey(key)) {
+				headers.put(key, new ArrayList<String>());
+			}
+			headers.get(key).add(val);
+		} else {
+			headers.remove(key);
 		}
-		headers.get(key).add(val);
 	}
 
 	public abstract void setCookieJar(CookieJar cookieJar);
