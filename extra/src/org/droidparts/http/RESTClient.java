@@ -75,8 +75,8 @@ public class RESTClient {
 		getWorker().setCookieJar(enabled ? cookieJar : null);
 	}
 
-	public void addHeader(String key, String value) {
-		getWorker().addHeader(key, value);
+	public void putHeader(String key, String value) {
+		getWorker().putHeader(key, value);
 	}
 
 	public void authenticateBasic(String username, String password) {

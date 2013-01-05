@@ -32,7 +32,7 @@ public abstract class HTTPWorker {
 		this.userAgent = userAgent;
 	}
 
-	public void addHeader(String key, String val) {
+	public final void putHeader(String key, String val) {
 		if (val != null) {
 			if (!headers.containsKey(key)) {
 				headers.put(key, new ArrayList<String>());

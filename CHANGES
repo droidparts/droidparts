@@ -2,6 +2,7 @@
     * Changed ProGuard config to preserve all annotated fields.
     * Numerous ImageFetcher improvements.
     * AsyncTask, L fixes.
+    * RESTClient: addHeader() => putHeader(), null removes headers for the key.
 
 1.0 /2012-12-31/:
     * Oh yeah! (:
