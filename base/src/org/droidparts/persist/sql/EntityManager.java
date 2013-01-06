@@ -40,6 +40,8 @@ import static org.droidparts.reflect.util.TypeHelper.isUUID;
 import static org.droidparts.reflect.util.TypeHelper.toObjectArr;
 import static org.droidparts.reflect.util.TypeHelper.toTypeArr;
 import static org.droidparts.reflect.util.TypeHelper.toTypeColl;
+import static org.droidparts.util.io.IOUtils.fromBlob;
+import static org.droidparts.util.io.IOUtils.toBlob;
 
 import java.io.ByteArrayOutputStream;
 import java.lang.reflect.Field;
@@ -55,6 +57,7 @@ import org.droidparts.reflect.FieldSpecBuilder;
 import org.droidparts.reflect.ann.FieldSpec;
 import org.droidparts.reflect.ann.sql.ColumnAnn;
 import org.droidparts.reflect.util.ReflectionUtils;
+import org.droidparts.util.L;
 import org.droidparts.util.Strings;
 
 import android.content.ContentValues;
@@ -143,8 +146,8 @@ public class EntityManager<EntityType extends Entity> extends
 		ContentValues cv = new ContentValues();
 		for (FieldSpec<ColumnAnn> spec : getTableColumnSpecs(cls)) {
 			Object columnVal = getFieldVal(item, spec.field);
-			putToContentValues(cv, spec.ann.name, spec.field.getType(),
-					columnVal);
+			putToContentValues(cv, spec.ann.name, spec.field,
+					spec.multiFieldArgType, columnVal);
 		}
 		return cv;
 	}
@@ -179,44 +182,45 @@ public class EntityManager<EntityType extends Entity> extends
 	private String[] eagerForeignKeyColumnNames;
 
 	protected void putToContentValues(ContentValues cv, String key,
-			Class<?> valueCls, Object value) {
+			Field field, Class<?> multiFieldArgType, Object value) {
+		Class<?> valueType = field.getType();
 		if (value == null) {
 			cv.putNull(key);
-		} else if (isBoolean(valueCls)) {
+		} else if (isBoolean(valueType)) {
 			cv.put(key, ((Boolean) value));
-		} else if (isByte(valueCls)) {
+		} else if (isByte(valueType)) {
 			cv.put(key, (Byte) value);
-		} else if (isByteArray(valueCls)) {
+		} else if (isByteArray(valueType)) {
 			cv.put(key, (byte[]) value);
-		} else if (isDouble(valueCls)) {
+		} else if (isDouble(valueType)) {
 			cv.put(key, (Double) value);
-		} else if (isFloat(valueCls)) {
+		} else if (isFloat(valueType)) {
 			cv.put(key, (Float) value);
-		} else if (isInteger(valueCls)) {
+		} else if (isInteger(valueType)) {
 			cv.put(key, (Integer) value);
-		} else if (isLong(valueCls)) {
+		} else if (isLong(valueType)) {
 			cv.put(key, (Long) value);
-		} else if (isShort(valueCls)) {
+		} else if (isShort(valueType)) {
 			cv.put(key, (Short) value);
-		} else if (isString(valueCls)) {
+		} else if (isString(valueType)) {
 			cv.put(key, (String) value);
-		} else if (isUUID(valueCls)) {
+		} else if (isUUID(valueType)) {
 			cv.put(key, value.toString());
-		} else if (isDate(valueCls)) {
+		} else if (isDate(valueType)) {
 			cv.put(key, ((Date) value).getTime());
-		} else if (isBitmap(valueCls)) {
+		} else if (isBitmap(valueType)) {
 			Bitmap bm = (Bitmap) value;
 			ByteArrayOutputStream baos = new ByteArrayOutputStream();
 			bm.compress(CompressFormat.PNG, 0, baos);
 			cv.put(key, baos.toByteArray());
-		} else if (isEnum(valueCls)) {
+		} else if (isEnum(valueType)) {
 			cv.put(key, value.toString());
-		} else if (isEntity(valueCls)) {
+		} else if (isEntity(valueType)) {
 			Long id = value != null ? ((Entity) value).id : null;
 			cv.put(key, id);
-		} else if (isArray(valueCls) || isCollection(valueCls)) {
+		} else if (isArray(valueType) || isCollection(valueType)) {
 			Object[] arr;
-			if (isArray(valueCls)) {
+			if (isArray(valueType)) {
 				arr = toObjectArr(value);
 			} else {
 				Collection<?> coll = (Collection<?>) value;
@@ -227,66 +231,72 @@ public class EntityManager<EntityType extends Entity> extends
 				cv.put(key, val);
 			}
 		} else {
-			// TODO ObjectOutputStream
-			throw new IllegalArgumentException("Need to manually put "
-					+ valueCls + " to ContentValues.");
+			L.w("Saving " + valueType.getName() + " as BLOB is inefficient.");
+			try {
+				cv.put(key, toBlob(value));
+			} catch (Exception e) {
+				L.e(e);
+			}
 		}
 	}
 
 	protected Object readFromCursor(Cursor cursor, int columnIndex,
 			Field field, Class<?> multiFieldArgType) {
-		Class<?> fieldType = field.getType();
+		Class<?> valueType = field.getType();
 		if (cursor.isNull(columnIndex)) {
 			return null;
-		} else if (isBoolean(fieldType)) {
+		} else if (isBoolean(valueType)) {
 			return cursor.getInt(columnIndex) == 1;
-		} else if (isByte(fieldType)) {
+		} else if (isByte(valueType)) {
 			return Byte.valueOf(cursor.getString(columnIndex));
-		} else if (isByteArray(fieldType)) {
+		} else if (isByteArray(valueType)) {
 			return cursor.getBlob(columnIndex);
-		} else if (isDouble(fieldType)) {
+		} else if (isDouble(valueType)) {
 			return cursor.getDouble(columnIndex);
-		} else if (isFloat(fieldType)) {
+		} else if (isFloat(valueType)) {
 			return cursor.getFloat(columnIndex);
-		} else if (isInteger(fieldType)) {
+		} else if (isInteger(valueType)) {
 			return cursor.getInt(columnIndex);
-		} else if (isLong(fieldType)) {
+		} else if (isLong(valueType)) {
 			return cursor.getLong(columnIndex);
-		} else if (isShort(fieldType)) {
+		} else if (isShort(valueType)) {
 			return cursor.getShort(columnIndex);
-		} else if (isString(fieldType)) {
+		} else if (isString(valueType)) {
 			return cursor.getString(columnIndex);
-		} else if (isUUID(fieldType)) {
+		} else if (isUUID(valueType)) {
 			return UUID.fromString(cursor.getString(columnIndex));
-		} else if (isDate(fieldType)) {
+		} else if (isDate(valueType)) {
 			return new Date(cursor.getLong(columnIndex));
-		} else if (isBitmap(fieldType)) {
+		} else if (isBitmap(valueType)) {
 			byte[] arr = cursor.getBlob(columnIndex);
 			return BitmapFactory.decodeByteArray(arr, 0, arr.length);
-		} else if (isEnum(fieldType)) {
-			return instantiateEnum(fieldType, cursor.getString(columnIndex));
-		} else if (isEntity(fieldType)) {
+		} else if (isEnum(valueType)) {
+			return instantiateEnum(valueType, cursor.getString(columnIndex));
+		} else if (isEntity(valueType)) {
 			long id = cursor.getLong(columnIndex);
 			@SuppressWarnings("unchecked")
-			Entity entity = instantiate((Class<Entity>) fieldType);
+			Entity entity = instantiate((Class<Entity>) valueType);
 			entity.id = id;
 			return entity;
-		} else if (isArray(fieldType) || isCollection(fieldType)) {
+		} else if (isArray(valueType) || isCollection(valueType)) {
 			String str = cursor.getString(columnIndex);
 			String[] parts = (str.length() > 0) ? str.split("\\" + SEP)
 					: new String[0];
-			if (isArray(fieldType)) {
+			if (isArray(valueType)) {
 				return toTypeArr(multiFieldArgType, parts);
 			} else {
 				@SuppressWarnings("unchecked")
-				Collection<Object> coll = (Collection<Object>) instantiate(fieldType);
+				Collection<Object> coll = (Collection<Object>) instantiate(valueType);
 				coll.addAll(toTypeColl(multiFieldArgType, parts));
 				return coll;
 			}
 		} else {
-			// TODO ObjectInputStream
-			throw new IllegalArgumentException("Need to manually read "
-					+ fieldType + " from Cursor.");
+			try {
+				return fromBlob(cursor.getBlob(columnIndex));
+			} catch (Exception e) {
+				L.e(e);
+				return null;
+			}
 		}
 	}
 

@@ -17,8 +17,8 @@ package org.droidparts.net.cache;
 
 import static android.graphics.Bitmap.CompressFormat.PNG;
 import static org.droidparts.contract.Constants.BUFFER_SIZE;
-import static org.droidparts.util.io.IOUtils.getFileList;
 import static org.droidparts.util.io.IOUtils.silentlyClose;
+import static org.droidparts.util.io.IOUtils2.getFileList;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;

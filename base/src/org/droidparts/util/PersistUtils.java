@@ -284,7 +284,6 @@ public final class PersistUtils implements SQL.DDL {
 			return INTEGER;
 		}
 		// persist any other type as blob
-		// TODO sure?
 		return BLOB;
 	}
 
