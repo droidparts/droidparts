@@ -69,8 +69,6 @@ public class L {
 	private static final int ASSERT = Log.ASSERT;
 	private static final int DISABLE = 1024;
 
-	private static final int DEFAULT = DISABLE;
-
 	private static void log(int priority, Object obj) {
 		boolean debug = isDebug();
 		if (debug || (!debug && priority >= getLogLevel())) {
@@ -128,7 +126,7 @@ public class L {
 				} else if (ManifestMeta.DISABLE.equals(logLevelStr)) {
 					_logLevel = DISABLE;
 				} else {
-					_logLevel = DEFAULT;
+					_logLevel = DISABLE;
 					Log.i(TAG,
 							"No valid <meta-data android:name=\""
 									+ ManifestMeta.LOG_LEVEL
@@ -136,7 +134,7 @@ public class L {
 				}
 			}
 		}
-		return (_logLevel != 0) ? _logLevel : DEFAULT;
+		return (_logLevel != 0) ? _logLevel : DISABLE;
 	}
 
 	private static String getTag(boolean debug) {
