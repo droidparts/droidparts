@@ -26,7 +26,6 @@ import static org.droidparts.reflect.util.TypeHelper.isBitmap;
 import static org.droidparts.reflect.util.TypeHelper.isBoolean;
 import static org.droidparts.reflect.util.TypeHelper.isByte;
 import static org.droidparts.reflect.util.TypeHelper.isByteArray;
-import static org.droidparts.reflect.util.TypeHelper.isCollection;
 import static org.droidparts.reflect.util.TypeHelper.isDate;
 import static org.droidparts.reflect.util.TypeHelper.isDouble;
 import static org.droidparts.reflect.util.TypeHelper.isEntity;
@@ -40,6 +39,7 @@ import static org.droidparts.reflect.util.TypeHelper.isUUID;
 import static org.droidparts.reflect.util.TypeHelper.toObjectArr;
 import static org.droidparts.reflect.util.TypeHelper.toTypeArr;
 import static org.droidparts.reflect.util.TypeHelper.toTypeColl;
+import static org.droidparts.util.PersistUtils.isConvertibleToStringArrayOrCollection;
 import static org.droidparts.util.io.IOUtils.fromBlob;
 import static org.droidparts.util.io.IOUtils.toBlob;
 
@@ -218,7 +218,8 @@ public class EntityManager<EntityType extends Entity> extends
 		} else if (isEntity(valueType)) {
 			Long id = value != null ? ((Entity) value).id : null;
 			cv.put(key, id);
-		} else if (isArray(valueType) || isCollection(valueType)) {
+		} else if (isConvertibleToStringArrayOrCollection(valueType,
+				multiFieldArgType)) {
 			Object[] arr;
 			if (isArray(valueType)) {
 				arr = toObjectArr(value);
@@ -278,7 +279,8 @@ public class EntityManager<EntityType extends Entity> extends
 			Entity entity = instantiate((Class<Entity>) valueType);
 			entity.id = id;
 			return entity;
-		} else if (isArray(valueType) || isCollection(valueType)) {
+		} else if (isConvertibleToStringArrayOrCollection(valueType,
+				multiFieldArgType)) {
 			String str = cursor.getString(columnIndex);
 			String[] parts = (str.length() > 0) ? str.split("\\" + SEP)
 					: new String[0];

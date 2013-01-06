@@ -249,6 +249,17 @@ public final class PersistUtils implements SQL.DDL {
 		return sb.toString();
 	}
 
+	public static boolean isConvertibleToStringArrayOrCollection(
+			Class<?> fieldType, Class<?> fieldArrOrCollType) {
+		boolean really = false;
+		if (isArray(fieldType) || isCollection(fieldType)) {
+			if (!isEntity(fieldArrOrCollType)) {
+				really = !BLOB.equals(getColumnType(fieldArrOrCollType, null));
+			}
+		}
+		return really;
+	}
+
 	private static String getColumnType(Class<?> fieldType,
 			Class<?> fieldArrOrCollType) {
 		if (isByte(fieldType)) {
@@ -275,11 +286,9 @@ public final class PersistUtils implements SQL.DDL {
 			return TEXT;
 		} else if (isDate(fieldType)) {
 			return INTEGER;
-		} else if (isArray(fieldType) || isCollection(fieldType)) {
-			String arrOrCollColumnType = getColumnType(fieldArrOrCollType, null);
-			if (!BLOB.equals(arrOrCollColumnType)) {
-				return TEXT;
-			}
+		} else if (isConvertibleToStringArrayOrCollection(fieldType,
+				fieldArrOrCollType)) {
+			return TEXT;
 		} else if (isEntity(fieldType)) {
 			return INTEGER;
 		}
