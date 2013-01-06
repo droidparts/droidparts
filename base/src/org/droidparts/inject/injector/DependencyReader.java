@@ -94,7 +94,9 @@ public class DependencyReader {
 			L.d(e);
 		}
 		if (className == null) {
-			L.e("No <meta-data android:name=\"droidparts_dependency_provider\" android:value=\"...\"/> in AndroidManifest.xml.");
+			L.e("No <meta-data android:name=\""
+					+ ManifestMeta.DEPENDENCY_PROVIDER
+					+ "\" android:value=\"...\"/> in AndroidManifest.xml.");
 			return null;
 		}
 		if (className.startsWith(".")) {
