@@ -113,7 +113,8 @@ public class JSONSerializer<ModelType extends Model> {
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	protected void putToJSONObject(JSONObject obj, String key,
-			Class<?> valType, Object val) throws Exception {
+			Class<?> valType, Class<?> arrCollItemType, Object val)
+			throws Exception {
 		if (val == null) {
 			obj.put(key, NULL);
 		} else if (isByte(valType)) {
@@ -153,22 +154,20 @@ public class JSONSerializer<ModelType extends Model> {
 				list.addAll((Collection<?>) val);
 			}
 			JSONArray jArr = new JSONArray();
-			if (list.size() > 0) {
-				Class<?> itemCls = list.get(0).getClass();
-				if (isModel(itemCls)) {
-					JSONSerializer serializer = subSerializer(itemCls);
-					jArr = serializer.serialize(list);
-				} else {
-					boolean isDate = isDate(itemCls);
-					boolean toString = isUUID(itemCls) || isEnum(itemCls);
-					for (Object o : list) {
-						if (isDate) {
-							o = ((Date) o).getTime();
-						} else if (toString) {
-							o = o.toString();
-						}
-						jArr.put(o);
+			if (isModel(arrCollItemType)) {
+				JSONSerializer serializer = subSerializer(arrCollItemType);
+				jArr = serializer.serialize(list);
+			} else {
+				boolean isDate = isDate(arrCollItemType);
+				boolean toString = isUUID(arrCollItemType)
+						|| isEnum(arrCollItemType);
+				for (Object o : list) {
+					if (isDate) {
+						o = ((Date) o).getTime();
+					} else if (toString) {
+						o = o.toString();
 					}
+					jArr.put(o);
 				}
 			}
 			obj.put(key, jArr);
@@ -259,7 +258,8 @@ public class JSONSerializer<ModelType extends Model> {
 		} else {
 			Object columnVal = getFieldVal(item, spec.field);
 			try {
-				putToJSONObject(obj, key, spec.field.getType(), columnVal);
+				putToJSONObject(obj, key, spec.field.getType(),
+						spec.arrCollItemType, columnVal);
 			} catch (Exception e) {
 				if (spec.ann.optional) {
 					L.w("Failded to serialize " + cls.getSimpleName() + "."
