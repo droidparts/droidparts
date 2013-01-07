@@ -40,7 +40,6 @@ import static org.droidparts.reflect.util.TypeHelper.toObjectArr;
 import static org.droidparts.reflect.util.TypeHelper.toTypeArr;
 import static org.json.JSONObject.NULL;
 
-import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -176,9 +175,8 @@ public class JSONSerializer<ModelType extends Model> {
 		}
 	}
 
-	protected Object readFromJSON(Field field, Class<?> arrCollItemType,
+	protected Object readFromJSON(Class<?> fieldType, Class<?> arrCollItemType,
 			Object jsonVal) throws Exception {
-		Class<?> fieldType = field.getType();
 		String strVal = String.valueOf(jsonVal);
 		if (NULL.equals(jsonVal)) {
 			return jsonVal;
@@ -286,7 +284,8 @@ public class JSONSerializer<ModelType extends Model> {
 		} else if (obj.has(key)) {
 			Object val = obj.get(key);
 			try {
-				val = readFromJSON(spec.field, spec.arrCollItemType, val);
+				val = readFromJSON(spec.field.getType(), spec.arrCollItemType,
+						val);
 				if (!NULL.equals(val)) {
 					setFieldVal(model, spec.field, val);
 				} else {

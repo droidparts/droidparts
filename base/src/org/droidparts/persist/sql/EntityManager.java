@@ -108,8 +108,8 @@ public class EntityManager<EntityType extends Entity> extends
 		for (FieldSpec<ColumnAnn> spec : getTableColumnSpecs(cls)) {
 			int colIdx = cursor.getColumnIndex(spec.ann.name);
 			if (colIdx >= 0) {
-				Object columnVal = readFromCursor(cursor, colIdx, spec.field,
-						spec.arrCollItemType);
+				Object columnVal = readFromCursor(cursor, colIdx,
+						spec.field.getType(), spec.arrCollItemType);
 				if (columnVal != null) {
 					setFieldVal(entity, spec.field, columnVal);
 				}
@@ -150,7 +150,7 @@ public class EntityManager<EntityType extends Entity> extends
 		ContentValues cv = new ContentValues();
 		for (FieldSpec<ColumnAnn> spec : getTableColumnSpecs(cls)) {
 			Object columnVal = getFieldVal(item, spec.field);
-			putToContentValues(cv, spec.ann.name, spec.field,
+			putToContentValues(cv, spec.ann.name, spec.field.getType(),
 					spec.arrCollItemType, columnVal);
 		}
 		return cv;
@@ -186,9 +186,8 @@ public class EntityManager<EntityType extends Entity> extends
 	private String[] eagerForeignKeyColumnNames;
 
 	protected void putToContentValues(ContentValues cv, String key,
-			Field field, Class<?> arrCollItemType, Object value)
+			Class<?> valueType, Class<?> arrCollItemType, Object value)
 			throws IllegalArgumentException {
-		Class<?> valueType = field.getType();
 		if (value == null) {
 			cv.putNull(key);
 		} else if (isBoolean(valueType)) {
@@ -252,9 +251,8 @@ public class EntityManager<EntityType extends Entity> extends
 	}
 
 	protected Object readFromCursor(Cursor cursor, int columnIndex,
-			Field field, Class<?> arrCollItemType)
+			Class<?> valType, Class<?> arrCollItemType)
 			throws IllegalArgumentException {
-		Class<?> valType = field.getType();
 		if (cursor.isNull(columnIndex)) {
 			return null;
 		} else if (isBoolean(valType)) {
