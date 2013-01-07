@@ -18,7 +18,7 @@ package org.droidparts.persist.sql;
 import java.io.File;
 
 import org.droidparts.util.L;
-import org.droidparts.util.io.IOUtils2;
+import org.droidparts.util.io.IOUtils;
 
 import android.content.Context;
 
@@ -49,7 +49,7 @@ public abstract class AbstractDBOpenHelper2 extends AbstractDBOpenHelper {
 			if (fileTo.exists()) {
 				fileTo.delete();
 			}
-			IOUtils2.copy(fileFrom, fileTo);
+			IOUtils.copy(fileFrom, fileTo);
 		} else {
 			L.e("No DB file at " + dbFilePath);
 		}

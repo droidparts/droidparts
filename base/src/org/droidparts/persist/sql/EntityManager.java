@@ -40,8 +40,6 @@ import static org.droidparts.reflect.util.TypeHelper.toObjectArr;
 import static org.droidparts.reflect.util.TypeHelper.toTypeArr;
 import static org.droidparts.reflect.util.TypeHelper.toTypeColl;
 import static org.droidparts.util.PersistUtils.isConvertibleToStringArrayOrCollection;
-import static org.droidparts.util.io.IOUtils.fromBlob;
-import static org.droidparts.util.io.IOUtils.toBlob;
 
 import java.io.ByteArrayOutputStream;
 import java.lang.reflect.Field;
@@ -57,7 +55,6 @@ import org.droidparts.reflect.FieldSpecBuilder;
 import org.droidparts.reflect.ann.FieldSpec;
 import org.droidparts.reflect.ann.sql.ColumnAnn;
 import org.droidparts.reflect.util.ReflectionUtils;
-import org.droidparts.util.L;
 import org.droidparts.util.Strings;
 
 import android.content.ContentValues;
@@ -105,7 +102,7 @@ public class EntityManager<EntityType extends Entity> extends
 			int colIdx = cursor.getColumnIndex(spec.ann.name);
 			if (colIdx >= 0) {
 				Object columnVal = readFromCursor(cursor, colIdx, spec.field,
-						spec.multiFieldArgType);
+						spec.arrCollItemType);
 				if (columnVal != null) {
 					setFieldVal(entity, spec.field, columnVal);
 				}
@@ -147,7 +144,7 @@ public class EntityManager<EntityType extends Entity> extends
 		for (FieldSpec<ColumnAnn> spec : getTableColumnSpecs(cls)) {
 			Object columnVal = getFieldVal(item, spec.field);
 			putToContentValues(cv, spec.ann.name, spec.field,
-					spec.multiFieldArgType, columnVal);
+					spec.arrCollItemType, columnVal);
 		}
 		return cv;
 	}
@@ -182,7 +179,7 @@ public class EntityManager<EntityType extends Entity> extends
 	private String[] eagerForeignKeyColumnNames;
 
 	protected void putToContentValues(ContentValues cv, String key,
-			Field field, Class<?> multiFieldArgType, Object value) {
+			Field field, Class<?> arrCollItemType, Object value) {
 		Class<?> valueType = field.getType();
 		if (value == null) {
 			cv.putNull(key);
@@ -219,7 +216,7 @@ public class EntityManager<EntityType extends Entity> extends
 			Long id = value != null ? ((Entity) value).id : null;
 			cv.put(key, id);
 		} else if (isConvertibleToStringArrayOrCollection(valueType,
-				multiFieldArgType)) {
+				arrCollItemType)) {
 			Object[] arr;
 			if (isArray(valueType)) {
 				arr = toObjectArr(value);
@@ -232,17 +229,13 @@ public class EntityManager<EntityType extends Entity> extends
 				cv.put(key, val);
 			}
 		} else {
-			L.w("Saving " + valueType.getName() + " as BLOB is inefficient.");
-			try {
-				cv.put(key, toBlob(value));
-			} catch (Exception e) {
-				L.e(e);
-			}
+			throw new IllegalArgumentException("Need to manually put "
+					+ valueType.getName() + " to cursor.");
 		}
 	}
 
 	protected Object readFromCursor(Cursor cursor, int columnIndex,
-			Field field, Class<?> multiFieldArgType) {
+			Field field, Class<?> arrCollItemType) {
 		Class<?> valueType = field.getType();
 		if (cursor.isNull(columnIndex)) {
 			return null;
@@ -280,25 +273,21 @@ public class EntityManager<EntityType extends Entity> extends
 			entity.id = id;
 			return entity;
 		} else if (isConvertibleToStringArrayOrCollection(valueType,
-				multiFieldArgType)) {
+				arrCollItemType)) {
 			String str = cursor.getString(columnIndex);
 			String[] parts = (str.length() > 0) ? str.split("\\" + SEP)
 					: new String[0];
 			if (isArray(valueType)) {
-				return toTypeArr(multiFieldArgType, parts);
+				return toTypeArr(arrCollItemType, parts);
 			} else {
 				@SuppressWarnings("unchecked")
 				Collection<Object> coll = (Collection<Object>) instantiate(valueType);
-				coll.addAll(toTypeColl(multiFieldArgType, parts));
+				coll.addAll(toTypeColl(arrCollItemType, parts));
 				return coll;
 			}
 		} else {
-			try {
-				return fromBlob(cursor.getBlob(columnIndex));
-			} catch (Exception e) {
-				L.e(e);
-				return null;
-			}
+			throw new IllegalArgumentException("Need to manually read "
+					+ valueType.getName() + " from cursor.");
 		}
 	}
 

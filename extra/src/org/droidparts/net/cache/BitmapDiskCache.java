@@ -17,8 +17,6 @@ package org.droidparts.net.cache;
 
 import static android.graphics.Bitmap.CompressFormat.PNG;
 import static org.droidparts.contract.Constants.BUFFER_SIZE;
-import static org.droidparts.util.io.IOUtils.silentlyClose;
-import static org.droidparts.util.io.IOUtils2.getFileList;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -29,6 +27,7 @@ import java.io.FileOutputStream;
 import org.droidparts.util.AppUtils;
 import org.droidparts.util.L;
 import org.droidparts.util.crypto.HashCalc;
+import org.droidparts.util.io.IOUtils;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -71,7 +70,7 @@ public class BitmapDiskCache {
 			L.w(e);
 			return false;
 		} finally {
-			silentlyClose(bos);
+			IOUtils.silentlyClose(bos);
 		}
 	}
 
@@ -89,7 +88,7 @@ public class BitmapDiskCache {
 			} catch (Exception e) {
 				L.w(e);
 			} finally {
-				silentlyClose(bis);
+				IOUtils.silentlyClose(bis);
 			}
 		}
 		if (bm == null) {
@@ -99,7 +98,7 @@ public class BitmapDiskCache {
 	}
 
 	public void purgeFilesAccessedBefore(long timestamp) {
-		for (File f : getFileList(cacheDir)) {
+		for (File f : IOUtils.getFileList(cacheDir)) {
 			if (f.lastModified() < timestamp) {
 				f.delete();
 			}

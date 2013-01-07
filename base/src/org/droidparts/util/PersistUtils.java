@@ -230,7 +230,7 @@ public final class PersistUtils implements SQL.DDL {
 			}
 			sb.append(SEPARATOR);
 			String columnType = getColumnType(spec.field.getType(),
-					spec.multiFieldArgType);
+					spec.arrCollItemType);
 			sb.append(spec.ann.name);
 			sb.append(columnType);
 			if (!spec.ann.nullable) {
@@ -250,18 +250,18 @@ public final class PersistUtils implements SQL.DDL {
 	}
 
 	public static boolean isConvertibleToStringArrayOrCollection(
-			Class<?> fieldType, Class<?> fieldArrOrCollType) {
+			Class<?> fieldType, Class<?> arrCollItemType) {
 		boolean really = false;
 		if (isArray(fieldType) || isCollection(fieldType)) {
-			if (!isEntity(fieldArrOrCollType)) {
-				really = !BLOB.equals(getColumnType(fieldArrOrCollType, null));
+			if (!isEntity(arrCollItemType)) {
+				really = !BLOB.equals(getColumnType(arrCollItemType, null));
 			}
 		}
 		return really;
 	}
 
 	private static String getColumnType(Class<?> fieldType,
-			Class<?> fieldArrOrCollType) {
+			Class<?> arrCollItemType) {
 		if (isByte(fieldType)) {
 			return INTEGER;
 		} else if (isShort(fieldType)) {
@@ -287,7 +287,7 @@ public final class PersistUtils implements SQL.DDL {
 		} else if (isDate(fieldType)) {
 			return INTEGER;
 		} else if (isConvertibleToStringArrayOrCollection(fieldType,
-				fieldArrOrCollType)) {
+				arrCollItemType)) {
 			return TEXT;
 		} else if (isEntity(fieldType)) {
 			return INTEGER;

@@ -172,7 +172,7 @@ public class JSONSerializer<ModelType extends Model> {
 		}
 	}
 
-	protected Object readFromJSON(Field field, Class<?> multiFieldArgType,
+	protected Object readFromJSON(Field field, Class<?> arrCollItemType,
 			Object jsonVal) throws Exception {
 		Class<?> fieldType = field.getType();
 		String strVal = String.valueOf(jsonVal);
@@ -207,8 +207,8 @@ public class JSONSerializer<ModelType extends Model> {
 				coll = instantiate(cl);
 			}
 			JSONSerializer<Model> serializer = null;
-			if (isModel(multiFieldArgType)) {
-				serializer = subSerializer(multiFieldArgType);
+			if (isModel(arrCollItemType)) {
+				serializer = subSerializer(arrCollItemType);
 			}
 			for (int i = 0; i < jArr.length(); i++) {
 				Object obj = jArr.get(i);
@@ -222,7 +222,7 @@ public class JSONSerializer<ModelType extends Model> {
 				}
 			}
 			if (isArr) {
-				return toTypeArr(multiFieldArgType, arr);
+				return toTypeArr(arrCollItemType, arr);
 			} else {
 				return coll;
 			}
@@ -281,7 +281,7 @@ public class JSONSerializer<ModelType extends Model> {
 		} else if (obj.has(key)) {
 			Object val = obj.get(key);
 			try {
-				val = readFromJSON(spec.field, spec.multiFieldArgType, val);
+				val = readFromJSON(spec.field, spec.arrCollItemType, val);
 				if (!NULL.equals(val)) {
 					setFieldVal(model, spec.field, val);
 				} else {

@@ -20,21 +20,21 @@ import java.lang.reflect.Field;
 public class FieldSpec<AnnType extends Ann<?>> {
 
 	public final Field field;
-	public final Class<?> multiFieldArgType;
+	public final Class<?> arrCollItemType;
 
 	public final AnnType ann;
 
-	public FieldSpec(Field field, Class<?> multiFieldArgType, AnnType ann) {
+	public FieldSpec(Field field, Class<?> arrCollItemType, AnnType ann) {
 		this.field = field;
-		this.multiFieldArgType = multiFieldArgType;
+		this.arrCollItemType = arrCollItemType;
 		this.ann = ann;
 	}
 
 	@Override
 	public String toString() {
 		return getClass().getSimpleName() + ", fieldName:" + field.getName()
-				+ ", fieldType:" + field.getType() + ", multiFieldArgType:"
-				+ multiFieldArgType + ", ann:" + ann;
+				+ ", fieldType:" + field.getType() + ", arrCollItemType:"
+				+ arrCollItemType + ", ann:" + ann;
 	}
 
 }

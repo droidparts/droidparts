@@ -19,6 +19,7 @@ import static org.droidparts.contract.Constants.BUFFER_SIZE;
 import static org.droidparts.contract.Constants.UTF8;
 
 import java.io.BufferedReader;
+import java.io.Closeable;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -31,7 +32,9 @@ import java.net.URLEncoder;
 import java.nio.channels.FileChannel;
 import java.util.ArrayList;
 
-public class IOUtils2 extends IOUtils {
+import org.droidparts.util.L;
+
+public class IOUtils {
 
 	public static String urlEncode(String str) {
 		try {
@@ -46,6 +49,18 @@ public class IOUtils2 extends IOUtils {
 			return URLDecoder.decode(str, UTF8);
 		} catch (UnsupportedEncodingException e) {
 			throw new IllegalArgumentException("failed to decode", e);
+		}
+	}
+
+	public static void silentlyClose(Closeable... closeables) {
+		for (Closeable cl : closeables) {
+			try {
+				if (cl != null) {
+					cl.close();
+				}
+			} catch (Exception e) {
+				L.d(e);
+			}
 		}
 	}
 
