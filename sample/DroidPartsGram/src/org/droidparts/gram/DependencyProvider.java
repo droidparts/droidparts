@@ -19,6 +19,7 @@ import org.droidparts.gram.persist.DBOpenHelper;
 import org.droidparts.gram.persist.ImageEntityManager;
 import org.droidparts.gram.persist.PrefsManager;
 import org.droidparts.inject.AbstractDependencyProvider;
+import org.droidparts.net.ImageFetcher;
 import org.droidparts.persist.sql.AbstractDBOpenHelper;
 
 import android.content.Context;
@@ -28,6 +29,7 @@ public class DependencyProvider extends AbstractDependencyProvider {
 	private final DBOpenHelper dbOpenHelper;
 	private PrefsManager prefsManager;
 	private ImageEntityManager imageManager;
+	private ImageFetcher imageFetcher;
 
 	public DependencyProvider(Context ctx) {
 		super(ctx);
@@ -51,6 +53,15 @@ public class DependencyProvider extends AbstractDependencyProvider {
 			imageManager = new ImageEntityManager(ctx);
 		}
 		return imageManager;
+	}
+
+	public ImageFetcher getImageFetcher(Context ctx) {
+		if (imageFetcher == null) {
+			imageFetcher = new ImageFetcher(ctx);
+			imageFetcher.setCrossFadeDuration(400);
+			imageFetcher.clearCacheOlderThan(48);
+		}
+		return imageFetcher;
 	}
 
 }

@@ -19,6 +19,7 @@ import static org.droidparts.util.Strings.join;
 
 import org.droidparts.adapter.cursor.EntityCursorAdapter;
 import org.droidparts.adapter.tag.IconText2Tag;
+import org.droidparts.annotation.inject.InjectDependency;
 import org.droidparts.gram.R;
 import org.droidparts.gram.model.Image;
 import org.droidparts.net.ImageFetcher;
@@ -34,15 +35,13 @@ import android.view.ViewGroup;
 
 public class ImageListAdapter extends EntityCursorAdapter<Image> {
 
-	private final ImageFetcher imageFetcher;
-	private final Drawable placeholderDrawable;
+	@InjectDependency
+	private ImageFetcher imageFetcher;
+
+	private Drawable placeholderDrawable;
 
 	public ImageListAdapter(Context ctx, Select<Image> select) {
 		super(ctx, Image.class, select);
-		imageFetcher = new ImageFetcher(ctx);
-		imageFetcher.setCrossFadeDuration(400);
-		placeholderDrawable = ctx.getResources().getDrawable(
-				R.drawable.ic_launcher);
 	}
 
 	@Override
@@ -50,6 +49,9 @@ public class ImageListAdapter extends EntityCursorAdapter<Image> {
 		View view = layoutInflater.inflate(R.layout.list_row_image, null);
 		IconText2Tag tag = new IconText2Tag(view);
 		view.setTag(tag);
+		if (placeholderDrawable == null) {
+			placeholderDrawable = tag.icon.getDrawable();
+		}
 		return view;
 	}
 
