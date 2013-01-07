@@ -26,12 +26,15 @@ import static org.droidparts.reflect.util.TypeHelper.isBitmap;
 import static org.droidparts.reflect.util.TypeHelper.isBoolean;
 import static org.droidparts.reflect.util.TypeHelper.isByte;
 import static org.droidparts.reflect.util.TypeHelper.isByteArray;
+import static org.droidparts.reflect.util.TypeHelper.isCollection;
 import static org.droidparts.reflect.util.TypeHelper.isDate;
 import static org.droidparts.reflect.util.TypeHelper.isDouble;
 import static org.droidparts.reflect.util.TypeHelper.isEntity;
 import static org.droidparts.reflect.util.TypeHelper.isEnum;
 import static org.droidparts.reflect.util.TypeHelper.isFloat;
 import static org.droidparts.reflect.util.TypeHelper.isInteger;
+import static org.droidparts.reflect.util.TypeHelper.isJsonArray;
+import static org.droidparts.reflect.util.TypeHelper.isJsonObject;
 import static org.droidparts.reflect.util.TypeHelper.isLong;
 import static org.droidparts.reflect.util.TypeHelper.isShort;
 import static org.droidparts.reflect.util.TypeHelper.isString;
@@ -39,7 +42,6 @@ import static org.droidparts.reflect.util.TypeHelper.isUUID;
 import static org.droidparts.reflect.util.TypeHelper.toObjectArr;
 import static org.droidparts.reflect.util.TypeHelper.toTypeArr;
 import static org.droidparts.reflect.util.TypeHelper.toTypeColl;
-import static org.droidparts.util.PersistUtils.isConvertibleToStringArrayOrCollection;
 
 import java.io.ByteArrayOutputStream;
 import java.lang.reflect.Field;
@@ -56,6 +58,9 @@ import org.droidparts.reflect.ann.FieldSpec;
 import org.droidparts.reflect.ann.sql.ColumnAnn;
 import org.droidparts.reflect.util.ReflectionUtils;
 import org.droidparts.util.Strings;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -179,7 +184,8 @@ public class EntityManager<EntityType extends Entity> extends
 	private String[] eagerForeignKeyColumnNames;
 
 	protected void putToContentValues(ContentValues cv, String key,
-			Field field, Class<?> arrCollItemType, Object value) {
+			Field field, Class<?> arrCollItemType, Object value)
+			throws IllegalArgumentException {
 		Class<?> valueType = field.getType();
 		if (value == null) {
 			cv.putNull(key);
@@ -212,11 +218,12 @@ public class EntityManager<EntityType extends Entity> extends
 			cv.put(key, baos.toByteArray());
 		} else if (isEnum(valueType)) {
 			cv.put(key, value.toString());
+		} else if (isJsonObject(valueType) || isJsonArray(valueType)) {
+			cv.put(key, value.toString());
 		} else if (isEntity(valueType)) {
 			Long id = value != null ? ((Entity) value).id : null;
 			cv.put(key, id);
-		} else if (isConvertibleToStringArrayOrCollection(valueType,
-				arrCollItemType)) {
+		} else if (isArray(valueType) || isCollection(valueType)) {
 			Object[] arr;
 			if (isArray(valueType)) {
 				arr = toObjectArr(value);
@@ -224,10 +231,8 @@ public class EntityManager<EntityType extends Entity> extends
 				Collection<?> coll = (Collection<?>) value;
 				arr = coll.toArray(new Object[coll.size()]);
 			}
-			if (arr != null) {
-				String val = Strings.join(arr, SEP, null);
-				cv.put(key, val);
-			}
+			String val = Strings.join(arr, SEP, null);
+			cv.put(key, val);
 		} else {
 			throw new IllegalArgumentException("Need to manually put "
 					+ valueType.getName() + " to cursor.");
@@ -235,59 +240,67 @@ public class EntityManager<EntityType extends Entity> extends
 	}
 
 	protected Object readFromCursor(Cursor cursor, int columnIndex,
-			Field field, Class<?> arrCollItemType) {
-		Class<?> valueType = field.getType();
+			Field field, Class<?> arrCollItemType)
+			throws IllegalArgumentException {
+		Class<?> valType = field.getType();
 		if (cursor.isNull(columnIndex)) {
 			return null;
-		} else if (isBoolean(valueType)) {
+		} else if (isBoolean(valType)) {
 			return cursor.getInt(columnIndex) == 1;
-		} else if (isByte(valueType)) {
+		} else if (isByte(valType)) {
 			return Byte.valueOf(cursor.getString(columnIndex));
-		} else if (isByteArray(valueType)) {
+		} else if (isByteArray(valType)) {
 			return cursor.getBlob(columnIndex);
-		} else if (isDouble(valueType)) {
+		} else if (isDouble(valType)) {
 			return cursor.getDouble(columnIndex);
-		} else if (isFloat(valueType)) {
+		} else if (isFloat(valType)) {
 			return cursor.getFloat(columnIndex);
-		} else if (isInteger(valueType)) {
+		} else if (isInteger(valType)) {
 			return cursor.getInt(columnIndex);
-		} else if (isLong(valueType)) {
+		} else if (isLong(valType)) {
 			return cursor.getLong(columnIndex);
-		} else if (isShort(valueType)) {
+		} else if (isShort(valType)) {
 			return cursor.getShort(columnIndex);
-		} else if (isString(valueType)) {
+		} else if (isString(valType)) {
 			return cursor.getString(columnIndex);
-		} else if (isUUID(valueType)) {
+		} else if (isUUID(valType)) {
 			return UUID.fromString(cursor.getString(columnIndex));
-		} else if (isDate(valueType)) {
+		} else if (isDate(valType)) {
 			return new Date(cursor.getLong(columnIndex));
-		} else if (isBitmap(valueType)) {
+		} else if (isBitmap(valType)) {
 			byte[] arr = cursor.getBlob(columnIndex);
 			return BitmapFactory.decodeByteArray(arr, 0, arr.length);
-		} else if (isEnum(valueType)) {
-			return instantiateEnum(valueType, cursor.getString(columnIndex));
-		} else if (isEntity(valueType)) {
+		} else if (isJsonObject(valType) || isJsonArray(valType)) {
+			String str = cursor.getString(columnIndex);
+			try {
+				return isJsonObject(valType) ? new JSONObject(str)
+						: new JSONArray(str);
+			} catch (JSONException e) {
+				throw new IllegalArgumentException(e);
+			}
+		} else if (isEnum(valType)) {
+			return instantiateEnum(valType, cursor.getString(columnIndex));
+		} else if (isEntity(valType)) {
 			long id = cursor.getLong(columnIndex);
 			@SuppressWarnings("unchecked")
-			Entity entity = instantiate((Class<Entity>) valueType);
+			Entity entity = instantiate((Class<Entity>) valType);
 			entity.id = id;
 			return entity;
-		} else if (isConvertibleToStringArrayOrCollection(valueType,
-				arrCollItemType)) {
+		} else if (isArray(valType) || isCollection(valType)) {
 			String str = cursor.getString(columnIndex);
 			String[] parts = (str.length() > 0) ? str.split("\\" + SEP)
 					: new String[0];
-			if (isArray(valueType)) {
+			if (isArray(valType)) {
 				return toTypeArr(arrCollItemType, parts);
 			} else {
 				@SuppressWarnings("unchecked")
-				Collection<Object> coll = (Collection<Object>) instantiate(valueType);
+				Collection<Object> coll = (Collection<Object>) instantiate(valType);
 				coll.addAll(toTypeColl(arrCollItemType, parts));
 				return coll;
 			}
 		} else {
 			throw new IllegalArgumentException("Need to manually read "
-					+ valueType.getName() + " from cursor.");
+					+ valType.getName() + " from cursor.");
 		}
 	}
 

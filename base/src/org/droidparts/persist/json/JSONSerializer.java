@@ -146,22 +146,21 @@ public class JSONSerializer<ModelType extends Model> {
 			JSONObject obj2 = subSerializer(valType).serialize((Model) val);
 			obj.put(key, obj2);
 		} else if (isArray(valType) || isCollection(valType)) {
-			ArrayList<Object> list = new ArrayList<Object>();
+			Object[] arr;
 			if (isArray(valType)) {
-				Object[] arr = toObjectArr(val);
-				list.addAll(Arrays.asList(arr));
-			} else if (isCollection(valType)) {
-				Collection<Object> coll = (Collection<Object>) val;
-				list.addAll(coll);
+				arr = toObjectArr(val);
+			} else {
+				Collection<?> coll = (Collection<?>) val;
+				arr = coll.toArray(new Object[coll.size()]);
 			}
 			JSONArray jArr = new JSONArray();
-			if (list.size() > 0) {
-				Class<?> itemCls = list.get(0).getClass();
+			if (arr.length > 0) {
+				Class<?> itemCls = arr[0].getClass();
 				if (isModel(itemCls)) {
 					JSONSerializer serializer = subSerializer(itemCls);
-					jArr = serializer.serialize(list);
+					jArr = serializer.serialize(Arrays.asList(arr));
 				} else {
-					for (Object o : list) {
+					for (Object o : arr) {
 						jArr.put(o);
 					}
 				}
@@ -184,9 +183,11 @@ public class JSONSerializer<ModelType extends Model> {
 			}
 		}
 
-		Object parsedVal = parseValue(fieldType, strVal);
-		if (parsedVal != null) {
-			return parsedVal;
+		Exception e = null;
+		try {
+			return parseValue(fieldType, strVal);
+		} catch (Exception ex) {
+			e = ex;
 		}
 
 		if (isByteArray(fieldType)) {
@@ -226,10 +227,8 @@ public class JSONSerializer<ModelType extends Model> {
 			} else {
 				return coll;
 			}
-		} else {
-			throw new IllegalArgumentException("Unsupported class: "
-					+ fieldType);
 		}
+		throw e;
 	}
 
 	protected boolean hasNonNull(JSONObject obj, String key)

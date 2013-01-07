@@ -134,28 +134,26 @@ public final class TypeHelper {
 	public static Object[] toObjectArr(Object someArr) {
 		// as autoboxing won't work for Arrays.asList(int[] value)
 		Class<?> arrCls = someArr.getClass();
-		Object[] arr;
 		if (arrCls == byte[].class) {
-			arr = toObject((byte[]) someArr);
+			return toObject((byte[]) someArr);
 		} else if (arrCls == short[].class) {
-			arr = toObject((short[]) someArr);
+			return toObject((short[]) someArr);
 		} else if (arrCls == int[].class) {
-			arr = toObject((int[]) someArr);
+			return toObject((int[]) someArr);
 		} else if (arrCls == long[].class) {
-			arr = toObject((long[]) someArr);
+			return toObject((long[]) someArr);
 		} else if (arrCls == float[].class) {
-			arr = toObject((float[]) someArr);
+			return toObject((float[]) someArr);
 		} else if (arrCls == double[].class) {
-			arr = toObject((double[]) someArr);
+			return toObject((double[]) someArr);
 		} else if (arrCls == boolean[].class) {
-			arr = toObject((boolean[]) someArr);
+			return toObject((boolean[]) someArr);
 		} else if (arrCls == char[].class) {
-			arr = toObject((char[]) someArr);
+			return toObject((char[]) someArr);
 		} else {
 			// out of primitives
-			arr = (Object[]) someArr;
+			return (Object[]) someArr;
 		}
-		return arr;
 	}
 
 	public static Object toTypeArr(Class<?> arrValType, Object[] arr) {
@@ -222,48 +220,47 @@ public final class TypeHelper {
 		}
 	}
 
-	public static <T> ArrayList<T> toTypeColl(Class<T> cls, String[] arr) {
+	public static <T> ArrayList<T> toTypeColl(Class<T> valCls,
+			String[] valStrArr) throws IllegalArgumentException {
 		ArrayList<Object> list = new ArrayList<Object>();
-		for (String str : arr) {
-			Object val = parseValue(cls, str);
-			if (val != null) {
-				list.add(val);
-			} else {
-				throw new IllegalArgumentException("Unable to convert to" + cls);
-			}
+		for (String str : valStrArr) {
+			list.add(parseValue(valCls, str));
 		}
 		@SuppressWarnings("unchecked")
 		ArrayList<T> typedList = (ArrayList<T>) list;
 		return typedList;
 	}
 
-	public static Object parseValue(Class<?> cls, String str) {
-		if (isByte(cls)) {
-			return Byte.valueOf(str);
-		} else if (isShort(cls)) {
-			return Short.valueOf(str);
-		} else if (isInteger(cls)) {
-			return Integer.valueOf(str);
-		} else if (isLong(cls)) {
-			return Long.valueOf(str);
-		} else if (isFloat(cls)) {
-			return Float.valueOf(str);
-		} else if (isDouble(cls)) {
-			return Double.valueOf(str);
-		} else if (isBoolean(cls)) {
-			return Boolean.valueOf(str);
-		} else if (isCharacter(cls)) {
-			return Character.valueOf((str.length() == 0) ? ' ' : str.charAt(0));
-		} else if (isString(cls)) {
-			return str;
-		} else if (isEnum(cls)) {
-			return instantiateEnum(cls, str);
-		} else if (isUUID(cls)) {
-			return UUID.fromString(str);
-		} else if (isDate(cls)) {
-			return new Date(Long.valueOf(str));
+	public static Object parseValue(Class<?> valCls, String valStr)
+			throws IllegalArgumentException {
+		if (isByte(valCls)) {
+			return Byte.valueOf(valStr);
+		} else if (isShort(valCls)) {
+			return Short.valueOf(valStr);
+		} else if (isInteger(valCls)) {
+			return Integer.valueOf(valStr);
+		} else if (isLong(valCls)) {
+			return Long.valueOf(valStr);
+		} else if (isFloat(valCls)) {
+			return Float.valueOf(valStr);
+		} else if (isDouble(valCls)) {
+			return Double.valueOf(valStr);
+		} else if (isBoolean(valCls)) {
+			return Boolean.valueOf(valStr);
+		} else if (isCharacter(valCls)) {
+			return Character.valueOf((valStr.length() == 0) ? ' ' : valStr
+					.charAt(0));
+		} else if (isString(valCls)) {
+			return valStr;
+		} else if (isEnum(valCls)) {
+			return instantiateEnum(valCls, valStr);
+		} else if (isUUID(valCls)) {
+			return UUID.fromString(valStr);
+		} else if (isDate(valCls)) {
+			return new Date(Long.valueOf(valStr));
 		} else {
-			return null;
+			throw new IllegalArgumentException("Unable to convert '" + valStr
+					+ "' to " + valCls.getSimpleName() + ".");
 		}
 	}
 

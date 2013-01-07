@@ -74,9 +74,9 @@ public final class ReflectionUtils {
 		}
 	}
 
-	public static Enum<?> instantiateEnum(Class<?> fieldCls, String str) {
+	public static Enum<?> instantiateEnum(Class<?> enumClass, String enumStr) {
 		@SuppressWarnings({ "rawtypes", "unchecked" })
-		Enum en = Enum.valueOf(fieldCls.asSubclass(Enum.class), str);
+		Enum en = Enum.valueOf(enumClass.asSubclass(Enum.class), enumStr);
 		return en;
 	}
 

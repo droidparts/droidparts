@@ -28,6 +28,8 @@ import static org.droidparts.reflect.util.TypeHelper.isEntity;
 import static org.droidparts.reflect.util.TypeHelper.isEnum;
 import static org.droidparts.reflect.util.TypeHelper.isFloat;
 import static org.droidparts.reflect.util.TypeHelper.isInteger;
+import static org.droidparts.reflect.util.TypeHelper.isJsonArray;
+import static org.droidparts.reflect.util.TypeHelper.isJsonObject;
 import static org.droidparts.reflect.util.TypeHelper.isLong;
 import static org.droidparts.reflect.util.TypeHelper.isShort;
 import static org.droidparts.reflect.util.TypeHelper.isString;
@@ -249,17 +251,6 @@ public final class PersistUtils implements SQL.DDL {
 		return sb.toString();
 	}
 
-	public static boolean isConvertibleToStringArrayOrCollection(
-			Class<?> fieldType, Class<?> arrCollItemType) {
-		boolean really = false;
-		if (isArray(fieldType) || isCollection(fieldType)) {
-			if (!isEntity(arrCollItemType)) {
-				really = !BLOB.equals(getColumnType(arrCollItemType, null));
-			}
-		}
-		return really;
-	}
-
 	private static String getColumnType(Class<?> fieldType,
 			Class<?> arrCollItemType) {
 		if (isByte(fieldType)) {
@@ -286,8 +277,9 @@ public final class PersistUtils implements SQL.DDL {
 			return TEXT;
 		} else if (isDate(fieldType)) {
 			return INTEGER;
-		} else if (isConvertibleToStringArrayOrCollection(fieldType,
-				arrCollItemType)) {
+		} else if (isJsonObject(fieldType) || isJsonArray(fieldType)) {
+			return TEXT;
+		} else if (isArray(fieldType) || isCollection(fieldType)) {
 			return TEXT;
 		} else if (isEntity(fieldType)) {
 			return INTEGER;
