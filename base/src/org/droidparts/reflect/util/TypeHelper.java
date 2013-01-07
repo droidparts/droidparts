@@ -28,6 +28,7 @@ import java.util.UUID;
 import org.droidparts.model.Entity;
 import org.droidparts.model.Model;
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.graphics.Bitmap;
@@ -214,6 +215,12 @@ public final class TypeHelper {
 		} else if (isDate(arrValType)) {
 			ArrayList<Date> list = toTypeColl(Date.class, arr);
 			return list.toArray(new Date[list.size()]);
+		} else if (isJsonObject(arrValType)) {
+			ArrayList<JSONObject> list = toTypeColl(JSONObject.class, arr);
+			return list.toArray(new JSONObject[list.size()]);
+		} else if (isJsonArray(arrValType)) {
+			ArrayList<JSONArray> list = toTypeColl(JSONArray.class, arr);
+			return list.toArray(new JSONArray[list.size()]);
 		} else {
 			throw new IllegalArgumentException("Unable to convert to"
 					+ arrValType);
@@ -258,6 +265,13 @@ public final class TypeHelper {
 			return UUID.fromString(valStr);
 		} else if (isDate(valCls)) {
 			return new Date(Long.valueOf(valStr));
+		} else if (isJsonObject(valCls) || isJsonArray(valCls)) {
+			try {
+				return isJsonObject(valCls) ? new JSONObject(valStr)
+						: new JSONArray(valStr);
+			} catch (JSONException e) {
+				throw new IllegalArgumentException(e);
+			}
 		} else {
 			throw new IllegalArgumentException("Unable to convert '" + valStr
 					+ "' to " + valCls.getSimpleName() + ".");

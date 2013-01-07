@@ -45,6 +45,8 @@ import static org.droidparts.reflect.util.TypeHelper.toTypeColl;
 
 import java.io.ByteArrayOutputStream;
 import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashSet;
@@ -224,14 +226,24 @@ public class EntityManager<EntityType extends Entity> extends
 			Long id = value != null ? ((Entity) value).id : null;
 			cv.put(key, id);
 		} else if (isArray(valueType) || isCollection(valueType)) {
-			Object[] arr;
+			final ArrayList<Object> list = new ArrayList<Object>();
 			if (isArray(valueType)) {
-				arr = toObjectArr(value);
+				list.addAll(Arrays.asList(toObjectArr(value)));
 			} else {
-				Collection<?> coll = (Collection<?>) value;
-				arr = coll.toArray(new Object[coll.size()]);
+				list.addAll((Collection<?>) value);
 			}
-			String val = Strings.join(arr, SEP, null);
+			boolean isDate = isDate(arrCollItemType);
+			boolean toString = isUUID(arrCollItemType)
+					|| isEnum(arrCollItemType) || isJsonObject(arrCollItemType)
+					|| isJsonArray(arrCollItemType);
+			if (isDate || toString) {
+				for (int i = 0; i < list.size(); i++) {
+					Object obj = list.get(i);
+					obj = isDate ? ((Date) obj).getTime() : obj.toString();
+					list.set(i, obj);
+				}
+			}
+			String val = Strings.join(list, SEP, null);
 			cv.put(key, val);
 		} else {
 			throw new IllegalArgumentException("Need to manually put "

@@ -146,21 +146,27 @@ public class JSONSerializer<ModelType extends Model> {
 			JSONObject obj2 = subSerializer(valType).serialize((Model) val);
 			obj.put(key, obj2);
 		} else if (isArray(valType) || isCollection(valType)) {
-			Object[] arr;
+			final ArrayList<Object> list = new ArrayList<Object>();
 			if (isArray(valType)) {
-				arr = toObjectArr(val);
+				list.addAll(Arrays.asList(toObjectArr(val)));
 			} else {
-				Collection<?> coll = (Collection<?>) val;
-				arr = coll.toArray(new Object[coll.size()]);
+				list.addAll((Collection<?>) val);
 			}
 			JSONArray jArr = new JSONArray();
-			if (arr.length > 0) {
-				Class<?> itemCls = arr[0].getClass();
+			if (list.size() > 0) {
+				Class<?> itemCls = list.get(0).getClass();
 				if (isModel(itemCls)) {
 					JSONSerializer serializer = subSerializer(itemCls);
-					jArr = serializer.serialize(Arrays.asList(arr));
+					jArr = serializer.serialize(list);
 				} else {
-					for (Object o : arr) {
+					boolean isDate = isDate(itemCls);
+					boolean toString = isUUID(itemCls) || isEnum(itemCls);
+					for (Object o : list) {
+						if (isDate) {
+							o = ((Date) o).getTime();
+						} else if (toString) {
+							o = o.toString();
+						}
 						jArr.put(o);
 					}
 				}
