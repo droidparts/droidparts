@@ -122,9 +122,13 @@ public class EntityTestCase extends AndroidTestCase implements DB {
 		long now = System.currentTimeMillis();
 		Primitives pri = new Primitives();
 		pri.date = new Date(now);
+		pri.dates.add(pri.date);
 		assertTrue(primitivesManager.create(pri));
 		pri = primitivesManager.read(pri.id);
 		assertEquals(now, pri.date.getTime());
+		assertEquals(1, pri.dates.size());
+		assertEquals(now, pri.dates.get(0).getTime());
+
 	}
 
 	public void testEnum() {

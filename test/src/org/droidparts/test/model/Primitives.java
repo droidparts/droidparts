@@ -37,15 +37,17 @@ public class Primitives extends Entity {
 
 	@Column(nullable = true)
 	public Date date;
+	@Column
+	public final ArrayList<Date> dates = new ArrayList<Date>();
 
 	@Key(name = "string_array")
 	@Column(nullable = true)
 	public String[] strArr;
 	@Column(nullable = true)
 	public int[] intArr;
-	@Column(nullable = true)
+	@Column
 	public ArrayList<String> strList = new ArrayList<String>();
-	@Column(nullable = true)
+	@Column
 	public HashSet<Double> doubleSet = new HashSet<Double>();
 
 	public static enum En {
