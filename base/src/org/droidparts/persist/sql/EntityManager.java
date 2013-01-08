@@ -110,7 +110,7 @@ public class EntityManager<EntityType extends Entity> extends
 			if (colIdx >= 0) {
 				Object columnVal = readFromCursor(cursor, colIdx,
 						spec.field.getType(), spec.arrCollItemType);
-				if (columnVal != null) {
+				if (columnVal != null | spec.ann.nullable) {
 					setFieldVal(entity, spec.field, columnVal);
 				}
 			}

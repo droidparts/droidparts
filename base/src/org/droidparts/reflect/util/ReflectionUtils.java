@@ -47,8 +47,8 @@ public final class ReflectionUtils {
 			field.set(obj, val);
 		} catch (Exception e) {
 			String valClsName = (val != null) ? val.getClass().getSimpleName()
-					: "";
-			L.w("Error assigning (" + valClsName + ")" + val + " to ("
+					: "?";
+			L.w("Error assigning <" + valClsName + "> " + val + " to ("
 					+ field.getType().getSimpleName() + ") field "
 					+ obj.getClass().getSimpleName() + "#" + field.getName()
 					+ ": " + e.getMessage());
