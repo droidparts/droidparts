@@ -100,13 +100,13 @@ public final class FieldSpecBuilder {
 				ColumnAnn columnAnn = (ColumnAnn) getFieldAnn(ColumnAnn.class,
 						cls, field);
 				if (columnAnn != null) {
-					Class<?> multiFieldArgType = getMultiFieldArgType(field);
+					Class<?> arrCollItemType = getArrCollItemType(field);
 					ColumnAnn ann = new ColumnAnn();
 					ann.name = getColumnName(columnAnn, field);
 					ann.nullable = columnAnn.nullable;
 					ann.unique = columnAnn.unique;
 					ann.eager = columnAnn.eager;
-					list.add(new FieldSpec<ColumnAnn>(field, multiFieldArgType,
+					list.add(new FieldSpec<ColumnAnn>(field, arrCollItemType,
 							ann));
 				}
 			}
@@ -126,11 +126,11 @@ public final class FieldSpecBuilder {
 			for (Field field : listAnnotatedFields(cls)) {
 				KeyAnn keyAnn = (KeyAnn) getFieldAnn(KeyAnn.class, cls, field);
 				if (keyAnn != null) {
-					Class<?> multiFieldArgType = getMultiFieldArgType(field);
+					Class<?> arrCollItemType = getArrCollItemType(field);
 					KeyAnn ann = new KeyAnn();
 					ann.name = getKeyName(keyAnn, field);
 					ann.optional = keyAnn.optional;
-					list.add(new FieldSpec<KeyAnn>(field, multiFieldArgType,
+					list.add(new FieldSpec<KeyAnn>(field, arrCollItemType,
 							(KeyAnn) ann));
 				}
 			}
@@ -151,7 +151,7 @@ public final class FieldSpecBuilder {
 
 	// Utils
 
-	private static Class<?> getMultiFieldArgType(Field field) {
+	private static Class<?> getArrCollItemType(Field field) {
 		Class<?> argType = null;
 		Class<?> fieldType = field.getType();
 		if (isArray(fieldType)) {
