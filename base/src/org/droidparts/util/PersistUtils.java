@@ -116,7 +116,7 @@ public final class PersistUtils implements SQL.DDL {
 				argStr = "NULL";
 			} else if (arg instanceof Boolean) {
 				argStr = ((Boolean) arg) ? "1" : "0";
-			} else if (isEntity(arg.getClass())) {
+			} else if (arg instanceof Entity) {
 				argStr = String.valueOf(((Entity) arg).id);
 			} else {
 				argStr = arg.toString();
