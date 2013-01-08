@@ -63,6 +63,7 @@ public abstract class AbstractEntityManager<EntityType extends Entity>
 	}
 
 	public boolean update(EntityType item) {
+		createForeignKeys(item);
 		ContentValues cv = toContentValues(item);
 		cv.remove(DB.Column.ID);
 		int rowCount = update().whereId(item.id).setContent(cv).execute();
