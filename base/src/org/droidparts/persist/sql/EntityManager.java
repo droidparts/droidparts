@@ -157,13 +157,13 @@ public class EntityManager<EntityType extends Entity> extends
 	}
 
 	@Override
-	protected void createOrUpdateForeignKeys(EntityType item) {
+	protected void createForeignKeys(EntityType item) {
 		for (FieldSpec<ColumnAnn> spec : getTableColumnSpecs(cls)) {
 			if (isEntity(spec.field.getType())) {
 				Entity foreignEntity = ReflectionUtils.getFieldVal(item,
 						spec.field);
-				if (foreignEntity != null) {
-					subManager(spec.field).createOrUpdate(foreignEntity);
+				if (foreignEntity != null && foreignEntity.id == 0) {
+					subManager(spec.field).create(foreignEntity);
 				}
 			}
 		}

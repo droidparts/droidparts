@@ -39,7 +39,7 @@ public abstract class AbstractEntityManager<EntityType extends Entity>
 	// CRUD methods
 
 	public boolean create(EntityType item) {
-		createOrUpdateForeignKeys(item);
+		createForeignKeys(item);
 		ContentValues cv = toContentValues(item);
 		cv.remove(DB.Column.ID);
 		long id = 0;
@@ -63,7 +63,6 @@ public abstract class AbstractEntityManager<EntityType extends Entity>
 	}
 
 	public boolean update(EntityType item) {
-		createOrUpdateForeignKeys(item);
 		ContentValues cv = toContentValues(item);
 		cv.remove(DB.Column.ID);
 		int rowCount = update().whereId(item.id).setContent(cv).execute();
@@ -173,6 +172,6 @@ public abstract class AbstractEntityManager<EntityType extends Entity>
 
 	protected abstract ContentValues toContentValues(EntityType item);
 
-	protected abstract void createOrUpdateForeignKeys(EntityType item);
+	protected abstract void createForeignKeys(EntityType item);
 
 }
