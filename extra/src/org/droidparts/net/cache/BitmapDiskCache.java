@@ -35,7 +35,7 @@ import android.graphics.BitmapFactory;
 
 public class BitmapDiskCache {
 
-	private static final String DEFAULT_DIR = "image_cache";
+	private static final String DEFAULT_DIR = "img";
 
 	private static BitmapDiskCache instance;
 
