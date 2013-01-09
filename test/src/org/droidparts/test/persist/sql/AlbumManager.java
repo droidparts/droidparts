@@ -5,13 +5,13 @@ import java.util.Collection;
 
 import org.droidparts.persist.sql.EntityManager;
 import org.droidparts.persist.sql.stmt.Is;
+import org.droidparts.persist.sql.stmt.Select;
 import org.droidparts.test.model.Album;
 import org.droidparts.test.model.AlbumToTag;
 import org.droidparts.test.model.Tag;
 import org.droidparts.test.persist.DB;
 
 import android.content.Context;
-import android.database.Cursor;
 
 public class AlbumManager extends EntityManager<Album> implements DB {
 
@@ -26,9 +26,9 @@ public class AlbumManager extends EntityManager<Album> implements DB {
 
 	public ArrayList<Tag> getTags(long albumId) {
 		ArrayList<Tag> tags = new ArrayList<Tag>();
-		Cursor c = tagManager.select()
-				.where(Column.ID, Is.IN, getTagIds(albumId)).execute();
-		tags = tagManager.readAll(c);
+		Select<Tag> select = tagManager.select().where(Column.ID, Is.IN,
+				getTagIds(albumId));
+		tags = tagManager.readAll(select);
 		return tags;
 	}
 
@@ -37,17 +37,18 @@ public class AlbumManager extends EntityManager<Album> implements DB {
 		for (Tag tag : tags) {
 			boolean success = tagManager.create(tag);
 			if (!success) {
-				Cursor c = tagManager.select()
-						.where(Column.NAME, Is.EQUAL, tag.name).execute();
-				tag = tagManager.readFirst(c);
+				Select<Tag> select = tagManager.select().where(Column.NAME,
+						Is.EQUAL, tag.name);
+				tag = tagManager.readFirst(select);
 			}
 			albumToTagManager.create(new AlbumToTag(album, tag));
 		}
 	}
 
 	public long[] getTagIds(long albumId) {
-		Cursor c = albumToTagManager.select().columns(Column.TAG_ID)
-				.where(Column.ALBUM_ID, Is.EQUAL, albumId).execute();
-		return readIds(c);
+		Select<AlbumToTag> select = albumToTagManager.select()
+				.columns(Column.TAG_ID)
+				.where(Column.ALBUM_ID, Is.EQUAL, albumId);
+		return albumToTagManager.readIds(select);
 	}
 }

@@ -58,8 +58,7 @@ public abstract class AbstractEntityManager<EntityType extends Entity>
 	}
 
 	public EntityType read(long id) {
-		Cursor cursor = select().whereId(id).execute();
-		return readFirst(cursor);
+		return readFirst(select().whereId(id));
 	}
 
 	public boolean update(EntityType item) {
@@ -149,16 +148,16 @@ public abstract class AbstractEntityManager<EntityType extends Entity>
 		return PersistUtils.executeInTransaction(getDB(), task);
 	}
 
-	public long[] readIds(Cursor cursor) {
-		return PersistUtils.readIds(cursor);
+	public long[] readIds(Select<EntityType> select) {
+		return PersistUtils.readIds(select.execute());
 	}
 
-	public EntityType readFirst(Cursor cursor) {
-		return PersistUtils.readFirst(this, cursor);
+	public EntityType readFirst(Select<EntityType> select) {
+		return PersistUtils.readFirst(this, select.execute());
 	}
 
-	public ArrayList<EntityType> readAll(Cursor cursor) {
-		return PersistUtils.readAll(this, cursor);
+	public ArrayList<EntityType> readAll(Select<EntityType> select) {
+		return PersistUtils.readAll(this, select.execute());
 	}
 
 	public abstract EntityType readRow(Cursor cursor);
