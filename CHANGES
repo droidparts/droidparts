@@ -1,3 +1,6 @@
+1.0.6 /2013-01-09/:
+    * Tweaks & fixes.
+
 1.0.5 /2013-01-05/:
     * Changed ProGuard config to preserve all annotated fields.
     * Numerous ImageFetcher improvements.
