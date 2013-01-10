@@ -231,15 +231,10 @@ public class EntityManager<EntityType extends Entity> extends
 			} else {
 				list.addAll((Collection<?>) value);
 			}
-			boolean isDate = isDate(arrCollItemType);
-			boolean toString = isUUID(arrCollItemType)
-					|| isEnum(arrCollItemType) || isJsonObject(arrCollItemType)
-					|| isJsonArray(arrCollItemType);
-			if (isDate || toString) {
+			if (isDate(arrCollItemType)) {
 				for (int i = 0; i < list.size(); i++) {
-					Object obj = list.get(i);
-					obj = isDate ? ((Date) obj).getTime() : obj.toString();
-					list.set(i, obj);
+					Long timestamp = ((Date) list.get(i)).getTime();
+					list.set(i, timestamp);
 				}
 			}
 			String val = Strings.join(list, SEP, null);

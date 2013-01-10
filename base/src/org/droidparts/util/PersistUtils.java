@@ -38,6 +38,7 @@ import static org.droidparts.util.Strings.join;
 import static org.json.JSONObject.NULL;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.concurrent.Callable;
 
@@ -116,6 +117,8 @@ public final class PersistUtils implements SQL.DDL {
 				argStr = "NULL";
 			} else if (arg instanceof Boolean) {
 				argStr = ((Boolean) arg) ? "1" : "0";
+			} else if (arg instanceof Date) {
+				argStr = String.valueOf(((Date) arg).getTime());
 			} else if (arg instanceof Entity) {
 				argStr = String.valueOf(((Entity) arg).id);
 			} else {
