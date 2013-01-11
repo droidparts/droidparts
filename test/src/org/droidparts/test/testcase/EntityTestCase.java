@@ -138,7 +138,7 @@ public class EntityTestCase extends AndroidTestCase implements DB {
 		primitivesManager.create(pri);
 		pri = primitivesManager.read(pri.id);
 		assertEquals(En.HI, pri.en);
-		assertEquals(En.THERE, pri.enArr[1]);
+		assertEquals(En.THERE.id, pri.enArr[1].id);
 	}
 
 	public void testArraysAndCollections() {

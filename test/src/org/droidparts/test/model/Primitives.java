@@ -51,7 +51,15 @@ public class Primitives extends Entity {
 	public HashSet<Double> doubleSet = new HashSet<Double>();
 
 	public static enum En {
-		HI, THERE,
+
+		HI(14), THERE(1024);
+
+		public final int id;
+
+		private En(int id) {
+			this.id = id;
+		}
+
 	}
 
 }
