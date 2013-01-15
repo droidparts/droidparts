@@ -77,6 +77,10 @@ public class JSONSerializer<ModelType extends Model> {
 		this.cls = cls;
 	}
 
+	public Context getContext() {
+		return ctx;
+	}
+
 	public JSONObject serialize(ModelType item) throws JSONException {
 		JSONObject obj = new JSONObject();
 		for (FieldSpec<KeyAnn> spec : getJsonKeySpecs(cls)) {

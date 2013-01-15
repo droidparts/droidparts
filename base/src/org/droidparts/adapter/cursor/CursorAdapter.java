@@ -24,12 +24,19 @@ import android.view.LayoutInflater;
 
 public abstract class CursorAdapter extends android.widget.CursorAdapter {
 
+	private final Context ctx;
+
 	@InjectSystemService
 	protected LayoutInflater layoutInflater;
 
 	public CursorAdapter(Context ctx, Cursor cursor) {
 		super(ctx, cursor);
+		this.ctx = ctx.getApplicationContext();
 		Injector.get().inject(ctx, this);
+	}
+
+	public Context getContext() {
+		return ctx;
 	}
 
 }

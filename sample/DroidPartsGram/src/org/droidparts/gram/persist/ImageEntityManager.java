@@ -23,8 +23,11 @@ import android.content.Context;
 
 public class ImageEntityManager extends EntityManager<Image> {
 
+	private final FilterEntityManager filterEntityManager;
+
 	public ImageEntityManager(Context ctx) {
 		super(ctx, Image.class);
+		filterEntityManager = new FilterEntityManager(ctx);
 	}
 
 	@Override
@@ -41,7 +44,7 @@ public class ImageEntityManager extends EntityManager<Image> {
 
 	private void setFilterId(Filter filter) {
 		if (filter.id < 1) {
-			new FilterEntityManager(ctx).readOrCreateForName(filter);
+			filterEntityManager.setIdOrCreateForName(filter);
 		}
 	}
 

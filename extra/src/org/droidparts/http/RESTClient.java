@@ -39,6 +39,8 @@ import android.util.Pair;
 
 public class RESTClient {
 
+	private final Context ctx;
+
 	private final boolean forceApacheHttpClient;
 
 	private final HttpClientWorker httpClientWorker;
@@ -57,6 +59,7 @@ public class RESTClient {
 
 	public RESTClient(Context ctx, String userAgent,
 			boolean forceApacheHttpClient) {
+		this.ctx = ctx.getApplicationContext();
 		this.forceApacheHttpClient = forceApacheHttpClient;
 		httpClientWorker = useHttpURLConnection() ? null
 				: new HttpClientWorker(userAgent);
@@ -68,6 +71,10 @@ public class RESTClient {
 		if (Build.VERSION.SDK_INT >= 14) {
 			HttpURLConnectionWorker.setHttpResponseCacheEnabled(ctx, true);
 		}
+	}
+
+	public Context getContext() {
+		return ctx;
 	}
 
 	public void setCookieCacheEnabled(boolean enabled, boolean persistent) {

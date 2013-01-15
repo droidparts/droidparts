@@ -45,6 +45,7 @@ public class ImageIntentService extends SimpleIntentService {
 
 	private final Uri refreshUri;
 	private RESTClient2 restClient;
+	private ImageSerializer imageSerializer;
 
 	@InjectDependency
 	private ImageEntityManager imageEntityManager;
@@ -62,6 +63,7 @@ public class ImageIntentService extends SimpleIntentService {
 	public void onCreate() {
 		super.onCreate();
 		restClient = new RESTClient2(this);
+		imageSerializer = new ImageSerializer(this);
 	}
 
 	@Override
@@ -69,7 +71,7 @@ public class ImageIntentService extends SimpleIntentService {
 		if (ACTION_REFRESH.equals(action)) {
 			JSONObject obj = restClient.getJSONObject(refreshUri.toString());
 			JSONArray arr = obj.getJSONArray("data");
-			ArrayList<Image> list = new ImageSerializer(this).deserialize(arr);
+			ArrayList<Image> list = imageSerializer.deserialize(arr);
 			imageEntityManager.delete().execute();
 			imageEntityManager.create(list);
 			return data;

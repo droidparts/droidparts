@@ -81,7 +81,7 @@ public class EntityManager<EntityType extends Entity> extends
 	@InjectDependency
 	private SQLiteDatabase db;
 
-	protected final Context ctx;
+	private final Context ctx;
 	private final Class<EntityType> cls;
 
 	public EntityManager(Context ctx, Class<EntityType> cls) {
@@ -93,6 +93,10 @@ public class EntityManager<EntityType extends Entity> extends
 		this.ctx = ctx.getApplicationContext();
 		this.cls = cls;
 		this.db = db;
+	}
+
+	public Context getContext() {
+		return ctx;
 	}
 
 	public void fillEagerForeignKeys(EntityType item) {

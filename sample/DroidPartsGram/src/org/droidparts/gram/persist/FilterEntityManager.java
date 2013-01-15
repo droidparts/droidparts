@@ -21,9 +21,9 @@ import static org.droidparts.gram.contract.DB.Column.NAME;
 import org.droidparts.gram.model.Filter;
 import org.droidparts.persist.sql.EntityManager;
 import org.droidparts.persist.sql.stmt.Is;
+import org.droidparts.persist.sql.stmt.Select;
 
 import android.content.Context;
-import android.database.Cursor;
 
 public class FilterEntityManager extends EntityManager<Filter> {
 
@@ -31,17 +31,13 @@ public class FilterEntityManager extends EntityManager<Filter> {
 		super(ctx, Filter.class);
 	}
 
-	public void readOrCreateForName(Filter filter) {
-		Cursor cursor = select().columns(ID).where(NAME, Is.EQUAL, filter.name)
-				.execute();
-		try {
-			if (cursor.moveToFirst()) {
-				filter.id = cursor.getLong(0);
-			} else {
-				create(filter);
-			}
-		} finally {
-			cursor.close();
+	public void setIdOrCreateForName(Filter filter) {
+		Select<Filter> select = select().columns(ID).where(NAME, Is.EQUAL,
+				filter.name);
+		if (select.count() == 1) {
+			filter.id = readFirst(select).id;
+		} else {
+			create(filter);
 		}
 	}
 }

@@ -26,9 +26,9 @@ import android.util.Pair;
 public abstract class AsyncTask<Params, Progress, Result> extends
 		android.os.AsyncTask<Params, Progress, Pair<Exception, Result>> {
 
-	protected final Context ctx;
-	protected final AsyncTaskProgressListener progressListener;
-	protected final AsyncTaskResultListener<Result> resultListener;
+	private final Context ctx;
+	private final AsyncTaskProgressListener progressListener;
+	private final AsyncTaskResultListener<Result> resultListener;
 
 	public AsyncTask(Context ctx) {
 		this(ctx, null, null);
@@ -37,9 +37,17 @@ public abstract class AsyncTask<Params, Progress, Result> extends
 	public AsyncTask(Context ctx, AsyncTaskProgressListener progressListener,
 			AsyncTaskResultListener<Result> resultListener) {
 		Injector.get().inject(ctx, this);
-		this.ctx = ctx;
+		this.ctx = ctx.getApplicationContext();
 		this.progressListener = progressListener;
 		this.resultListener = resultListener;
+	}
+
+	public Context getContext() {
+		return ctx;
+	}
+
+	public AsyncTaskProgressListener getProgressListener() {
+		return progressListener;
 	}
 
 	@Override

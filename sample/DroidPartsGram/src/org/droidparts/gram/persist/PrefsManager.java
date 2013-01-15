@@ -34,12 +34,12 @@ public class PrefsManager extends AbstractPrefsManager {
 
 	public boolean isShowDetailFilter() {
 		return getShowDetailVaules().contains(
-				ctx.getString(R.string.pref_filter));
+				getContext().getString(R.string.pref_filter));
 	}
 
 	public boolean isShowDetailTags() {
-		return getShowDetailVaules()
-				.contains(ctx.getString(R.string.pref_tags));
+		return getShowDetailVaules().contains(
+				getContext().getString(R.string.pref_tags));
 	}
 
 	private HashSet<String> getShowDetailVaules() {

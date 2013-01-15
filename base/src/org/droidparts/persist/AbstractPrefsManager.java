@@ -22,16 +22,14 @@ import org.droidparts.inject.Injector;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.content.res.Resources;
 import android.preference.PreferenceManager;
 
 public abstract class AbstractPrefsManager {
 
 	private static final String VERSION = "__prefs_version__";
 
-	protected final Context ctx;
-	protected final Resources res;
-	protected final SharedPreferences prefs;
+	private final Context ctx;
+	private final SharedPreferences prefs;
 
 	public AbstractPrefsManager(Context ctx, int version) {
 		this(ctx, null, version);
@@ -40,7 +38,6 @@ public abstract class AbstractPrefsManager {
 	public AbstractPrefsManager(Context ctx, String prefsName, int version) {
 		Injector.get().inject(ctx, this);
 		this.ctx = ctx.getApplicationContext();
-		res = ctx.getResources();
 		if (isEmpty(prefsName)) {
 			prefs = PreferenceManager.getDefaultSharedPreferences(ctx);
 		} else {
@@ -49,7 +46,11 @@ public abstract class AbstractPrefsManager {
 		init(version);
 	}
 
-	public SharedPreferences getPrefs() {
+	public Context getContext() {
+		return ctx;
+	}
+
+	public SharedPreferences getSharedPreferences() {
 		return prefs;
 	}
 
@@ -69,13 +70,13 @@ public abstract class AbstractPrefsManager {
 	// shortcuts
 
 	protected boolean readBoolean(int keyResId, int defValueResId) {
-		return prefs.getBoolean(res.getString(keyResId),
-				res.getBoolean(defValueResId));
+		return prefs.getBoolean(ctx.getString(keyResId), getContext()
+				.getResources().getBoolean(defValueResId));
 	}
 
 	protected int readInt(int keyResId, int defValueResId) {
-		return prefs.getInt(res.getString(keyResId),
-				res.getInteger(defValueResId));
+		return prefs.getInt(ctx.getString(keyResId), getContext()
+				.getResources().getInteger(defValueResId));
 	}
 
 	protected String readString(int keyResId, int defValueResId) {
