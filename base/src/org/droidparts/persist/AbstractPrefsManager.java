@@ -50,7 +50,7 @@ public abstract class AbstractPrefsManager {
 		return ctx;
 	}
 
-	public SharedPreferences getSharedPreferences() {
+	public SharedPreferences getPreferences() {
 		return prefs;
 	}
 
