@@ -65,7 +65,7 @@ public abstract class AbstractEntityManager<EntityType extends Entity>
 		createForeignKeys(item);
 		ContentValues cv = toContentValues(item);
 		cv.remove(DB.Column.ID);
-		int rowCount = update().whereId(item.id).setContent(cv).execute();
+		int rowCount = update().whereId(item.id).setValues(cv).execute();
 		return rowCount > 0;
 	}
 

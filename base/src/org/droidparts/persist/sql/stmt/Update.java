@@ -48,7 +48,7 @@ public class Update<EntityType extends Entity> extends Statement<EntityType> {
 		return (Update<EntityType>) super.where(selection, selectionArgs);
 	}
 
-	public Update<EntityType> setContent(ContentValues contentValues) {
+	public Update<EntityType> setValues(ContentValues contentValues) {
 		this.contentValues = contentValues;
 		return this;
 	}
