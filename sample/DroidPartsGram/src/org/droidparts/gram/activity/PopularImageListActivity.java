@@ -79,7 +79,7 @@ public class PopularImageListActivity extends
 	}
 
 	@Override
-	public void onShowImageDetail(int position) {
+	public void doShowImageDetail(int position) {
 		Image img = adapter.read(position);
 		ImageDetailFragment.newInstance(img).show(this);
 	}
