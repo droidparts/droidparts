@@ -15,7 +15,7 @@
  */
 package org.droidparts.widget;
 
-import static org.droidparts.util.Strings.isNotEmpty;
+import static org.droidparts.util.Strings.isEmpty;
 
 import org.droidparts.adapter.ui.TextWatcherAdapter;
 import org.droidparts.adapter.ui.TextWatcherAdapter.TextWatcherListener;
@@ -89,7 +89,7 @@ public class ClearableEditText extends EditText implements OnTouchListener,
 
 	@Override
 	public void onTextChanged(EditText view, String text) {
-		Drawable x = isNotEmpty(getText()) ? xD : null;
+		Drawable x = isEmpty(text) ? null : xD;
 		setCompoundDrawables(getCompoundDrawables()[0],
 				getCompoundDrawables()[1], x, getCompoundDrawables()[3]);
 	}
