@@ -24,7 +24,7 @@ import org.droidparts.gram.fragment.ImageListFragment;
 import org.droidparts.gram.model.Image;
 import org.droidparts.gram.persist.ImageEntityManager;
 import org.droidparts.gram.service.ImageIntentService;
-import org.droidparts.service.listener.MainThreadResultReceiver;
+import org.droidparts.service.MainThreadResultReceiver;
 
 import android.content.Intent;
 import android.os.Bundle;

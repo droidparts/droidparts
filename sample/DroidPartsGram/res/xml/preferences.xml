@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
 
-    <org.droidparts.preference.MultiSelectListPreference
+    <org.droidparts.widget.MultiSelectListPreference
         android:defaultValue="@string/pref_show_detail_default"
         android:dialogTitle="@string/show_detail"
         android:entries="@array/pref_show_detail_names"

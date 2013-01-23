@@ -20,7 +20,7 @@ import static org.droidparts.util.Strings.join;
 import org.droidparts.activity.sherlock.PreferenceActivity;
 import org.droidparts.annotation.inject.InjectView;
 import org.droidparts.gram.R;
-import org.droidparts.preference.MultiSelectListPreference;
+import org.droidparts.widget.MultiSelectListPreference;
 
 import android.content.Context;
 import android.content.Intent;
