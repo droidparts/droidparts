@@ -38,18 +38,18 @@ public class ListViewSynchronizer implements OnTouchListener, OnScrollListener {
 	}
 
 	public void init() {
+		ListAdapter leftAdapter = leftListView.getAdapter();
+		ListAdapter rightAdapter = rightListView.getAdapter();
+		if (leftAdapter == null || rightAdapter == null) {
+			throw new IllegalStateException("List adapters must be set.");
+		}
+		leftViewsHeights = new int[leftAdapter.getCount()];
+		rightViewsHeights = new int[rightAdapter.getCount()];
+		//
 		leftListView.setOnTouchListener(this);
 		rightListView.setOnTouchListener(this);
 		leftListView.setOnScrollListener(this);
 		rightListView.setOnScrollListener(this);
-		//
-		ListAdapter leftAdapter = leftListView.getAdapter();
-		ListAdapter rightAdapter = rightListView.getAdapter();
-		if (leftAdapter == null || rightAdapter == null) {
-			throw new IllegalStateException("Both adapters must be set.");
-		}
-		leftViewsHeights = new int[leftAdapter.getCount()];
-		rightViewsHeights = new int[rightAdapter.getCount()];
 	}
 
 	/**
@@ -75,11 +75,11 @@ public class ListViewSynchronizer implements OnTouchListener, OnScrollListener {
 	 * child
 	 */
 	@Override
-	public void onScroll(AbsListView view, int firstVisibleItem,
+	public void onScroll(AbsListView listView, int firstVisibleItem,
 			int visibleItemCount, int totalItemCount) {
-		if (view.getChildAt(0) != null) {
-			if (view == leftListView) {
-				leftViewsHeights[view.getFirstVisiblePosition()] = view
+		if (listView.getChildAt(0) != null) {
+			if (listView == leftListView) {
+				leftViewsHeights[listView.getFirstVisiblePosition()] = listView
 						.getChildAt(0).getHeight();
 
 				int h = 0;
@@ -92,11 +92,11 @@ public class ListViewSynchronizer implements OnTouchListener, OnScrollListener {
 					hi += leftViewsHeights[i];
 				}
 
-				int top = h - hi + view.getChildAt(0).getTop();
+				int top = h - hi + listView.getChildAt(0).getTop();
 				rightListView.setSelectionFromTop(
 						rightListView.getFirstVisiblePosition(), top);
-			} else if (view == rightListView) {
-				rightViewsHeights[view.getFirstVisiblePosition()] = view
+			} else if (listView == rightListView) {
+				rightViewsHeights[listView.getFirstVisiblePosition()] = listView
 						.getChildAt(0).getHeight();
 
 				int h = 0;
@@ -109,7 +109,7 @@ public class ListViewSynchronizer implements OnTouchListener, OnScrollListener {
 					hi += rightViewsHeights[i];
 				}
 
-				int top = h - hi + view.getChildAt(0).getTop();
+				int top = h - hi + listView.getChildAt(0).getTop();
 				leftListView.setSelectionFromTop(
 						leftListView.getFirstVisiblePosition(), top);
 			}

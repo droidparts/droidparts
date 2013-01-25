@@ -64,10 +64,17 @@ public class ClearableEditText extends EditText implements OnTouchListener,
 
 	private void init() {
 		setClearDrawable(android.R.drawable.presence_offline);
-		setOnTouchListener(this);
+		super.setOnTouchListener(this);
 		addTextChangedListener(new TextWatcherAdapter(this, this));
 		onTextChanged(this, getText().toString());
 	}
+
+	@Override
+	public void setOnTouchListener(OnTouchListener l) {
+		this.l = l;
+	}
+
+	private OnTouchListener l;
 
 	@Override
 	public boolean onTouch(View v, MotionEvent event) {
@@ -83,6 +90,9 @@ public class ClearableEditText extends EditText implements OnTouchListener,
 					return true;
 				}
 			}
+		}
+		if (l != null) {
+			return l.onTouch(v, event);
 		}
 		return false;
 	}
