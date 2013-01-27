@@ -21,7 +21,7 @@ import android.widget.EditText;
 
 public abstract class EditTextValidator {
 
-	static class ValidationException extends Exception {
+	public static class ValidationException extends Exception {
 		private static final long serialVersionUID = 1L;
 
 		public final EditText editText;
