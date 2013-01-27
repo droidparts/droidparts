@@ -17,37 +17,39 @@ package org.droidparts.util.ui;
 
 import java.util.regex.Pattern;
 
-import android.view.View;
 import android.widget.EditText;
 
-public abstract class ViewInputVaildator {
+public abstract class EditTextValidator {
 
 	static class InputValidationException extends Exception {
 		private static final long serialVersionUID = 1L;
 
-		public final View view;
+		public final EditText editText;
 		public final String errorMessage;
 
-		public InputValidationException(View view, String errMsg) {
-			this.view = view;
+		public InputValidationException(EditText et, String errMsg) {
+			this.editText = et;
 			this.errorMessage = errMsg;
 		}
+
+		// editText.setError(errMsg);
+		// editText.requestFocus();
 	}
 
-	public static String getText(EditText et, int minLen, String errMsg)
+	public static String getText(EditText editText, int minLen, String errMsg)
 			throws InputValidationException {
-		String txt = getTrimmed(et);
+		String txt = getTrimmed(editText);
 		if (txt.length() < minLen) {
-			throwValidationException(et, errMsg);
+			throw new InputValidationException(editText, errMsg);
 		}
 		return txt;
 	}
 
-	public static String getText(EditText et, Pattern pattern, String errMsg)
+	public static String getText(EditText editText, Pattern pattern, String errMsg)
 			throws InputValidationException {
-		String txt = getTrimmed(et);
+		String txt = getTrimmed(editText);
 		if (!pattern.matcher(txt).matches()) {
-			throwValidationException(et, errMsg);
+			throw new InputValidationException(editText, errMsg);
 		}
 		return txt;
 	}
@@ -55,11 +57,4 @@ public abstract class ViewInputVaildator {
 	public static String getTrimmed(EditText et) {
 		return et.getText().toString().trim();
 	}
-
-	private static void throwValidationException(View v, String errMsg)
-			throws InputValidationException {
-		v.requestFocus();
-		throw new InputValidationException(v, errMsg);
-	}
-
 }
