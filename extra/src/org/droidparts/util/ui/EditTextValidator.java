@@ -21,35 +21,41 @@ import android.widget.EditText;
 
 public abstract class EditTextValidator {
 
-	static class InputValidationException extends Exception {
+	static class ValidationException extends Exception {
 		private static final long serialVersionUID = 1L;
 
 		public final EditText editText;
 		public final String errorMessage;
 
-		public InputValidationException(EditText et, String errMsg) {
+		public ValidationException(EditText et, String errMsg) {
 			this.editText = et;
 			this.errorMessage = errMsg;
 		}
 
-		// editText.setError(errMsg);
-		// editText.requestFocus();
 	}
 
+	// Typical handling:
+	// editText.setError(errMsg);
+	// editText.requestFocus();
+	//
+	// Empty popup fix:
+	// <item
+	// name="android:textColorPrimaryInverse">@android:color/primary_text_light</item>
+
 	public static String getText(EditText editText, int minLen, String errMsg)
-			throws InputValidationException {
+			throws ValidationException {
 		String txt = getTrimmed(editText);
 		if (txt.length() < minLen) {
-			throw new InputValidationException(editText, errMsg);
+			throw new ValidationException(editText, errMsg);
 		}
 		return txt;
 	}
 
-	public static String getText(EditText editText, Pattern pattern, String errMsg)
-			throws InputValidationException {
+	public static String getText(EditText editText, Pattern pattern,
+			String errMsg) throws ValidationException {
 		String txt = getTrimmed(editText);
 		if (!pattern.matcher(txt).matches()) {
-			throw new InputValidationException(editText, errMsg);
+			throw new ValidationException(editText, errMsg);
 		}
 		return txt;
 	}
