@@ -42,6 +42,19 @@ public abstract class EditTextValidator {
 	// <item
 	// name="android:textColorPrimaryInverse">@android:color/primary_text_light</item>
 
+	public static String getText(EditText editText, int minLen, int errMsgResId)
+			throws ValidationException {
+		return getText(editText, minLen,
+				editText.getContext().getString(errMsgResId));
+
+	}
+
+	public static String getText(EditText editText, Pattern pattern,
+			int errMsgResId) throws ValidationException {
+		return getText(editText, pattern,
+				editText.getContext().getString(errMsgResId));
+	}
+
 	public static String getText(EditText editText, int minLen, String errMsg)
 			throws ValidationException {
 		String txt = getTrimmed(editText);
