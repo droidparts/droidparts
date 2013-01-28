@@ -88,7 +88,7 @@ public class ImagePicker {
 		return handled;
 	}
 
-	static class Localization {
+	public static class Localization {
 		public String takeAPicture;
 		public String chooseFromLibrary;
 		public String delete;
