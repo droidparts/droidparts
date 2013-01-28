@@ -23,16 +23,14 @@ public final class BitmapUtils {
 		return bm.getRowBytes() * bm.getHeight();
 	}
 
-	public static Bitmap scaleBitmap(Bitmap bm, int maxSidePx) {
+	public static Bitmap scaleBitmap(Bitmap bm, int sidePx, boolean max) {
 		float w = bm.getWidth();
 		float h = bm.getHeight();
-		if (w > h) {
-			h = (maxSidePx / w) * h;
-			w = maxSidePx;
-		} else {
-			w = (maxSidePx / h) * w;
-			h = maxSidePx;
-		}
+		float wRatio = sidePx / w;
+		float hRatio = sidePx / h;
+		float ratio = max ? Math.min(wRatio, hRatio) : Math.max(wRatio, hRatio);
+		w = ratio * w;
+		h = ratio * h;
 		return Bitmap.createScaledBitmap(bm, (int) w, (int) h, true);
 	}
 
