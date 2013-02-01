@@ -57,7 +57,6 @@ public class ListViewSynchronizer implements OnTouchListener, OnScrollListener {
 	 */
 	@Override
 	public boolean onTouch(View v, MotionEvent event) {
-		boolean dispatched = false;
 		if (v == leftListView && !dispatched) {
 			dispatched = true;
 			rightListView.dispatchTouchEvent(event);
@@ -65,8 +64,11 @@ public class ListViewSynchronizer implements OnTouchListener, OnScrollListener {
 			dispatched = true;
 			leftListView.dispatchTouchEvent(event);
 		}
+		dispatched = false;
 		return false;
 	}
+
+	private boolean dispatched = false;
 
 	/**
 	 * Synchronizing scrolling Distance from the top of the first visible
