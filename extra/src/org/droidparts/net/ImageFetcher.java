@@ -26,6 +26,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadPoolExecutor;
 
 import org.droidparts.http.RESTClient;
+import org.droidparts.net.cache.BitmapCache;
 import org.droidparts.net.cache.BitmapDiskCache;
 import org.droidparts.net.cache.BitmapMemoryCache;
 import org.droidparts.util.L;
@@ -46,8 +47,8 @@ public class ImageFetcher {
 
 	private final RESTClient restClient;
 
-	private final BitmapMemoryCache memoryCache;
-	private final BitmapDiskCache diskCache;
+	private final BitmapCache memoryCache;
+	private final BitmapCache diskCache;
 
 	final ThreadPoolExecutor cacheExecutor;
 	final ThreadPoolExecutor fetchExecutor;
@@ -66,8 +67,8 @@ public class ImageFetcher {
 	}
 
 	protected ImageFetcher(Context ctx, ThreadPoolExecutor fetchExecutor,
-			RESTClient restClient, BitmapMemoryCache memoryCache,
-			BitmapDiskCache diskCache) {
+			RESTClient restClient, BitmapCache memoryCache,
+			BitmapCache diskCache) {
 		this.fetchExecutor = fetchExecutor;
 		this.restClient = restClient;
 		this.memoryCache = memoryCache;
@@ -120,16 +121,19 @@ public class ImageFetcher {
 	//
 
 	public void clearCacheOlderThan(int hours) {
-		if (diskCache != null) {
+		if (diskCache != null && diskCache instanceof BitmapDiskCache) {
 			final long timestamp = System.currentTimeMillis() - hours * 60 * 60
 					* 1000;
 			cacheExecutor.execute(new Runnable() {
 
 				@Override
 				public void run() {
-					diskCache.purgeFilesAccessedBefore(timestamp);
+					((BitmapDiskCache) diskCache)
+							.purgeFilesAccessedBefore(timestamp);
 				}
 			});
+		} else {
+			L.w("Failed to clear null or incompatible disk cache.");
 		}
 	}
 

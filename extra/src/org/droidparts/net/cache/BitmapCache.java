@@ -17,9 +17,9 @@ package org.droidparts.net.cache;
 
 import android.graphics.Bitmap;
 
-public interface BitmapLruCache {
+public interface BitmapCache {
 
-	Bitmap put(String key, Bitmap bm);
+	boolean put(String key, Bitmap bm);
 
 	Bitmap get(String key);
 

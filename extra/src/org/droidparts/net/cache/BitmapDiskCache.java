@@ -33,7 +33,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 
-public class BitmapDiskCache {
+public class BitmapDiskCache implements BitmapCache {
 
 	private static final String DEFAULT_DIR = "img";
 
@@ -58,6 +58,7 @@ public class BitmapDiskCache {
 		cacheDir.mkdirs();
 	}
 
+	@Override
 	public boolean put(String key, Bitmap bm) {
 		File file = getCachedFile(key);
 		BufferedOutputStream bos = null;
@@ -74,6 +75,7 @@ public class BitmapDiskCache {
 		}
 	}
 
+	@Override
 	public Bitmap get(String key) {
 		Bitmap bm = null;
 		File file = getCachedFile(key);
