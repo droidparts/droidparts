@@ -73,7 +73,7 @@ public abstract class EntityCursorAdapter<EntityType extends Entity> extends
 
 	private boolean requeryOnSuccess(boolean success) {
 		if (success) {
-			getCursor().requery();
+			requeryData();
 		}
 		return success;
 	}
