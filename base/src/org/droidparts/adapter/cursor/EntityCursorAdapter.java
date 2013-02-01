@@ -57,7 +57,6 @@ public abstract class EntityCursorAdapter<EntityType extends Entity> extends
 	public EntityType read(int position) {
 		long id = getItemId(position);
 		EntityType item = entityManager.read(id);
-		entityManager.fillEagerForeignKeys(item);
 		return item;
 	}
 

@@ -16,6 +16,12 @@
 package org.droidparts.util.ui;
 
 import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.Paint;
+import android.graphics.PorterDuff.Mode;
+import android.graphics.PorterDuffXfermode;
+import android.graphics.Rect;
+import android.graphics.RectF;
 
 public final class BitmapUtils {
 
@@ -23,17 +29,45 @@ public final class BitmapUtils {
 		return bm.getRowBytes() * bm.getHeight();
 	}
 
-	public static Bitmap scaleBitmap(Bitmap bm, int maxSidePx) {
+	public static Bitmap getScaled(Bitmap bm, int sidePx, boolean max) {
 		float w = bm.getWidth();
 		float h = bm.getHeight();
-		if (w > h) {
-			h = (maxSidePx / w) * h;
-			w = maxSidePx;
-		} else {
-			w = (maxSidePx / h) * w;
-			h = maxSidePx;
-		}
+		float wRatio = sidePx / w;
+		float hRatio = sidePx / h;
+		float ratio = max ? Math.min(wRatio, hRatio) : Math.max(wRatio, hRatio);
+		w = ratio * w;
+		h = ratio * h;
 		return Bitmap.createScaledBitmap(bm, (int) w, (int) h, true);
+	}
+
+	public static Bitmap getSquare(Bitmap bm) {
+		int w = bm.getWidth();
+		int h = bm.getHeight();
+		int side = (w > h) ? h : w;
+		return Bitmap.createBitmap(bm, 0, 0, side, side);
+	}
+
+	public static Bitmap getRounded(Bitmap bm, int cornerRadiusPx) {
+		int w = bm.getWidth();
+		int h = bm.getHeight();
+
+		Bitmap bmOut = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888);
+		Canvas canvas = new Canvas(bmOut);
+
+		Paint paint = new Paint();
+		paint.setAntiAlias(true);
+		paint.setColor(0xff424242);
+
+		Rect rect = new Rect(0, 0, w, h);
+		RectF rectF = new RectF(rect);
+
+		canvas.drawARGB(0, 0, 0, 0);
+		canvas.drawRoundRect(rectF, cornerRadiusPx, cornerRadiusPx, paint);
+
+		paint.setXfermode(new PorterDuffXfermode(Mode.SRC_IN));
+		canvas.drawBitmap(bm, rect, rect, paint);
+
+		return bmOut;
 	}
 
 }

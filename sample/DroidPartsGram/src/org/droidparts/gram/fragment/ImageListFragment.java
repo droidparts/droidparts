@@ -28,7 +28,7 @@ public class ImageListFragment extends ListFragment implements
 
 	public static interface Listener {
 
-		void onShowImageDetail(int position);
+		void doShowImageDetail(int position);
 
 	}
 
@@ -42,7 +42,7 @@ public class ImageListFragment extends ListFragment implements
 
 	@Override
 	public void onListItemClick(ListView l, View v, int position, long id) {
-		listener.onShowImageDetail(position);
+		listener.doShowImageDetail(position);
 	}
 
 }

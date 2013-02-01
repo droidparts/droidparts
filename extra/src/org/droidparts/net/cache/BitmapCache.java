@@ -13,16 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License. 
  */
-package org.droidparts.service.listener;
+package org.droidparts.net.cache;
 
-import android.os.Handler;
-import android.os.Looper;
-import android.os.ResultReceiver;
+import android.graphics.Bitmap;
 
-public class MainThreadResultReceiver extends ResultReceiver {
+public interface BitmapCache {
 
-	public MainThreadResultReceiver() {
-		super(new Handler(Looper.getMainLooper()));
-	}
+	boolean put(String key, Bitmap bm);
+
+	Bitmap get(String key);
 
 }

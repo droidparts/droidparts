@@ -15,11 +15,11 @@
  */
 package org.droidparts.util;
 
+import static org.droidparts.util.ui.ViewUtils.dpToPx;
 import android.app.Activity;
 import android.content.Context;
 import android.content.res.Configuration;
 import android.os.Build;
-import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.FrameLayout;
@@ -38,11 +38,6 @@ public class SecretFragmentsUtil {
 		px = dpToPx(ctx, 32);
 		fl.addView(pb, new LayoutParams(px, px, Gravity.CENTER));
 		return fl;
-	}
-
-	private static int dpToPx(Context ctx, int val) {
-		return (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,
-				val, ctx.getResources().getDisplayMetrics());
 	}
 
 	protected static final int CONTENT_VIEW_ID = 140584;

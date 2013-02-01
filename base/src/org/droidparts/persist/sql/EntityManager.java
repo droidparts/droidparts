@@ -99,13 +99,6 @@ public class EntityManager<EntityType extends Entity> extends
 		return ctx;
 	}
 
-	public void fillEagerForeignKeys(EntityType item) {
-		String[] eagerColumnNames = getEagerForeignKeyColumnNames();
-		if (eagerColumnNames.length != 0) {
-			fillForeignKeys(item, eagerColumnNames);
-		}
-	}
-
 	@Override
 	public EntityType readRow(Cursor cursor) {
 		EntityType entity = instantiate(cls);
@@ -170,6 +163,14 @@ public class EntityManager<EntityType extends Entity> extends
 					subManager(spec.field).create(foreignEntity);
 				}
 			}
+		}
+	}
+
+	@Override
+	protected void fillEagerForeignKeys(EntityType item) {
+		String[] eagerColumnNames = getEagerForeignKeyColumnNames();
+		if (eagerColumnNames.length != 0) {
+			fillForeignKeys(item, eagerColumnNames);
 		}
 	}
 

@@ -20,7 +20,7 @@ import java.util.HashSet;
 
 import org.droidparts.gram.R;
 import org.droidparts.persist.AbstractPrefsManager;
-import org.droidparts.preference.MultiSelectListPreference;
+import org.droidparts.widget.MultiSelectListPreference;
 
 import android.content.Context;
 

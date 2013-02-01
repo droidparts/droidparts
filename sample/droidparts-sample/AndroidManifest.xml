@@ -23,7 +23,7 @@
         </activity>
         
         <activity
-            android:name=".activity.EntryListAsJSONActivity"
+            android:name=".activity.JsonViewActivity"
             android:theme="@android:style/Theme.Dialog" />
         
     </application>
