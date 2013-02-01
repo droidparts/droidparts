@@ -74,6 +74,7 @@ public abstract class AsyncTask<Params, Progress, Result> extends
 			L.i("Executed " + getClass().getSimpleName() + " in "
 					+ (System.currentTimeMillis() - start) + " ms.");
 		} catch (Exception e) {
+			L.w(e);
 			ex = e;
 		}
 		return new Pair<Exception, Result>(ex, res);

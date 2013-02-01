@@ -93,7 +93,7 @@ public abstract class SimpleIntentService extends IntentService {
 				resultReceiver.send(RESULT_OK, data);
 			}
 		} catch (Exception e) {
-			L.d(e);
+			L.w(e);
 			if (resultReceiver != null) {
 				data.putSerializable(EXTRA_EXCEPTION, e);
 				resultReceiver.send(RESULT_CANCELED, data);
