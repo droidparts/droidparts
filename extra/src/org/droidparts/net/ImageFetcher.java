@@ -226,6 +226,9 @@ public class ImageFetcher {
 	}
 
 	Bitmap reshapeAndCache(String imgUrl, Bitmap bm) {
+		if (diskCache != null) {
+			diskCache.put(imgUrl, bm);
+		}
 		if (reshaper != null) {
 			bm = reshaper.reshape(bm);
 		}
@@ -233,7 +236,7 @@ public class ImageFetcher {
 		if (memoryCache != null) {
 			memoryCache.put(key, bm);
 		}
-		if (diskCache != null) {
+		if (diskCache != null && reshaper != null) {
 			diskCache.put(key, bm);
 		}
 		return bm;
