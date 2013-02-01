@@ -80,7 +80,7 @@ public class EntryListActivity extends ListActivity implements OnClickListener {
 			Entry entry = adapter.read(i);
 			list.add(entry);
 		}
-		Intent intent = EntryListAsJSONActivity.getIntent(this, list);
+		Intent intent = JsonViewActivity.getIntent(this, list);
 		startActivity(intent);
 	}
 }

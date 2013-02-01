@@ -21,13 +21,12 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.TextView;
 
-public class EntryListAsJSONActivity extends Activity implements
-		OnClickListener {
+public class JsonViewActivity extends Activity implements OnClickListener {
 
 	private static final String EXTRA_ARR_STR = "arr_str";
 
 	public static Intent getIntent(Context ctx, ArrayList<Entry> entries) {
-		Intent intent = new Intent(ctx, EntryListAsJSONActivity.class);
+		Intent intent = new Intent(ctx, JsonViewActivity.class);
 		intent.putExtra(EXTRA_ARR_STR, entries);
 		return intent;
 	}
@@ -45,7 +44,7 @@ public class EntryListAsJSONActivity extends Activity implements
 
 	@Override
 	public void onPreInject() {
-		setContentView(R.layout.activity_entry_list_as_json);
+		setContentView(R.layout.activity_json_view);
 	}
 
 	@Override
