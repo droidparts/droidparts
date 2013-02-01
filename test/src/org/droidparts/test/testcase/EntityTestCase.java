@@ -227,9 +227,6 @@ public class EntityTestCase extends AndroidTestCase implements DB {
 		track.nullableAlbum = album;
 		trackManager.create(track);
 		track = trackManager.read(track.id);
-		assertNull(track.album.name);
-		assertNull(track.nullableAlbum.name);
-		trackManager.fillEagerForeignKeys(track);
 		assertNotNull(track.album.name);
 		assertNull(track.nullableAlbum.name);
 	}

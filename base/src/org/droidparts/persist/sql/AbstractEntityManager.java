@@ -153,11 +153,20 @@ public abstract class AbstractEntityManager<EntityType extends Entity>
 	}
 
 	public EntityType readFirst(Select<EntityType> select) {
-		return PersistUtils.readFirst(this, select.execute());
+		EntityType item = PersistUtils.readFirst(this, select.execute());
+		if (item != null) {
+			fillEagerForeignKeys(item);
+		}
+		return item;
 	}
 
 	public ArrayList<EntityType> readAll(Select<EntityType> select) {
-		return PersistUtils.readAll(this, select.execute());
+		ArrayList<EntityType> list = PersistUtils.readAll(this,
+				select.execute());
+		for (EntityType item : list) {
+			fillEagerForeignKeys(item);
+		}
+		return list;
 	}
 
 	public abstract EntityType readRow(Cursor cursor);
@@ -173,5 +182,7 @@ public abstract class AbstractEntityManager<EntityType extends Entity>
 	protected abstract ContentValues toContentValues(EntityType item);
 
 	protected abstract void createForeignKeys(EntityType item);
+
+	protected abstract void fillEagerForeignKeys(EntityType item);
 
 }
