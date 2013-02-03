@@ -63,7 +63,7 @@ public class ImagePicker {
 		dialog.show();
 	}
 
-	public boolean onActivityResult(int requestCode, int resultCode, Intent data) {
+	public boolean handleActivityResult(int requestCode, int resultCode, Intent data) {
 		boolean handled = false;
 		Bitmap bm = null;
 		switch (requestCode) {
