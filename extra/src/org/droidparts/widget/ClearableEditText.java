@@ -26,10 +26,11 @@ import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnTouchListener;
+import android.view.View.OnFocusChangeListener;
 import android.widget.EditText;
 
 public class ClearableEditText extends EditText implements OnTouchListener,
-		TextWatcherListener {
+		OnFocusChangeListener, TextWatcherListener {
 
 	public interface Listener {
 		void didClearEditText();
@@ -65,6 +66,7 @@ public class ClearableEditText extends EditText implements OnTouchListener,
 	private void init() {
 		setClearDrawable(android.R.drawable.presence_offline);
 		super.setOnTouchListener(this);
+		super.setOnFocusChangeListener(this);
 		addTextChangedListener(new TextWatcherAdapter(this, this));
 		onTextChanged(this, getText().toString());
 	}
@@ -74,8 +76,14 @@ public class ClearableEditText extends EditText implements OnTouchListener,
 		this.l = l;
 	}
 
-	private OnTouchListener l;
+	@Override
+	public void setOnFocusChangeListener(OnFocusChangeListener f) {
+		this.f = f;
+	}
 
+	private OnTouchListener l;
+	private OnFocusChangeListener f;
+	
 	@Override
 	public boolean onTouch(View v, MotionEvent event) {
 		if (getCompoundDrawables()[2] != null) {
@@ -99,9 +107,22 @@ public class ClearableEditText extends EditText implements OnTouchListener,
 
 	@Override
 	public void onTextChanged(EditText view, String text) {
+		toggleClearDrawable(text);
+	}
+
+	@Override
+	public void onFocusChange(View v, boolean hasFocus) {
+		if(hasFocus) {
+			toggleClearDrawable(getText().toString());
+		}
+		if (f != null) {
+			f.onFocusChange(v, hasFocus);
+		}
+	}
+
+	private void toggleClearDrawable(String text) {
 		Drawable x = isEmpty(text) ? null : xD;
 		setCompoundDrawables(getCompoundDrawables()[0],
 				getCompoundDrawables()[1], x, getCompoundDrawables()[3]);
 	}
-
 }
