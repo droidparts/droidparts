@@ -33,7 +33,7 @@ public class AndroidMarketHelper {
 		this.ctx = ctx;
 	}
 
-	public void showPackage(String pkgName) {
+	public void showDetail(String pkgName) {
 		launchMarket("market://details?id=" + pkgName);
 	}
 

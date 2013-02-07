@@ -39,4 +39,11 @@ public abstract class CursorAdapter extends android.widget.CursorAdapter {
 		return ctx;
 	}
 
+	public void requeryData() {
+		Cursor c = getCursor();
+		if (c != null) {
+			c.requery();
+		}
+	}
+
 }

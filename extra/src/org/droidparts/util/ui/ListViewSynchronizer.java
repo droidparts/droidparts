@@ -37,7 +37,7 @@ public class ListViewSynchronizer implements OnTouchListener, OnScrollListener {
 		rightListView = second;
 	}
 
-	public void init() {
+	public void synchronize() {
 		ListAdapter leftAdapter = leftListView.getAdapter();
 		ListAdapter rightAdapter = rightListView.getAdapter();
 		if (leftAdapter == null || rightAdapter == null) {
@@ -50,6 +50,13 @@ public class ListViewSynchronizer implements OnTouchListener, OnScrollListener {
 		rightListView.setOnTouchListener(this);
 		leftListView.setOnScrollListener(this);
 		rightListView.setOnScrollListener(this);
+	}
+
+	public void desynchronize() {
+		leftListView.setOnTouchListener(null);
+		rightListView.setOnTouchListener(null);
+		leftListView.setOnScrollListener(null);
+		rightListView.setOnScrollListener(null);
 	}
 
 	/**

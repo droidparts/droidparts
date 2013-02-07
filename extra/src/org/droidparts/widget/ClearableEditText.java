@@ -15,7 +15,7 @@
  */
 package org.droidparts.widget;
 
-import static org.droidparts.util.Strings.isEmpty;
+import static org.droidparts.util.Strings.isNotEmpty;
 
 import org.droidparts.adapter.ui.TextWatcherAdapter;
 import org.droidparts.adapter.ui.TextWatcherAdapter.TextWatcherListener;
@@ -25,8 +25,8 @@ import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.View.OnTouchListener;
 import android.view.View.OnFocusChangeListener;
+import android.view.View.OnTouchListener;
 import android.widget.EditText;
 
 public class ClearableEditText extends EditText implements OnTouchListener,
@@ -68,7 +68,6 @@ public class ClearableEditText extends EditText implements OnTouchListener,
 		super.setOnTouchListener(this);
 		super.setOnFocusChangeListener(this);
 		addTextChangedListener(new TextWatcherAdapter(this, this));
-		onTextChanged(this, getText().toString());
 	}
 
 	@Override
@@ -83,7 +82,7 @@ public class ClearableEditText extends EditText implements OnTouchListener,
 
 	private OnTouchListener l;
 	private OnFocusChangeListener f;
-	
+
 	@Override
 	public boolean onTouch(View v, MotionEvent event) {
 		if (getCompoundDrawables()[2] != null) {
@@ -106,22 +105,24 @@ public class ClearableEditText extends EditText implements OnTouchListener,
 	}
 
 	@Override
-	public void onTextChanged(EditText view, String text) {
-		toggleClearDrawable(text);
-	}
-
-	@Override
 	public void onFocusChange(View v, boolean hasFocus) {
-		if(hasFocus) {
-			toggleClearDrawable(getText().toString());
+		if (hasFocus) {
+			setClearShown(isNotEmpty(getText()));
+		} else {
+			setClearShown(false);
 		}
 		if (f != null) {
 			f.onFocusChange(v, hasFocus);
 		}
 	}
 
-	private void toggleClearDrawable(String text) {
-		Drawable x = isEmpty(text) ? null : xD;
+	@Override
+	public void onTextChanged(EditText view, String text) {
+		setClearShown(isNotEmpty(text));
+	}
+
+	private void setClearShown(boolean shown) {
+		Drawable x = shown ? xD : null;
 		setCompoundDrawables(getCompoundDrawables()[0],
 				getCompoundDrawables()[1], x, getCompoundDrawables()[3]);
 	}
