@@ -158,11 +158,19 @@ public final class TypeHelper {
 	}
 
 	public static Object toTypeArr(Class<?> arrValType, Object[] arr) {
-		String[] arr2 = new String[arr.length];
-		for (int i = 0; i < arr.length; i++) {
-			arr2[i] = arr[i].toString();
+		if (isModel(arrValType)) {
+			Object modelArr = Array.newInstance(arrValType, arr.length);
+			for (int i = 0; i < arr.length; i++) {
+				Array.set(modelArr, i, arr[i]);
+			}
+			return modelArr;
+		} else {
+			String[] arr2 = new String[arr.length];
+			for (int i = 0; i < arr.length; i++) {
+				arr2[i] = arr[i].toString();
+			}
+			return toTypeArr(arrValType, arr2);
 		}
-		return toTypeArr(arrValType, arr2);
 	}
 
 	public static Object toTypeArr(Class<?> arrValType, String[] arr) {
@@ -222,8 +230,8 @@ public final class TypeHelper {
 			ArrayList<JSONArray> list = toTypeColl(JSONArray.class, arr);
 			return list.toArray(new JSONArray[list.size()]);
 		} else {
-			throw new IllegalArgumentException("Unable to convert to"
-					+ arrValType);
+			throw new IllegalArgumentException("Unable to convert to "
+					+ arrValType + ".");
 		}
 	}
 
