@@ -45,6 +45,9 @@ public class ListViewSynchronizer implements OnTouchListener, OnScrollListener {
 		}
 		leftViewsHeights = new int[leftAdapter.getCount()];
 		rightViewsHeights = new int[rightAdapter.getCount()];
+		// reset getFirstVisiblePosition()
+		leftListView.setAdapter(leftAdapter);
+		rightListView.setAdapter(rightAdapter);
 		//
 		leftListView.setOnTouchListener(this);
 		rightListView.setOnTouchListener(this);
