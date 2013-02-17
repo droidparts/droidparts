@@ -1,3 +1,7 @@
+1.1.0 /2013-02-18/:
+    * base, extra & fragments got merged into a single library. Thank ADT bug.
+    * Misc fixes & tweaks.
+
 1.0.8 /2013-02-01/:
     * Changed EntityManager to fill eager foreign keys.
     * BitmapUtils: a couple of new methods.
