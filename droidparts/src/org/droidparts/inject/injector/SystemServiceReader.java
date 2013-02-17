@@ -95,7 +95,7 @@ public class SystemServiceReader {
 				Class<?> cls = Class.forName(clsName);
 				serviceRegistry.put(cls, serviceName);
 			} catch (ClassNotFoundException e) {
-				L.i(clsName + " service not available.");
+				L.i("%s service not available.", clsName);
 			}
 		}
 	}

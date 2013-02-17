@@ -56,13 +56,13 @@ public class InjectorDelegate {
 					setFieldVal(target, spec.field, val);
 				}
 			} catch (Throwable e) {
-				L.w("Failed to inject " + cls.getSimpleName() + "#"
-						+ spec.field.getName() + ": " + e.getMessage());
+				L.w("Failed to inject %s#%s: %s.", cls.getSimpleName(),
+						spec.field.getName(), e.getMessage());
 				L.d(e);
 			}
 		}
-		L.i("Injected into " + cls.getSimpleName() + " in "
-				+ (System.currentTimeMillis() - start) + " ms.");
+		L.i("Injected into %s in %d ms.", cls.getSimpleName(),
+				(System.currentTimeMillis() - start));
 	}
 
 	protected Object getVal(Context ctx, View root, Object target, Ann<?> ann,

@@ -71,8 +71,8 @@ public abstract class AsyncTask<Params, Progress, Result> extends
 		try {
 			long start = System.currentTimeMillis();
 			res = executeInBackground(params);
-			L.i("Executed " + getClass().getSimpleName() + " in "
-					+ (System.currentTimeMillis() - start) + " ms.");
+			L.i("Executed %s in %d ms.", getClass().getSimpleName(),
+					(System.currentTimeMillis() - start));
 		} catch (Exception e) {
 			L.w(e);
 			ex = e;

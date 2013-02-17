@@ -94,9 +94,8 @@ public class DependencyReader {
 			L.d(e);
 		}
 		if (className == null) {
-			L.e("No <meta-data android:name=\""
-					+ ManifestMeta.DEPENDENCY_PROVIDER
-					+ "\" android:value=\"...\"/> in AndroidManifest.xml.");
+			L.e("No <meta-data android:name=\"%s\" android:value=\"...\"/> in AndroidManifest.xml.",
+					ManifestMeta.DEPENDENCY_PROVIDER);
 			return null;
 		}
 		if (className.startsWith(".")) {
@@ -109,7 +108,7 @@ public class DependencyReader {
 					.newInstance(ctx.getApplicationContext());
 			return adp;
 		} catch (Exception e) {
-			L.e("Not a valid DroidParts dependency provider: " + className);
+			L.e("Not a valid DroidParts dependency provider: %s.", className);
 			L.d(e);
 			return null;
 		}

@@ -264,8 +264,8 @@ public class JSONSerializer<ModelType extends Model> {
 						spec.arrCollItemType, columnVal);
 			} catch (Exception e) {
 				if (spec.ann.optional) {
-					L.w("Failded to serialize " + cls.getSimpleName() + "."
-							+ spec.field.getName() + ": " + e.getMessage());
+					L.w("Failded to serialize %s.%s: %s.", cls.getSimpleName(),
+							spec.field.getName(), e.getMessage());
 				} else {
 					throw new JSONException(Log.getStackTraceString(e));
 				}
@@ -293,12 +293,12 @@ public class JSONSerializer<ModelType extends Model> {
 				if (!NULL.equals(val)) {
 					setFieldVal(model, spec.field, val);
 				} else {
-					L.i("Received NULL '" + spec.ann.name + "', skipping.");
+					L.i("Received NULL '%s', skipping.", spec.ann.name);
 				}
 			} catch (Exception e) {
 				if (spec.ann.optional) {
-					L.w("Failed to deserialize '" + spec.ann.name + "': "
-							+ e.getMessage());
+					L.w("Failed to deserialize '%s': %s.", spec.ann.name,
+							e.getMessage());
 				} else {
 					throw new JSONException(Log.getStackTraceString(e));
 				}

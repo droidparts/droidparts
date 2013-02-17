@@ -32,31 +32,81 @@ import android.util.Log;
 public class L {
 
 	public static void v(Object obj) {
-		log(VERBOSE, obj);
+		if (shouldLog(VERBOSE)) {
+			log(VERBOSE, obj);
+		}
+	}
+
+	public static void v(String format, Object... args) {
+		if (shouldLog(VERBOSE)) {
+			log(VERBOSE, format, args);
+		}
 	}
 
 	public static void d(Object obj) {
-		log(DEBUG, obj);
+		if (shouldLog(DEBUG)) {
+			log(DEBUG, obj);
+		}
+	}
+
+	public static void d(String format, Object... args) {
+		if (shouldLog(DEBUG)) {
+			log(DEBUG, format, args);
+		}
 	}
 
 	public static void i(Object obj) {
-		log(INFO, obj);
+		if (shouldLog(INFO)) {
+			log(INFO, obj);
+		}
+	}
+
+	public static void i(String format, Object... args) {
+		if (shouldLog(INFO)) {
+			log(INFO, format, args);
+		}
 	}
 
 	public static void w(Object obj) {
-		log(WARN, obj);
+		if (shouldLog(WARN)) {
+			log(WARN, obj);
+		}
+	}
+
+	public static void w(String format, Object... args) {
+		if (shouldLog(WARN)) {
+			log(WARN, format, args);
+		}
 	}
 
 	public static void e(Object obj) {
-		log(ERROR, obj);
+		if (shouldLog(ERROR)) {
+			log(ERROR, obj);
+		}
+	}
+
+	public static void e(String format, Object... args) {
+		if (shouldLog(ERROR)) {
+			log(ERROR, format, args);
+		}
 	}
 
 	public static void wtf(Object obj) {
-		log(ASSERT, obj);
+		if (shouldLog(ASSERT)) {
+			log(ASSERT, obj);
+		}
+	}
+
+	public static void wtf(String format, Object... args) {
+		if (shouldLog(ASSERT)) {
+			log(ASSERT, format, args);
+		}
 	}
 
 	public static void wtf() {
-		log(ASSERT, "WTF");
+		if (shouldLog(ASSERT)) {
+			log(ASSERT, "WTF");
+		}
 	}
 
 	private static final String TAG = "DroidParts";
@@ -69,21 +119,33 @@ public class L {
 	private static final int ASSERT = Log.ASSERT;
 	private static final int DISABLE = 1024;
 
-	private static void log(int priority, Object obj) {
+	private static boolean shouldLog(int priority) {
 		boolean debug = isDebug();
-		if (debug || (!debug && priority >= getLogLevel())) {
-			String msg;
-			if (obj instanceof Throwable) {
-				StringWriter sw = new StringWriter();
-				((Throwable) obj).printStackTrace(new PrintWriter(sw));
-				msg = sw.toString();
-			} else {
-				msg = String.valueOf(obj);
-				if (isEmpty(msg)) {
-					msg = "\"\"";
-				}
+		boolean log = debug || (!debug && priority >= getLogLevel());
+		return log;
+	}
+
+	private static void log(int priority, Object obj) {
+		String msg;
+		if (obj instanceof Throwable) {
+			StringWriter sw = new StringWriter();
+			((Throwable) obj).printStackTrace(new PrintWriter(sw));
+			msg = sw.toString();
+		} else {
+			msg = String.valueOf(obj);
+			if (isEmpty(msg)) {
+				msg = "\"\"";
 			}
-			Log.println(priority, getTag(debug), msg);
+		}
+		Log.println(priority, getTag(isDebug()), msg);
+	}
+
+	private static void log(int priority, String format, Object... args) {
+		try {
+			String msg = String.format(format, args);
+			Log.println(priority, getTag(isDebug()), msg);
+		} catch (Exception e) {
+			e(e);
 		}
 	}
 

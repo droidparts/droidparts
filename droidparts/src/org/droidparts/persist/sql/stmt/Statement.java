@@ -126,7 +126,7 @@ public abstract class Statement<EntityType extends Entity> implements SQL {
 	}
 
 	private void errArgs(Is operator, int num) {
-		L.e("Invalid number of agruments for '" + operator + "': " + num + ".");
+		L.e("Invalid number of agruments for '%s': %d.", operator, num);
 	}
 
 	@Override
