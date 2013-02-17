@@ -1,1 +1,0 @@
-package com.actionbarsherlock.app;import android.preference.PreferenceActivity;public class SherlockPreferenceActivity extends PreferenceActivity {}
