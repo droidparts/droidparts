@@ -1,1 +1,0 @@
-package org.droidparts;public class Stub extends RuntimeException {	private static final long serialVersionUID = 1L;	public Stub() {		super("Stub implementation, real library required at runtime.");	}}

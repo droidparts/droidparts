@@ -1,1 +1,0 @@
-package com.actionbarsherlock.app;import android.support.v4.app.DialogFragment;public class SherlockDialogFragment extends DialogFragment {}
