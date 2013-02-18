@@ -125,7 +125,7 @@ public class Injector {
 
 	//
 
-	public final void inject(Context ctx, View root, Object target) {
+	private void inject(Context ctx, View root, Object target) {
 		long start = System.currentTimeMillis();
 		final Class<?> cls = target.getClass();
 		for (FieldSpec<InjectAnn<?>> spec : getInjectSpecs(cls)) {
@@ -144,7 +144,7 @@ public class Injector {
 				(System.currentTimeMillis() - start));
 	}
 
-	protected Object getVal(Context ctx, View root, Object target, Ann<?> ann,
+	private Object getVal(Context ctx, View root, Object target, Ann<?> ann,
 			Field field) throws Exception {
 		Class<?> annType = ann.getClass();
 		Object val = null;
@@ -182,7 +182,7 @@ public class Injector {
 		return val;
 	}
 
-	protected Bundle getIntentExtras(Object obj) {
+	private Bundle getIntentExtras(Object obj) {
 		Bundle data = null;
 		if (obj instanceof Activity) {
 			data = ((Activity) obj).getIntent().getExtras();
