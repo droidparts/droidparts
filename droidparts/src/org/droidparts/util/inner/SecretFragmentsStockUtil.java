@@ -13,20 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License. 
  */
-package org.droidparts.util.fragments;
+package org.droidparts.util.inner;
 
-import android.support.v4.app.DialogFragment;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
+import android.app.Activity;
+import android.app.DialogFragment;
+import android.app.Fragment;
+import android.app.FragmentManager;
+import android.app.FragmentTransaction;
 
-public class SecretFragmentsSupportUtil extends SecretFragmentsUtil {
+public class SecretFragmentsStockUtil extends SecretFragmentsUtil {
 
 	public static void fragmentActivitySetFragmentVisible(
-			FragmentActivity fragmentActivity, boolean visible,
-			Fragment... fragments) {
-		FragmentManager fm = fragmentActivity.getSupportFragmentManager();
+			Activity fragmentActivity, boolean visible, Fragment... fragments) {
+		FragmentManager fm = fragmentActivity.getFragmentManager();
 		FragmentTransaction ft = fm.beginTransaction();
 		for (Fragment fragment : fragments) {
 			if (visible) {
@@ -39,16 +38,16 @@ public class SecretFragmentsSupportUtil extends SecretFragmentsUtil {
 	}
 
 	public static void singleFragmentActivityAddFragmentToContentView(
-			FragmentActivity fragmentActivity, Fragment fragment) {
-		FragmentManager fm = fragmentActivity.getSupportFragmentManager();
+			Activity fragmentActivity, Fragment fragment) {
+		FragmentManager fm = fragmentActivity.getFragmentManager();
 		FragmentTransaction ft = fm.beginTransaction();
 		ft.add(CONTENT_VIEW_ID, fragment);
 		ft.commit();
 	}
 
 	public static void dialogFragmentShowDialogFragment(
-			FragmentActivity fragmentActivity, DialogFragment dialogFragment) {
-		FragmentManager fm = fragmentActivity.getSupportFragmentManager();
+			Activity fragmentActivity, DialogFragment dialogFragment) {
+		FragmentManager fm = fragmentActivity.getFragmentManager();
 		String tag = dialogFragment.getClass().getName();
 		FragmentTransaction ft = fm.beginTransaction();
 		Fragment f = fm.findFragmentByTag(tag);

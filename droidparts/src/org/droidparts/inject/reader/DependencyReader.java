@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License. 
  */
-package org.droidparts.inject.injector;
+package org.droidparts.inject.reader;
 
 import static android.content.pm.PackageManager.GET_META_DATA;
 
@@ -35,7 +35,7 @@ public class DependencyReader {
 	private static AbstractDependencyProvider dependencyProvider;
 	private static HashMap<Class<?>, Method> methodRegistry = new HashMap<Class<?>, Method>();
 
-	static void init(Context ctx) {
+	public static void init(Context ctx) {
 		if (!inited) {
 			synchronized (DependencyReader.class) {
 				if (!inited) {
@@ -53,7 +53,7 @@ public class DependencyReader {
 		}
 	}
 
-	static void tearDown() {
+	public static void tearDown() {
 		if (dependencyProvider != null) {
 			dependencyProvider.getDB().close();
 		}

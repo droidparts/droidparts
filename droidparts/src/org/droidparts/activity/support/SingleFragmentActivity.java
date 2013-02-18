@@ -15,7 +15,7 @@
  */
 package org.droidparts.activity.support;
 
-import org.droidparts.util.fragments.SecretFragmentsSupportUtil;
+import org.droidparts.util.inner.SecretFragmentsSupportUtil;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;

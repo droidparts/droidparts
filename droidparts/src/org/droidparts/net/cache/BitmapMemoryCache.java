@@ -27,11 +27,9 @@ import android.graphics.Bitmap;
 public class BitmapMemoryCache implements BitmapCache {
 
 	public interface BitmapLruCache {
-
 		Bitmap put(String key, Bitmap bm);
 
 		Bitmap get(String key);
-
 	}
 
 	private static final int DEFAULT_APP_MEMORY_PERCENT = 20;
@@ -56,16 +54,11 @@ public class BitmapMemoryCache implements BitmapCache {
 				.getSystemService(ACTIVITY_SERVICE)).getMemoryClass();
 		int maxBytes = (int) (maxAvailableMemory * ((float) appMemoryPercent / 100)) * 1024 * 1024;
 		try {
-			cache = (BitmapLruCache) Class
-					.forName("org.droidparts.net.cache.StockBitmapLruCache")
-					.getConstructor(int.class).newInstance(maxBytes);
+			cache = new StockBitmapLruCache(maxBytes);
 			L.i("Using stock LruCache.");
 		} catch (Throwable t) {
 			try {
-				cache = (BitmapLruCache) Class
-						.forName(
-								"org.droidparts.net.cache.SupportBitmapLruCache")
-						.getConstructor(int.class).newInstance(maxBytes);
+				cache = new SupportBitmapLruCache(maxBytes);
 				L.i("Using Support Package LruCache.");
 			} catch (Throwable tr) {
 				L.i("LruCache not available.");

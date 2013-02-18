@@ -13,11 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License. 
  */
-package org.droidparts.adapter.spinner;
+package org.droidparts.adapter.array;
 
 import java.util.List;
 
-import org.droidparts.adapter.array.ArrayAdapter;
 
 import android.widget.Spinner;
 

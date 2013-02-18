@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License. 
  */
-package org.droidparts.inject.injector;
+package org.droidparts.inject.reader;
 
 import static org.droidparts.reflect.util.TypeHelper.isArray;
 import static org.droidparts.reflect.util.TypeHelper.isBoolean;
@@ -30,7 +30,7 @@ import android.content.res.Resources;
 
 public class ResourceReader {
 
-	static Object getVal(Context ctx, InjectResourceAnn ann, Field field)
+	public static Object getVal(Context ctx, InjectResourceAnn ann, Field field)
 			throws Exception {
 		Resources res = ctx.getResources();
 		Class<?> cls = field.getType();

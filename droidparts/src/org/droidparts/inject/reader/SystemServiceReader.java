@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License. 
  */
-package org.droidparts.inject.injector;
+package org.droidparts.inject.reader;
 
 import static org.droidparts.util.Strings.isEmpty;
 
@@ -27,8 +27,8 @@ import android.content.Context;
 
 public class SystemServiceReader {
 
-	static Object getVal(Context ctx, InjectSystemServiceAnn ann, Field field)
-			throws Exception {
+	public static Object getVal(Context ctx, InjectSystemServiceAnn ann,
+			Field field) throws Exception {
 		String serviceName = ann.name;
 		String name = isEmpty(serviceName) ? serviceRegistry.get(field
 				.getType()) : serviceName;
