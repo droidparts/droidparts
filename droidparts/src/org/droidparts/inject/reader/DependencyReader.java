@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License. 
  */
-package org.droidparts.inject.injector;
+package org.droidparts.inject.reader;
 
 import static android.content.pm.PackageManager.GET_META_DATA;
 
@@ -35,7 +35,7 @@ public class DependencyReader {
 	private static AbstractDependencyProvider dependencyProvider;
 	private static HashMap<Class<?>, Method> methodRegistry = new HashMap<Class<?>, Method>();
 
-	static void init(Context ctx) {
+	public static void init(Context ctx) {
 		if (!inited) {
 			synchronized (DependencyReader.class) {
 				if (!inited) {
@@ -53,7 +53,7 @@ public class DependencyReader {
 		}
 	}
 
-	static void tearDown() {
+	public static void tearDown() {
 		if (dependencyProvider != null) {
 			dependencyProvider.getDB().close();
 		}
@@ -94,9 +94,8 @@ public class DependencyReader {
 			L.d(e);
 		}
 		if (className == null) {
-			L.e("No <meta-data android:name=\""
-					+ ManifestMeta.DEPENDENCY_PROVIDER
-					+ "\" android:value=\"...\"/> in AndroidManifest.xml.");
+			L.e("No <meta-data android:name=\"%s\" android:value=\"...\"/> in AndroidManifest.xml.",
+					ManifestMeta.DEPENDENCY_PROVIDER);
 			return null;
 		}
 		if (className.startsWith(".")) {
@@ -109,7 +108,7 @@ public class DependencyReader {
 					.newInstance(ctx.getApplicationContext());
 			return adp;
 		} catch (Exception e) {
-			L.e("Not a valid DroidParts dependency provider: " + className);
+			L.e("Not a valid DroidParts dependency provider: %s.", className);
 			L.d(e);
 			return null;
 		}

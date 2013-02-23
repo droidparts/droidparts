@@ -1,3 +1,7 @@
+1.1.1 /2013-02-23/:
+	* Cleaned up since merge.
+	* Extra L methods.
+
 1.1.0 /2013-02-18/:
     * base, extra & fragments got merged into a single library. Thank ADT bug.
     * Misc fixes & tweaks.

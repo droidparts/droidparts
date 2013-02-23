@@ -196,7 +196,7 @@ public final class FieldSpecBuilder {
 				if (isBoolean(fieldType) || isByte(fieldType)
 						|| isFloat(fieldType) || isInteger(fieldType)
 						|| isLong(fieldType) || isShort(fieldType)) {
-					L.w(fieldType.getSimpleName() + " can't be null.");
+					L.w("%s can't be null.", fieldType.getSimpleName());
 					spec.ann.nullable = false;
 				}
 			}

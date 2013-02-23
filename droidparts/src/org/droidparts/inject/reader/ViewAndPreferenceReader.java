@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License. 
  */
-package org.droidparts.inject.injector;
+package org.droidparts.inject.reader;
 
 import java.lang.reflect.Field;
 
@@ -28,7 +28,7 @@ import android.view.View;
 
 public class ViewAndPreferenceReader {
 
-	static Object getVal(Context ctx, View rootView, InjectViewAnn ann,
+	public static Object getVal(Context ctx, View rootView, InjectViewAnn ann,
 			Object target, Field field) throws Exception {
 		boolean isView = View.class.isAssignableFrom(field.getType());
 		boolean isPreference = Preference.class.isAssignableFrom(field

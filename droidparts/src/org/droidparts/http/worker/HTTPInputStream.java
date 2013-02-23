@@ -61,7 +61,7 @@ public class HTTPInputStream extends BufferedInputStream {
 
 	private static InputStream getUnpackedInputStream(String contentEncoding,
 			InputStream is) throws IOException {
-		L.d("Content-Encoding: " + contentEncoding);
+		L.d("Content-Encoding: %s.", contentEncoding);
 		if (isNotEmpty(contentEncoding)) {
 			contentEncoding = contentEncoding.toLowerCase();
 			if (contentEncoding.contains("gzip")) {

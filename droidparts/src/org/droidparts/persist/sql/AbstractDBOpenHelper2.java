@@ -51,7 +51,7 @@ public abstract class AbstractDBOpenHelper2 extends AbstractDBOpenHelper {
 			}
 			IOUtils.copy(fileFrom, fileTo);
 		} else {
-			L.e("No DB file at " + dbFilePath);
+			L.e("No DB file at %s.", dbFilePath);
 		}
 	}
 

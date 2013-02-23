@@ -48,10 +48,9 @@ public final class ReflectionUtils {
 		} catch (Exception e) {
 			String valClsName = (val != null) ? val.getClass().getSimpleName()
 					: "?";
-			L.w("Error assigning <" + valClsName + "> " + val + " to ("
-					+ field.getType().getSimpleName() + ") field "
-					+ obj.getClass().getSimpleName() + "#" + field.getName()
-					+ ": " + e.getMessage());
+			L.w("Error assigning <%s> %s to (%s) field %s#%s: %s.", valClsName,
+					val, field.getType().getSimpleName(), obj.getClass()
+							.getSimpleName(), field.getName(), e.getMessage());
 			throw new IllegalArgumentException(e);
 		}
 	}

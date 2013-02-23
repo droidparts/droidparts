@@ -13,15 +13,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License. 
  */
-package org.droidparts.inject.injector;
+package org.droidparts.adapter.array;
 
-import android.support.v4.app.Fragment;
+import java.util.Arrays;
 
-public class SupportParentActivityReader {
+import android.widget.Spinner;
 
-	static Object getVal(Object fragmentObj) {
-		Fragment fragment = (Fragment) fragmentObj;
-		return fragment.getActivity();
+public class StringSpinnerAdapter extends SpinnerAdapter<String> {
+
+	public StringSpinnerAdapter(Spinner spinner, int stringArrResId) {
+		this(spinner, getArr(spinner, stringArrResId));
+	}
+
+	public StringSpinnerAdapter(Spinner spinner, String[] arr) {
+		super(spinner, Arrays.asList(arr));
+	}
+
+	private static String[] getArr(Spinner spinner, int stringArrResId) {
+		return spinner.getContext().getResources()
+				.getStringArray(stringArrResId);
 	}
 
 }

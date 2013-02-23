@@ -169,7 +169,7 @@ public class ImageFetcher {
 			Bitmap bm = BitmapFactory.decodeByteArray(data, 0, data.length);
 			return bm;
 		} catch (final Exception e) {
-			L.w("Failed to fetch " + imgUrl);
+			L.w("Failed to fetch %s.", imgUrl);
 			L.d(e);
 			if (fetchListener != null) {
 				runOnUiThread(new Runnable() {

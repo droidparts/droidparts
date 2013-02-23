@@ -13,15 +13,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License. 
  */
-package org.droidparts.inject.injector;
+package org.droidparts.inject.reader;
 
-import android.app.Fragment;
+import org.droidparts.reflect.ann.inject.InjectBundleExtraAnn;
 
-public class NativeParentActivityReader {
+import android.os.Bundle;
 
-	static Object getVal(Object fragmentObj) {
-		Fragment fragment = (Fragment) fragmentObj;
-		return fragment.getActivity();
+public class BundleExtraReader {
+
+	public static Object getVal(InjectBundleExtraAnn ann, Bundle data)
+			throws Exception {
+		Object val = data.get(ann.key);
+		if (val == null && !ann.optional) {
+			throw new Exception("Bundle missing required key: " + ann.key);
+		} else {
+			return val;
+		}
 	}
 
 }
