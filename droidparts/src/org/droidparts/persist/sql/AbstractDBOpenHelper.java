@@ -45,12 +45,18 @@ public abstract class AbstractDBOpenHelper extends SQLiteOpenHelper implements
 
 	// helpers
 
-	protected boolean executeStatements(SQLiteDatabase db,
-			ArrayList<String> queries) {
-		return PersistUtils.executeStatements(db, queries);
+	protected final boolean createTables(SQLiteDatabase db,
+			Class<? extends Entity>... entityClasses) {
+		ArrayList<String> statements = new ArrayList<String>();
+		for (Class<? extends Entity> cls : entityClasses) {
+			String query = PersistUtils.getSQLCreate(getTableName(cls),
+					getTableColumnSpecs(cls));
+			statements.add(query);
+		}
+		return executeStatements(db, statements);
 	}
 
-	protected boolean createIndex(SQLiteDatabase db, String table,
+	protected final boolean createIndex(SQLiteDatabase db, String table,
 			boolean unique, String firstColumn, String... otherColumns) {
 		ArrayList<String> statements = new ArrayList<String>();
 		statements.add(PersistUtils.getCreateIndex(table, unique, firstColumn,
@@ -58,23 +64,22 @@ public abstract class AbstractDBOpenHelper extends SQLiteOpenHelper implements
 		return executeStatements(db, statements);
 	}
 
-	protected boolean dropTables(SQLiteDatabase db,
+	protected final boolean dropTables(SQLiteDatabase db,
 			String... optionalTableNames) {
 		return PersistUtils.dropTables(db, optionalTableNames);
+	}
+
+	protected final boolean executeStatements(SQLiteDatabase db,
+			ArrayList<String> queries) {
+		return PersistUtils.executeStatements(db, queries);
 	}
 
 	//
 
 	@Override
 	public final void onCreate(SQLiteDatabase db) {
-		ArrayList<String> statements = new ArrayList<String>();
-		for (Class<? extends Entity> cls : getEntityClasses()) {
-			String query = PersistUtils.getSQLCreate(getTableName(cls),
-					getTableColumnSpecs(cls));
-			statements.add(query);
-		}
 		onOpen(db);
-		executeStatements(db, statements);
+		createTables(db, getEntityClasses());
 		onCreateExtra(db);
 	}
 
