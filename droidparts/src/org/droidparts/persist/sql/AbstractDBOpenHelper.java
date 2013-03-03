@@ -31,8 +31,15 @@ import android.database.sqlite.SQLiteOpenHelper;
 public abstract class AbstractDBOpenHelper extends SQLiteOpenHelper implements
 		SQL.DDL {
 
+	private final Context ctx;
+
 	public AbstractDBOpenHelper(Context ctx, String name, int version) {
 		super(ctx.getApplicationContext(), name, null, version);
+		this.ctx = ctx.getApplicationContext();
+	}
+
+	public Context getContext() {
+		return ctx;
 	}
 
 	protected abstract Class<? extends Entity>[] getEntityClasses();
