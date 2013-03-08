@@ -29,16 +29,18 @@ import android.view.View.OnFocusChangeListener;
 import android.view.View.OnTouchListener;
 import android.widget.EditText;
 
+/**
+ * To change clear icon, set
+ * 
+ * <pre>
+ * android:drawableRight="@drawable/custom_icon"
+ * </pre>
+ */
 public class ClearableEditText extends EditText implements OnTouchListener,
 		OnFocusChangeListener, TextWatcherListener {
 
 	public interface Listener {
-		void didClearEditText();
-	}
-
-	public void setClearDrawable(int drawableResId) {
-		xD = getResources().getDrawable(drawableResId);
-		xD.setBounds(0, 0, xD.getIntrinsicWidth(), xD.getIntrinsicHeight());
+		void didClearText();
 	}
 
 	public void setListener(Listener listener) {
@@ -64,7 +66,13 @@ public class ClearableEditText extends EditText implements OnTouchListener,
 	}
 
 	private void init() {
-		setClearDrawable(android.R.drawable.presence_offline);
+		xD = getCompoundDrawables()[2];
+		if (xD == null) {
+			xD = getResources()
+					.getDrawable(android.R.drawable.presence_offline);
+		}
+		xD.setBounds(0, 0, xD.getIntrinsicWidth(), xD.getIntrinsicHeight());
+		setClearIconVisible(false);
 		super.setOnTouchListener(this);
 		super.setOnFocusChangeListener(this);
 		addTextChangedListener(new TextWatcherAdapter(this, this));
@@ -92,7 +100,7 @@ public class ClearableEditText extends EditText implements OnTouchListener,
 				if (tappedX) {
 					setText("");
 					if (listener != null) {
-						listener.didClearEditText();
+						listener.didClearText();
 					}
 					return true;
 				}
@@ -107,9 +115,9 @@ public class ClearableEditText extends EditText implements OnTouchListener,
 	@Override
 	public void onFocusChange(View v, boolean hasFocus) {
 		if (hasFocus) {
-			setClearShown(isNotEmpty(getText()));
+			setClearIconVisible(isNotEmpty(getText()));
 		} else {
-			setClearShown(false);
+			setClearIconVisible(false);
 		}
 		if (f != null) {
 			f.onFocusChange(v, hasFocus);
@@ -118,11 +126,11 @@ public class ClearableEditText extends EditText implements OnTouchListener,
 
 	@Override
 	public void onTextChanged(EditText view, String text) {
-		setClearShown(isNotEmpty(text));
+		setClearIconVisible(isNotEmpty(text));
 	}
 
-	private void setClearShown(boolean shown) {
-		Drawable x = shown ? xD : null;
+	protected void setClearIconVisible(boolean visible) {
+		Drawable x = visible ? xD : null;
 		setCompoundDrawables(getCompoundDrawables()[0],
 				getCompoundDrawables()[1], x, getCompoundDrawables()[3]);
 	}

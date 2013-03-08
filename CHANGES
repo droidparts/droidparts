@@ -1,3 +1,8 @@
+1.1.5 /2013-03-08/:
+    * Fixed porn.xml.
+    * DBOpenHelper: a method to create tables for new Entities.
+    * ClearableEditText: specify clear icon via xml & tweaks.
+
 1.1.1 /2013-02-23/:
 	* Cleaned up since merge.
 	* Extra L methods.
