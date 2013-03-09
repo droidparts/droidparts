@@ -322,7 +322,7 @@ public class JSONSerializer<ModelType extends Model> {
 
 	@SuppressWarnings("unchecked")
 	private JSONSerializer<Model> subSerializer(Class<?> cls) {
-		return new JSONSerializer<Model>(ctx, (Class<Model>) cls);
+		return new JSONSerializer<Model>((Class<Model>) cls, ctx);
 	}
 
 	private void throwIfRequired(FieldSpec<KeyAnn> spec) throws JSONException {

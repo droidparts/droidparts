@@ -89,7 +89,8 @@ public class EntityManager<EntityType extends Entity> extends
 		Injector.get().inject(ctx, this);
 	}
 
-	public EntityManager(Context ctx, Class<EntityType> cls, SQLiteDatabase db) {
+	protected EntityManager(Context ctx, Class<EntityType> cls,
+			SQLiteDatabase db) {
 		this.ctx = ctx.getApplicationContext();
 		this.cls = cls;
 		this.db = db;
