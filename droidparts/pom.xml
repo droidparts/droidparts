@@ -6,12 +6,12 @@
 	<parent>
 		<groupId>org.droidparts</groupId>
 		<artifactId>droidparts-parent</artifactId>
-		<version>1.0-SNAPSHOT</version>
+		<version>1.2-SNAPSHOT</version>
 	</parent>
 
 	<artifactId>droidparts</artifactId>
-	<name>DroidParts</name>
-	<packaging>apklib</packaging>
+	<name>DroidParts - Library</name>
+	<packaging>jar</packaging>
 
 	<dependencies>
 		<dependency>
@@ -21,19 +21,21 @@
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
-		    <groupId>com.google.android</groupId>
-		    <artifactId>annotations</artifactId>
-		    <version>4.1.1.4</version>
+			<groupId>com.google.android</groupId>
+			<artifactId>annotations</artifactId>
+			<version>4.1.1.4</version>
+			<optional>true</optional>
 		</dependency>
 		<dependency>
 			<groupId>com.google.android</groupId>
 			<artifactId>support-v4</artifactId>
+			<optional>true</optional>
 		</dependency>
 		<dependency>
 			<groupId>com.actionbarsherlock</groupId>
 			<artifactId>actionbarsherlock</artifactId>
 			<version>4.2.0</version>
-			<type>apklib</type>
+			<optional>true</optional>
 		</dependency>
 	</dependencies>
 
