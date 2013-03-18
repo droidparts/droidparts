@@ -19,6 +19,7 @@ import static android.content.Context.INPUT_METHOD_SERVICE;
 import static android.view.View.GONE;
 import static android.view.View.INVISIBLE;
 import static android.view.View.VISIBLE;
+import android.app.Activity;
 import android.content.Context;
 import android.os.Handler;
 import android.os.Looper;
@@ -29,6 +30,18 @@ import android.widget.EditText;
 
 public class ViewUtils {
 
+	public static <T extends View> T findViewById(View view, int id) {
+		@SuppressWarnings("unchecked")
+		T v = (T) view.findViewById(id);
+		return v;
+	}
+
+	public static <T extends View> T findViewById(Activity activity, int id) {
+		@SuppressWarnings("unchecked")
+		T v = (T) activity.findViewById(id);
+		return v;
+	}
+
 	public static void setInvisible(boolean invisible, View... views) {
 		for (View view : views) {
 			view.setVisibility(invisible ? INVISIBLE : VISIBLE);
@@ -38,6 +51,12 @@ public class ViewUtils {
 	public static void setGone(boolean gone, View... views) {
 		for (View view : views) {
 			view.setVisibility(gone ? GONE : VISIBLE);
+		}
+	}
+
+	public static void setEnabled(boolean enabled, View... views) {
+		for (View view : views) {
+			view.setEnabled(enabled);
 		}
 	}
 
