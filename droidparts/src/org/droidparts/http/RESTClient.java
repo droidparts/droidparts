@@ -114,7 +114,7 @@ public class RESTClient {
 
 	public HTTPResponse post(String uri, String contentType, String data)
 			throws HTTPException {
-		L.i("POST on \"%s\", data:\" %s\".", uri, data);
+		L.i("POST on \"%s\", data: \"%s\".", uri, data);
 		HTTPResponse response;
 		if (useHttpURLConnection()) {
 			HttpURLConnection conn = httpURLConnectionWorker.getConnection(uri,
