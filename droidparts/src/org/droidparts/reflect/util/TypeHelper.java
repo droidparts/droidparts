@@ -33,6 +33,7 @@ import org.json.JSONObject;
 
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
 
 public final class TypeHelper {
 
@@ -80,6 +81,10 @@ public final class TypeHelper {
 
 	public static boolean isUUID(Class<?> cls) {
 		return UUID.class.isAssignableFrom(cls);
+	}
+
+	public static boolean isUri(Class<?> cls) {
+		return Uri.class.isAssignableFrom(cls);
 	}
 
 	public static boolean isDate(Class<?> cls) {
@@ -220,6 +225,9 @@ public final class TypeHelper {
 		} else if (isUUID(arrValType)) {
 			ArrayList<UUID> list = toTypeColl(UUID.class, arr);
 			return list.toArray(new UUID[list.size()]);
+		} else if (isUri(arrValType)) {
+			ArrayList<Uri> list = toTypeColl(Uri.class, arr);
+			return list.toArray(new Uri[list.size()]);
 		} else if (isDate(arrValType)) {
 			ArrayList<Date> list = toTypeColl(Date.class, arr);
 			return list.toArray(new Date[list.size()]);
@@ -271,6 +279,8 @@ public final class TypeHelper {
 			return instantiateEnum(valCls, valStr);
 		} else if (isUUID(valCls)) {
 			return UUID.fromString(valStr);
+		} else if (isUri(valCls)) {
+			return Uri.parse(valStr);
 		} else if (isDate(valCls)) {
 			return new Date(Long.valueOf(valStr));
 		} else if (isJsonObject(valCls) || isJsonArray(valCls)) {

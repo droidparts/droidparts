@@ -39,6 +39,7 @@ import static org.droidparts.reflect.util.TypeHelper.isLong;
 import static org.droidparts.reflect.util.TypeHelper.isShort;
 import static org.droidparts.reflect.util.TypeHelper.isString;
 import static org.droidparts.reflect.util.TypeHelper.isUUID;
+import static org.droidparts.reflect.util.TypeHelper.isUri;
 import static org.droidparts.reflect.util.TypeHelper.toObjectArr;
 import static org.droidparts.reflect.util.TypeHelper.toTypeArr;
 import static org.droidparts.reflect.util.TypeHelper.toTypeColl;
@@ -71,6 +72,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.CompressFormat;
 import android.graphics.BitmapFactory;
+import android.net.Uri;
 
 public class EntityManager<EntityType extends Entity> extends
 		AbstractEntityManager<EntityType> {
@@ -216,6 +218,8 @@ public class EntityManager<EntityType extends Entity> extends
 			cv.put(key, (String) value);
 		} else if (isUUID(valueType)) {
 			cv.put(key, value.toString());
+		} else if (isUri(valueType)) {
+			cv.put(key, value.toString());
 		} else if (isDate(valueType)) {
 			cv.put(key, ((Date) value).getTime());
 		} else if (isBitmap(valueType)) {
@@ -276,6 +280,8 @@ public class EntityManager<EntityType extends Entity> extends
 			return cursor.getString(columnIndex);
 		} else if (isUUID(valType)) {
 			return UUID.fromString(cursor.getString(columnIndex));
+		} else if (isUri(valType)) {
+			return Uri.parse(cursor.getString(columnIndex));
 		} else if (isDate(valType)) {
 			return new Date(cursor.getLong(columnIndex));
 		} else if (isBitmap(valType)) {

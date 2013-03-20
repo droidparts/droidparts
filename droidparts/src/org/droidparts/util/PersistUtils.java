@@ -34,6 +34,7 @@ import static org.droidparts.reflect.util.TypeHelper.isLong;
 import static org.droidparts.reflect.util.TypeHelper.isShort;
 import static org.droidparts.reflect.util.TypeHelper.isString;
 import static org.droidparts.reflect.util.TypeHelper.isUUID;
+import static org.droidparts.reflect.util.TypeHelper.isUri;
 import static org.droidparts.util.Strings.join;
 import static org.json.JSONObject.NULL;
 
@@ -279,6 +280,8 @@ public final class PersistUtils implements SQL.DDL {
 		} else if (isEnum(fieldType)) {
 			return TEXT;
 		} else if (isUUID(fieldType)) {
+			return TEXT;
+		} else if (isUri(fieldType)) {
 			return TEXT;
 		} else if (isDate(fieldType)) {
 			return INTEGER;
