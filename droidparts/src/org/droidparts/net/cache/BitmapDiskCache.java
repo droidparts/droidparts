@@ -94,7 +94,7 @@ public class BitmapDiskCache implements BitmapCache {
 			}
 		}
 		if (bm == null) {
-			L.i("Cache miss for %s.", key);
+			L.i("Cache miss for '%s'.", key);
 		}
 		return bm;
 	}
