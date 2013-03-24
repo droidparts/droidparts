@@ -29,7 +29,8 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Pair;
 
-public class Select<EntityType extends Entity> extends Statement<EntityType> {
+public class Select<EntityType extends Entity> extends Statement<EntityType>
+		implements AbstractSelect<EntityType> {
 
 	private String[] columns = null;
 	private boolean distinct = false;
@@ -95,6 +96,7 @@ public class Select<EntityType extends Entity> extends Statement<EntityType> {
 		return this;
 	}
 
+	@Override
 	public Cursor execute() {
 		buildArgs();
 		L.d(describe("SELECT"));
@@ -102,6 +104,7 @@ public class Select<EntityType extends Entity> extends Statement<EntityType> {
 				selection.second, groupByStr, having, orderByStr, limitStr);
 	}
 
+	@Override
 	public int count() {
 		buildArgs();
 		L.d(describe("COUNT"));
