@@ -15,7 +15,6 @@
  */
 package org.droidparts.net.cache;
 
-import static android.graphics.Bitmap.CompressFormat.PNG;
 import static org.droidparts.contract.Constants.BUFFER_SIZE;
 
 import java.io.BufferedInputStream;
@@ -36,6 +35,9 @@ import android.graphics.BitmapFactory;
 public class BitmapDiskCache implements BitmapCache {
 
 	private static final String DEFAULT_DIR = "img";
+
+	private static final Bitmap.CompressFormat DEFAULT_COMPRESS_FORMAT = Bitmap.CompressFormat.JPEG;
+	private static final int DEFAULT_COMPRESS_QUALITY = 80;
 
 	private static BitmapDiskCache instance;
 
@@ -65,7 +67,7 @@ public class BitmapDiskCache implements BitmapCache {
 		try {
 			bos = new BufferedOutputStream(new FileOutputStream(file),
 					BUFFER_SIZE);
-			bm.compress(PNG, 100, bos);
+			bm.compress(DEFAULT_COMPRESS_FORMAT, DEFAULT_COMPRESS_QUALITY, bos);
 			return true;
 		} catch (Exception e) {
 			L.w(e);
