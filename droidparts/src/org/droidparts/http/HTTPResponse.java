@@ -15,14 +15,57 @@
  */
 package org.droidparts.http;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
+
+import org.droidparts.util.L;
 
 public class HTTPResponse {
 
 	public int code;
 	public String body;
 	public Map<String, List<String>> headers;
+
+	public String getContentType() {
+		return getHeaderString("Content-Type");
+	}
+
+	public long getLastModified() {
+		return getHeaderDate("Last-Modified");
+	}
+
+	public long getExpires() {
+		return getHeaderDate("Expires");
+	}
+
+	public String getETag() {
+		return getHeaderString("ETag");
+	}
+
+	public long getHeaderDate(String name) {
+		long date = 0;
+		String dateStr = getHeaderString(name);
+		if (dateStr != null) {
+			try {
+				date = Date.parse(dateStr);
+			} catch (Exception e) {
+				L.d(e);
+			}
+		}
+		return date;
+	}
+
+	public String getHeaderString(String name) {
+		String val = null;
+		if (headers != null) {
+			List<String> vals = headers.get(name);
+			if (vals != null && vals.size() == 1) {
+				val = vals.get(0);
+			}
+		}
+		return val;
+	}
 
 	@Override
 	public int hashCode() {

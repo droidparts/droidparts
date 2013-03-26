@@ -22,6 +22,7 @@ import static org.droidparts.http.worker.HttpURLConnectionWorker.PUT;
 
 import java.io.BufferedInputStream;
 import java.net.HttpURLConnection;
+import java.util.Date;
 
 import org.apache.http.auth.AuthScope;
 import org.apache.http.client.methods.HttpDelete;
@@ -98,14 +99,33 @@ public class RESTClient {
 	//
 
 	public HTTPResponse get(String uri) throws HTTPException {
-		L.i("GET on '%s'.", uri);
+		return get(uri, -1, null);
+	}
+
+	public HTTPResponse get(String uri, long ifModifiedSince, String etag)
+			throws HTTPException {
+		L.i("GET on '%s', If-Modified-Since: '%d', ETag: '%s'.", uri,
+				ifModifiedSince, etag);
 		HTTPResponse response;
 		if (useHttpURLConnection()) {
 			HttpURLConnection conn = httpURLConnectionWorker.getConnection(uri,
 					GET);
+			if (ifModifiedSince > 0) {
+				conn.setIfModifiedSince(ifModifiedSince);
+			}
+			if (etag != null) {
+				conn.addRequestProperty("If-None-Match", etag);
+			}
 			response = HttpURLConnectionWorker.getReponse(conn);
 		} else {
 			HttpGet req = new HttpGet(uri);
+			if (ifModifiedSince > 0) {
+				req.addHeader("If-Modified-Since",
+						new Date(ifModifiedSince).toGMTString());
+			}
+			if (etag != null) {
+				req.addHeader("If-None-Match", etag);
+			}
 			response = httpClientWorker.getReponse(req);
 		}
 		L.d(response);
