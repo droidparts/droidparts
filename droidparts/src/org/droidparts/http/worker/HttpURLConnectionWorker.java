@@ -16,6 +16,9 @@
 package org.droidparts.http.worker;
 
 import static org.droidparts.contract.Constants.UTF8;
+import static org.droidparts.contract.HTTP.Header.ACCEPT_CHARSET;
+import static org.droidparts.contract.HTTP.Header.ACCEPT_ENCODING;
+import static org.droidparts.contract.HTTP.Header.CONTENT_TYPE;
 import static org.droidparts.util.io.IOUtils.silentlyClose;
 
 import java.io.BufferedInputStream;
@@ -31,6 +34,7 @@ import java.net.URL;
 import java.net.UnknownHostException;
 
 import org.apache.http.auth.AuthScope;
+import org.droidparts.contract.HTTP.Method;
 import org.droidparts.http.CookieJar;
 import org.droidparts.http.HTTPException;
 import org.droidparts.http.HTTPResponse;
@@ -40,11 +44,6 @@ import android.content.Context;
 import android.util.Pair;
 
 public class HttpURLConnectionWorker extends HTTPWorker {
-
-	public static final String GET = "GET";
-	public static final String PUT = "PUT";
-	public static final String POST = "POST";
-	public static final String DELETE = "DELETE";
 
 	private Proxy proxy;
 	private PasswordAuthentication passAuth;
@@ -105,10 +104,11 @@ public class HttpURLConnectionWorker extends HTTPWorker {
 				}
 			}
 			conn.setRequestProperty("http.agent", userAgent);
-			conn.setRequestProperty("Accept-Encoding", "gzip,deflate");
+			conn.setRequestProperty(ACCEPT_ENCODING, "gzip,deflate");
 			setupBasicAuth();
 			conn.setRequestMethod(requestMethod);
-			if (PUT.equals(requestMethod) || POST.equals(requestMethod)) {
+			if (Method.PUT.equals(requestMethod)
+					|| Method.POST.equals(requestMethod)) {
 				conn.setDoOutput(true);
 			}
 			return conn;
@@ -119,8 +119,8 @@ public class HttpURLConnectionWorker extends HTTPWorker {
 
 	public static void postOrPut(HttpURLConnection conn, String contentType,
 			String data) throws HTTPException {
-		conn.setRequestProperty("Accept-Charset", UTF8);
-		conn.setRequestProperty("Content-Type", contentType);
+		conn.setRequestProperty(ACCEPT_CHARSET, UTF8);
+		conn.setRequestProperty(CONTENT_TYPE, contentType);
 		OutputStream os = null;
 		try {
 			os = conn.getOutputStream();
@@ -143,7 +143,7 @@ public class HttpURLConnectionWorker extends HTTPWorker {
 
 	public Pair<Integer, BufferedInputStream> getInputStream(String uri)
 			throws HTTPException {
-		HttpURLConnection conn = getConnection(uri, GET);
+		HttpURLConnection conn = getConnection(uri, Method.GET);
 		HttpURLConnectionWorker.connectAndGetResponseCodeOrThrow(conn);
 		int contentLength = conn.getContentLength();
 		HTTPInputStream is = HTTPInputStream.getInstance(conn, false);

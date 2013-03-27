@@ -27,22 +27,6 @@ public class HTTPResponse {
 	public String body;
 	public Map<String, List<String>> headers;
 
-	public String getContentType() {
-		return getHeaderString("Content-Type");
-	}
-
-	public long getLastModified() {
-		return getHeaderDate("Last-Modified");
-	}
-
-	public long getExpires() {
-		return getHeaderDate("Expires");
-	}
-
-	public String getETag() {
-		return getHeaderString("ETag");
-	}
-
 	public long getHeaderDate(String name) {
 		long date = 0;
 		String dateStr = getHeaderString(name);

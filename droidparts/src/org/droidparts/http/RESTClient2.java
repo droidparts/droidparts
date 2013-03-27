@@ -17,6 +17,7 @@ package org.droidparts.http;
 
 import java.util.Map;
 
+import org.droidparts.contract.HTTP.ContentType;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -25,10 +26,6 @@ import android.content.Context;
 import android.net.Uri;
 
 public class RESTClient2 extends RESTClient {
-
-	private static final String TEXT_PLAIN = "text/plain";
-	private static final String APPLICATION_JSON = "application/json";
-	private static final String APPLICATION_FORM_DATA = "application/x-www-form-urlencoded";
 
 	public RESTClient2(Context ctx) {
 		super(ctx);
@@ -58,27 +55,27 @@ public class RESTClient2 extends RESTClient {
 	}
 
 	public HTTPResponse put(String uri, String data) throws HTTPException {
-		return put(uri, TEXT_PLAIN, data);
+		return put(uri, ContentType.TEXT_PLAIN, data);
 	}
 
 	public HTTPResponse put(String uri, JSONObject data) throws HTTPException {
-		return put(uri, APPLICATION_JSON, data.toString());
+		return put(uri, ContentType.APPLICATION_JSON, data.toString());
 	}
 
 	public HTTPResponse put(String uri, JSONArray data) throws HTTPException {
-		return put(uri, APPLICATION_JSON, data.toString());
+		return put(uri, ContentType.APPLICATION_JSON, data.toString());
 	}
 
 	public HTTPResponse post(String uri, String data) throws HTTPException {
-		return post(uri, TEXT_PLAIN, data);
+		return post(uri, ContentType.TEXT_PLAIN, data);
 	}
 
 	public HTTPResponse post(String uri, JSONObject data) throws HTTPException {
-		return post(uri, APPLICATION_JSON, data.toString());
+		return post(uri, ContentType.APPLICATION_JSON, data.toString());
 	}
 
 	public HTTPResponse post(String uri, JSONArray data) throws HTTPException {
-		return post(uri, APPLICATION_JSON, data.toString());
+		return post(uri, ContentType.APPLICATION_JSON, data.toString());
 	}
 
 	public HTTPResponse post(String uri, Map<String, String> formData)
@@ -89,7 +86,7 @@ public class RESTClient2 extends RESTClient {
 			builder.appendQueryParameter(key, (val != null) ? val : "");
 		}
 		String query = builder.build().getQuery();
-		return post(uri, APPLICATION_FORM_DATA, query);
+		return post(uri, ContentType.APPLICATION_FORM_DATA, query);
 	}
 
 }
