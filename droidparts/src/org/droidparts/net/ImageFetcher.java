@@ -61,7 +61,7 @@ public class ImageFetcher {
 	int crossFadeMillis = 0;
 
 	public ImageFetcher(Context ctx) {
-		this(ctx, (ThreadPoolExecutor) Executors.newFixedThreadPool(1),
+		this(ctx, (ThreadPoolExecutor) Executors.newFixedThreadPool(2),
 				new RESTClient(ctx), BitmapMemoryCache.getDefaultInstance(ctx),
 				BitmapDiskCache.getDefaultInstance(ctx));
 	}
