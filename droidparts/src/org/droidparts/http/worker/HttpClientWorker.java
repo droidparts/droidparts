@@ -18,6 +18,7 @@ package org.droidparts.http.worker;
 import static org.apache.http.client.params.CookiePolicy.BROWSER_COMPATIBILITY;
 import static org.droidparts.contract.Constants.BUFFER_SIZE;
 import static org.droidparts.contract.Constants.UTF8;
+import static org.droidparts.contract.HTTP.Header.ACCEPT_ENCODING;
 
 import java.io.BufferedInputStream;
 import java.io.UnsupportedEncodingException;
@@ -118,7 +119,7 @@ public class HttpClientWorker extends HTTPWorker {
 				req.addHeader(key, val);
 			}
 		}
-		req.setHeader("Accept-Encoding", "gzip,deflate");
+		req.setHeader(ACCEPT_ENCODING, "gzip,deflate");
 		try {
 			return httpClient.execute(req);
 		} catch (Exception e) {

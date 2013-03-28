@@ -1,17 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
 	<parent>
 		<groupId>org.droidparts</groupId>
 		<artifactId>droidparts-parent</artifactId>
-		<version>1.0-SNAPSHOT</version>
+		<version>1.3-SNAPSHOT</version>
 	</parent>
 
 	<artifactId>droidparts</artifactId>
-	<name>DroidParts</name>
-	<packaging>apklib</packaging>
+	<name>DroidParts - Library</name>
+	<packaging>jar</packaging>
 
 	<dependencies>
 		<dependency>
@@ -21,19 +20,21 @@
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
-		    <groupId>com.google.android</groupId>
-		    <artifactId>annotations</artifactId>
-		    <version>4.1.1.4</version>
+			<groupId>com.google.android</groupId>
+			<artifactId>annotations</artifactId>
+			<version>4.1.1.4</version>
+			<optional>true</optional>
 		</dependency>
 		<dependency>
 			<groupId>com.google.android</groupId>
 			<artifactId>support-v4</artifactId>
+			<optional>true</optional>
 		</dependency>
 		<dependency>
 			<groupId>com.actionbarsherlock</groupId>
 			<artifactId>actionbarsherlock</artifactId>
 			<version>4.2.0</version>
-			<type>apklib</type>
+			<optional>true</optional>
 		</dependency>
 	</dependencies>
 

@@ -35,6 +35,7 @@ import static org.droidparts.reflect.util.TypeHelper.isModel;
 import static org.droidparts.reflect.util.TypeHelper.isShort;
 import static org.droidparts.reflect.util.TypeHelper.isString;
 import static org.droidparts.reflect.util.TypeHelper.isUUID;
+import static org.droidparts.reflect.util.TypeHelper.isUri;
 import static org.droidparts.reflect.util.TypeHelper.parseValue;
 import static org.droidparts.reflect.util.TypeHelper.toObjectArr;
 import static org.droidparts.reflect.util.TypeHelper.toTypeArr;
@@ -141,6 +142,8 @@ public class JSONSerializer<ModelType extends Model> {
 		} else if (isEnum(valType)) {
 			obj.put(key, val.toString());
 		} else if (isUUID(valType)) {
+			obj.put(key, val.toString());
+		} else if (isUri(valType)) {
 			obj.put(key, val.toString());
 		} else if (isDate(valType)) {
 			obj.put(key, ((Date) val).getTime());
@@ -322,7 +325,7 @@ public class JSONSerializer<ModelType extends Model> {
 
 	@SuppressWarnings("unchecked")
 	private JSONSerializer<Model> subSerializer(Class<?> cls) {
-		return new JSONSerializer<Model>(ctx, (Class<Model>) cls);
+		return new JSONSerializer<Model>((Class<Model>) cls, ctx);
 	}
 
 	private void throwIfRequired(FieldSpec<KeyAnn> spec) throws JSONException {

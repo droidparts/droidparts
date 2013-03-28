@@ -15,19 +15,17 @@
  */
 package org.droidparts.http;
 
-import static org.droidparts.http.worker.HttpURLConnectionWorker.DELETE;
-import static org.droidparts.http.worker.HttpURLConnectionWorker.GET;
-import static org.droidparts.http.worker.HttpURLConnectionWorker.POST;
-import static org.droidparts.http.worker.HttpURLConnectionWorker.PUT;
-
 import java.io.BufferedInputStream;
 import java.net.HttpURLConnection;
+import java.util.Date;
 
 import org.apache.http.auth.AuthScope;
 import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpPut;
+import org.droidparts.contract.HTTP.Header;
+import org.droidparts.contract.HTTP.Method;
 import org.droidparts.http.worker.HTTPWorker;
 import org.droidparts.http.worker.HttpClientWorker;
 import org.droidparts.http.worker.HttpURLConnectionWorker;
@@ -98,14 +96,33 @@ public class RESTClient {
 	//
 
 	public HTTPResponse get(String uri) throws HTTPException {
-		L.i("GET on %s.", uri);
+		return get(uri, -1, null);
+	}
+
+	public HTTPResponse get(String uri, long ifModifiedSince, String etag)
+			throws HTTPException {
+		L.i("GET on '%s', If-Modified-Since: '%d', ETag: '%s'.", uri,
+				ifModifiedSince, etag);
 		HTTPResponse response;
 		if (useHttpURLConnection()) {
 			HttpURLConnection conn = httpURLConnectionWorker.getConnection(uri,
-					GET);
+					Method.GET);
+			if (ifModifiedSince > 0) {
+				conn.setIfModifiedSince(ifModifiedSince);
+			}
+			if (etag != null) {
+				conn.addRequestProperty(Header.IF_NONE_MATCH, etag);
+			}
 			response = HttpURLConnectionWorker.getReponse(conn);
 		} else {
 			HttpGet req = new HttpGet(uri);
+			if (ifModifiedSince > 0) {
+				req.addHeader(Header.IF_MODIFIED_SINCE, new Date(
+						ifModifiedSince).toGMTString());
+			}
+			if (etag != null) {
+				req.addHeader(Header.IF_NONE_MATCH, etag);
+			}
 			response = httpClientWorker.getReponse(req);
 		}
 		L.d(response);
@@ -114,11 +131,11 @@ public class RESTClient {
 
 	public HTTPResponse post(String uri, String contentType, String data)
 			throws HTTPException {
-		L.i("POST on %s, data: %s.", uri, data);
+		L.i("POST on '%s', data: '%s'.", uri, data);
 		HTTPResponse response;
 		if (useHttpURLConnection()) {
 			HttpURLConnection conn = httpURLConnectionWorker.getConnection(uri,
-					POST);
+					Method.POST);
 			HttpURLConnectionWorker.postOrPut(conn, contentType, data);
 			response = HttpURLConnectionWorker.getReponse(conn);
 		} else {
@@ -132,11 +149,11 @@ public class RESTClient {
 
 	public HTTPResponse put(String uri, String contentType, String data)
 			throws HTTPException {
-		L.i("PUT on %s, data: %s.", uri, data);
+		L.i("PUT on '%s', data: '%s'.", uri, data);
 		HTTPResponse response;
 		if (useHttpURLConnection()) {
 			HttpURLConnection conn = httpURLConnectionWorker.getConnection(uri,
-					PUT);
+					Method.PUT);
 			HttpURLConnectionWorker.postOrPut(conn, contentType, data);
 			response = HttpURLConnectionWorker.getReponse(conn);
 		} else {
@@ -149,11 +166,11 @@ public class RESTClient {
 	}
 
 	public HTTPResponse delete(String uri) throws HTTPException {
-		L.i("DELETE on %s.", uri);
+		L.i("DELETE on '%s'.", uri);
 		HTTPResponse response;
 		if (useHttpURLConnection()) {
 			HttpURLConnection conn = httpURLConnectionWorker.getConnection(uri,
-					DELETE);
+					Method.DELETE);
 			response = HttpURLConnectionWorker.getReponse(conn);
 		} else {
 			HttpDelete req = new HttpDelete(uri);
@@ -165,7 +182,7 @@ public class RESTClient {
 
 	public Pair<Integer, BufferedInputStream> getInputStream(String uri)
 			throws HTTPException {
-		L.i("InputStream on %s.", uri);
+		L.i("InputStream on '%s'.", uri);
 		Pair<Integer, BufferedInputStream> resp = null;
 		if (useHttpURLConnection()) {
 			resp = httpURLConnectionWorker.getInputStream(uri);

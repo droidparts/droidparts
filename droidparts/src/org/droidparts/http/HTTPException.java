@@ -16,7 +16,7 @@
 
 package org.droidparts.http;
 
-import org.apache.http.HttpStatus;
+import org.droidparts.contract.HTTP.ResponseCode;
 
 public class HTTPException extends Exception {
 
@@ -34,7 +34,7 @@ public class HTTPException extends Exception {
 	}
 
 	/**
-	 * @see HttpStatus
+	 * @see ResponseCode
 	 */
 	public int getResponseCode() {
 		return respCode;

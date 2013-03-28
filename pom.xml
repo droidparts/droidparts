@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
 	<parent>
@@ -11,23 +10,23 @@
 
 	<groupId>org.droidparts</groupId>
 	<artifactId>droidparts-parent</artifactId>
-	<version>1.0-SNAPSHOT</version>
 	<packaging>pom</packaging>
+	
+	<version>1.3-SNAPSHOT</version>
 
-	<name>DroidParts (Parent)</name>
+	<name>DroidParts - Parent</name>
 	<description>A carefully crafted Android framework.</description>
 	<url>http://droidparts.org</url>
 	<inceptionYear>2011</inceptionYear>
 
 	<modules>
 		<module>droidparts</module>
+		<module>droidparts-test</module>
 	</modules>
 
 	<scm>
-		<connection>scm:git:git@github.com:yanchenko/droidparts.git
-		</connection>
-		<developerConnection>scm:git:git@github.com:yanchenko/droidparts.git
-		</developerConnection>
+		<connection>scm:git:git@github.com:yanchenko/droidparts.git</connection>
+		<developerConnection>scm:git:git@github.com:yanchenko/droidparts.git</developerConnection>
 		<url>https://github.com/yanchenko/droidparts</url>
 	</scm>
 
@@ -45,7 +44,7 @@
 
 	<licenses>
 		<license>
-			<name>Apache 2</name>
+			<name>Apache License Version 2.0</name>
 			<url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
 			<distribution>repo</distribution>
 		</license>
