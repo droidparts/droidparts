@@ -22,13 +22,13 @@ import static org.droidparts.util.io.IOUtils.silentlyClose;
 import java.io.BufferedInputStream;
 import java.io.ByteArrayOutputStream;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadPoolExecutor;
 
 import org.droidparts.http.RESTClient;
 import org.droidparts.net.cache.BitmapCache;
 import org.droidparts.net.cache.BitmapDiskCache;
 import org.droidparts.net.cache.BitmapMemoryCache;
+import org.droidparts.net.concurrent.BackgroundExecutor;
 import org.droidparts.util.L;
 
 import android.content.Context;
@@ -61,9 +61,9 @@ public class ImageFetcher {
 	int crossFadeMillis = 0;
 
 	public ImageFetcher(Context ctx) {
-		this(ctx, (ThreadPoolExecutor) Executors.newFixedThreadPool(2),
-				new RESTClient(ctx), BitmapMemoryCache.getDefaultInstance(ctx),
-				BitmapDiskCache.getDefaultInstance(ctx));
+		this(ctx, new BackgroundExecutor(2), new RESTClient(ctx),
+				BitmapMemoryCache.getDefaultInstance(ctx), BitmapDiskCache
+						.getDefaultInstance(ctx));
 	}
 
 	protected ImageFetcher(Context ctx, ThreadPoolExecutor fetchExecutor,
@@ -74,7 +74,7 @@ public class ImageFetcher {
 		this.memoryCache = memoryCache;
 		this.diskCache = diskCache;
 		handler = new Handler(Looper.getMainLooper());
-		cacheExecutor = (ThreadPoolExecutor) Executors.newFixedThreadPool(1);
+		cacheExecutor = new BackgroundExecutor(1);
 	}
 
 	public void setFetchListener(ImageFetchListener fetchListener) {

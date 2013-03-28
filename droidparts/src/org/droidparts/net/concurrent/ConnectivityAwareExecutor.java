@@ -20,12 +20,6 @@ import static android.net.ConnectivityManager.CONNECTIVITY_ACTION;
 import static android.net.ConnectivityManager.TYPE_MOBILE;
 import static android.net.ConnectivityManager.TYPE_WIFI;
 import static android.net.ConnectivityManager.TYPE_WIMAX;
-import static java.lang.Thread.MIN_PRIORITY;
-
-import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.ThreadFactory;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
 
 import org.droidparts.util.L;
 
@@ -36,7 +30,7 @@ import android.content.IntentFilter;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 
-public class ConnectivityAwareExecutor extends ThreadPoolExecutor {
+public class ConnectivityAwareExecutor extends BackgroundExecutor {
 
 	private final Context ctx;
 	private final int slowMobileThreads, fastMobileThreads, wifiThreads;
@@ -49,9 +43,7 @@ public class ConnectivityAwareExecutor extends ThreadPoolExecutor {
 
 	public ConnectivityAwareExecutor(Context ctx, int slowMobileThreads,
 			int fastMobileThreads, int wifiThreads) {
-		super(1, 1, 0, TimeUnit.MILLISECONDS,
-				new LinkedBlockingQueue<Runnable>(),
-				new ExecutorThreadFactory());
+		super(1);
 		this.ctx = ctx.getApplicationContext();
 		this.slowMobileThreads = slowMobileThreads;
 		this.fastMobileThreads = fastMobileThreads;
@@ -110,16 +102,5 @@ public class ConnectivityAwareExecutor extends ThreadPoolExecutor {
 			detemineNetworTypeAndUpdatePoolSize();
 		}
 	};
-
-	private static class ExecutorThreadFactory implements ThreadFactory {
-
-		@Override
-		public Thread newThread(Runnable r) {
-			Thread t = new Thread(r);
-			t.setPriority(MIN_PRIORITY);
-			return t;
-		}
-
-	}
 
 }
