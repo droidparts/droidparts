@@ -16,6 +16,7 @@
 package org.droidparts.gram.fragment;
 
 import static org.droidparts.util.Strings.join;
+import static org.droidparts.util.ui.ViewUtils.setGone;
 
 import org.droidparts.annotation.inject.InjectBundleExtra;
 import org.droidparts.annotation.inject.InjectDependency;
@@ -24,6 +25,7 @@ import org.droidparts.fragment.sherlock.DialogFragment;
 import org.droidparts.gram.R;
 import org.droidparts.gram.model.Image;
 import org.droidparts.gram.persist.PrefsManager;
+import org.droidparts.net.ImageFetchListener;
 import org.droidparts.net.ImageFetcher;
 
 import android.os.Bundle;
@@ -31,9 +33,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
-public class ImageDetailFragment extends DialogFragment {
+public class ImageDetailFragment extends DialogFragment implements
+		ImageFetchListener {
 
 	private static final String EXTRA_IMAGE = "img";
 
@@ -53,6 +57,9 @@ public class ImageDetailFragment extends DialogFragment {
 
 	@InjectView(id = R.id.view_img)
 	private ImageView imgView;
+	@InjectView(id = R.id.view_progress_bar)
+	private ProgressBar progressBarView;
+
 	@InjectView(id = R.id.view_filter)
 	private TextView filterView;
 	@InjectView(id = R.id.view_tags)
@@ -68,12 +75,37 @@ public class ImageDetailFragment extends DialogFragment {
 	public void onActivityCreated(Bundle bundle) {
 		super.onActivityCreated(bundle);
 		getDialog().setTitle(img.captionText);
-		new ImageFetcher(getActivity()).attachImage(imgView, img.imageUrl);
 		if (prefsManager.isShowDetailFilter()) {
 			filterView.setText(img.filter.name);
 		}
 		if (prefsManager.isShowDetailTags()) {
 			tagsView.setText(join(img.tags, ", ", null));
 		}
+		ImageFetcher imageFetcher = new ImageFetcher(getActivity());
+		imageFetcher.setFetchListener(this);
+		imageFetcher.attachImage(imgView, img.imageUrl);
+	}
+
+	@Override
+	public void onTaskAdded(ImageView imageView) {
+		progressBarView.setProgress(0);
+		setGone(false, progressBarView);
+	}
+
+	@Override
+	public void onDownloadProgressChanged(ImageView imageView, int kBTotal,
+			int kBReceived) {
+		int progress = (int) ((float) kBReceived / kBTotal * 100);
+		progressBarView.setProgress(progress);
+	}
+
+	@Override
+	public void onDownloadFailed(ImageView imageView, Exception e) {
+		onTaskCompleted(imageView);
+	}
+
+	@Override
+	public void onTaskCompleted(ImageView imageView) {
+		setGone(true, progressBarView);
 	}
 }
