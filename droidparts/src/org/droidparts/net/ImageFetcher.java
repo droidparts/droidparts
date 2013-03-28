@@ -28,8 +28,8 @@ import org.droidparts.http.RESTClient;
 import org.droidparts.net.cache.BitmapCache;
 import org.droidparts.net.cache.BitmapDiskCache;
 import org.droidparts.net.cache.BitmapMemoryCache;
-import org.droidparts.net.concurrent.BackgroundExecutor;
 import org.droidparts.util.L;
+import org.droidparts.util.concurrent.BackgroundExecutor;
 
 import android.content.Context;
 import android.graphics.Bitmap;
