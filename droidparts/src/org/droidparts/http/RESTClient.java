@@ -15,7 +15,6 @@
  */
 package org.droidparts.http;
 
-import java.io.BufferedInputStream;
 import java.net.HttpURLConnection;
 import java.util.Date;
 
@@ -33,7 +32,6 @@ import org.droidparts.util.L;
 
 import android.content.Context;
 import android.os.Build;
-import android.util.Pair;
 
 public class RESTClient {
 
@@ -96,13 +94,17 @@ public class RESTClient {
 	//
 
 	public HTTPResponse get(String uri) throws HTTPException {
-		return get(uri, -1, null);
+		return get(uri, -1, null, true);
 	}
 
-	public HTTPResponse get(String uri, long ifModifiedSince, String etag)
-			throws HTTPException {
-		L.i("GET on '%s', If-Modified-Since: '%d', ETag: '%s'.", uri,
-				ifModifiedSince, etag);
+	public HTTPResponse getInputStream(String uri) throws HTTPException {
+		return get(uri, -1, null, false);
+	}
+
+	public HTTPResponse get(String uri, long ifModifiedSince, String etag,
+			boolean body) throws HTTPException {
+		L.i("GET on '%s', If-Modified-Since: '%d', ETag: '%s', body: '%b'.",
+				uri, ifModifiedSince, etag, body);
 		HTTPResponse response;
 		if (useHttpURLConnection()) {
 			HttpURLConnection conn = httpURLConnectionWorker.getConnection(uri,
@@ -113,7 +115,7 @@ public class RESTClient {
 			if (etag != null) {
 				conn.addRequestProperty(Header.IF_NONE_MATCH, etag);
 			}
-			response = HttpURLConnectionWorker.getReponse(conn);
+			response = HttpURLConnectionWorker.getReponse(conn, body);
 		} else {
 			HttpGet req = new HttpGet(uri);
 			if (ifModifiedSince > 0) {
@@ -123,7 +125,7 @@ public class RESTClient {
 			if (etag != null) {
 				req.addHeader(Header.IF_NONE_MATCH, etag);
 			}
-			response = httpClientWorker.getReponse(req);
+			response = httpClientWorker.getReponse(req, body);
 		}
 		L.d(response);
 		return response;
@@ -137,11 +139,11 @@ public class RESTClient {
 			HttpURLConnection conn = httpURLConnectionWorker.getConnection(uri,
 					Method.POST);
 			HttpURLConnectionWorker.postOrPut(conn, contentType, data);
-			response = HttpURLConnectionWorker.getReponse(conn);
+			response = HttpURLConnectionWorker.getReponse(conn, true);
 		} else {
 			HttpPost req = new HttpPost(uri);
 			req.setEntity(HttpClientWorker.buildStringEntity(contentType, data));
-			response = httpClientWorker.getReponse(req);
+			response = httpClientWorker.getReponse(req, true);
 		}
 		L.d(response);
 		return response;
@@ -155,11 +157,11 @@ public class RESTClient {
 			HttpURLConnection conn = httpURLConnectionWorker.getConnection(uri,
 					Method.PUT);
 			HttpURLConnectionWorker.postOrPut(conn, contentType, data);
-			response = HttpURLConnectionWorker.getReponse(conn);
+			response = HttpURLConnectionWorker.getReponse(conn, true);
 		} else {
 			HttpPut req = new HttpPut(uri);
 			req.setEntity(HttpClientWorker.buildStringEntity(contentType, data));
-			response = httpClientWorker.getReponse(req);
+			response = httpClientWorker.getReponse(req, true);
 		}
 		L.d(response);
 		return response;
@@ -171,26 +173,13 @@ public class RESTClient {
 		if (useHttpURLConnection()) {
 			HttpURLConnection conn = httpURLConnectionWorker.getConnection(uri,
 					Method.DELETE);
-			response = HttpURLConnectionWorker.getReponse(conn);
+			response = HttpURLConnectionWorker.getReponse(conn, true);
 		} else {
 			HttpDelete req = new HttpDelete(uri);
-			response = httpClientWorker.getReponse(req);
+			response = httpClientWorker.getReponse(req, true);
 		}
 		L.d(response);
 		return response;
-	}
-
-	public Pair<Integer, BufferedInputStream> getInputStream(String uri)
-			throws HTTPException {
-		L.i("InputStream on '%s'.", uri);
-		Pair<Integer, BufferedInputStream> resp = null;
-		if (useHttpURLConnection()) {
-			resp = httpURLConnectionWorker.getInputStream(uri);
-		} else {
-			resp = httpClientWorker.getInputStream(uri);
-		}
-		L.d("Content-Length: %d.", resp.first);
-		return resp;
 	}
 
 	//

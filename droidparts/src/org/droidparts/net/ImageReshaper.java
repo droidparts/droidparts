@@ -25,7 +25,8 @@ public interface ImageReshaper {
 
 	Bitmap reshape(Bitmap bm);
 
-	Pair<CompressFormat, Integer> getCacheFormat();
+	Pair<CompressFormat, Integer> getCacheFormat(String contentType,
+			int contentLength);
 
 	// slow, supports transparency
 	Pair<CompressFormat, Integer> PNG = Pair.create(CompressFormat.PNG, 100);

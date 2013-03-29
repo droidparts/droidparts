@@ -20,7 +20,6 @@ import static org.droidparts.contract.Constants.BUFFER_SIZE;
 import static org.droidparts.contract.Constants.UTF8;
 import static org.droidparts.contract.HTTP.Header.ACCEPT_ENCODING;
 
-import java.io.BufferedInputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -28,11 +27,9 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.http.Header;
-import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.UsernamePasswordCredentials;
-import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.client.params.HttpClientParams;
 import org.apache.http.entity.StringEntity;
@@ -43,8 +40,6 @@ import org.apache.http.params.HttpProtocolParams;
 import org.droidparts.http.CookieJar;
 import org.droidparts.http.HTTPException;
 import org.droidparts.http.HTTPResponse;
-
-import android.util.Pair;
 
 // For API < 10
 public class HttpClientWorker extends HTTPWorker {
@@ -92,24 +87,19 @@ public class HttpClientWorker extends HTTPWorker {
 		}
 	}
 
-	public HTTPResponse getReponse(HttpUriRequest req) throws HTTPException {
+	public HTTPResponse getReponse(HttpUriRequest req, boolean body)
+			throws HTTPException {
 		HTTPResponse response = new HTTPResponse();
 		HttpResponse resp = getHttpResponse(req);
 		response.code = getResponseCodeOrThrow(resp);
 		response.headers = getHeaders(resp);
-		response.body = HTTPInputStream.getInstance(resp).readAndClose();
-		return response;
-	}
-
-	public Pair<Integer, BufferedInputStream> getInputStream(String uri)
-			throws HTTPException {
-		HttpGet req = new HttpGet(uri);
-		HttpResponse resp = getHttpResponse(req);
-		HttpEntity entity = resp.getEntity();
-		// 2G limit
-		int contentLength = (int) entity.getContentLength();
 		HTTPInputStream is = HTTPInputStream.getInstance(resp);
-		return new Pair<Integer, BufferedInputStream>(contentLength, is);
+		if (body) {
+			response.body = is.readAndClose();
+		} else {
+			response.inputStream = is;
+		}
+		return response;
 	}
 
 	private HttpResponse getHttpResponse(HttpUriRequest req)

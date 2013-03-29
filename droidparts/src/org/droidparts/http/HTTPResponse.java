@@ -19,25 +19,42 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import org.droidparts.http.worker.HTTPInputStream;
 import org.droidparts.util.L;
 
 public class HTTPResponse {
 
 	public int code;
-	public String body;
 	public Map<String, List<String>> headers;
 
+	public String body;
+	// or
+	public HTTPInputStream inputStream;
+
 	public long getHeaderDate(String name) {
-		long date = 0;
-		String dateStr = getHeaderString(name);
-		if (dateStr != null) {
+		long val = 0;
+		String valStr = getHeaderString(name);
+		if (valStr != null) {
 			try {
-				date = Date.parse(dateStr);
+				val = Date.parse(valStr);
 			} catch (Exception e) {
 				L.d(e);
 			}
 		}
-		return date;
+		return val;
+	}
+
+	public int getHeaderInt(String name) {
+		int val = 0;
+		String valStr = getHeaderString(name);
+		if (valStr != null) {
+			try {
+				val = Integer.valueOf(valStr);
+			} catch (Exception e) {
+				L.d(e);
+			}
+		}
+		return val;
 	}
 
 	public String getHeaderString(String name) {

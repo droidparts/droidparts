@@ -24,6 +24,8 @@ import java.io.ByteArrayOutputStream;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ThreadPoolExecutor;
 
+import org.droidparts.contract.HTTP.Header;
+import org.droidparts.http.HTTPResponse;
 import org.droidparts.http.RESTClient;
 import org.droidparts.net.cache.BitmapDiskCache;
 import org.droidparts.net.cache.BitmapMemoryCache;
@@ -151,10 +153,9 @@ public class ImageFetcher {
 		BufferedInputStream bis = null;
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		try {
-			Pair<Integer, BufferedInputStream> resp = restClient
-					.getInputStream(imgUrl);
-			final int kBTotal = resp.first / 1024;
-			bis = resp.second;
+			HTTPResponse resp = restClient.getInputStream(imgUrl);
+			final int kBTotal = resp.getHeaderInt(Header.CONTENT_LENGTH) / 1024;
+			bis = resp.inputStream;
 			int bytesRead;
 			while ((bytesRead = bis.read(buffer)) != -1) {
 				baos.write(buffer, 0, bytesRead);
@@ -246,8 +247,9 @@ public class ImageFetcher {
 			memoryCache.put(key, bm);
 		}
 		if (diskCache != null && reshaper != null) {
+			// TODO
 			Pair<CompressFormat, Integer> cacheFormat = reshaper
-					.getCacheFormat();
+					.getCacheFormat(null, -1);
 			if (cacheFormat != null) {
 				diskCache.put(key, bm, cacheFormat);
 			}
