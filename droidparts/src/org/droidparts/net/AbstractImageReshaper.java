@@ -15,16 +15,25 @@
  */
 package org.droidparts.net;
 
-import android.graphics.Bitmap;
 import android.graphics.Bitmap.CompressFormat;
 import android.util.Pair;
 
-public interface ImageReshaper {
+public abstract class AbstractImageReshaper implements ImageReshaper {
 
-	String getId();
+	// slow, supports transparency
+	public static final Pair<CompressFormat, Integer> PNG = Pair.create(
+			CompressFormat.PNG, 100);
+	// fast
+	public static final Pair<CompressFormat, Integer> JPEG = Pair.create(
+			CompressFormat.JPEG, 80);
 
-	Bitmap reshape(Bitmap bm);
-
-	Pair<CompressFormat, Integer> getCacheFormat(String contentType);
+	@Override
+	public Pair<CompressFormat, Integer> getCacheFormat(String contentType) {
+		if ("image/png".equals(contentType)) {
+			return PNG;
+		} else {
+			return JPEG;
+		}
+	}
 
 }
