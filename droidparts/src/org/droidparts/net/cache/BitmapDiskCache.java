@@ -16,9 +16,12 @@
 package org.droidparts.net.cache;
 
 import static org.droidparts.contract.Constants.BUFFER_SIZE;
+import static org.droidparts.util.io.IOUtils.getFileList;
+import static org.droidparts.util.io.IOUtils.silentlyClose;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -26,20 +29,16 @@ import java.io.FileOutputStream;
 import org.droidparts.util.AppUtils;
 import org.droidparts.util.L;
 import org.droidparts.util.crypto.HashCalc;
-import org.droidparts.util.io.IOUtils;
 
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.CompressFormat;
 import android.graphics.BitmapFactory;
+import android.util.Pair;
 
-public class BitmapDiskCache implements BitmapCache {
+public class BitmapDiskCache {
 
 	private static final String DEFAULT_DIR = "img";
-
-	// .png is painfully slow
-	private static final CompressFormat DEFAULT_COMPRESS_FORMAT = CompressFormat.JPEG;
-	private static final int DEFAULT_COMPRESS_QUALITY = 80;
 
 	private static BitmapDiskCache instance;
 
@@ -47,8 +46,7 @@ public class BitmapDiskCache implements BitmapCache {
 		if (instance == null) {
 			File cacheDir = new AppUtils(ctx).getExternalCacheDir();
 			if (cacheDir != null) {
-				instance = new BitmapDiskCache(new File(cacheDir, DEFAULT_DIR),
-						DEFAULT_COMPRESS_FORMAT, DEFAULT_COMPRESS_QUALITY);
+				instance = new BitmapDiskCache(new File(cacheDir, DEFAULT_DIR));
 			} else {
 				L.w("External cache dir null. Lacking 'android.permission.WRITE_EXTERNAL_STORAGE' permission?");
 			}
@@ -57,35 +55,43 @@ public class BitmapDiskCache implements BitmapCache {
 	}
 
 	private final File cacheDir;
-	private final CompressFormat format;
-	private final int quality;
 
-	public BitmapDiskCache(File cacheDir, CompressFormat format,
-			int quality) {
+	public BitmapDiskCache(File cacheDir) {
 		this.cacheDir = cacheDir;
-		this.format = format;
-		this.quality = quality;
 		cacheDir.mkdirs();
 	}
 
-	@Override
-	public boolean put(String key, Bitmap bm) {
+	public boolean put(String key, Bitmap bm,
+			Pair<CompressFormat, Integer> cacheFormat) {
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		try {
+			bm.compress(cacheFormat.first, cacheFormat.second, baos);
+			baos.close();
+			return put(key, baos.toByteArray());
+		} catch (Exception e) {
+			L.w(e);
+			return false;
+		} finally {
+			silentlyClose(baos);
+		}
+	}
+
+	public boolean put(String key, byte[] bmArr) {
 		File file = getCachedFile(key);
 		BufferedOutputStream bos = null;
 		try {
 			bos = new BufferedOutputStream(new FileOutputStream(file),
 					BUFFER_SIZE);
-			bm.compress(format, quality, bos);
+			bos.write(bmArr);
 			return true;
 		} catch (Exception e) {
 			L.w(e);
 			return false;
 		} finally {
-			IOUtils.silentlyClose(bos);
+			silentlyClose(bos);
 		}
 	}
 
-	@Override
 	public Bitmap get(String key) {
 		Bitmap bm = null;
 		File file = getCachedFile(key);
@@ -100,7 +106,7 @@ public class BitmapDiskCache implements BitmapCache {
 			} catch (Exception e) {
 				L.w(e);
 			} finally {
-				IOUtils.silentlyClose(bis);
+				silentlyClose(bis);
 			}
 		}
 		if (bm == null) {
@@ -110,7 +116,7 @@ public class BitmapDiskCache implements BitmapCache {
 	}
 
 	public void purgeFilesAccessedBefore(long timestamp) {
-		for (File f : IOUtils.getFileList(cacheDir)) {
+		for (File f : getFileList(cacheDir)) {
 			if (f.lastModified() < timestamp) {
 				f.delete();
 			}

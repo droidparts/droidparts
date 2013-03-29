@@ -25,7 +25,6 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ThreadPoolExecutor;
 
 import org.droidparts.http.RESTClient;
-import org.droidparts.net.cache.BitmapCache;
 import org.droidparts.net.cache.BitmapDiskCache;
 import org.droidparts.net.cache.BitmapMemoryCache;
 import org.droidparts.util.L;
@@ -33,6 +32,7 @@ import org.droidparts.util.concurrent.BackgroundExecutor;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.Bitmap.CompressFormat;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
@@ -47,8 +47,8 @@ public class ImageFetcher {
 
 	private final RESTClient restClient;
 
-	private final BitmapCache memoryCache;
-	private final BitmapCache diskCache;
+	private final BitmapMemoryCache memoryCache;
+	private final BitmapDiskCache diskCache;
 
 	final ThreadPoolExecutor cacheExecutor;
 	final ThreadPoolExecutor fetchExecutor;
@@ -67,8 +67,8 @@ public class ImageFetcher {
 	}
 
 	protected ImageFetcher(Context ctx, ThreadPoolExecutor fetchExecutor,
-			RESTClient restClient, BitmapCache memoryCache,
-			BitmapCache diskCache) {
+			RESTClient restClient, BitmapMemoryCache memoryCache,
+			BitmapDiskCache diskCache) {
 		this.fetchExecutor = fetchExecutor;
 		this.restClient = restClient;
 		this.memoryCache = memoryCache;
@@ -109,11 +109,14 @@ public class ImageFetcher {
 
 	public Bitmap getImage(String imgUrl) {
 		Bitmap bm = getCached(imgUrl);
+		byte[] data = null;
 		if (bm == null) {
-			bm = fetch(null, imgUrl);
+			Pair<byte[], Bitmap> bmData = fetch(null, imgUrl);
+			bm = bmData.second;
+			data = bmData.first;
 		}
 		if (bm != null) {
-			bm = reshapeAndCache(imgUrl, bm);
+			bm = reshapeAndCache(imgUrl, Pair.create(data, bm));
 		}
 		return bm;
 	}
@@ -139,7 +142,7 @@ public class ImageFetcher {
 
 	//
 
-	Bitmap fetch(final ImageView imageView, final String imgUrl) {
+	Pair<byte[], Bitmap> fetch(final ImageView imageView, final String imgUrl) {
 		int bytesReadTotal = 0;
 		byte[] buffer = new byte[BUFFER_SIZE];
 		BufferedInputStream bis = null;
@@ -167,7 +170,7 @@ public class ImageFetcher {
 			}
 			byte[] data = baos.toByteArray();
 			Bitmap bm = BitmapFactory.decodeByteArray(data, 0, data.length);
-			return bm;
+			return Pair.create(data, bm);
 		} catch (final Exception e) {
 			L.w("Failed to fetch %s.", imgUrl);
 			L.d(e);
@@ -225,9 +228,10 @@ public class ImageFetcher {
 		return bm;
 	}
 
-	Bitmap reshapeAndCache(String imgUrl, Bitmap bm) {
-		if (diskCache != null) {
-			diskCache.put(imgUrl, bm);
+	Bitmap reshapeAndCache(String imgUrl, Pair<byte[], Bitmap> bmData) {
+		Bitmap bm = bmData.second;
+		if (diskCache != null && bmData.first != null) {
+			diskCache.put(imgUrl, bmData.first);
 		}
 		if (reshaper != null) {
 			bm = reshaper.reshape(bm);
@@ -237,7 +241,11 @@ public class ImageFetcher {
 			memoryCache.put(key, bm);
 		}
 		if (diskCache != null && reshaper != null) {
-			diskCache.put(key, bm);
+			Pair<CompressFormat, Integer> cacheFormat = reshaper
+					.getCacheFormat();
+			if (cacheFormat != null) {
+				diskCache.put(key, bm, cacheFormat);
+			}
 		}
 		return bm;
 	}
@@ -321,9 +329,10 @@ public class ImageFetcher {
 
 		@Override
 		public void run() {
-			Bitmap bm = imageFetcher.fetch(imageView, imgUrl);
+			Pair<byte[], Bitmap> bmData = imageFetcher.fetch(imageView, imgUrl);
+			Bitmap bm = bmData.second;
 			if (bm != null) {
-				bm = imageFetcher.reshapeAndCache(imgUrl, bm);
+				bm = imageFetcher.reshapeAndCache(imgUrl, bmData);
 				//
 				Long timestamp = imageFetcher.wip.get(imageView);
 				if (timestamp != null && timestamp == submitted) {

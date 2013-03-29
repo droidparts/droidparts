@@ -16,11 +16,18 @@
 package org.droidparts.net;
 
 import android.graphics.Bitmap;
+import android.graphics.Bitmap.CompressFormat;
+import android.util.Pair;
 
 public interface ImageReshaper {
 
 	String getId();
 
 	Bitmap reshape(Bitmap bm);
+
+	/**
+	 * .png = slow, supports transparency; .jpg = fast.
+	 */
+	Pair<CompressFormat, Integer> getCacheFormat();
 
 }
