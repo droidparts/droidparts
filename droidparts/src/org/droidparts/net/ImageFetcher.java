@@ -108,17 +108,12 @@ public class ImageFetcher {
 	}
 
 	public Bitmap getImage(String imgUrl) {
-		Bitmap bm = getCached(imgUrl);
-		byte[] data = null;
+		Bitmap bm = getCachedReshaped(imgUrl);
 		if (bm == null) {
 			Pair<byte[], Bitmap> bmData = fetch(null, imgUrl);
 			if (bmData != null) {
-				bm = bmData.second;
-				data = bmData.first;
+				bm = reshapeAndCache(imgUrl, bmData);
 			}
-		}
-		if (bm != null) {
-			bm = reshapeAndCache(imgUrl, Pair.create(data, bm));
 		}
 		return bm;
 	}
@@ -194,7 +189,7 @@ public class ImageFetcher {
 		return bmData;
 	}
 
-	Bitmap getCached(String imgUrl) {
+	Bitmap getCachedReshaped(String imgUrl) {
 		String key = getCacheKey(imgUrl);
 		Bitmap bm = null;
 		if (reshaper != null) {
@@ -235,7 +230,7 @@ public class ImageFetcher {
 
 	Bitmap reshapeAndCache(String imgUrl, Pair<byte[], Bitmap> bmData) {
 		Bitmap bm = bmData.second;
-		if (diskCache != null && bmData.first != null) {
+		if (diskCache != null) {
 			diskCache.put(imgUrl, bmData.first);
 		}
 		if (reshaper != null) {
@@ -311,7 +306,7 @@ public class ImageFetcher {
 
 		@Override
 		public void run() {
-			Bitmap bm = imageFetcher.getCached(imgUrl);
+			Bitmap bm = imageFetcher.getCachedReshaped(imgUrl);
 			if (bm == null) {
 				FetchAndCacheRunnable r = new FetchAndCacheRunnable(
 						imageFetcher, imageView, imgUrl, submitted);
