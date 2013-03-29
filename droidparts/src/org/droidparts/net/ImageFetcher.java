@@ -112,7 +112,7 @@ public class ImageFetcher {
 	public Bitmap getImage(String imgUrl) {
 		Bitmap bm = getCachedReshaped(imgUrl);
 		if (bm == null) {
-			Pair<byte[], Bitmap> bmData = fetch(null, imgUrl);
+			Pair<Bitmap, Pair<String, byte[]>> bmData = fetch(null, imgUrl);
 			if (bmData != null) {
 				bm = reshapeAndCache(imgUrl, bmData);
 			}
@@ -141,8 +141,9 @@ public class ImageFetcher {
 
 	//
 
-	Pair<byte[], Bitmap> fetch(final ImageView imageView, final String imgUrl) {
-		Pair<byte[], Bitmap> bmData = null;
+	Pair<Bitmap, Pair<String, byte[]>> fetch(final ImageView imageView,
+			final String imgUrl) {
+		Pair<Bitmap, Pair<String, byte[]>> bmData = null;
 		int bytesReadTotal = 0;
 		byte[] buffer = new byte[BUFFER_SIZE];
 		BufferedInputStream bis = null;
@@ -170,7 +171,8 @@ public class ImageFetcher {
 			byte[] data = baos.toByteArray();
 			Bitmap bm = BitmapFactory.decodeByteArray(data, 0, data.length);
 			if (bm != null) {
-				bmData = Pair.create(data, bm);
+				String contentType = resp.getHeaderString(Header.CONTENT_TYPE);
+				bmData = Pair.create(bm, Pair.create(contentType, data));
 			}
 		} catch (final Exception e) {
 			L.w("Failed to fetch %s.", imgUrl);
@@ -229,10 +231,11 @@ public class ImageFetcher {
 		return bm;
 	}
 
-	Bitmap reshapeAndCache(String imgUrl, Pair<byte[], Bitmap> bmData) {
-		Bitmap bm = bmData.second;
+	Bitmap reshapeAndCache(String imgUrl,
+			Pair<Bitmap, Pair<String, byte[]>> bmData) {
+		Bitmap bm = bmData.first;
 		if (diskCache != null) {
-			diskCache.put(imgUrl, bmData.first);
+			diskCache.put(imgUrl, bmData.second.second);
 		}
 		if (reshaper != null) {
 			bm = reshaper.reshape(bm);
@@ -242,9 +245,8 @@ public class ImageFetcher {
 			memoryCache.put(key, bm);
 		}
 		if (diskCache != null && reshaper != null) {
-			// TODO
 			Pair<CompressFormat, Integer> cacheFormat = reshaper
-					.getCacheFormat(null, -1);
+					.getCacheFormat(bmData.second.first);
 			if (cacheFormat != null) {
 				diskCache.put(key, bm, cacheFormat);
 			}
@@ -331,9 +333,10 @@ public class ImageFetcher {
 
 		@Override
 		public void run() {
-			Pair<byte[], Bitmap> bmData = imageFetcher.fetch(imageView, imgUrl);
+			Pair<Bitmap, Pair<String, byte[]>> bmData = imageFetcher.fetch(
+					imageView, imgUrl);
 			if (bmData != null) {
-				Bitmap bm = bmData.second;
+				Bitmap bm = bmData.first;
 				bm = imageFetcher.reshapeAndCache(imgUrl, bmData);
 				//
 				Long timestamp = imageFetcher.wip.get(imageView);
