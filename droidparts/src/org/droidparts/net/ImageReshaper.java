@@ -25,9 +25,11 @@ public interface ImageReshaper {
 
 	Bitmap reshape(Bitmap bm);
 
-	/**
-	 * .png = slow, supports transparency; .jpg = fast.
-	 */
 	Pair<CompressFormat, Integer> getCacheFormat();
+
+	// slow, supports transparency
+	Pair<CompressFormat, Integer> PNG = Pair.create(CompressFormat.PNG, 100);
+	// fast
+	Pair<CompressFormat, Integer> JPEG = Pair.create(CompressFormat.JPEG, 80);
 
 }
