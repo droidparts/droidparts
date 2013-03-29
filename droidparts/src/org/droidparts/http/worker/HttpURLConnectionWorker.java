@@ -21,7 +21,6 @@ import static org.droidparts.contract.HTTP.Header.ACCEPT_ENCODING;
 import static org.droidparts.contract.HTTP.Header.CONTENT_TYPE;
 import static org.droidparts.util.io.IOUtils.silentlyClose;
 
-import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.OutputStream;
 import java.net.Authenticator;
@@ -41,7 +40,6 @@ import org.droidparts.http.HTTPResponse;
 import org.droidparts.util.L;
 
 import android.content.Context;
-import android.util.Pair;
 
 public class HttpURLConnectionWorker extends HTTPWorker {
 
@@ -132,22 +130,18 @@ public class HttpURLConnectionWorker extends HTTPWorker {
 		}
 	}
 
-	public static HTTPResponse getReponse(HttpURLConnection conn)
+	public static HTTPResponse getReponse(HttpURLConnection conn, boolean body)
 			throws HTTPException {
 		HTTPResponse response = new HTTPResponse();
 		response.code = connectAndGetResponseCodeOrThrow(conn);
 		response.headers = conn.getHeaderFields();
-		response.body = HTTPInputStream.getInstance(conn, false).readAndClose();
-		return response;
-	}
-
-	public Pair<Integer, BufferedInputStream> getInputStream(String uri)
-			throws HTTPException {
-		HttpURLConnection conn = getConnection(uri, Method.GET);
-		HttpURLConnectionWorker.connectAndGetResponseCodeOrThrow(conn);
-		int contentLength = conn.getContentLength();
 		HTTPInputStream is = HTTPInputStream.getInstance(conn, false);
-		return new Pair<Integer, BufferedInputStream>(contentLength, is);
+		if (body) {
+			response.body = is.readAndClose();
+		} else {
+			response.inputStream = is;
+		}
+		return response;
 	}
 
 	private static int connectAndGetResponseCodeOrThrow(HttpURLConnection conn)

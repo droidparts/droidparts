@@ -13,18 +13,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License. 
  */
-package org.droidparts.net;
+package org.droidparts.util.concurrent;
 
-import android.graphics.Bitmap;
-import android.graphics.Bitmap.CompressFormat;
-import android.util.Pair;
+import java.util.concurrent.ThreadFactory;
 
-public interface ImageReshaper {
+import android.os.Process;
 
-	String getId();
+public class BackgroundPriorityThreadFactory implements ThreadFactory {
 
-	Bitmap reshape(Bitmap bm);
-
-	Pair<CompressFormat, Integer> getCacheFormat(String contentType);
+	@Override
+	public Thread newThread(Runnable r) {
+		return new Thread(r) {
+			@Override
+			public void run() {
+				Process.setThreadPriority(Process.THREAD_PRIORITY_BACKGROUND);
+				super.run();
+			}
+		};
+	}
 
 }

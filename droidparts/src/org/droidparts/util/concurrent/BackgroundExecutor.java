@@ -13,18 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License. 
  */
-package org.droidparts.net;
+package org.droidparts.util.concurrent;
 
-import android.graphics.Bitmap;
-import android.graphics.Bitmap.CompressFormat;
-import android.util.Pair;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
-public interface ImageReshaper {
+public class BackgroundExecutor extends ThreadPoolExecutor {
 
-	String getId();
-
-	Bitmap reshape(Bitmap bm);
-
-	Pair<CompressFormat, Integer> getCacheFormat(String contentType);
+	public BackgroundExecutor(int nThreads) {
+		super(nThreads, nThreads, 0L, TimeUnit.MILLISECONDS,
+				new LinkedBlockingQueue<Runnable>(),
+				new BackgroundPriorityThreadFactory());
+	}
 
 }

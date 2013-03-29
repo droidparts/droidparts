@@ -1,3 +1,15 @@
+1.2.1 /2013-03-30/:
+    * DroidPartsGram: added image loading progress example.
+    * RESTClient & ImageFetcher stuff.
+
+1.2.0 /2013-03-28/:
+    * Made available from Maven Central.
+    * Extra ViewUtils helpers.
+    * Uri persistence support.
+    * Added MergeSelect.
+    * RESTClient: If-Modified-Since & ETag support.
+    * ImageFetcher tweaks.
+    
 1.1.5 /2013-03-08/:
     * Fixed porn.xml.
     * DBOpenHelper: a method to create tables for new Entities.

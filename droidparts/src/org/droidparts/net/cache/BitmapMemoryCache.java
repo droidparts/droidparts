@@ -24,7 +24,7 @@ import android.app.ActivityManager;
 import android.content.Context;
 import android.graphics.Bitmap;
 
-public class BitmapMemoryCache implements BitmapCache {
+public class BitmapMemoryCache {
 
 	public interface BitmapLruCache {
 		Bitmap put(String key, Bitmap bm);
@@ -70,7 +70,6 @@ public class BitmapMemoryCache implements BitmapCache {
 		return (cache != null);
 	}
 
-	@Override
 	public boolean put(String key, Bitmap bm) {
 		boolean put = false;
 		if (isAvailable() && getSize(bm) <= maxItemSize) {
@@ -80,7 +79,6 @@ public class BitmapMemoryCache implements BitmapCache {
 		return put;
 	}
 
-	@Override
 	public Bitmap get(String key) {
 		Bitmap bm = null;
 		if (isAvailable()) {

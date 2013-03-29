@@ -17,4 +17,17 @@ Documentation
 -------------
 available at http://droidparts.org.
 
+Download
+--------
+[the latest JAR][2], get from Maven:
+```xml
+<dependency>
+  <groupId>org.droidparts</groupId>
+  <artifactId>droidparts</artifactId>
+  <version>1.2.1</version>
+</dependency>
+```
+or use as a plain old Android library project.
+
  [1]: https://github.com/JakeWharton/ActionBarSherlock
+ [2]: http://repository.sonatype.org/service/local/artifact/maven/redirect?r=central-proxy&g=org.droidparts&a=droidparts&v=LATEST
