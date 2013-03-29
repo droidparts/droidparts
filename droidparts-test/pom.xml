@@ -5,10 +5,11 @@
 	<parent>
 		<groupId>org.droidparts</groupId>
 		<artifactId>droidparts-parent</artifactId>
-		<version>1.2.1</version>
+		<version>1.2.1 - 2013-03-30</version>
 	</parent>
 
 	<artifactId>droidparts-test</artifactId>
+  <version>1.2.2-SNAPSHOT</version>
 	<name>DroidParts - Tests</name>
 
 </project>
