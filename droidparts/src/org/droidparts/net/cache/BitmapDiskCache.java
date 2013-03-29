@@ -66,7 +66,6 @@ public class BitmapDiskCache {
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		try {
 			bm.compress(cacheFormat.first, cacheFormat.second, baos);
-			baos.close();
 			return put(key, baos.toByteArray());
 		} catch (Exception e) {
 			L.w(e);

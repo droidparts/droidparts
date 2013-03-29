@@ -112,8 +112,10 @@ public class ImageFetcher {
 		byte[] data = null;
 		if (bm == null) {
 			Pair<byte[], Bitmap> bmData = fetch(null, imgUrl);
-			bm = bmData.second;
-			data = bmData.first;
+			if (bmData != null) {
+				bm = bmData.second;
+				data = bmData.first;
+			}
 		}
 		if (bm != null) {
 			bm = reshapeAndCache(imgUrl, Pair.create(data, bm));
@@ -143,6 +145,7 @@ public class ImageFetcher {
 	//
 
 	Pair<byte[], Bitmap> fetch(final ImageView imageView, final String imgUrl) {
+		Pair<byte[], Bitmap> bmData = null;
 		int bytesReadTotal = 0;
 		byte[] buffer = new byte[BUFFER_SIZE];
 		BufferedInputStream bis = null;
@@ -170,7 +173,9 @@ public class ImageFetcher {
 			}
 			byte[] data = baos.toByteArray();
 			Bitmap bm = BitmapFactory.decodeByteArray(data, 0, data.length);
-			return Pair.create(data, bm);
+			if (bm != null) {
+				bmData = Pair.create(data, bm);
+			}
 		} catch (final Exception e) {
 			L.w("Failed to fetch %s.", imgUrl);
 			L.d(e);
@@ -183,10 +188,10 @@ public class ImageFetcher {
 					}
 				});
 			}
-			return null;
 		} finally {
 			silentlyClose(bis, baos);
 		}
+		return bmData;
 	}
 
 	Bitmap getCached(String imgUrl) {
@@ -330,8 +335,8 @@ public class ImageFetcher {
 		@Override
 		public void run() {
 			Pair<byte[], Bitmap> bmData = imageFetcher.fetch(imageView, imgUrl);
-			Bitmap bm = bmData.second;
-			if (bm != null) {
+			if (bmData != null) {
+				Bitmap bm = bmData.second;
 				bm = imageFetcher.reshapeAndCache(imgUrl, bmData);
 				//
 				Long timestamp = imageFetcher.wip.get(imageView);
