@@ -15,7 +15,6 @@
  */
 package org.droidparts.reflect.util;
 
-import static org.droidparts.util.Arrays2.toObject;
 import static org.droidparts.util.Arrays2.toPrimitive;
 
 import java.lang.reflect.Array;
@@ -117,11 +116,11 @@ public final class TypeHelper {
 
 	//
 
-	public static boolean isJsonObject(Class<?> cls) {
+	public static boolean isJSONObject(Class<?> cls) {
 		return JSONObject.class.isAssignableFrom(cls);
 	}
 
-	public static boolean isJsonArray(Class<?> cls) {
+	public static boolean isJSONArray(Class<?> cls) {
 		return JSONArray.class.isAssignableFrom(cls);
 	}
 
@@ -136,47 +135,6 @@ public final class TypeHelper {
 	}
 
 	//
-
-	public static Object[] toObjectArr(Object someArr) {
-		// as autoboxing won't work for Arrays.asList(int[] value)
-		Class<?> arrCls = someArr.getClass();
-		if (arrCls == byte[].class) {
-			return toObject((byte[]) someArr);
-		} else if (arrCls == short[].class) {
-			return toObject((short[]) someArr);
-		} else if (arrCls == int[].class) {
-			return toObject((int[]) someArr);
-		} else if (arrCls == long[].class) {
-			return toObject((long[]) someArr);
-		} else if (arrCls == float[].class) {
-			return toObject((float[]) someArr);
-		} else if (arrCls == double[].class) {
-			return toObject((double[]) someArr);
-		} else if (arrCls == boolean[].class) {
-			return toObject((boolean[]) someArr);
-		} else if (arrCls == char[].class) {
-			return toObject((char[]) someArr);
-		} else {
-			// out of primitives
-			return (Object[]) someArr;
-		}
-	}
-
-	public static Object toTypeArr(Class<?> arrValType, Object[] arr) {
-		if (isModel(arrValType)) {
-			Object modelArr = Array.newInstance(arrValType, arr.length);
-			for (int i = 0; i < arr.length; i++) {
-				Array.set(modelArr, i, arr[i]);
-			}
-			return modelArr;
-		} else {
-			String[] arr2 = new String[arr.length];
-			for (int i = 0; i < arr.length; i++) {
-				arr2[i] = arr[i].toString();
-			}
-			return toTypeArr(arrValType, arr2);
-		}
-	}
 
 	public static Object toTypeArr(Class<?> arrValType, String[] arr) {
 		if (isByte(arrValType)) {
@@ -231,10 +189,10 @@ public final class TypeHelper {
 		} else if (isDate(arrValType)) {
 			ArrayList<Date> list = toTypeColl(Date.class, arr);
 			return list.toArray(new Date[list.size()]);
-		} else if (isJsonObject(arrValType)) {
+		} else if (isJSONObject(arrValType)) {
 			ArrayList<JSONObject> list = toTypeColl(JSONObject.class, arr);
 			return list.toArray(new JSONObject[list.size()]);
-		} else if (isJsonArray(arrValType)) {
+		} else if (isJSONArray(arrValType)) {
 			ArrayList<JSONArray> list = toTypeColl(JSONArray.class, arr);
 			return list.toArray(new JSONArray[list.size()]);
 		} else {
@@ -246,39 +204,22 @@ public final class TypeHelper {
 	public static <T> ArrayList<T> toTypeColl(Class<T> valCls,
 			String[] valStrArr) throws IllegalArgumentException {
 		ArrayList<Object> list = new ArrayList<Object>();
+		String key = "key";
 		JSONObject hackObj = new JSONObject();
+		AbstractHandler<?> handler = TypeHandlerRegistry.get(valCls);
 		for (String str : valStrArr) {
-			list.add(parseValue(valCls, hackObj, str));
+			try {
+				hackObj.put(key, str);
+				Object val = handler.readFromJSON(valCls, hackObj, key);
+				list.add(val);
+			} catch (JSONException e) {
+				throw new IllegalArgumentException("Unable to convert '" + str
+						+ "' to " + valCls.getSimpleName() + ".");
+			}
 		}
 		@SuppressWarnings("unchecked")
 		ArrayList<T> typedList = (ArrayList<T>) list;
 		return typedList;
-	}
-
-	private static Object parseValue(Class<?> valCls, JSONObject obj, String val)
-			throws IllegalArgumentException {
-		String key = "key";
-		AbstractHandler<?> handler = TypeHandlerRegistry.get(valCls);
-		try {
-			obj.put(key, val);
-			if (handler != null) {
-				return handler.readFromJSON(valCls, obj, key);
-			}
-			// TODO
-			if (isJsonObject(valCls) || isJsonArray(valCls)) {
-				try {
-					return isJsonObject(valCls) ? new JSONObject(val)
-							: new JSONArray(val);
-				} catch (JSONException e) {
-					throw new IllegalArgumentException(e);
-				}
-			} else {
-				throw new IllegalArgumentException("Unable to convert '" + val
-						+ "' to " + valCls.getSimpleName() + ".");
-			}
-		} catch (JSONException e) {
-			throw new IllegalArgumentException(e);
-		}
 	}
 
 	protected TypeHelper() {

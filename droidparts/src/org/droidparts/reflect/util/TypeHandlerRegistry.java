@@ -28,6 +28,8 @@ import org.droidparts.reflect.type.DoubleHandler;
 import org.droidparts.reflect.type.EnumHandler;
 import org.droidparts.reflect.type.FloatHandler;
 import org.droidparts.reflect.type.IntegerHandler;
+import org.droidparts.reflect.type.JSONArrayHandler;
+import org.droidparts.reflect.type.JSONObjectHandler;
 import org.droidparts.reflect.type.LongHandler;
 import org.droidparts.reflect.type.ShortHandler;
 import org.droidparts.reflect.type.StringHandler;
@@ -55,6 +57,8 @@ public class TypeHandlerRegistry {
 		handlers.add(new UUIDHandler());
 		handlers.add(new UriHandler());
 		handlers.add(new ByteArrayHandler());
+		handlers.add(new JSONObjectHandler());
+		handlers.add(new JSONArrayHandler());
 	}
 
 	@SuppressWarnings("unchecked")

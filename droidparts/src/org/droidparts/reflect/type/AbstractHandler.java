@@ -35,9 +35,9 @@ public abstract class AbstractHandler<T> implements SQL.DDL {
 			throws JSONException;
 
 	public abstract void putToContentValues(ContentValues cv, String key,
-			Object val);
+			Object val) throws IllegalArgumentException;
 
 	public abstract T readFromCursor(Class<?> cls, Cursor cursor,
-			int columnIndex);
+			int columnIndex) throws IllegalArgumentException;
 
 }

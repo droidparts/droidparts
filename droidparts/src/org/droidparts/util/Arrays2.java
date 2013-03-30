@@ -145,6 +145,31 @@ public class Arrays2 {
 		return arr2;
 	}
 
+	public static Object[] toObjectArr(Object someArr) {
+		// as autoboxing won't work for Arrays.asList(int[] value)
+		Class<?> arrCls = someArr.getClass();
+		if (arrCls == byte[].class) {
+			return toObject((byte[]) someArr);
+		} else if (arrCls == short[].class) {
+			return toObject((short[]) someArr);
+		} else if (arrCls == int[].class) {
+			return toObject((int[]) someArr);
+		} else if (arrCls == long[].class) {
+			return toObject((long[]) someArr);
+		} else if (arrCls == float[].class) {
+			return toObject((float[]) someArr);
+		} else if (arrCls == double[].class) {
+			return toObject((double[]) someArr);
+		} else if (arrCls == boolean[].class) {
+			return toObject((boolean[]) someArr);
+		} else if (arrCls == char[].class) {
+			return toObject((char[]) someArr);
+		} else {
+			// out of primitives
+			return (Object[]) someArr;
+		}
+	}
+
 	protected Arrays2() {
 	}
 

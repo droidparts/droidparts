@@ -20,8 +20,6 @@ import static org.droidparts.reflect.FieldSpecBuilder.getTableName;
 import static org.droidparts.reflect.util.TypeHelper.isArray;
 import static org.droidparts.reflect.util.TypeHelper.isCollection;
 import static org.droidparts.reflect.util.TypeHelper.isEntity;
-import static org.droidparts.reflect.util.TypeHelper.isJsonArray;
-import static org.droidparts.reflect.util.TypeHelper.isJsonObject;
 import static org.droidparts.util.Strings.join;
 import static org.json.JSONObject.NULL;
 
@@ -253,9 +251,7 @@ public final class PersistUtils implements SQL.DDL {
 			return handler.getDBColumnType();
 		}
 		// TODO
-		if (isJsonObject(fieldType) || isJsonArray(fieldType)) {
-			return TEXT;
-		} else if (isArray(fieldType) || isCollection(fieldType)) {
+		if (isArray(fieldType) || isCollection(fieldType)) {
 			return TEXT;
 		} else if (isEntity(fieldType)) {
 			return INTEGER;

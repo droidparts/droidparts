@@ -16,7 +16,6 @@
 package org.droidparts.reflect.util;
 
 import static org.droidparts.reflect.util.TypeHelper.isArray;
-import static org.droidparts.reflect.util.TypeHelper.toObjectArr;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
@@ -24,6 +23,7 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.droidparts.util.Arrays2;
 import org.droidparts.util.L;
 
 public final class ReflectionUtils {
@@ -152,7 +152,7 @@ public final class ReflectionUtils {
 			if (firstArg != null) {
 				Class<?> firstArgCls = firstArg.getClass();
 				if (isArray(firstArgCls)) {
-					varArgs = toObjectArr(firstArg);
+					varArgs = Arrays2.toObjectArr(firstArg);
 				}
 			}
 		}

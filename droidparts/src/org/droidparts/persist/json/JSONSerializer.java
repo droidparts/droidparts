@@ -25,10 +25,10 @@ import static org.droidparts.reflect.util.TypeHelper.isDate;
 import static org.droidparts.reflect.util.TypeHelper.isEnum;
 import static org.droidparts.reflect.util.TypeHelper.isModel;
 import static org.droidparts.reflect.util.TypeHelper.isUUID;
-import static org.droidparts.reflect.util.TypeHelper.toObjectArr;
 import static org.droidparts.reflect.util.TypeHelper.toTypeArr;
 import static org.json.JSONObject.NULL;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -40,6 +40,7 @@ import org.droidparts.reflect.ann.FieldSpec;
 import org.droidparts.reflect.ann.json.KeyAnn;
 import org.droidparts.reflect.type.AbstractHandler;
 import org.droidparts.reflect.util.TypeHandlerRegistry;
+import org.droidparts.util.Arrays2;
 import org.droidparts.util.L;
 import org.droidparts.util.PersistUtils;
 import org.json.JSONArray;
@@ -125,7 +126,7 @@ public class JSONSerializer<ModelType extends Model> {
 		} else if (isArray(valType) || isCollection(valType)) {
 			final ArrayList<Object> list = new ArrayList<Object>();
 			if (isArray(valType)) {
-				list.addAll(Arrays.asList(toObjectArr(val)));
+				list.addAll(Arrays.asList(Arrays2.toObjectArr(val)));
 			} else {
 				list.addAll((Collection<?>) val);
 			}
@@ -185,13 +186,14 @@ public class JSONSerializer<ModelType extends Model> {
 				Class<? extends Collection<Object>> cl = (Class<? extends Collection<Object>>) fieldType;
 				coll = instantiate(cl);
 			}
+			boolean isModel = isModel(arrCollItemType);
 			JSONSerializer<Model> serializer = null;
-			if (isModel(arrCollItemType)) {
+			if (isModel) {
 				serializer = subSerializer(arrCollItemType);
 			}
 			for (int i = 0; i < jArr.length(); i++) {
 				Object obj1 = jArr.get(i);
-				if (serializer != null) {
+				if (isModel) {
 					obj1 = serializer.deserialize((JSONObject) obj1);
 				}
 				if (isArr) {
@@ -201,7 +203,20 @@ public class JSONSerializer<ModelType extends Model> {
 				}
 			}
 			if (isArr) {
-				return toTypeArr(arrCollItemType, arr);
+				if (isModel) {
+					Object modelArr = Array.newInstance(arrCollItemType,
+							arr.length);
+					for (int i = 0; i < arr.length; i++) {
+						Array.set(modelArr, i, arr[i]);
+					}
+					return modelArr;
+				} else {
+					String[] arr2 = new String[arr.length];
+					for (int i = 0; i < arr.length; i++) {
+						arr2[i] = arr[i].toString();
+					}
+					return toTypeArr(arrCollItemType, arr2);
+				}
 			} else {
 				return coll;
 			}

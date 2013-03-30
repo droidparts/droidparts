@@ -25,9 +25,6 @@ import static org.droidparts.reflect.util.TypeHelper.isBitmap;
 import static org.droidparts.reflect.util.TypeHelper.isCollection;
 import static org.droidparts.reflect.util.TypeHelper.isDate;
 import static org.droidparts.reflect.util.TypeHelper.isEntity;
-import static org.droidparts.reflect.util.TypeHelper.isJsonArray;
-import static org.droidparts.reflect.util.TypeHelper.isJsonObject;
-import static org.droidparts.reflect.util.TypeHelper.toObjectArr;
 import static org.droidparts.reflect.util.TypeHelper.toTypeArr;
 import static org.droidparts.reflect.util.TypeHelper.toTypeColl;
 
@@ -48,10 +45,8 @@ import org.droidparts.reflect.ann.sql.ColumnAnn;
 import org.droidparts.reflect.type.AbstractHandler;
 import org.droidparts.reflect.util.ReflectionUtils;
 import org.droidparts.reflect.util.TypeHandlerRegistry;
+import org.droidparts.util.Arrays2;
 import org.droidparts.util.Strings;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -198,15 +193,13 @@ public class EntityManager<EntityType extends Entity> extends
 			ByteArrayOutputStream baos = new ByteArrayOutputStream();
 			bm.compress(CompressFormat.PNG, 0, baos);
 			cv.put(key, baos.toByteArray());
-		} else if (isJsonObject(valueType) || isJsonArray(valueType)) {
-			cv.put(key, value.toString());
 		} else if (isEntity(valueType)) {
 			Long id = (value != null) ? ((Entity) value).id : null;
 			cv.put(key, id);
 		} else if (isArray(valueType) || isCollection(valueType)) {
 			final ArrayList<Object> list = new ArrayList<Object>();
 			if (isArray(valueType)) {
-				list.addAll(Arrays.asList(toObjectArr(value)));
+				list.addAll(Arrays.asList(Arrays2.toObjectArr(value)));
 			} else {
 				list.addAll((Collection<?>) value);
 			}
@@ -238,14 +231,6 @@ public class EntityManager<EntityType extends Entity> extends
 		if (isBitmap(valType)) {
 			byte[] arr = cursor.getBlob(columnIndex);
 			return BitmapFactory.decodeByteArray(arr, 0, arr.length);
-		} else if (isJsonObject(valType) || isJsonArray(valType)) {
-			String str = cursor.getString(columnIndex);
-			try {
-				return isJsonObject(valType) ? new JSONObject(str)
-						: new JSONArray(str);
-			} catch (JSONException e) {
-				throw new IllegalArgumentException(e);
-			}
 		} else if (isEntity(valType)) {
 			long id = cursor.getLong(columnIndex);
 			@SuppressWarnings("unchecked")
