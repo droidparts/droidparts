@@ -81,6 +81,7 @@
 	</dependencyManagement>
 
 	<build>
+		<sourceDirectory>src</sourceDirectory>
 		<pluginManagement>
 			<plugins>
 				<plugin>
@@ -96,8 +97,8 @@
 					<artifactId>android-maven-plugin</artifactId>
 					<extensions>true</extensions>
 					<configuration>
-                        <undeployBeforeDeploy>true</undeployBeforeDeploy>
-                    </configuration>
+						<undeployBeforeDeploy>true</undeployBeforeDeploy>
+					</configuration>
 				</plugin>
 			</plugins>
 		</pluginManagement>
