@@ -20,7 +20,6 @@ import static org.droidparts.reflect.util.ReflectionUtils.getFieldVal;
 import static org.droidparts.reflect.util.ReflectionUtils.instantiate;
 import static org.droidparts.reflect.util.ReflectionUtils.setFieldVal;
 import static org.droidparts.reflect.util.TypeHelper.isArray;
-import static org.droidparts.reflect.util.TypeHelper.isByteArray;
 import static org.droidparts.reflect.util.TypeHelper.isCollection;
 import static org.droidparts.reflect.util.TypeHelper.isDate;
 import static org.droidparts.reflect.util.TypeHelper.isEnum;
@@ -170,9 +169,7 @@ public class JSONSerializer<ModelType extends Model> {
 			}
 		}
 
-		if (isByteArray(fieldType)) {
-			return jsonVal;
-		} else if (isModel(fieldType)) {
+		if (isModel(fieldType)) {
 			return subSerializer(fieldType).deserialize((JSONObject) jsonVal);
 		} else if (isArray(fieldType) || isCollection(fieldType)) {
 			String strVal = String.valueOf(jsonVal);

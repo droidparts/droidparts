@@ -201,7 +201,7 @@ public class EntityManager<EntityType extends Entity> extends
 		} else if (isJsonObject(valueType) || isJsonArray(valueType)) {
 			cv.put(key, value.toString());
 		} else if (isEntity(valueType)) {
-			Long id = value != null ? ((Entity) value).id : null;
+			Long id = (value != null) ? ((Entity) value).id : null;
 			cv.put(key, id);
 		} else if (isArray(valueType) || isCollection(valueType)) {
 			final ArrayList<Object> list = new ArrayList<Object>();
