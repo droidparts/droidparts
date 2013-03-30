@@ -25,8 +25,6 @@ import static org.droidparts.reflect.util.TypeHelper.isBitmap;
 import static org.droidparts.reflect.util.TypeHelper.isCollection;
 import static org.droidparts.reflect.util.TypeHelper.isDate;
 import static org.droidparts.reflect.util.TypeHelper.isEntity;
-import static org.droidparts.reflect.util.TypeHelper.toTypeArr;
-import static org.droidparts.reflect.util.TypeHelper.toTypeColl;
 
 import java.io.ByteArrayOutputStream;
 import java.lang.reflect.Field;
@@ -238,15 +236,20 @@ public class EntityManager<EntityType extends Entity> extends
 			entity.id = id;
 			return entity;
 		} else if (isArray(valType) || isCollection(valType)) {
+			handler = TypeHandlerRegistry.get(arrCollItemType);
+			if (handler == null) {
+				throw new IllegalArgumentException("Unable to convert to "
+						+ arrCollItemType + ".");
+			}
 			String str = cursor.getString(columnIndex);
 			String[] parts = (str.length() > 0) ? str.split("\\" + SEP)
 					: new String[0];
 			if (isArray(valType)) {
-				return toTypeArr(arrCollItemType, parts);
+				return handler.parseTypeArr(arrCollItemType, parts);
 			} else {
 				@SuppressWarnings("unchecked")
 				Collection<Object> coll = (Collection<Object>) instantiate(valType);
-				coll.addAll(toTypeColl(arrCollItemType, parts));
+				coll.addAll(AbstractHandler.toTypeColl(arrCollItemType, parts));
 				return coll;
 			}
 		} else {

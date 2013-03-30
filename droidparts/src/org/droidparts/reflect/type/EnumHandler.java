@@ -17,6 +17,9 @@ package org.droidparts.reflect.type;
 
 import static org.droidparts.reflect.util.ReflectionUtils.instantiateEnum;
 
+import java.lang.reflect.Array;
+import java.util.ArrayList;
+
 import org.droidparts.reflect.util.TypeHelper;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -56,6 +59,18 @@ public class EnumHandler extends AbstractHandler<Enum<?>> {
 	@Override
 	public Enum<?> readFromCursor(Class<?> cls, Cursor cursor, int columnIndex) {
 		return instantiateEnum(cls, cursor.getString(columnIndex));
+	}
+
+	@Override
+	public Object parseTypeArr(Class<?> arrValType, String[] arr) {
+		@SuppressWarnings({ "rawtypes", "unchecked" })
+		ArrayList<? extends Enum> list = (ArrayList<? extends Enum>) toTypeColl(
+				arrValType, arr);
+		Object enumArr = Array.newInstance(arrValType, list.size());
+		for (int i = 0; i < list.size(); i++) {
+			Array.set(enumArr, i, list.get(i));
+		}
+		return enumArr;
 	}
 
 }

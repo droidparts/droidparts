@@ -56,4 +56,9 @@ public class StringHandler extends AbstractHandler<String> {
 		return cursor.getString(columnIndex);
 	}
 
+	@Override
+	public Object parseTypeArr(Class<?> arrValType, String[] arr) {
+		return arr;
+	}
+
 }

@@ -15,7 +15,10 @@
  */
 package org.droidparts.reflect.type;
 
+import java.util.ArrayList;
+
 import org.droidparts.contract.SQL;
+import org.droidparts.reflect.util.TypeHandlerRegistry;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -39,5 +42,29 @@ public abstract class AbstractHandler<T> implements SQL.DDL {
 
 	public abstract T readFromCursor(Class<?> cls, Cursor cursor,
 			int columnIndex) throws IllegalArgumentException;
+
+	public abstract Object parseTypeArr(Class<?> arrValType, String[] arr);
+
+	// XXX
+	public static <T> ArrayList<T> toTypeColl(Class<T> valCls,
+			String[] valStrArr) throws IllegalArgumentException {
+		ArrayList<Object> list = new ArrayList<Object>();
+		String key = "key";
+		JSONObject hackObj = new JSONObject();
+		AbstractHandler<?> handler = TypeHandlerRegistry.get(valCls);
+		for (String str : valStrArr) {
+			try {
+				hackObj.put(key, str);
+				Object val = handler.readFromJSON(valCls, hackObj, key);
+				list.add(val);
+			} catch (JSONException e) {
+				throw new IllegalArgumentException("Unable to convert '" + str
+						+ "' to " + valCls.getSimpleName() + ".");
+			}
+		}
+		@SuppressWarnings("unchecked")
+		ArrayList<T> typedList = (ArrayList<T>) list;
+		return typedList;
+	}
 
 }

@@ -15,6 +15,10 @@
  */
 package org.droidparts.reflect.type;
 
+import static org.droidparts.util.Arrays2.toPrimitive;
+
+import java.util.ArrayList;
+
 import org.droidparts.reflect.util.TypeHelper;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -54,6 +58,13 @@ public class ByteHandler extends AbstractHandler<Byte> {
 	@Override
 	public Byte readFromCursor(Class<?> cls, Cursor cursor, int columnIndex) {
 		return Byte.valueOf(cursor.getString(columnIndex));
+	}
+
+	@Override
+	public Object parseTypeArr(Class<?> arrValType, String[] arr) {
+		ArrayList<Byte> list = toTypeColl(Byte.class, arr);
+		Byte[] tArr = list.toArray(new Byte[list.size()]);
+		return (arrValType == byte.class) ? toPrimitive(tArr) : tArr;
 	}
 
 }

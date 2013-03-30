@@ -15,19 +15,13 @@
  */
 package org.droidparts.reflect.util;
 
-import static org.droidparts.util.Arrays2.toPrimitive;
-
-import java.lang.reflect.Array;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.UUID;
 
 import org.droidparts.model.Entity;
 import org.droidparts.model.Model;
-import org.droidparts.reflect.type.AbstractHandler;
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.graphics.Bitmap;
@@ -132,94 +126,6 @@ public final class TypeHelper {
 
 	public static boolean isEntity(Class<?> cls) {
 		return Entity.class.isAssignableFrom(cls);
-	}
-
-	//
-
-	public static Object toTypeArr(Class<?> arrValType, String[] arr) {
-		if (isByte(arrValType)) {
-			ArrayList<Byte> list = toTypeColl(Byte.class, arr);
-			Byte[] tArr = list.toArray(new Byte[list.size()]);
-			return (arrValType == byte.class) ? toPrimitive(tArr) : tArr;
-		} else if (isShort(arrValType)) {
-			ArrayList<Short> list = toTypeColl(Short.class, arr);
-			Short[] tArr = list.toArray(new Short[list.size()]);
-			return (arrValType == short.class) ? toPrimitive(tArr) : tArr;
-		} else if (isInteger(arrValType)) {
-			ArrayList<Integer> list = toTypeColl(Integer.class, arr);
-			Integer[] tArr = list.toArray(new Integer[list.size()]);
-			return (arrValType == int.class) ? toPrimitive(tArr) : tArr;
-		} else if (isLong(arrValType)) {
-			ArrayList<Long> list = toTypeColl(Long.class, arr);
-			Long[] tArr = list.toArray(new Long[list.size()]);
-			return (arrValType == long.class) ? toPrimitive(tArr) : tArr;
-		} else if (isFloat(arrValType)) {
-			ArrayList<Float> list = toTypeColl(Float.class, arr);
-			Float[] tArr = list.toArray(new Float[list.size()]);
-			return (arrValType == float.class) ? toPrimitive(tArr) : tArr;
-		} else if (isDouble(arrValType)) {
-			ArrayList<Double> list = toTypeColl(Double.class, arr);
-			Double[] tArr = list.toArray(new Double[list.size()]);
-			return (arrValType == double.class) ? toPrimitive(tArr) : tArr;
-		} else if (isBoolean(arrValType)) {
-			ArrayList<Boolean> list = toTypeColl(Boolean.class, arr);
-			Boolean[] tArr = list.toArray(new Boolean[list.size()]);
-			return (arrValType == boolean.class) ? toPrimitive(tArr) : tArr;
-		} else if (isCharacter(arrValType)) {
-			ArrayList<Character> list = toTypeColl(Character.class, arr);
-			Character[] tArr = list.toArray(new Character[list.size()]);
-			return (arrValType == char.class) ? toPrimitive(tArr) : tArr;
-		} else if (isString(arrValType)) {
-			return arr;
-		} else if (isEnum(arrValType)) {
-			@SuppressWarnings({ "rawtypes", "unchecked" })
-			ArrayList<? extends Enum> list = (ArrayList<? extends Enum>) toTypeColl(
-					arrValType, arr);
-			Object enumArr = Array.newInstance(arrValType, list.size());
-			for (int i = 0; i < list.size(); i++) {
-				Array.set(enumArr, i, list.get(i));
-			}
-			return enumArr;
-		} else if (isUUID(arrValType)) {
-			ArrayList<UUID> list = toTypeColl(UUID.class, arr);
-			return list.toArray(new UUID[list.size()]);
-		} else if (isUri(arrValType)) {
-			ArrayList<Uri> list = toTypeColl(Uri.class, arr);
-			return list.toArray(new Uri[list.size()]);
-		} else if (isDate(arrValType)) {
-			ArrayList<Date> list = toTypeColl(Date.class, arr);
-			return list.toArray(new Date[list.size()]);
-		} else if (isJSONObject(arrValType)) {
-			ArrayList<JSONObject> list = toTypeColl(JSONObject.class, arr);
-			return list.toArray(new JSONObject[list.size()]);
-		} else if (isJSONArray(arrValType)) {
-			ArrayList<JSONArray> list = toTypeColl(JSONArray.class, arr);
-			return list.toArray(new JSONArray[list.size()]);
-		} else {
-			throw new IllegalArgumentException("Unable to convert to "
-					+ arrValType + ".");
-		}
-	}
-
-	public static <T> ArrayList<T> toTypeColl(Class<T> valCls,
-			String[] valStrArr) throws IllegalArgumentException {
-		ArrayList<Object> list = new ArrayList<Object>();
-		String key = "key";
-		JSONObject hackObj = new JSONObject();
-		AbstractHandler<?> handler = TypeHandlerRegistry.get(valCls);
-		for (String str : valStrArr) {
-			try {
-				hackObj.put(key, str);
-				Object val = handler.readFromJSON(valCls, hackObj, key);
-				list.add(val);
-			} catch (JSONException e) {
-				throw new IllegalArgumentException("Unable to convert '" + str
-						+ "' to " + valCls.getSimpleName() + ".");
-			}
-		}
-		@SuppressWarnings("unchecked")
-		ArrayList<T> typedList = (ArrayList<T>) list;
-		return typedList;
 	}
 
 	protected TypeHelper() {

@@ -15,6 +15,7 @@
  */
 package org.droidparts.reflect.type;
 
+import java.util.ArrayList;
 import java.util.Date;
 
 import org.droidparts.reflect.util.TypeHelper;
@@ -56,6 +57,12 @@ public class DateHandler extends AbstractHandler<Date> {
 	@Override
 	public Date readFromCursor(Class<?> cls, Cursor cursor, int columnIndex) {
 		return new Date(cursor.getLong(columnIndex));
+	}
+
+	@Override
+	public Object parseTypeArr(Class<?> arrValType, String[] arr) {
+		ArrayList<Date> list = toTypeColl(Date.class, arr);
+		return list.toArray(new Date[list.size()]);
 	}
 
 }

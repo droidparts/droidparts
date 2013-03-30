@@ -15,6 +15,8 @@
  */
 package org.droidparts.reflect.type;
 
+import java.util.ArrayList;
+
 import org.droidparts.reflect.util.TypeHelper;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -55,6 +57,12 @@ public class UriHandler extends AbstractHandler<Uri> {
 	@Override
 	public Uri readFromCursor(Class<?> cls, Cursor cursor, int columnIndex) {
 		return Uri.parse(cursor.getString(columnIndex));
+	}
+
+	@Override
+	public Object parseTypeArr(Class<?> arrValType, String[] arr) {
+		ArrayList<Uri> list = toTypeColl(Uri.class, arr);
+		return list.toArray(new Uri[list.size()]);
 	}
 
 }

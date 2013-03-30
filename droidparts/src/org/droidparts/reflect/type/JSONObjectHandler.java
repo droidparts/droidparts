@@ -15,6 +15,8 @@
  */
 package org.droidparts.reflect.type;
 
+import java.util.ArrayList;
+
 import org.droidparts.reflect.util.TypeHelper;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -59,6 +61,12 @@ public class JSONObjectHandler extends AbstractHandler<JSONObject> {
 		} catch (JSONException e) {
 			throw new IllegalArgumentException(e);
 		}
+	}
+
+	@Override
+	public Object parseTypeArr(Class<?> arrValType, String[] arr) {
+		ArrayList<JSONObject> list = toTypeColl(JSONObject.class, arr);
+		return list.toArray(new JSONObject[list.size()]);
 	}
 
 }

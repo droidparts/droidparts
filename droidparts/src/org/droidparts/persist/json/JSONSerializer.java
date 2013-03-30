@@ -25,7 +25,6 @@ import static org.droidparts.reflect.util.TypeHelper.isDate;
 import static org.droidparts.reflect.util.TypeHelper.isEnum;
 import static org.droidparts.reflect.util.TypeHelper.isModel;
 import static org.droidparts.reflect.util.TypeHelper.isUUID;
-import static org.droidparts.reflect.util.TypeHelper.toTypeArr;
 import static org.json.JSONObject.NULL;
 
 import java.lang.reflect.Array;
@@ -215,7 +214,12 @@ public class JSONSerializer<ModelType extends Model> {
 					for (int i = 0; i < arr.length; i++) {
 						arr2[i] = arr[i].toString();
 					}
-					return toTypeArr(arrCollItemType, arr2);
+					handler = TypeHandlerRegistry.get(arrCollItemType);
+					if (handler == null) {
+						throw new IllegalArgumentException(
+								"Unable to convert to " + arrCollItemType + ".");
+					}
+					return handler.parseTypeArr(arrCollItemType, arr2);
 				}
 			} else {
 				return coll;

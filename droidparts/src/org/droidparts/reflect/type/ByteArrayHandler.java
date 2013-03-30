@@ -56,4 +56,9 @@ public class ByteArrayHandler extends AbstractHandler<byte[]> {
 		return cursor.getBlob(columnIndex);
 	}
 
+	@Override
+	public Object parseTypeArr(Class<?> arrValType, String[] arr) {
+		throw new UnsupportedOperationException();
+	}
+
 }
