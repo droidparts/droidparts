@@ -10,7 +10,7 @@
 	</parent>
 
 	<artifactId>droidparts-test</artifactId>
-	<name>DroidParts - Tests</name>
+	<name>DroidParts - Test</name>
 	<packaging>apk</packaging>
 
 	<dependencies>

@@ -64,12 +64,12 @@
 			</dependency>
 			<dependency>
 				<groupId>com.google.android</groupId>
-				<artifactId>annotations</artifactId>
+				<artifactId>android-test</artifactId>
 				<version>4.1.1.4</version>
 			</dependency>
 			<dependency>
 				<groupId>com.google.android</groupId>
-				<artifactId>android-test</artifactId>
+				<artifactId>annotations</artifactId>
 				<version>4.1.1.4</version>
 			</dependency>
 			<dependency>
@@ -84,10 +84,20 @@
 		<pluginManagement>
 			<plugins>
 				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-compiler-plugin</artifactId>
+					<configuration>
+						<source>1.6</source>
+						<target>1.6</target>
+					</configuration>
+				</plugin>
+				<plugin>
 					<groupId>com.jayway.maven.plugins.android.generation2</groupId>
 					<artifactId>android-maven-plugin</artifactId>
-					<version>3.5.1</version>
 					<extensions>true</extensions>
+					<configuration>
+                        <undeployBeforeDeploy>true</undeployBeforeDeploy>
+                    </configuration>
 				</plugin>
 			</plugins>
 		</pluginManagement>
