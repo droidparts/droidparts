@@ -27,7 +27,7 @@ import org.json.JSONObject;
 import android.content.ContentValues;
 import android.database.Cursor;
 
-public class EnumHandler extends AbstractHandler<Enum<?>> {
+public class EnumHandler extends AbstractTypeHandler<Enum<?>> {
 
 	@Override
 	public boolean canHandle(Class<?> cls) {

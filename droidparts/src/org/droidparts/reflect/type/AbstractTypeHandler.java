@@ -25,7 +25,7 @@ import org.json.JSONObject;
 import android.content.ContentValues;
 import android.database.Cursor;
 
-public abstract class AbstractHandler<T> implements SQL.DDL {
+public abstract class AbstractTypeHandler<T> implements SQL.DDL {
 
 	public abstract boolean canHandle(Class<?> cls);
 
@@ -51,7 +51,7 @@ public abstract class AbstractHandler<T> implements SQL.DDL {
 		ArrayList<Object> list = new ArrayList<Object>();
 		String key = "key";
 		JSONObject hackObj = new JSONObject();
-		AbstractHandler<?> handler = TypeHandlerRegistry.get(valCls);
+		AbstractTypeHandler<?> handler = TypeHandlerRegistry.get(valCls);
 		for (String str : valStrArr) {
 			try {
 				hackObj.put(key, str);

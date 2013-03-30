@@ -26,7 +26,7 @@ import org.json.JSONObject;
 import android.content.ContentValues;
 import android.database.Cursor;
 
-public class CharacterHandler extends AbstractHandler<Character> {
+public class CharacterHandler extends AbstractTypeHandler<Character> {
 
 	@Override
 	public boolean canHandle(Class<?> cls) {

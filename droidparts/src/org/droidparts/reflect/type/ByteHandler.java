@@ -26,7 +26,7 @@ import org.json.JSONObject;
 import android.content.ContentValues;
 import android.database.Cursor;
 
-public class ByteHandler extends AbstractHandler<Byte> {
+public class ByteHandler extends AbstractTypeHandler<Byte> {
 
 	@Override
 	public boolean canHandle(Class<?> cls) {

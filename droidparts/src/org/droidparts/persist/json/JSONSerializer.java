@@ -37,7 +37,7 @@ import org.droidparts.inject.Injector;
 import org.droidparts.model.Model;
 import org.droidparts.reflect.ann.FieldSpec;
 import org.droidparts.reflect.ann.json.KeyAnn;
-import org.droidparts.reflect.type.AbstractHandler;
+import org.droidparts.reflect.type.AbstractTypeHandler;
 import org.droidparts.reflect.util.TypeHandlerRegistry;
 import org.droidparts.util.Arrays2;
 import org.droidparts.util.L;
@@ -113,7 +113,7 @@ public class JSONSerializer<ModelType extends Model> {
 			obj.put(key, NULL);
 			return;
 		}
-		AbstractHandler<?> handler = TypeHandlerRegistry.get(valType);
+		AbstractTypeHandler<?> handler = TypeHandlerRegistry.get(valType);
 		if (handler != null) {
 			handler.putToJSONObject(obj, key, val);
 			return;
@@ -159,7 +159,7 @@ public class JSONSerializer<ModelType extends Model> {
 			return jsonVal;
 		}
 
-		AbstractHandler<?> handler = TypeHandlerRegistry.get(fieldType);
+		AbstractTypeHandler<?> handler = TypeHandlerRegistry.get(fieldType);
 		Exception e = null;
 		if (handler != null) {
 			try {

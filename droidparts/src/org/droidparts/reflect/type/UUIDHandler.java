@@ -25,7 +25,7 @@ import org.json.JSONObject;
 import android.content.ContentValues;
 import android.database.Cursor;
 
-public class UUIDHandler extends AbstractHandler<UUID> {
+public class UUIDHandler extends AbstractTypeHandler<UUID> {
 
 	@Override
 	public boolean canHandle(Class<?> cls) {

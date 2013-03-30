@@ -26,7 +26,7 @@ import org.json.JSONObject;
 import android.content.ContentValues;
 import android.database.Cursor;
 
-public class IntegerHandler extends AbstractHandler<Integer> {
+public class IntegerHandler extends AbstractTypeHandler<Integer> {
 
 	@Override
 	public boolean canHandle(Class<?> cls) {

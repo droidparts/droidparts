@@ -25,7 +25,7 @@ import org.json.JSONObject;
 import android.content.ContentValues;
 import android.database.Cursor;
 
-public class DateHandler extends AbstractHandler<Date> {
+public class DateHandler extends AbstractTypeHandler<Date> {
 
 	@Override
 	public boolean canHandle(Class<?> cls) {

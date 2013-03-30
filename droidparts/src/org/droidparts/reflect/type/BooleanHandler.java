@@ -26,7 +26,7 @@ import org.json.JSONObject;
 import android.content.ContentValues;
 import android.database.Cursor;
 
-public class BooleanHandler extends AbstractHandler<Boolean> {
+public class BooleanHandler extends AbstractTypeHandler<Boolean> {
 
 	@Override
 	public boolean canHandle(Class<?> cls) {

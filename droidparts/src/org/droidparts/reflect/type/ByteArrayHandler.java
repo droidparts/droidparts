@@ -22,7 +22,7 @@ import org.json.JSONObject;
 import android.content.ContentValues;
 import android.database.Cursor;
 
-public class ByteArrayHandler extends AbstractHandler<byte[]> {
+public class ByteArrayHandler extends AbstractTypeHandler<byte[]> {
 
 	@Override
 	public boolean canHandle(Class<?> cls) {

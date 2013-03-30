@@ -22,7 +22,7 @@ import org.json.JSONObject;
 import android.content.ContentValues;
 import android.database.Cursor;
 
-public class StringHandler extends AbstractHandler<String> {
+public class StringHandler extends AbstractTypeHandler<String> {
 
 	@Override
 	public boolean canHandle(Class<?> cls) {

@@ -40,7 +40,7 @@ import org.droidparts.model.Entity;
 import org.droidparts.reflect.FieldSpecBuilder;
 import org.droidparts.reflect.ann.FieldSpec;
 import org.droidparts.reflect.ann.sql.ColumnAnn;
-import org.droidparts.reflect.type.AbstractHandler;
+import org.droidparts.reflect.type.AbstractTypeHandler;
 import org.droidparts.reflect.util.ReflectionUtils;
 import org.droidparts.reflect.util.TypeHandlerRegistry;
 import org.droidparts.util.Arrays2;
@@ -180,7 +180,7 @@ public class EntityManager<EntityType extends Entity> extends
 			cv.putNull(key);
 			return;
 		}
-		AbstractHandler<?> handler = TypeHandlerRegistry.get(valueType);
+		AbstractTypeHandler<?> handler = TypeHandlerRegistry.get(valueType);
 		if (handler != null) {
 			handler.putToContentValues(cv, key, value);
 			return;
@@ -221,7 +221,7 @@ public class EntityManager<EntityType extends Entity> extends
 		if (cursor.isNull(columnIndex)) {
 			return null;
 		}
-		AbstractHandler<?> handler = TypeHandlerRegistry.get(valType);
+		AbstractTypeHandler<?> handler = TypeHandlerRegistry.get(valType);
 		if (handler != null) {
 			return handler.readFromCursor(valType, cursor, columnIndex);
 		}
@@ -249,7 +249,7 @@ public class EntityManager<EntityType extends Entity> extends
 			} else {
 				@SuppressWarnings("unchecked")
 				Collection<Object> coll = (Collection<Object>) instantiate(valType);
-				coll.addAll(AbstractHandler.toTypeColl(arrCollItemType, parts));
+				coll.addAll(AbstractTypeHandler.toTypeColl(arrCollItemType, parts));
 				return coll;
 			}
 		} else {
