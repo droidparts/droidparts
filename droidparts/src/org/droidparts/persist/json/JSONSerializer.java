@@ -20,23 +20,12 @@ import static org.droidparts.reflect.util.ReflectionUtils.getFieldVal;
 import static org.droidparts.reflect.util.ReflectionUtils.instantiate;
 import static org.droidparts.reflect.util.ReflectionUtils.setFieldVal;
 import static org.droidparts.reflect.util.TypeHelper.isArray;
-import static org.droidparts.reflect.util.TypeHelper.isBoolean;
-import static org.droidparts.reflect.util.TypeHelper.isByte;
 import static org.droidparts.reflect.util.TypeHelper.isByteArray;
-import static org.droidparts.reflect.util.TypeHelper.isCharacter;
 import static org.droidparts.reflect.util.TypeHelper.isCollection;
 import static org.droidparts.reflect.util.TypeHelper.isDate;
-import static org.droidparts.reflect.util.TypeHelper.isDouble;
 import static org.droidparts.reflect.util.TypeHelper.isEnum;
-import static org.droidparts.reflect.util.TypeHelper.isFloat;
-import static org.droidparts.reflect.util.TypeHelper.isInteger;
-import static org.droidparts.reflect.util.TypeHelper.isLong;
 import static org.droidparts.reflect.util.TypeHelper.isModel;
-import static org.droidparts.reflect.util.TypeHelper.isShort;
-import static org.droidparts.reflect.util.TypeHelper.isString;
 import static org.droidparts.reflect.util.TypeHelper.isUUID;
-import static org.droidparts.reflect.util.TypeHelper.isUri;
-import static org.droidparts.reflect.util.TypeHelper.parseValue;
 import static org.droidparts.reflect.util.TypeHelper.toObjectArr;
 import static org.droidparts.reflect.util.TypeHelper.toTypeArr;
 import static org.json.JSONObject.NULL;
@@ -50,6 +39,8 @@ import org.droidparts.inject.Injector;
 import org.droidparts.model.Model;
 import org.droidparts.reflect.ann.FieldSpec;
 import org.droidparts.reflect.ann.json.KeyAnn;
+import org.droidparts.reflect.type.AbstractHandler;
+import org.droidparts.reflect.util.TypeHandlerRegistry;
 import org.droidparts.util.L;
 import org.droidparts.util.PersistUtils;
 import org.json.JSONArray;
@@ -121,35 +112,15 @@ public class JSONSerializer<ModelType extends Model> {
 			throws Exception {
 		if (val == null) {
 			obj.put(key, NULL);
-		} else if (isByte(valType)) {
-			obj.put(key, (Byte) val);
-		} else if (isShort(valType)) {
-			obj.put(key, (Short) val);
-		} else if (isInteger(valType)) {
-			obj.put(key, (Integer) val);
-		} else if (isLong(valType)) {
-			obj.put(key, (Long) val);
-		} else if (isFloat(valType)) {
-			obj.put(key, (Float) val);
-		} else if (isDouble(valType)) {
-			obj.put(key, (Double) val);
-		} else if (isBoolean(valType)) {
-			obj.put(key, (Boolean) val);
-		} else if (isCharacter(valType)) {
-			obj.put(key, (Character) val);
-		} else if (isString(valType)) {
-			obj.put(key, (String) val);
-		} else if (isEnum(valType)) {
-			obj.put(key, val.toString());
-		} else if (isUUID(valType)) {
-			obj.put(key, val.toString());
-		} else if (isUri(valType)) {
-			obj.put(key, val.toString());
-		} else if (isDate(valType)) {
-			obj.put(key, ((Date) val).getTime());
-		} else if (isByteArray(valType)) {
-			obj.put(key, val);
-		} else if (isModel(valType)) {
+			return;
+		}
+		AbstractHandler<?> handler = TypeHandlerRegistry.get(valType);
+		if (handler != null) {
+			handler.putToJSONObject(obj, key, val);
+			return;
+		}
+		// TODO
+		if (isModel(valType)) {
 			JSONObject obj2 = subSerializer(valType).serialize((Model) val);
 			obj.put(key, obj2);
 		} else if (isArray(valType) || isCollection(valType)) {
@@ -183,21 +154,20 @@ public class JSONSerializer<ModelType extends Model> {
 	}
 
 	protected Object readFromJSON(Class<?> fieldType, Class<?> arrCollItemType,
-			Object jsonVal) throws Exception {
-		String strVal = String.valueOf(jsonVal);
+			JSONObject obj, String key) throws Exception {
+		Object jsonVal = obj.get(key);
 		if (NULL.equals(jsonVal)) {
 			return jsonVal;
-		} else if (isBoolean(fieldType)) {
-			if ("1".equals(strVal)) {
-				strVal = "true";
-			}
 		}
 
+		AbstractHandler<?> handler = TypeHandlerRegistry.get(fieldType);
 		Exception e = null;
-		try {
-			return parseValue(fieldType, strVal);
-		} catch (Exception ex) {
-			e = ex;
+		if (handler != null) {
+			try {
+				return handler.readFromJSON(fieldType, obj, key);
+			} catch (Exception ex) {
+				e = ex;
+			}
 		}
 
 		if (isByteArray(fieldType)) {
@@ -205,6 +175,7 @@ public class JSONSerializer<ModelType extends Model> {
 		} else if (isModel(fieldType)) {
 			return subSerializer(fieldType).deserialize((JSONObject) jsonVal);
 		} else if (isArray(fieldType) || isCollection(fieldType)) {
+			String strVal = String.valueOf(jsonVal);
 			JSONArray jArr = (jsonVal instanceof JSONArray) ? (JSONArray) jsonVal
 					: new JSONArray(strVal);
 			boolean isArr = isArray(fieldType);
@@ -222,14 +193,14 @@ public class JSONSerializer<ModelType extends Model> {
 				serializer = subSerializer(arrCollItemType);
 			}
 			for (int i = 0; i < jArr.length(); i++) {
-				Object obj = jArr.get(i);
+				Object obj1 = jArr.get(i);
 				if (serializer != null) {
-					obj = serializer.deserialize((JSONObject) obj);
+					obj1 = serializer.deserialize((JSONObject) obj1);
 				}
 				if (isArr) {
-					arr[i] = obj;
+					arr[i] = obj1;
 				} else {
-					coll.add(obj);
+					coll.add(obj1);
 				}
 			}
 			if (isArr) {
@@ -289,10 +260,9 @@ public class JSONSerializer<ModelType extends Model> {
 				throwIfRequired(spec);
 			}
 		} else if (obj.has(key)) {
-			Object val = obj.get(key);
 			try {
-				val = readFromJSON(spec.field.getType(), spec.arrCollItemType,
-						val);
+				Object val = readFromJSON(spec.field.getType(),
+						spec.arrCollItemType, obj, key);
 				if (!NULL.equals(val)) {
 					setFieldVal(model, spec.field, val);
 				} else {

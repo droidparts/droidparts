@@ -19,27 +19,14 @@ import static java.util.Arrays.asList;
 import static org.droidparts.reflect.FieldSpecBuilder.getTableColumnSpecs;
 import static org.droidparts.reflect.util.ReflectionUtils.getFieldVal;
 import static org.droidparts.reflect.util.ReflectionUtils.instantiate;
-import static org.droidparts.reflect.util.ReflectionUtils.instantiateEnum;
 import static org.droidparts.reflect.util.ReflectionUtils.setFieldVal;
 import static org.droidparts.reflect.util.TypeHelper.isArray;
 import static org.droidparts.reflect.util.TypeHelper.isBitmap;
-import static org.droidparts.reflect.util.TypeHelper.isBoolean;
-import static org.droidparts.reflect.util.TypeHelper.isByte;
-import static org.droidparts.reflect.util.TypeHelper.isByteArray;
 import static org.droidparts.reflect.util.TypeHelper.isCollection;
 import static org.droidparts.reflect.util.TypeHelper.isDate;
-import static org.droidparts.reflect.util.TypeHelper.isDouble;
 import static org.droidparts.reflect.util.TypeHelper.isEntity;
-import static org.droidparts.reflect.util.TypeHelper.isEnum;
-import static org.droidparts.reflect.util.TypeHelper.isFloat;
-import static org.droidparts.reflect.util.TypeHelper.isInteger;
 import static org.droidparts.reflect.util.TypeHelper.isJsonArray;
 import static org.droidparts.reflect.util.TypeHelper.isJsonObject;
-import static org.droidparts.reflect.util.TypeHelper.isLong;
-import static org.droidparts.reflect.util.TypeHelper.isShort;
-import static org.droidparts.reflect.util.TypeHelper.isString;
-import static org.droidparts.reflect.util.TypeHelper.isUUID;
-import static org.droidparts.reflect.util.TypeHelper.isUri;
 import static org.droidparts.reflect.util.TypeHelper.toObjectArr;
 import static org.droidparts.reflect.util.TypeHelper.toTypeArr;
 import static org.droidparts.reflect.util.TypeHelper.toTypeColl;
@@ -51,7 +38,6 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashSet;
-import java.util.UUID;
 
 import org.droidparts.annotation.inject.InjectDependency;
 import org.droidparts.inject.Injector;
@@ -59,7 +45,9 @@ import org.droidparts.model.Entity;
 import org.droidparts.reflect.FieldSpecBuilder;
 import org.droidparts.reflect.ann.FieldSpec;
 import org.droidparts.reflect.ann.sql.ColumnAnn;
+import org.droidparts.reflect.type.AbstractHandler;
 import org.droidparts.reflect.util.ReflectionUtils;
+import org.droidparts.reflect.util.TypeHandlerRegistry;
 import org.droidparts.util.Strings;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -72,7 +60,6 @@ import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.CompressFormat;
 import android.graphics.BitmapFactory;
-import android.net.Uri;
 
 public class EntityManager<EntityType extends Entity> extends
 		AbstractEntityManager<EntityType> {
@@ -198,37 +185,19 @@ public class EntityManager<EntityType extends Entity> extends
 			throws IllegalArgumentException {
 		if (value == null) {
 			cv.putNull(key);
-		} else if (isBoolean(valueType)) {
-			cv.put(key, ((Boolean) value));
-		} else if (isByte(valueType)) {
-			cv.put(key, (Byte) value);
-		} else if (isByteArray(valueType)) {
-			cv.put(key, (byte[]) value);
-		} else if (isDouble(valueType)) {
-			cv.put(key, (Double) value);
-		} else if (isFloat(valueType)) {
-			cv.put(key, (Float) value);
-		} else if (isInteger(valueType)) {
-			cv.put(key, (Integer) value);
-		} else if (isLong(valueType)) {
-			cv.put(key, (Long) value);
-		} else if (isShort(valueType)) {
-			cv.put(key, (Short) value);
-		} else if (isString(valueType)) {
-			cv.put(key, (String) value);
-		} else if (isUUID(valueType)) {
-			cv.put(key, value.toString());
-		} else if (isUri(valueType)) {
-			cv.put(key, value.toString());
-		} else if (isDate(valueType)) {
-			cv.put(key, ((Date) value).getTime());
-		} else if (isBitmap(valueType)) {
+			return;
+		}
+		AbstractHandler<?> handler = TypeHandlerRegistry.get(valueType);
+		if (handler != null) {
+			handler.putToContentValues(cv, key, value);
+			return;
+		}
+		// TODO
+		if (isBitmap(valueType)) {
 			Bitmap bm = (Bitmap) value;
 			ByteArrayOutputStream baos = new ByteArrayOutputStream();
 			bm.compress(CompressFormat.PNG, 0, baos);
 			cv.put(key, baos.toByteArray());
-		} else if (isEnum(valueType)) {
-			cv.put(key, value.toString());
 		} else if (isJsonObject(valueType) || isJsonArray(valueType)) {
 			cv.put(key, value.toString());
 		} else if (isEntity(valueType)) {
@@ -260,31 +229,13 @@ public class EntityManager<EntityType extends Entity> extends
 			throws IllegalArgumentException {
 		if (cursor.isNull(columnIndex)) {
 			return null;
-		} else if (isBoolean(valType)) {
-			return cursor.getInt(columnIndex) == 1;
-		} else if (isByte(valType)) {
-			return Byte.valueOf(cursor.getString(columnIndex));
-		} else if (isByteArray(valType)) {
-			return cursor.getBlob(columnIndex);
-		} else if (isDouble(valType)) {
-			return cursor.getDouble(columnIndex);
-		} else if (isFloat(valType)) {
-			return cursor.getFloat(columnIndex);
-		} else if (isInteger(valType)) {
-			return cursor.getInt(columnIndex);
-		} else if (isLong(valType)) {
-			return cursor.getLong(columnIndex);
-		} else if (isShort(valType)) {
-			return cursor.getShort(columnIndex);
-		} else if (isString(valType)) {
-			return cursor.getString(columnIndex);
-		} else if (isUUID(valType)) {
-			return UUID.fromString(cursor.getString(columnIndex));
-		} else if (isUri(valType)) {
-			return Uri.parse(cursor.getString(columnIndex));
-		} else if (isDate(valType)) {
-			return new Date(cursor.getLong(columnIndex));
-		} else if (isBitmap(valType)) {
+		}
+		AbstractHandler<?> handler = TypeHandlerRegistry.get(valType);
+		if (handler != null) {
+			return handler.readFromCursor(valType, cursor, columnIndex);
+		}
+		// TODO
+		if (isBitmap(valType)) {
 			byte[] arr = cursor.getBlob(columnIndex);
 			return BitmapFactory.decodeByteArray(arr, 0, arr.length);
 		} else if (isJsonObject(valType) || isJsonArray(valType)) {
@@ -295,8 +246,6 @@ public class EntityManager<EntityType extends Entity> extends
 			} catch (JSONException e) {
 				throw new IllegalArgumentException(e);
 			}
-		} else if (isEnum(valType)) {
-			return instantiateEnum(valType, cursor.getString(columnIndex));
 		} else if (isEntity(valType)) {
 			long id = cursor.getLong(columnIndex);
 			@SuppressWarnings("unchecked")

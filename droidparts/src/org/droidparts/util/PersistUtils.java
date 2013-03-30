@@ -18,23 +18,10 @@ package org.droidparts.util;
 import static java.util.Arrays.asList;
 import static org.droidparts.reflect.FieldSpecBuilder.getTableName;
 import static org.droidparts.reflect.util.TypeHelper.isArray;
-import static org.droidparts.reflect.util.TypeHelper.isBoolean;
-import static org.droidparts.reflect.util.TypeHelper.isByte;
-import static org.droidparts.reflect.util.TypeHelper.isCharacter;
 import static org.droidparts.reflect.util.TypeHelper.isCollection;
-import static org.droidparts.reflect.util.TypeHelper.isDate;
-import static org.droidparts.reflect.util.TypeHelper.isDouble;
 import static org.droidparts.reflect.util.TypeHelper.isEntity;
-import static org.droidparts.reflect.util.TypeHelper.isEnum;
-import static org.droidparts.reflect.util.TypeHelper.isFloat;
-import static org.droidparts.reflect.util.TypeHelper.isInteger;
 import static org.droidparts.reflect.util.TypeHelper.isJsonArray;
 import static org.droidparts.reflect.util.TypeHelper.isJsonObject;
-import static org.droidparts.reflect.util.TypeHelper.isLong;
-import static org.droidparts.reflect.util.TypeHelper.isShort;
-import static org.droidparts.reflect.util.TypeHelper.isString;
-import static org.droidparts.reflect.util.TypeHelper.isUUID;
-import static org.droidparts.reflect.util.TypeHelper.isUri;
 import static org.droidparts.util.Strings.join;
 import static org.json.JSONObject.NULL;
 
@@ -49,6 +36,8 @@ import org.droidparts.model.Entity;
 import org.droidparts.persist.sql.AbstractEntityManager;
 import org.droidparts.reflect.ann.FieldSpec;
 import org.droidparts.reflect.ann.sql.ColumnAnn;
+import org.droidparts.reflect.type.AbstractHandler;
+import org.droidparts.reflect.util.TypeHandlerRegistry;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -259,33 +248,12 @@ public final class PersistUtils implements SQL.DDL {
 
 	private static String getColumnType(Class<?> fieldType,
 			Class<?> arrCollItemType) {
-		if (isByte(fieldType)) {
-			return INTEGER;
-		} else if (isShort(fieldType)) {
-			return INTEGER;
-		} else if (isInteger(fieldType)) {
-			return INTEGER;
-		} else if (isLong(fieldType)) {
-			return INTEGER;
-		} else if (isFloat(fieldType)) {
-			return REAL;
-		} else if (isDouble(fieldType)) {
-			return REAL;
-		} else if (isBoolean(fieldType)) {
-			return INTEGER;
-		} else if (isCharacter(fieldType)) {
-			return INTEGER;
-		} else if (isString(fieldType)) {
-			return TEXT;
-		} else if (isEnum(fieldType)) {
-			return TEXT;
-		} else if (isUUID(fieldType)) {
-			return TEXT;
-		} else if (isUri(fieldType)) {
-			return TEXT;
-		} else if (isDate(fieldType)) {
-			return INTEGER;
-		} else if (isJsonObject(fieldType) || isJsonArray(fieldType)) {
+		AbstractHandler<?> handler = TypeHandlerRegistry.get(fieldType);
+		if (handler != null) {
+			return handler.getDBColumnType();
+		}
+		// TODO
+		if (isJsonObject(fieldType) || isJsonArray(fieldType)) {
 			return TEXT;
 		} else if (isArray(fieldType) || isCollection(fieldType)) {
 			return TEXT;

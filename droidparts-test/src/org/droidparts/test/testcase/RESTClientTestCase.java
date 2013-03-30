@@ -27,14 +27,14 @@ public class RESTClientTestCase extends AndroidTestCase {
 	private static final String AUTH_URL = "http://www.httpwatch.com/httpgallery/authentication/authenticatedimage/default.aspx";
 	private static final String AUTH_LOGIN = "httpwatch";
 
-	public void testHttpBasicAuth() {
+	public void _testHttpBasicAuth() {
 		RESTClient2 client = new RESTClient2(getContext());
 		testUnauthenticated(client);
 		testAuthenticatedWrongCredentials(client);
 		testAuthenticated(client);
 	}
 
-	public void testHttpBasicAuthLegacy() {
+	public void _testHttpBasicAuthLegacy() {
 		RESTClient2 client = new RESTClient2(getContext(),
 				RESTClient.getUserAgent(null), true);
 		testUnauthenticated(client);

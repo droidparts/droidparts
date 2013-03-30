@@ -15,7 +15,6 @@
  */
 package org.droidparts.reflect.util;
 
-import static org.droidparts.reflect.util.ReflectionUtils.instantiateEnum;
 import static org.droidparts.util.Arrays2.toObject;
 import static org.droidparts.util.Arrays2.toPrimitive;
 
@@ -27,6 +26,7 @@ import java.util.UUID;
 
 import org.droidparts.model.Entity;
 import org.droidparts.model.Model;
+import org.droidparts.reflect.type.AbstractHandler;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -246,53 +246,38 @@ public final class TypeHelper {
 	public static <T> ArrayList<T> toTypeColl(Class<T> valCls,
 			String[] valStrArr) throws IllegalArgumentException {
 		ArrayList<Object> list = new ArrayList<Object>();
+		JSONObject hackObj = new JSONObject();
 		for (String str : valStrArr) {
-			list.add(parseValue(valCls, str));
+			list.add(parseValue(valCls, hackObj, str));
 		}
 		@SuppressWarnings("unchecked")
 		ArrayList<T> typedList = (ArrayList<T>) list;
 		return typedList;
 	}
 
-	public static Object parseValue(Class<?> valCls, String valStr)
+	private static Object parseValue(Class<?> valCls, JSONObject obj, String val)
 			throws IllegalArgumentException {
-		if (isByte(valCls)) {
-			return Byte.valueOf(valStr);
-		} else if (isShort(valCls)) {
-			return Short.valueOf(valStr);
-		} else if (isInteger(valCls)) {
-			return Integer.valueOf(valStr);
-		} else if (isLong(valCls)) {
-			return Long.valueOf(valStr);
-		} else if (isFloat(valCls)) {
-			return Float.valueOf(valStr);
-		} else if (isDouble(valCls)) {
-			return Double.valueOf(valStr);
-		} else if (isBoolean(valCls)) {
-			return Boolean.valueOf(valStr);
-		} else if (isCharacter(valCls)) {
-			return Character.valueOf((valStr.length() == 0) ? ' ' : valStr
-					.charAt(0));
-		} else if (isString(valCls)) {
-			return valStr;
-		} else if (isEnum(valCls)) {
-			return instantiateEnum(valCls, valStr);
-		} else if (isUUID(valCls)) {
-			return UUID.fromString(valStr);
-		} else if (isUri(valCls)) {
-			return Uri.parse(valStr);
-		} else if (isDate(valCls)) {
-			return new Date(Long.valueOf(valStr));
-		} else if (isJsonObject(valCls) || isJsonArray(valCls)) {
-			try {
-				return isJsonObject(valCls) ? new JSONObject(valStr)
-						: new JSONArray(valStr);
-			} catch (JSONException e) {
-				throw new IllegalArgumentException(e);
+		String key = "key";
+		AbstractHandler<?> handler = TypeHandlerRegistry.get(valCls);
+		try {
+			obj.put(key, val);
+			if (handler != null) {
+				return handler.readFromJSON(valCls, obj, key);
 			}
-		} else {
-			throw new IllegalArgumentException("Unable to convert '" + valStr
-					+ "' to " + valCls.getSimpleName() + ".");
+			// TODO
+			if (isJsonObject(valCls) || isJsonArray(valCls)) {
+				try {
+					return isJsonObject(valCls) ? new JSONObject(val)
+							: new JSONArray(val);
+				} catch (JSONException e) {
+					throw new IllegalArgumentException(e);
+				}
+			} else {
+				throw new IllegalArgumentException("Unable to convert '" + val
+						+ "' to " + valCls.getSimpleName() + ".");
+			}
+		} catch (JSONException e) {
+			throw new IllegalArgumentException(e);
 		}
 	}
 
