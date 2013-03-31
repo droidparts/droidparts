@@ -155,6 +155,7 @@ public class EntityManager<EntityType extends Entity> extends
 
 	private String[] eagerForeignKeyColumnNames;
 
+	@SuppressWarnings("unchecked")
 	protected <T, V> void putToContentValues(ContentValues cv, String key,
 			Class<T> valueType, Class<V> arrCollItemType, Object value)
 			throws IllegalArgumentException {

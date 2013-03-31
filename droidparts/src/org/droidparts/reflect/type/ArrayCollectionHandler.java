@@ -67,6 +67,7 @@ public class ArrayCollectionHandler extends TypeHandler<Object> {
 		return vals;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	protected <V> Object parseFromString(Class<Object> valType,
 			Class<V> arrCollItemType, String str) {
@@ -83,9 +84,7 @@ public class ArrayCollectionHandler extends TypeHandler<Object> {
 		if (isArr) {
 			arr = new Object[jArr.length()];
 		} else {
-			@SuppressWarnings("unchecked")
-			Class<? extends Collection<Object>> cl = (Class<? extends Collection<Object>>) valType;
-			coll = instantiate(cl);
+			coll = (Collection<Object>) instantiate(valType);
 		}
 		boolean isModel = isModel(arrCollItemType);
 		JSONSerializer<Model> serializer = null;
