@@ -85,6 +85,16 @@ public class TypeHandlerRegistry {
 		return (TypeHandler<T>) handler;
 	}
 
+	public static <T> TypeHandler<T> getHandlerOrThrow(Class<T> cls) {
+		TypeHandler<T> handler = getHandler(cls);
+		if (handler != null) {
+			return handler;
+		} else {
+			throw new IllegalArgumentException("No handler for '"
+					+ cls.getName() + "'.");
+		}
+	}
+
 	private TypeHandlerRegistry() {
 	}
 

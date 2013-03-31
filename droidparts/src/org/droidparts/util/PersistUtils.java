@@ -17,8 +17,6 @@ package org.droidparts.util;
 
 import static java.util.Arrays.asList;
 import static org.droidparts.reflect.FieldSpecBuilder.getTableName;
-import static org.droidparts.reflect.util.TypeHelper.isArray;
-import static org.droidparts.reflect.util.TypeHelper.isCollection;
 import static org.droidparts.reflect.util.TypeHelper.isEntity;
 import static org.droidparts.util.Strings.join;
 import static org.json.JSONObject.NULL;
@@ -249,13 +247,10 @@ public final class PersistUtils implements SQL.DDL {
 		TypeHandler<?> handler = TypeHandlerRegistry.getHandler(fieldType);
 		if (handler != null) {
 			return handler.getDBColumnType();
+		} else {
+			// persist any other type as blob
+			return BLOB;
 		}
-		// TODO
-		if (isArray(fieldType) || isCollection(fieldType)) {
-			return TEXT;
-		}
-		// persist any other type as blob
-		return BLOB;
 	}
 
 	private static void appendForeignKeyDef(FieldSpec<ColumnAnn> spec,

@@ -57,20 +57,14 @@ public class ArrayCollectionHandler extends TypeHandler<Object> {
 	public <V> Object convertForJSON(Class<Object> valType,
 			Class<V> arrCollItemType, Object val) {
 		TypeHandler<V> handler = TypeHandlerRegistry
-				.getHandler(arrCollItemType);
-		if (handler != null) {
-			ArrayList<V> list = arrOrCollToList(valType, arrCollItemType, val);
-			JSONArray vals = new JSONArray();
-			for (V obj : list) {
-				Object jObj = handler
-						.convertForJSON(arrCollItemType, null, obj);
-				vals.put(jObj);
-			}
-			return vals;
-		} else {
-			throw new IllegalArgumentException("Unable to convert to "
-					+ arrCollItemType + ".");
+				.getHandlerOrThrow(arrCollItemType);
+		ArrayList<V> list = arrOrCollToList(valType, arrCollItemType, val);
+		JSONArray vals = new JSONArray();
+		for (V obj : list) {
+			Object jObj = handler.convertForJSON(arrCollItemType, null, obj);
+			vals.put(jObj);
 		}
+		return vals;
 	}
 
 	@Override
@@ -128,11 +122,7 @@ public class ArrayCollectionHandler extends TypeHandler<Object> {
 					arr2[i] = arr[i].toString();
 				}
 				TypeHandler<V> handler = TypeHandlerRegistry
-						.getHandler(arrCollItemType);
-				if (handler == null) {
-					throw new IllegalArgumentException("Unable to convert to "
-							+ arrCollItemType + ".");
-				}
+						.getHandlerOrThrow(arrCollItemType);
 				return handler.parseTypeArr(arrCollItemType, arr2);
 			}
 		} else {
@@ -145,21 +135,15 @@ public class ArrayCollectionHandler extends TypeHandler<Object> {
 			Class<V> arrCollItemType, ContentValues cv, String key, Object val)
 			throws IllegalArgumentException {
 		TypeHandler<V> handler = TypeHandlerRegistry
-				.getHandler(arrCollItemType);
-		if (handler != null) {
-			ArrayList<V> list = arrOrCollToList(valueType, arrCollItemType, val);
-			ArrayList<Object> vals = new ArrayList<Object>();
-			for (V obj : list) {
-				Object jObj = handler
-						.convertForJSON(arrCollItemType, null, obj);
-				vals.add(jObj);
-			}
-			String strVal = Strings.join(vals, SEP, null);
-			cv.put(key, strVal);
-		} else {
-			throw new IllegalArgumentException("Unable to convert to "
-					+ arrCollItemType + ".");
+				.getHandlerOrThrow(arrCollItemType);
+		ArrayList<V> list = arrOrCollToList(valueType, arrCollItemType, val);
+		ArrayList<Object> vals = new ArrayList<Object>();
+		for (V obj : list) {
+			Object jObj = handler.convertForJSON(arrCollItemType, null, obj);
+			vals.add(jObj);
 		}
+		String strVal = Strings.join(vals, SEP, null);
+		cv.put(key, strVal);
 	}
 
 	@Override
@@ -167,22 +151,17 @@ public class ArrayCollectionHandler extends TypeHandler<Object> {
 			Class<V> arrCollItemType, Cursor cursor, int columnIndex)
 			throws IllegalArgumentException {
 		TypeHandler<V> handler = TypeHandlerRegistry
-				.getHandler(arrCollItemType);
-		if (handler != null) {
-			String str = cursor.getString(columnIndex);
-			String[] parts = (str.length() > 0) ? str.split("\\" + SEP)
-					: new String[0];
-			if (isArray(valType)) {
-				return handler.parseTypeArr(arrCollItemType, parts);
-			} else {
-				@SuppressWarnings("unchecked")
-				Collection<Object> coll = (Collection<Object>) instantiate(valType);
-				coll.addAll(handler.parseTypeColl(arrCollItemType, parts));
-				return coll;
-			}
+				.getHandlerOrThrow(arrCollItemType);
+		String str = cursor.getString(columnIndex);
+		String[] parts = (str.length() > 0) ? str.split("\\" + SEP)
+				: new String[0];
+		if (isArray(valType)) {
+			return handler.parseTypeArr(arrCollItemType, parts);
 		} else {
-			throw new IllegalArgumentException("Unable to convert to "
-					+ arrCollItemType + ".");
+			@SuppressWarnings("unchecked")
+			Collection<Object> coll = (Collection<Object>) instantiate(valType);
+			coll.addAll(handler.parseTypeColl(arrCollItemType, parts));
+			return coll;
 		}
 	}
 

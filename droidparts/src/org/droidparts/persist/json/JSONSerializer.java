@@ -99,17 +99,12 @@ public class JSONSerializer<ModelType extends Model> {
 		if (val == null) {
 			obj.put(key, NULL);
 		} else {
-			TypeHandler<T> handler = TypeHandlerRegistry.getHandler(valType);
-			if (handler != null) {
-				@SuppressWarnings("unchecked")
-				Object jsonVal = handler.convertForJSON(valType,
-						arrCollItemType, (T) val);
-				obj.put(key, jsonVal);
-				return;
-			} else {
-				throw new IllegalArgumentException("Unsupported class: "
-						+ valType);
-			}
+			TypeHandler<T> handler = TypeHandlerRegistry
+					.getHandlerOrThrow(valType);
+			@SuppressWarnings("unchecked")
+			Object jsonVal = handler.convertForJSON(valType, arrCollItemType,
+					(T) val);
+			obj.put(key, jsonVal);
 		}
 	}
 
@@ -120,14 +115,10 @@ public class JSONSerializer<ModelType extends Model> {
 		if (NULL.equals(jsonVal)) {
 			return jsonVal;
 		} else {
-			TypeHandler<T> handler = TypeHandlerRegistry.getHandler(valType);
-			if (handler != null) {
-				Object val = obj.get(key);
-				return handler.convertFromJSON(valType, arrCollItemType, val);
-			} else {
-				throw new IllegalArgumentException("Unsupported class: "
-						+ valType);
-			}
+			TypeHandler<T> handler = TypeHandlerRegistry
+					.getHandlerOrThrow(valType);
+			Object val = obj.get(key);
+			return handler.convertFromJSON(valType, arrCollItemType, val);
 		}
 	}
 

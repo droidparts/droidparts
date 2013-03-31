@@ -160,16 +160,11 @@ public class EntityManager<EntityType extends Entity> extends
 			throws IllegalArgumentException {
 		if (value == null) {
 			cv.putNull(key);
-			return;
-		}
-		TypeHandler<T> handler = TypeHandlerRegistry.getHandler(valueType);
-		if (handler != null) {
+		} else {
+			TypeHandler<T> handler = TypeHandlerRegistry
+					.getHandlerOrThrow(valueType);
 			handler.putToContentValues(valueType, arrCollItemType, cv, key,
 					(T) value);
-			return;
-		} else {
-			throw new IllegalArgumentException("Need to manually put "
-					+ valueType.getName() + " to cursor.");
 		}
 	}
 
@@ -178,14 +173,11 @@ public class EntityManager<EntityType extends Entity> extends
 			throws IllegalArgumentException {
 		if (cursor.isNull(columnIndex)) {
 			return null;
-		}
-		TypeHandler<T> handler = TypeHandlerRegistry.getHandler(valType);
-		if (handler != null) {
+		} else {
+			TypeHandler<T> handler = TypeHandlerRegistry
+					.getHandlerOrThrow(valType);
 			return handler.readFromCursor(valType, arrCollItemType, cursor,
 					columnIndex);
-		} else {
-			throw new IllegalArgumentException("Need to manually read "
-					+ valType.getName() + " from cursor.");
 		}
 	}
 
