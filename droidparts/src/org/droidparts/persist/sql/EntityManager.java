@@ -20,16 +20,9 @@ import static org.droidparts.reflect.FieldSpecBuilder.getTableColumnSpecs;
 import static org.droidparts.reflect.util.ReflectionUtils.getFieldVal;
 import static org.droidparts.reflect.util.ReflectionUtils.instantiate;
 import static org.droidparts.reflect.util.ReflectionUtils.setFieldVal;
-import static org.droidparts.reflect.util.TypeHelper.isArray;
-import static org.droidparts.reflect.util.TypeHelper.isCollection;
-import static org.droidparts.reflect.util.TypeHelper.isDate;
 import static org.droidparts.reflect.util.TypeHelper.isEntity;
 
 import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Date;
 import java.util.HashSet;
 
 import org.droidparts.annotation.inject.InjectDependency;
@@ -41,8 +34,6 @@ import org.droidparts.reflect.ann.sql.ColumnAnn;
 import org.droidparts.reflect.type.TypeHandler;
 import org.droidparts.reflect.util.ReflectionUtils;
 import org.droidparts.reflect.util.TypeHandlerRegistry;
-import org.droidparts.util.Arrays2;
-import org.droidparts.util.Strings;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -51,9 +42,6 @@ import android.database.sqlite.SQLiteDatabase;
 
 public class EntityManager<EntityType extends Entity> extends
 		AbstractEntityManager<EntityType> {
-
-	// ASCII RS (record separator), '|' for readability
-	private static final String SEP = "|" + (char) 30;
 
 	@InjectDependency
 	private SQLiteDatabase db;
@@ -167,42 +155,25 @@ public class EntityManager<EntityType extends Entity> extends
 
 	private String[] eagerForeignKeyColumnNames;
 
-	protected void putToContentValues(ContentValues cv, String key,
-			Class<?> valueType, Class<?> arrCollItemType, Object value)
+	protected <T, V> void putToContentValues(ContentValues cv, String key,
+			Class<T> valueType, Class<V> arrCollItemType, Object value)
 			throws IllegalArgumentException {
 		if (value == null) {
 			cv.putNull(key);
 			return;
 		}
-		TypeHandler<Object> handler = (TypeHandler<Object>) TypeHandlerRegistry
-				.get(valueType);
+		TypeHandler<T> handler = TypeHandlerRegistry.get(valueType);
 		if (handler != null) {
-			handler.putToContentValues(cv, key, value);
+			handler.putToContentValues(valueType, arrCollItemType, cv, key,
+					(T) value);
 			return;
-		}
-		// TODO
-		if (isArray(valueType) || isCollection(valueType)) {
-			final ArrayList<Object> list = new ArrayList<Object>();
-			if (isArray(valueType)) {
-				list.addAll(Arrays.asList(Arrays2.toObjectArr(value)));
-			} else {
-				list.addAll((Collection<?>) value);
-			}
-			if (isDate(arrCollItemType)) {
-				for (int i = 0; i < list.size(); i++) {
-					Long timestamp = ((Date) list.get(i)).getTime();
-					list.set(i, timestamp);
-				}
-			}
-			String val = Strings.join(list, SEP, null);
-			cv.put(key, val);
 		} else {
 			throw new IllegalArgumentException("Need to manually put "
 					+ valueType.getName() + " to cursor.");
 		}
 	}
 
-	protected <T, V> T readFromCursor(Cursor cursor, int columnIndex,
+	protected <T, V> Object readFromCursor(Cursor cursor, int columnIndex,
 			Class<T> valType, Class<V> arrCollItemType)
 			throws IllegalArgumentException {
 		if (cursor.isNull(columnIndex)) {
@@ -210,28 +181,8 @@ public class EntityManager<EntityType extends Entity> extends
 		}
 		TypeHandler<T> handler = TypeHandlerRegistry.get(valType);
 		if (handler != null) {
-			return handler.readFromCursor(valType, cursor, columnIndex);
-		}
-		// TODO
-		if (isArray(valType) || isCollection(valType)) {
-			TypeHandler<V> arrItemHandler = TypeHandlerRegistry
-					.get(arrCollItemType);
-			if (arrItemHandler == null) {
-				throw new IllegalArgumentException("Unable to convert to "
-						+ arrCollItemType + ".");
-			}
-			String str = cursor.getString(columnIndex);
-			String[] parts = (str.length() > 0) ? str.split("\\" + SEP)
-					: new String[0];
-			if (isArray(valType)) {
-				return (T) arrItemHandler.parseTypeArr(arrCollItemType, parts);
-			} else {
-				@SuppressWarnings("unchecked")
-				Collection<Object> coll = (Collection<Object>) instantiate(valType);
-				coll.addAll(arrItemHandler
-						.parseTypeColl(arrCollItemType, parts));
-				return (T) coll;
-			}
+			return handler.readFromCursor(valType, arrCollItemType, cursor,
+					columnIndex);
 		} else {
 			throw new IllegalArgumentException("Need to manually read "
 					+ valType.getName() + " from cursor.");

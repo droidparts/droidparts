@@ -36,28 +36,32 @@ public class DateHandler extends TypeHandler<Date> {
 	}
 
 	@Override
-	public Object convertForJSON(Date val) {
+	public <V> Object convertForJSON(Class<Date> valType,
+			Class<V> arrCollItemType, Date val) {
 		return val.getTime();
 	}
 
 	@Override
-	protected Date parseFromString(Class<Date> cls, String str) {
+	protected <V> Date parseFromString(Class<Date> valType,
+			Class<V> arrCollItemType, String str) {
 		return new Date(Long.valueOf(str));
 	}
 
 	@Override
-	public void putToContentValues(ContentValues cv, String key, Date val) {
+	public <V> void putToContentValues(Class<Date> valueType,
+			Class<V> arrCollItemType, ContentValues cv, String key, Date val) {
 		cv.put(key, val.getTime());
 	}
 
 	@Override
-	public Date readFromCursor(Class<Date> cls, Cursor cursor, int columnIndex) {
+	public <V> Date readFromCursor(Class<Date> valType,
+			Class<V> arrCollItemType, Cursor cursor, int columnIndex) {
 		return new Date(cursor.getLong(columnIndex));
 	}
 
 	@Override
-	public Object parseTypeArr(Class<Date> arrValType, String[] arr) {
-		ArrayList<Date> list = parseTypeColl(arrValType, arr);
+	public Object parseTypeArr(Class<Date> valType, String[] arr) {
+		ArrayList<Date> list = parseTypeColl(valType, arr);
 		return list.toArray(new Date[list.size()]);
 	}
 

@@ -37,26 +37,28 @@ public class IntegerHandler extends TypeHandler<Integer> {
 	}
 
 	@Override
-	protected Integer parseFromString(Class<Integer> cls, String str) {
+	protected <V> Integer parseFromString(Class<Integer> valType,
+			Class<V> arrCollItemType, String str) {
 		return Integer.valueOf(str);
 	}
 
 	@Override
-	public void putToContentValues(ContentValues cv, String key, Integer val) {
+	public <V> void putToContentValues(Class<Integer> valueType,
+			Class<V> arrCollItemType, ContentValues cv, String key, Integer val) {
 		cv.put(key, val);
 	}
 
 	@Override
-	public Integer readFromCursor(Class<Integer> cls, Cursor cursor,
-			int columnIndex) {
+	public <V> Integer readFromCursor(Class<Integer> valType,
+			Class<V> arrCollItemType, Cursor cursor, int columnIndex) {
 		return cursor.getInt(columnIndex);
 	}
 
 	@Override
-	public Object parseTypeArr(Class<Integer> arrValType, String[] arr) {
-		ArrayList<Integer> list = parseTypeColl(arrValType, arr);
+	public Object parseTypeArr(Class<Integer> valType, String[] arr) {
+		ArrayList<Integer> list = parseTypeColl(valType, arr);
 		Integer[] tArr = list.toArray(new Integer[list.size()]);
-		return (arrValType == int.class) ? toPrimitive(tArr) : tArr;
+		return (valType == int.class) ? toPrimitive(tArr) : tArr;
 	}
 
 }

@@ -37,25 +37,28 @@ public class FloatHandler extends TypeHandler<Float> {
 	}
 
 	@Override
-	protected Float parseFromString(Class<Float> cls, String str) {
+	protected <V> Float parseFromString(Class<Float> valType,
+			Class<V> arrCollItemType, String str) {
 		return Float.valueOf(str);
 	}
 
 	@Override
-	public void putToContentValues(ContentValues cv, String key, Float val) {
+	public <V> void putToContentValues(Class<Float> valueType,
+			Class<V> arrCollItemType, ContentValues cv, String key, Float val) {
 		cv.put(key, val);
 	}
 
 	@Override
-	public Float readFromCursor(Class<Float> cls, Cursor cursor, int columnIndex) {
+	public <V> Float readFromCursor(Class<Float> valType,
+			Class<V> arrCollItemType, Cursor cursor, int columnIndex) {
 		return cursor.getFloat(columnIndex);
 	}
 
 	@Override
-	public Object parseTypeArr(Class<Float> arrValType, String[] arr) {
-		ArrayList<Float> list = parseTypeColl(arrValType, arr);
+	public Object parseTypeArr(Class<Float> valType, String[] arr) {
+		ArrayList<Float> list = parseTypeColl(valType, arr);
 		Float[] tArr = list.toArray(new Float[list.size()]);
-		return (arrValType == float.class) ? toPrimitive(tArr) : tArr;
+		return (valType == float.class) ? toPrimitive(tArr) : tArr;
 	}
 
 }

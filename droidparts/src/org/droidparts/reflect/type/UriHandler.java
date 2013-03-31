@@ -36,28 +36,32 @@ public class UriHandler extends TypeHandler<Uri> {
 	}
 
 	@Override
-	public Object convertForJSON(Uri val) {
+	public <V> Object convertForJSON(Class<Uri> valType,
+			Class<V> arrCollItemType, Uri val) {
 		return val.toString();
 	}
 
 	@Override
-	protected Uri parseFromString(Class<Uri> cls, String str) {
+	protected <V> Uri parseFromString(Class<Uri> valType,
+			Class<V> arrCollItemType, String str) {
 		return Uri.parse(str);
 	}
 
 	@Override
-	public void putToContentValues(ContentValues cv, String key, Uri val) {
+	public <V> void putToContentValues(Class<Uri> valueType,
+			Class<V> arrCollItemType, ContentValues cv, String key, Uri val) {
 		cv.put(key, val.toString());
 	}
 
 	@Override
-	public Uri readFromCursor(Class<Uri> cls, Cursor cursor, int columnIndex) {
+	public <V> Uri readFromCursor(Class<Uri> valType, Class<V> arrCollItemType,
+			Cursor cursor, int columnIndex) {
 		return Uri.parse(cursor.getString(columnIndex));
 	}
 
 	@Override
-	public Object parseTypeArr(Class<Uri> arrValType, String[] arr) {
-		ArrayList<Uri> list = parseTypeColl(arrValType, arr);
+	public Object parseTypeArr(Class<Uri> valType, String[] arr) {
+		ArrayList<Uri> list = parseTypeColl(valType, arr);
 		return list.toArray(new Uri[list.size()]);
 	}
 

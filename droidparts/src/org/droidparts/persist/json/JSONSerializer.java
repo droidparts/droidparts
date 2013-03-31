@@ -19,19 +19,10 @@ import static org.droidparts.reflect.FieldSpecBuilder.getJsonKeySpecs;
 import static org.droidparts.reflect.util.ReflectionUtils.getFieldVal;
 import static org.droidparts.reflect.util.ReflectionUtils.instantiate;
 import static org.droidparts.reflect.util.ReflectionUtils.setFieldVal;
-import static org.droidparts.reflect.util.TypeHelper.isArray;
-import static org.droidparts.reflect.util.TypeHelper.isCollection;
-import static org.droidparts.reflect.util.TypeHelper.isDate;
-import static org.droidparts.reflect.util.TypeHelper.isEnum;
-import static org.droidparts.reflect.util.TypeHelper.isModel;
-import static org.droidparts.reflect.util.TypeHelper.isUUID;
 import static org.json.JSONObject.NULL;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
-import java.util.Date;
 
 import org.droidparts.inject.Injector;
 import org.droidparts.model.Model;
@@ -39,7 +30,6 @@ import org.droidparts.reflect.ann.FieldSpec;
 import org.droidparts.reflect.ann.json.KeyAnn;
 import org.droidparts.reflect.type.TypeHandler;
 import org.droidparts.reflect.util.TypeHandlerRegistry;
-import org.droidparts.util.Arrays2;
 import org.droidparts.util.L;
 import org.droidparts.util.PersistUtils;
 import org.json.JSONArray;
@@ -103,126 +93,42 @@ public class JSONSerializer<ModelType extends Model> {
 		return list;
 	}
 
-	@SuppressWarnings({ "unchecked", "rawtypes" })
 	protected <T> void putToJSONObject(JSONObject obj, String key,
 			Class<T> valType, Class<?> arrCollItemType, Object val)
 			throws Exception {
 		if (val == null) {
 			obj.put(key, NULL);
-			return;
-		}
-		TypeHandler<T> handler = TypeHandlerRegistry.get(valType);
-		if (handler != null) {
-			Object jsonVal = handler.convertForJSON((T) val);
-			obj.put(key, jsonVal);
-			return;
-		}
-		// TODO
-		if (isArray(valType) || isCollection(valType)) {
-			final ArrayList<Object> list = new ArrayList<Object>();
-			if (isArray(valType)) {
-				list.addAll(Arrays.asList(Arrays2.toObjectArr(val)));
-			} else {
-				list.addAll((Collection<?>) val);
-			}
-			JSONArray jArr = new JSONArray();
-			if (isModel(arrCollItemType)) {
-				JSONSerializer serializer = subSerializer(arrCollItemType);
-				jArr = serializer.serialize(list);
-			} else {
-				boolean isDate = isDate(arrCollItemType);
-				boolean toString = isUUID(arrCollItemType)
-						|| isEnum(arrCollItemType);
-				for (Object o : list) {
-					if (isDate) {
-						o = ((Date) o).getTime();
-					} else if (toString) {
-						o = o.toString();
-					}
-					jArr.put(o);
-				}
-			}
-			obj.put(key, jArr);
 		} else {
-			throw new IllegalArgumentException("Unsupported class: " + valType);
+			TypeHandler<T> handler = TypeHandlerRegistry.get(valType);
+			if (handler != null) {
+				@SuppressWarnings("unchecked")
+				Object jsonVal = handler.convertForJSON(valType,
+						arrCollItemType, (T) val);
+				obj.put(key, jsonVal);
+				return;
+			} else {
+				throw new IllegalArgumentException("Unsupported class: "
+						+ valType);
+			}
 		}
 	}
 
-	protected <T, V> Object readFromJSON(Class<T> fieldType,
+	protected <T, V> Object readFromJSON(Class<T> valType,
 			Class<V> arrCollItemType, JSONObject obj, String key)
 			throws Exception {
 		Object jsonVal = obj.get(key);
 		if (NULL.equals(jsonVal)) {
 			return jsonVal;
-		}
-
-		TypeHandler<T> handler = TypeHandlerRegistry.get(fieldType);
-		Exception e = null;
-		if (handler != null) {
-			try {
+		} else {
+			TypeHandler<T> handler = TypeHandlerRegistry.get(valType);
+			if (handler != null) {
 				Object val = obj.get(key);
-				return handler.convertFromJSON(fieldType, val);
-			} catch (Exception ex) {
-				e = ex;
+				return handler.convertFromJSON(valType, arrCollItemType, val);
+			} else {
+				throw new IllegalArgumentException("Unsupported class: "
+						+ valType);
 			}
 		}
-		// TODO
-		if (isArray(fieldType) || isCollection(fieldType)) {
-			String strVal = String.valueOf(jsonVal);
-			JSONArray jArr = (jsonVal instanceof JSONArray) ? (JSONArray) jsonVal
-					: new JSONArray(strVal);
-			boolean isArr = isArray(fieldType);
-			Object[] arr = null;
-			Collection<Object> coll = null;
-			if (isArr) {
-				arr = new Object[jArr.length()];
-			} else {
-				@SuppressWarnings("unchecked")
-				Class<? extends Collection<Object>> cl = (Class<? extends Collection<Object>>) fieldType;
-				coll = instantiate(cl);
-			}
-			boolean isModel = isModel(arrCollItemType);
-			JSONSerializer<Model> serializer = null;
-			if (isModel) {
-				serializer = subSerializer(arrCollItemType);
-			}
-			for (int i = 0; i < jArr.length(); i++) {
-				Object obj1 = jArr.get(i);
-				if (isModel) {
-					obj1 = serializer.deserialize((JSONObject) obj1);
-				}
-				if (isArr) {
-					arr[i] = obj1;
-				} else {
-					coll.add(obj1);
-				}
-			}
-			if (isArr) {
-				if (isModel) {
-					Object modelArr = Array.newInstance(arrCollItemType,
-							arr.length);
-					for (int i = 0; i < arr.length; i++) {
-						Array.set(modelArr, i, arr[i]);
-					}
-					return modelArr;
-				} else {
-					String[] arr2 = new String[arr.length];
-					for (int i = 0; i < arr.length; i++) {
-						arr2[i] = arr[i].toString();
-					}
-					TypeHandler<V> arrItemHandler = TypeHandlerRegistry
-							.get(arrCollItemType);
-					if (arrItemHandler == null) {
-						throw new IllegalArgumentException(
-								"Unable to convert to " + arrCollItemType + ".");
-					}
-					return arrItemHandler.parseTypeArr(arrCollItemType, arr2);
-				}
-			} else {
-				return coll;
-			}
-		}
-		throw e;
 	}
 
 	protected boolean hasNonNull(JSONObject obj, String key)
@@ -304,11 +210,6 @@ public class JSONSerializer<ModelType extends Model> {
 		} else {
 			return null;
 		}
-	}
-
-	@SuppressWarnings("unchecked")
-	private JSONSerializer<Model> subSerializer(Class<?> cls) {
-		return new JSONSerializer<Model>((Class<Model>) cls, null);
 	}
 
 	private void throwIfRequired(FieldSpec<KeyAnn> spec) throws JSONException {

@@ -37,17 +37,19 @@ public class EntityHandler extends ModelHandler {
 	}
 
 	@Override
-	public void putToContentValues(ContentValues cv, String key, Model val)
+	public <V> void putToContentValues(Class<Model> valueType,
+			Class<V> arrCollItemType, ContentValues cv, String key, Model val)
 			throws IllegalArgumentException {
 		Long id = (val != null) ? ((Entity) val).id : null;
 		cv.put(key, id);
 	}
 
 	@Override
-	public Entity readFromCursor(Class<Model> cls, Cursor cursor,
-			int columnIndex) throws IllegalArgumentException {
+	public <V> Entity readFromCursor(Class<Model> valType,
+			Class<V> arrCollItemType, Cursor cursor, int columnIndex)
+			throws IllegalArgumentException {
 		long id = cursor.getLong(columnIndex);
-		Entity entity = (Entity) instantiate(cls);
+		Entity entity = (Entity) instantiate(valType);
 		entity.id = id;
 		return entity;
 	}

@@ -18,6 +18,7 @@ package org.droidparts.reflect.util;
 import java.util.HashMap;
 import java.util.HashSet;
 
+import org.droidparts.reflect.type.ArrayCollectionHandler;
 import org.droidparts.reflect.type.BitmapHandler;
 import org.droidparts.reflect.type.BooleanHandler;
 import org.droidparts.reflect.type.ByteArrayHandler;
@@ -65,6 +66,7 @@ public class TypeHandlerRegistry {
 		handlers.add(new BitmapHandler());
 		handlers.add(new ModelHandler());
 		handlers.add(new EntityHandler());
+		handlers.add(new ArrayCollectionHandler());
 	}
 
 	@SuppressWarnings("unchecked")

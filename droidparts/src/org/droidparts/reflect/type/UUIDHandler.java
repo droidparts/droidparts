@@ -36,28 +36,32 @@ public class UUIDHandler extends TypeHandler<UUID> {
 	}
 
 	@Override
-	public Object convertForJSON(UUID val) {
+	public <V> Object convertForJSON(Class<UUID> valType,
+			Class<V> arrCollItemType, UUID val) {
 		return val.toString();
 	}
 
 	@Override
-	protected UUID parseFromString(Class<UUID> cls, String str) {
+	protected <V> UUID parseFromString(Class<UUID> valType,
+			Class<V> arrCollItemType, String str) {
 		return UUID.fromString(str);
 	}
 
 	@Override
-	public void putToContentValues(ContentValues cv, String key, UUID val) {
+	public <V> void putToContentValues(Class<UUID> valueType,
+			Class<V> arrCollItemType, ContentValues cv, String key, UUID val) {
 		cv.put(key, val.toString());
 	}
 
 	@Override
-	public UUID readFromCursor(Class<UUID> cls, Cursor cursor, int columnIndex) {
+	public <V> UUID readFromCursor(Class<UUID> valType,
+			Class<V> arrCollItemType, Cursor cursor, int columnIndex) {
 		return UUID.fromString(cursor.getString(columnIndex));
 	}
 
 	@Override
-	public Object parseTypeArr(Class<UUID> arrValType, String[] arr) {
-		ArrayList<UUID> list = parseTypeColl(arrValType, arr);
+	public Object parseTypeArr(Class<UUID> valType, String[] arr) {
+		ArrayList<UUID> list = parseTypeColl(valType, arr);
 		return list.toArray(new UUID[list.size()]);
 	}
 

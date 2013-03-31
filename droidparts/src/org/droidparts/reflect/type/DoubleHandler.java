@@ -37,26 +37,28 @@ public class DoubleHandler extends TypeHandler<Double> {
 	}
 
 	@Override
-	protected Double parseFromString(Class<Double> cls, String str) {
+	protected <V> Double parseFromString(Class<Double> valType,
+			Class<V> arrCollItemType, String str) {
 		return Double.valueOf(str);
 	}
 
 	@Override
-	public void putToContentValues(ContentValues cv, String key, Double val) {
+	public <V> void putToContentValues(Class<Double> valueType,
+			Class<V> arrCollItemType, ContentValues cv, String key, Double val) {
 		cv.put(key, val);
 	}
 
 	@Override
-	public Double readFromCursor(Class<Double> cls, Cursor cursor,
-			int columnIndex) {
+	public <V> Double readFromCursor(Class<Double> valType,
+			Class<V> arrCollItemType, Cursor cursor, int columnIndex) {
 		return cursor.getDouble(columnIndex);
 	}
 
 	@Override
-	public Object parseTypeArr(Class<Double> arrValType, String[] arr) {
-		ArrayList<Double> list = parseTypeColl(arrValType, arr);
+	public Object parseTypeArr(Class<Double> valType, String[] arr) {
+		ArrayList<Double> list = parseTypeColl(valType, arr);
 		Double[] tArr = list.toArray(new Double[list.size()]);
-		return (arrValType == double.class) ? toPrimitive(tArr) : tArr;
+		return (valType == double.class) ? toPrimitive(tArr) : tArr;
 	}
 
 }

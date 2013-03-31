@@ -37,26 +37,29 @@ public class CharacterHandler extends TypeHandler<Character> {
 	}
 
 	@Override
-	protected Character parseFromString(Class<Character> cls, String str) {
+	protected <V> Character parseFromString(Class<Character> valType,
+			Class<V> arrCollItemType, String str) {
 		return Character.valueOf((str.length() == 0) ? ' ' : str.charAt(0));
 	}
 
 	@Override
-	public void putToContentValues(ContentValues cv, String key, Character val) {
+	public <V> void putToContentValues(Class<Character> valueType,
+			Class<V> arrCollItemType, ContentValues cv, String key,
+			Character val) {
 		cv.put(key, String.valueOf(val));
 	}
 
 	@Override
-	public Character readFromCursor(Class<Character> cls, Cursor cursor,
-			int columnIndex) {
-		return parseFromString(cls, cursor.getString(columnIndex));
+	public <V> Character readFromCursor(Class<Character> valType,
+			Class<V> arrCollItemType, Cursor cursor, int columnIndex) {
+		return parseFromString(valType, null, cursor.getString(columnIndex));
 	}
 
 	@Override
-	public Object parseTypeArr(Class<Character> arrValType, String[] arr) {
-		ArrayList<Character> list = parseTypeColl(arrValType, arr);
+	public Object parseTypeArr(Class<Character> valType, String[] arr) {
+		ArrayList<Character> list = parseTypeColl(valType, arr);
 		Character[] tArr = list.toArray(new Character[list.size()]);
-		return (arrValType == char.class) ? toPrimitive(tArr) : tArr;
+		return (valType == char.class) ? toPrimitive(tArr) : tArr;
 	}
 
 }

@@ -37,19 +37,22 @@ public class ModelHandler extends TypeHandler<Model> {
 	}
 
 	@Override
-	public void putToContentValues(ContentValues cv, String key, Model val)
+	public <V> void putToContentValues(Class<Model> valueType,
+			Class<V> arrCollItemType, ContentValues cv, String key, Model val)
 			throws IllegalArgumentException {
 		throw new UnsupportedOperationException();
 	}
 
 	@Override
-	public Model readFromCursor(Class<Model> cls, Cursor cursor, int columnIndex)
+	public <V> Model readFromCursor(Class<Model> valType,
+			Class<V> arrCollItemType, Cursor cursor, int columnIndex)
 			throws IllegalArgumentException {
 		throw new UnsupportedOperationException();
 	}
 
 	@Override
-	public Object convertForJSON(Model val) {
+	public <V> Object convertForJSON(Class<Model> valType,
+			Class<V> arrCollItemType, Model val) {
 		@SuppressWarnings("unchecked")
 		Class<Model> cls = (Class<Model>) val.getClass();
 		try {
@@ -60,30 +63,33 @@ public class ModelHandler extends TypeHandler<Model> {
 	}
 
 	@Override
-	public Model convertFromJSON(Class<Model> cls, Object val) {
+	public <V> Model convertFromJSON(Class<Model> valType,
+			Class<V> arrCollItemType, Object val) {
 		if (val instanceof JSONObject) {
 			try {
-				return new JSONSerializer<Model>(cls, null)
+				return new JSONSerializer<Model>(valType, null)
 						.deserialize((JSONObject) val);
 			} catch (JSONException e) {
 				throw new IllegalArgumentException(e);
 			}
 		} else {
-			return super.convertFromJSON(cls, val);
+			return super.convertFromJSON(valType, arrCollItemType, val);
 		}
 	}
 
 	@Override
-	protected Model parseFromString(Class<Model> cls, String str) {
+	protected <V> Model parseFromString(Class<Model> valType,
+			Class<V> arrCollItemType, String str) {
 		try {
-			return convertFromJSON(cls, new JSONObject(str));
+			return convertFromJSON(valType, arrCollItemType,
+					new JSONObject(str));
 		} catch (JSONException e) {
 			throw new IllegalArgumentException(e);
 		}
 	}
 
 	@Override
-	public Object parseTypeArr(Class<Model> arrValType, String[] arr) {
+	public Object parseTypeArr(Class<Model> valType, String[] arr) {
 		throw new UnsupportedOperationException();
 	}
 

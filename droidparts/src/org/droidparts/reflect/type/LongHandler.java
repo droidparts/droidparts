@@ -37,25 +37,28 @@ public class LongHandler extends TypeHandler<Long> {
 	}
 
 	@Override
-	protected Long parseFromString(Class<Long> cls, String str) {
+	protected <V> Long parseFromString(Class<Long> valType,
+			Class<V> arrCollItemType, String str) {
 		return Long.valueOf(str);
 	}
 
 	@Override
-	public void putToContentValues(ContentValues cv, String key, Long val) {
+	public <V> void putToContentValues(Class<Long> valueType,
+			Class<V> arrCollItemType, ContentValues cv, String key, Long val) {
 		cv.put(key, val);
 	}
 
 	@Override
-	public Long readFromCursor(Class<Long> cls, Cursor cursor, int columnIndex) {
+	public <V> Long readFromCursor(Class<Long> valType,
+			Class<V> arrCollItemType, Cursor cursor, int columnIndex) {
 		return cursor.getLong(columnIndex);
 	}
 
 	@Override
-	public Object parseTypeArr(Class<Long> arrValType, String[] arr) {
-		ArrayList<Long> list = parseTypeColl(arrValType, arr);
+	public Object parseTypeArr(Class<Long> valType, String[] arr) {
+		ArrayList<Long> list = parseTypeColl(valType, arr);
 		Long[] tArr = list.toArray(new Long[list.size()]);
-		return (arrValType == long.class) ? toPrimitive(tArr) : tArr;
+		return (valType == long.class) ? toPrimitive(tArr) : tArr;
 	}
 
 }

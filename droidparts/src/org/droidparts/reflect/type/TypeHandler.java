@@ -28,39 +28,44 @@ public abstract class TypeHandler<T> implements SQL.DDL {
 
 	public abstract String getDBColumnType();
 
-	public Object convertForJSON(T val) {
+	public <V> Object convertForJSON(Class<T> valType,
+			Class<V> arrCollItemType, T val) {
 		return val;
 	}
 
 	@SuppressWarnings("unchecked")
-	public T convertFromJSON(Class<T> cls, Object val) {
-		if (cls.isAssignableFrom(val.getClass())) {
+	public <V> T convertFromJSON(Class<T> valType, Class<V> arrCollItemType,
+			Object val) {
+		if (valType.isAssignableFrom(val.getClass())) {
 			return (T) val;
 		} else {
-			return parseFromString(cls, val.toString());
+			return parseFromString(valType, arrCollItemType, val.toString());
 		}
 	}
 
-	protected abstract T parseFromString(Class<T> cls, String str);
+	protected abstract <V> T parseFromString(Class<T> valType,
+			Class<V> arrCollItemType, String str);
 
-	public abstract void putToContentValues(ContentValues cv, String key, T val)
+	public abstract <V> void putToContentValues(Class<T> valueType,
+			Class<V> arrCollItemType, ContentValues cv, String key, T val)
 			throws IllegalArgumentException;
 
-	public abstract T readFromCursor(Class<T> cls, Cursor cursor,
-			int columnIndex) throws IllegalArgumentException;
+	public abstract <V> T readFromCursor(Class<T> valType,
+			Class<V> arrCollItemType, Cursor cursor, int columnIndex)
+			throws IllegalArgumentException;
 
 	// say hello to arrays of primitives
-	public abstract Object parseTypeArr(Class<T> arrValType, String[] arr);
+	public abstract Object parseTypeArr(Class<T> valType, String[] arr);
 
-	public ArrayList<T> parseTypeColl(Class<T> valCls, String[] arr)
+	public ArrayList<T> parseTypeColl(Class<T> valType, String[] arr)
 			throws IllegalArgumentException {
 		ArrayList<T> list = new ArrayList<T>();
 		for (String str : arr) {
 			try {
-				list.add(parseFromString(valCls, str));
+				list.add(parseFromString(valType, null, str));
 			} catch (Exception e) {
 				throw new IllegalArgumentException("Unable to convert '" + str
-						+ "' to " + valCls.getSimpleName() + ".");
+						+ "' to " + valType.getSimpleName() + ".");
 			}
 		}
 		return list;

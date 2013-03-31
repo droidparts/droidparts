@@ -37,25 +37,28 @@ public class ShortHandler extends TypeHandler<Short> {
 	}
 
 	@Override
-	protected Short parseFromString(Class<Short> cls, String str) {
+	protected <V> Short parseFromString(Class<Short> valType,
+			Class<V> arrCollItemType, String str) {
 		return Short.valueOf(str);
 	}
 
 	@Override
-	public void putToContentValues(ContentValues cv, String key, Short val) {
+	public <V> void putToContentValues(Class<Short> valueType,
+			Class<V> arrCollItemType, ContentValues cv, String key, Short val) {
 		cv.put(key, val);
 	}
 
 	@Override
-	public Short readFromCursor(Class<Short> cls, Cursor cursor, int columnIndex) {
+	public <V> Short readFromCursor(Class<Short> valType,
+			Class<V> arrCollItemType, Cursor cursor, int columnIndex) {
 		return cursor.getShort(columnIndex);
 	}
 
 	@Override
-	public Object parseTypeArr(Class<Short> arrValType, String[] arr) {
-		ArrayList<Short> list = parseTypeColl(arrValType, arr);
+	public Object parseTypeArr(Class<Short> valType, String[] arr) {
+		ArrayList<Short> list = parseTypeColl(valType, arr);
 		Short[] tArr = list.toArray(new Short[list.size()]);
-		return (arrValType == short.class) ? toPrimitive(tArr) : tArr;
+		return (valType == short.class) ? toPrimitive(tArr) : tArr;
 	}
 
 }

@@ -38,26 +38,28 @@ public class BitmapHandler extends TypeHandler<Bitmap> {
 	}
 
 	@Override
-	protected Bitmap parseFromString(Class<Bitmap> cls, String str) {
+	protected <V> Bitmap parseFromString(Class<Bitmap> valType,
+			Class<V> arrCollItemType, String str) {
 		throw new UnsupportedOperationException();
 	}
 
 	@Override
-	public void putToContentValues(ContentValues cv, String key, Bitmap val) {
+	public <V> void putToContentValues(Class<Bitmap> valueType,
+			Class<V> arrCollItemType, ContentValues cv, String key, Bitmap val) {
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		val.compress(CompressFormat.PNG, 0, baos);
 		cv.put(key, baos.toByteArray());
 	}
 
 	@Override
-	public Bitmap readFromCursor(Class<Bitmap> cls, Cursor cursor,
-			int columnIndex) {
+	public <V> Bitmap readFromCursor(Class<Bitmap> valType,
+			Class<V> arrCollItemType, Cursor cursor, int columnIndex) {
 		byte[] arr = cursor.getBlob(columnIndex);
 		return BitmapFactory.decodeByteArray(arr, 0, arr.length);
 	}
 
 	@Override
-	public Object parseTypeArr(Class<Bitmap> arrValType, String[] arr) {
+	public Object parseTypeArr(Class<Bitmap> valType, String[] arr) {
 		throw new UnsupportedOperationException();
 	}
 

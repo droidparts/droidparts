@@ -33,23 +33,25 @@ public class StringHandler extends TypeHandler<String> {
 	}
 
 	@Override
-	protected String parseFromString(Class<String> cls, String str) {
+	protected <V> String parseFromString(Class<String> valType,
+			Class<V> arrCollItemType, String str) {
 		return str;
 	}
 
 	@Override
-	public void putToContentValues(ContentValues cv, String key, String val) {
+	public <V> void putToContentValues(Class<String> valueType,
+			Class<V> arrCollItemType, ContentValues cv, String key, String val) {
 		cv.put(key, val);
 	}
 
 	@Override
-	public String readFromCursor(Class<String> cls, Cursor cursor,
-			int columnIndex) {
+	public <V> String readFromCursor(Class<String> valType,
+			Class<V> arrCollItemType, Cursor cursor, int columnIndex) {
 		return cursor.getString(columnIndex);
 	}
 
 	@Override
-	public Object parseTypeArr(Class<String> arrValType, String[] arr) {
+	public Object parseTypeArr(Class<String> valType, String[] arr) {
 		return arr;
 	}
 

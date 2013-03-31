@@ -37,25 +37,28 @@ public class ByteHandler extends TypeHandler<Byte> {
 	}
 
 	@Override
-	protected Byte parseFromString(Class<Byte> cls, String str) {
+	protected <V> Byte parseFromString(Class<Byte> valType,
+			Class<V> arrCollItemType, String str) {
 		return Byte.valueOf(str);
 	}
 
 	@Override
-	public void putToContentValues(ContentValues cv, String key, Byte val) {
+	public <V> void putToContentValues(Class<Byte> valueType,
+			Class<V> arrCollItemType, ContentValues cv, String key, Byte val) {
 		cv.put(key, val);
 	}
 
 	@Override
-	public Byte readFromCursor(Class<Byte> cls, Cursor cursor, int columnIndex) {
+	public <V> Byte readFromCursor(Class<Byte> valType,
+			Class<V> arrCollItemType, Cursor cursor, int columnIndex) {
 		return Byte.valueOf(cursor.getString(columnIndex));
 	}
 
 	@Override
-	public Object parseTypeArr(Class<Byte> arrValType, String[] arr) {
-		ArrayList<Byte> list = parseTypeColl(arrValType, arr);
+	public Object parseTypeArr(Class<Byte> valType, String[] arr) {
+		ArrayList<Byte> list = parseTypeColl(valType, arr);
 		Byte[] tArr = list.toArray(new Byte[list.size()]);
-		return (arrValType == byte.class) ? toPrimitive(tArr) : tArr;
+		return (valType == byte.class) ? toPrimitive(tArr) : tArr;
 	}
 
 }

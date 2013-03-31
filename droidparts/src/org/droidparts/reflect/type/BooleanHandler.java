@@ -37,7 +37,8 @@ public class BooleanHandler extends TypeHandler<Boolean> {
 	}
 
 	@Override
-	protected Boolean parseFromString(Class<Boolean> cls, String str) {
+	protected <V> Boolean parseFromString(Class<Boolean> valType,
+			Class<V> arrCollItemType, String str) {
 		if ("1".equals(str)) {
 			str = "true";
 		}
@@ -45,21 +46,22 @@ public class BooleanHandler extends TypeHandler<Boolean> {
 	}
 
 	@Override
-	public void putToContentValues(ContentValues cv, String key, Boolean val) {
+	public <V> void putToContentValues(Class<Boolean> valueType,
+			Class<V> arrCollItemType, ContentValues cv, String key, Boolean val) {
 		cv.put(key, val);
 	}
 
 	@Override
-	public Boolean readFromCursor(Class<Boolean> cls, Cursor cursor,
-			int columnIndex) {
+	public <V> Boolean readFromCursor(Class<Boolean> valType,
+			Class<V> arrCollItemType, Cursor cursor, int columnIndex) {
 		return (cursor.getInt(columnIndex) == 1);
 	}
 
 	@Override
-	public Object parseTypeArr(Class<Boolean> arrValType, String[] arr) {
-		ArrayList<Boolean> list = parseTypeColl(arrValType, arr);
+	public Object parseTypeArr(Class<Boolean> valType, String[] arr) {
+		ArrayList<Boolean> list = parseTypeColl(valType, arr);
 		Boolean[] tArr = list.toArray(new Boolean[list.size()]);
-		return (arrValType == boolean.class) ? toPrimitive(tArr) : tArr;
+		return (valType == boolean.class) ? toPrimitive(tArr) : tArr;
 	}
 
 }

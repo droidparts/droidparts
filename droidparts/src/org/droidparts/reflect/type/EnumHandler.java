@@ -38,31 +38,34 @@ public class EnumHandler extends TypeHandler<Enum<?>> {
 	}
 
 	@Override
-	public Object convertForJSON(Enum<?> val) {
+	public <V> Object convertForJSON(Class<Enum<?>> valType,
+			Class<V> arrCollItemType, Enum<?> val) {
 		return val.toString();
 	}
 
 	@Override
-	protected Enum<?> parseFromString(Class<Enum<?>> cls, String str) {
-		return instantiateEnum(cls, str);
+	protected <V> Enum<?> parseFromString(Class<Enum<?>> valType,
+			Class<V> arrCollItemType, String str) {
+		return instantiateEnum(valType, str);
 	}
 
 	@Override
-	public void putToContentValues(ContentValues cv, String key, Enum<?> val) {
+	public <V> void putToContentValues(Class<Enum<?>> valueType,
+			Class<V> arrCollItemType, ContentValues cv, String key, Enum<?> val) {
 		cv.put(key, val.toString());
 	}
 
 	@Override
-	public Enum<?> readFromCursor(Class<Enum<?>> cls, Cursor cursor,
-			int columnIndex) {
-		return instantiateEnum(cls, cursor.getString(columnIndex));
+	public <V> Enum<?> readFromCursor(Class<Enum<?>> valType,
+			Class<V> arrCollItemType, Cursor cursor, int columnIndex) {
+		return instantiateEnum(valType, cursor.getString(columnIndex));
 	}
 
 	@Override
-	public Object parseTypeArr(Class<Enum<?>> arrValType, String[] arr) {
+	public Object parseTypeArr(Class<Enum<?>> valType, String[] arr) {
 		ArrayList<? extends Enum<?>> list = (ArrayList<? extends Enum<?>>) parseTypeColl(
-				arrValType, arr);
-		Object enumArr = Array.newInstance(arrValType, list.size());
+				valType, arr);
+		Object enumArr = Array.newInstance(valType, list.size());
 		for (int i = 0; i < list.size(); i++) {
 			Array.set(enumArr, i, list.get(i));
 		}

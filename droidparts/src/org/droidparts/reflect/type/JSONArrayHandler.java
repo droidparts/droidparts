@@ -37,12 +37,14 @@ public class JSONArrayHandler extends TypeHandler<JSONArray> {
 	}
 
 	@Override
-	public Object convertForJSON(JSONArray val) {
+	public <V> Object convertForJSON(Class<JSONArray> valType,
+			Class<V> arrCollItemType, JSONArray val) {
 		return val.toString();
 	}
 
 	@Override
-	protected JSONArray parseFromString(Class<JSONArray> cls, String str) {
+	protected <V> JSONArray parseFromString(Class<JSONArray> valType,
+			Class<V> arrCollItemType, String str) {
 		try {
 			return new JSONArray(str);
 		} catch (JSONException e) {
@@ -51,13 +53,16 @@ public class JSONArrayHandler extends TypeHandler<JSONArray> {
 	}
 
 	@Override
-	public void putToContentValues(ContentValues cv, String key, JSONArray val) {
+	public <V> void putToContentValues(Class<JSONArray> valueType,
+			Class<V> arrCollItemType, ContentValues cv, String key,
+			JSONArray val) {
 		cv.put(key, val.toString());
 	}
 
 	@Override
-	public JSONArray readFromCursor(Class<JSONArray> cls, Cursor cursor,
-			int columnIndex) throws IllegalArgumentException {
+	public <V> JSONArray readFromCursor(Class<JSONArray> valType,
+			Class<V> arrCollItemType, Cursor cursor, int columnIndex)
+			throws IllegalArgumentException {
 		try {
 			return new JSONArray(cursor.getString(columnIndex));
 		} catch (JSONException e) {
@@ -66,8 +71,8 @@ public class JSONArrayHandler extends TypeHandler<JSONArray> {
 	}
 
 	@Override
-	public Object parseTypeArr(Class<JSONArray> arrValType, String[] arr) {
-		ArrayList<JSONArray> list = parseTypeColl(arrValType, arr);
+	public Object parseTypeArr(Class<JSONArray> valType, String[] arr) {
+		ArrayList<JSONArray> list = parseTypeColl(valType, arr);
 		return list.toArray(new JSONArray[list.size()]);
 	}
 
