@@ -38,8 +38,8 @@ public class StringHandler extends TypeHandler<String> {
 	}
 
 	@Override
-	public void putToContentValues(ContentValues cv, String key, Object val) {
-		cv.put(key, (String) val);
+	public void putToContentValues(ContentValues cv, String key, String val) {
+		cv.put(key, val);
 	}
 
 	@Override

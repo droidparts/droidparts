@@ -42,8 +42,8 @@ public class ShortHandler extends TypeHandler<Short> {
 	}
 
 	@Override
-	public void putToContentValues(ContentValues cv, String key, Object val) {
-		cv.put(key, (Short) val);
+	public void putToContentValues(ContentValues cv, String key, Short val) {
+		cv.put(key, val);
 	}
 
 	@Override

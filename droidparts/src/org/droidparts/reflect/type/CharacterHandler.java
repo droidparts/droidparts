@@ -42,8 +42,8 @@ public class CharacterHandler extends TypeHandler<Character> {
 	}
 
 	@Override
-	public void putToContentValues(ContentValues cv, String key, Object val) {
-		cv.put(key, String.valueOf((Character) val));
+	public void putToContentValues(ContentValues cv, String key, Character val) {
+		cv.put(key, String.valueOf(val));
 	}
 
 	@Override

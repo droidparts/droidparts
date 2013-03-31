@@ -51,7 +51,7 @@ public class JSONArrayHandler extends TypeHandler<JSONArray> {
 	}
 
 	@Override
-	public void putToContentValues(ContentValues cv, String key, Object val) {
+	public void putToContentValues(ContentValues cv, String key, JSONArray val) {
 		cv.put(key, val.toString());
 	}
 

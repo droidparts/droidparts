@@ -42,8 +42,8 @@ public class LongHandler extends TypeHandler<Long> {
 	}
 
 	@Override
-	public void putToContentValues(ContentValues cv, String key, Object val) {
-		cv.put(key, (Long) val);
+	public void putToContentValues(ContentValues cv, String key, Long val) {
+		cv.put(key, val);
 	}
 
 	@Override

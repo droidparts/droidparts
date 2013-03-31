@@ -51,7 +51,7 @@ public class JSONObjectHandler extends TypeHandler<JSONObject> {
 	}
 
 	@Override
-	public void putToContentValues(ContentValues cv, String key, Object val) {
+	public void putToContentValues(ContentValues cv, String key, JSONObject val) {
 		cv.put(key, val.toString());
 	}
 

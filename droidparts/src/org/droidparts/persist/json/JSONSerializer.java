@@ -217,13 +217,13 @@ public class JSONSerializer<ModelType extends Model> {
 					for (int i = 0; i < arr.length; i++) {
 						arr2[i] = arr[i].toString();
 					}
-					TypeHandler<V> handler2 = TypeHandlerRegistry
+					TypeHandler<V> arrItemHandler = TypeHandlerRegistry
 							.get(arrCollItemType);
-					if (handler2 == null) {
+					if (arrItemHandler == null) {
 						throw new IllegalArgumentException(
 								"Unable to convert to " + arrCollItemType + ".");
 					}
-					return handler2.parseTypeArr(arrCollItemType, arr2);
+					return arrItemHandler.parseTypeArr(arrCollItemType, arr2);
 				}
 			} else {
 				return coll;

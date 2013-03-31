@@ -46,8 +46,8 @@ public class DateHandler extends TypeHandler<Date> {
 	}
 
 	@Override
-	public void putToContentValues(ContentValues cv, String key, Object val) {
-		cv.put(key, ((Date) val).getTime());
+	public void putToContentValues(ContentValues cv, String key, Date val) {
+		cv.put(key, val.getTime());
 	}
 
 	@Override

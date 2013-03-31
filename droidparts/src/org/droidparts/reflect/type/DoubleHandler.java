@@ -42,8 +42,8 @@ public class DoubleHandler extends TypeHandler<Double> {
 	}
 
 	@Override
-	public void putToContentValues(ContentValues cv, String key, Object val) {
-		cv.put(key, (Double) val);
+	public void putToContentValues(ContentValues cv, String key, Double val) {
+		cv.put(key, val);
 	}
 
 	@Override

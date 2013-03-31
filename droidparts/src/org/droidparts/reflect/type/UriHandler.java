@@ -46,7 +46,7 @@ public class UriHandler extends TypeHandler<Uri> {
 	}
 
 	@Override
-	public void putToContentValues(ContentValues cv, String key, Object val) {
+	public void putToContentValues(ContentValues cv, String key, Uri val) {
 		cv.put(key, val.toString());
 	}
 

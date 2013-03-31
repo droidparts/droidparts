@@ -42,8 +42,8 @@ public class IntegerHandler extends TypeHandler<Integer> {
 	}
 
 	@Override
-	public void putToContentValues(ContentValues cv, String key, Object val) {
-		cv.put(key, (Integer) val);
+	public void putToContentValues(ContentValues cv, String key, Integer val) {
+		cv.put(key, val);
 	}
 
 	@Override

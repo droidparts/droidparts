@@ -175,7 +175,8 @@ public class EntityManager<EntityType extends Entity> extends
 			cv.putNull(key);
 			return;
 		}
-		TypeHandler<?> handler = TypeHandlerRegistry.get(valueType);
+		TypeHandler<Object> handler = (TypeHandler<Object>) TypeHandlerRegistry
+				.get(valueType);
 		if (handler != null) {
 			handler.putToContentValues(cv, key, value);
 			return;
@@ -223,8 +224,8 @@ public class EntityManager<EntityType extends Entity> extends
 			entity.id = id;
 			return (T) entity;
 		} else if (isArray(valType) || isCollection(valType)) {
-			TypeHandler<V> handler2 = TypeHandlerRegistry.get(arrCollItemType);
-			if (handler2 == null) {
+			TypeHandler<V> arrItemHandler = TypeHandlerRegistry.get(arrCollItemType);
+			if (arrItemHandler == null) {
 				throw new IllegalArgumentException("Unable to convert to "
 						+ arrCollItemType + ".");
 			}
@@ -232,11 +233,11 @@ public class EntityManager<EntityType extends Entity> extends
 			String[] parts = (str.length() > 0) ? str.split("\\" + SEP)
 					: new String[0];
 			if (isArray(valType)) {
-				return (T) handler2.parseTypeArr(arrCollItemType, parts);
+				return (T) arrItemHandler.parseTypeArr(arrCollItemType, parts);
 			} else {
 				@SuppressWarnings("unchecked")
 				Collection<Object> coll = (Collection<Object>) instantiate(valType);
-				coll.addAll(handler2.parseTypeColl(arrCollItemType, parts));
+				coll.addAll(arrItemHandler.parseTypeColl(arrCollItemType, parts));
 				return (T) coll;
 			}
 		} else {

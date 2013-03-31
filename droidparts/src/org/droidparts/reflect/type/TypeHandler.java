@@ -43,8 +43,8 @@ public abstract class TypeHandler<T> implements SQL.DDL {
 
 	protected abstract T parseFromString(Class<T> cls, String str);
 
-	public abstract void putToContentValues(ContentValues cv, String key,
-			Object val) throws IllegalArgumentException;
+	public abstract void putToContentValues(ContentValues cv, String key, T val)
+			throws IllegalArgumentException;
 
 	public abstract T readFromCursor(Class<T> cls, Cursor cursor,
 			int columnIndex) throws IllegalArgumentException;

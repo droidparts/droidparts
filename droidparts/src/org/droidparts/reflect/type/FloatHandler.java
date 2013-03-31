@@ -42,8 +42,8 @@ public class FloatHandler extends TypeHandler<Float> {
 	}
 
 	@Override
-	public void putToContentValues(ContentValues cv, String key, Object val) {
-		cv.put(key, (Float) val);
+	public void putToContentValues(ContentValues cv, String key, Float val) {
+		cv.put(key, val);
 	}
 
 	@Override

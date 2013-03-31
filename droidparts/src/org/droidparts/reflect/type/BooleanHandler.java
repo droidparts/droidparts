@@ -45,8 +45,8 @@ public class BooleanHandler extends TypeHandler<Boolean> {
 	}
 
 	@Override
-	public void putToContentValues(ContentValues cv, String key, Object val) {
-		cv.put(key, (Boolean) val);
+	public void putToContentValues(ContentValues cv, String key, Boolean val) {
+		cv.put(key, val);
 	}
 
 	@Override

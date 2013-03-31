@@ -46,7 +46,7 @@ public class UUIDHandler extends TypeHandler<UUID> {
 	}
 
 	@Override
-	public void putToContentValues(ContentValues cv, String key, Object val) {
+	public void putToContentValues(ContentValues cv, String key, UUID val) {
 		cv.put(key, val.toString());
 	}
 

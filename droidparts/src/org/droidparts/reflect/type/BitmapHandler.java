@@ -43,10 +43,9 @@ public class BitmapHandler extends TypeHandler<Bitmap> {
 	}
 
 	@Override
-	public void putToContentValues(ContentValues cv, String key, Object val) {
-		Bitmap bm = (Bitmap) val;
+	public void putToContentValues(ContentValues cv, String key, Bitmap val) {
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
-		bm.compress(CompressFormat.PNG, 0, baos);
+		val.compress(CompressFormat.PNG, 0, baos);
 		cv.put(key, baos.toByteArray());
 	}
 

@@ -48,7 +48,7 @@ public class EnumHandler extends TypeHandler<Enum<?>> {
 	}
 
 	@Override
-	public void putToContentValues(ContentValues cv, String key, Object val) {
+	public void putToContentValues(ContentValues cv, String key, Enum<?> val) {
 		cv.put(key, val.toString());
 	}
 

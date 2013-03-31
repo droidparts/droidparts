@@ -38,8 +38,8 @@ public class ByteArrayHandler extends TypeHandler<byte[]> {
 	}
 
 	@Override
-	public void putToContentValues(ContentValues cv, String key, Object val) {
-		cv.put(key, (byte[]) val);
+	public void putToContentValues(ContentValues cv, String key, byte[] val) {
+		cv.put(key, val);
 	}
 
 	@Override
