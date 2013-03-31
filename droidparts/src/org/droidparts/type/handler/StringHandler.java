@@ -16,6 +16,8 @@
 package org.droidparts.type.handler;
 
 import org.droidparts.type.TypeHelper;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import android.content.ContentValues;
 import android.database.Cursor;
@@ -30,6 +32,13 @@ public class StringHandler extends AbstractTypeHandler<String> {
 	@Override
 	public String getDBColumnType() {
 		return TEXT;
+	}
+
+	@Override
+	public <V> String readFromJSON(Class<String> valType,
+			Class<V> arrCollItemType, JSONObject obj, String key)
+			throws JSONException {
+		return obj.getString(key);
 	}
 
 	@Override

@@ -21,6 +21,8 @@ import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 import org.droidparts.type.TypeHelper;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import android.content.ContentValues;
 import android.database.Cursor;
@@ -41,6 +43,13 @@ public class EnumHandler extends AbstractTypeHandler<Enum<?>> {
 	public <V> Object convertForJSON(Class<Enum<?>> valType,
 			Class<V> arrCollItemType, Enum<?> val) {
 		return val.toString();
+	}
+
+	@Override
+	public <V> Enum<?> readFromJSON(Class<Enum<?>> valType,
+			Class<V> arrCollItemType, JSONObject obj, String key)
+			throws JSONException {
+		return parseFromString(valType, arrCollItemType, obj.getString(key));
 	}
 
 	@Override

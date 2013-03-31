@@ -43,6 +43,13 @@ public class JSONObjectHandler extends AbstractTypeHandler<JSONObject> {
 	}
 
 	@Override
+	public <V> JSONObject readFromJSON(Class<JSONObject> valType,
+			Class<V> arrCollItemType, JSONObject obj, String key)
+			throws JSONException {
+		return parseFromString(valType, arrCollItemType, obj.getString(key));
+	}
+
+	@Override
 	protected <V> JSONObject parseFromString(Class<JSONObject> valType,
 			Class<V> arrCollItemType, String str) {
 		try {

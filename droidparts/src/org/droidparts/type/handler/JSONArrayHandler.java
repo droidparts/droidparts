@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import org.droidparts.type.TypeHelper;
 import org.json.JSONArray;
 import org.json.JSONException;
+import org.json.JSONObject;
 
 import android.content.ContentValues;
 import android.database.Cursor;
@@ -40,6 +41,13 @@ public class JSONArrayHandler extends AbstractTypeHandler<JSONArray> {
 	public <V> Object convertForJSON(Class<JSONArray> valType,
 			Class<V> arrCollItemType, JSONArray val) {
 		return val.toString();
+	}
+
+	@Override
+	public <V> JSONArray readFromJSON(Class<JSONArray> valType,
+			Class<V> arrCollItemType, JSONObject obj, String key)
+			throws JSONException {
+		return parseFromString(valType, arrCollItemType, obj.getString(key));
 	}
 
 	@Override

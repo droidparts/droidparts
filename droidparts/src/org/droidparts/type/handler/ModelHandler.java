@@ -63,26 +63,19 @@ public class ModelHandler extends AbstractTypeHandler<Model> {
 	}
 
 	@Override
-	public <V> Model convertFromJSON(Class<Model> valType,
-			Class<V> arrCollItemType, Object val) {
-		if (val instanceof JSONObject) {
-			try {
-				return new JSONSerializer<Model>(valType, null)
-						.deserialize((JSONObject) val);
-			} catch (JSONException e) {
-				throw new IllegalArgumentException(e);
-			}
-		} else {
-			return super.convertFromJSON(valType, arrCollItemType, val);
-		}
+	public <V> Model readFromJSON(Class<Model> valType,
+			Class<V> arrCollItemType, JSONObject obj, String key)
+			throws JSONException {
+		return new JSONSerializer<Model>(valType, null).deserialize(obj
+				.getJSONObject(key));
 	}
 
 	@Override
 	protected <V> Model parseFromString(Class<Model> valType,
 			Class<V> arrCollItemType, String str) {
 		try {
-			return convertFromJSON(valType, arrCollItemType,
-					new JSONObject(str));
+			return new JSONSerializer<Model>(valType, null)
+					.deserialize(new JSONObject(str));
 		} catch (JSONException e) {
 			throw new IllegalArgumentException(e);
 		}

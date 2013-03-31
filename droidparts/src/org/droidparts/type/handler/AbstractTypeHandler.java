@@ -18,6 +18,8 @@ package org.droidparts.type.handler;
 import java.util.ArrayList;
 
 import org.droidparts.contract.SQL;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import android.content.ContentValues;
 import android.database.Cursor;
@@ -33,15 +35,9 @@ public abstract class AbstractTypeHandler<T> implements SQL.DDL {
 		return val;
 	}
 
-	@SuppressWarnings("unchecked")
-	public <V> T convertFromJSON(Class<T> valType, Class<V> arrCollItemType,
-			Object val) {
-		if (valType.isAssignableFrom(val.getClass())) {
-			return (T) val;
-		} else {
-			return parseFromString(valType, arrCollItemType, val.toString());
-		}
-	}
+	public abstract <V> T readFromJSON(Class<T> valType,
+			Class<V> arrCollItemType, JSONObject obj, String key)
+			throws JSONException;
 
 	protected abstract <V> T parseFromString(Class<T> valType,
 			Class<V> arrCollItemType, String str);

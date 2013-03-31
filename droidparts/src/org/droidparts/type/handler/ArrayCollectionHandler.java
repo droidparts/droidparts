@@ -54,6 +54,13 @@ public class ArrayCollectionHandler extends AbstractTypeHandler<Object> {
 	}
 
 	@Override
+	public <V> Object readFromJSON(Class<Object> valType,
+			Class<V> arrCollItemType, JSONObject obj, String key)
+			throws JSONException {
+		return parseFromString(valType, arrCollItemType, obj.getString(key));
+	}
+
+	@Override
 	public <V> Object convertForJSON(Class<Object> valType,
 			Class<V> arrCollItemType, Object val) {
 		AbstractTypeHandler<V> handler = TypeHandlerRegistry

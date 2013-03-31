@@ -18,6 +18,8 @@ package org.droidparts.type.handler;
 import java.util.ArrayList;
 
 import org.droidparts.type.TypeHelper;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import android.content.ContentValues;
 import android.database.Cursor;
@@ -39,6 +41,12 @@ public class UriHandler extends AbstractTypeHandler<Uri> {
 	public <V> Object convertForJSON(Class<Uri> valType,
 			Class<V> arrCollItemType, Uri val) {
 		return val.toString();
+	}
+
+	@Override
+	public <V> Uri readFromJSON(Class<Uri> valType, Class<V> arrCollItemType,
+			JSONObject obj, String key) throws JSONException {
+		return parseFromString(valType, arrCollItemType, obj.getString(key));
 	}
 
 	@Override

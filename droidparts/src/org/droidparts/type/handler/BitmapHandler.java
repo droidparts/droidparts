@@ -18,6 +18,7 @@ package org.droidparts.type.handler;
 import java.io.ByteArrayOutputStream;
 
 import org.droidparts.type.TypeHelper;
+import org.json.JSONObject;
 
 import android.content.ContentValues;
 import android.database.Cursor;
@@ -35,6 +36,12 @@ public class BitmapHandler extends AbstractTypeHandler<Bitmap> {
 	@Override
 	public String getDBColumnType() {
 		return BLOB;
+	}
+
+	@Override
+	public <V> Bitmap readFromJSON(Class<Bitmap> valType,
+			Class<V> arrCollItemType, JSONObject obj, String key) {
+		throw new UnsupportedOperationException();
 	}
 
 	@Override

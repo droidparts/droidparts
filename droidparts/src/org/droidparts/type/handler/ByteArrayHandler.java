@@ -16,6 +16,7 @@
 package org.droidparts.type.handler;
 
 import org.droidparts.type.TypeHelper;
+import org.json.JSONObject;
 
 import android.content.ContentValues;
 import android.database.Cursor;
@@ -30,6 +31,12 @@ public class ByteArrayHandler extends AbstractTypeHandler<byte[]> {
 	@Override
 	public String getDBColumnType() {
 		return BLOB;
+	}
+
+	@Override
+	public <V> byte[] readFromJSON(Class<byte[]> valType,
+			Class<V> arrCollItemType, JSONObject obj, String key) {
+		throw new IllegalArgumentException();
 	}
 
 	@Override

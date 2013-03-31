@@ -117,8 +117,7 @@ public class JSONSerializer<ModelType extends Model> {
 		} else {
 			AbstractTypeHandler<T> handler = TypeHandlerRegistry
 					.getHandlerOrThrow(valType);
-			Object val = obj.get(key);
-			return handler.convertFromJSON(valType, arrCollItemType, val);
+			return handler.readFromJSON(valType, arrCollItemType, obj, key);
 		}
 	}
 

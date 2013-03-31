@@ -20,6 +20,8 @@ import static org.droidparts.util.Arrays2.toPrimitive;
 import java.util.ArrayList;
 
 import org.droidparts.type.TypeHelper;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import android.content.ContentValues;
 import android.database.Cursor;
@@ -34,6 +36,12 @@ public class ByteHandler extends AbstractTypeHandler<Byte> {
 	@Override
 	public String getDBColumnType() {
 		return INTEGER;
+	}
+
+	@Override
+	public <V> Byte readFromJSON(Class<Byte> valType, Class<V> arrCollItemType,
+			JSONObject obj, String key) throws JSONException {
+		return parseFromString(valType, arrCollItemType, obj.getString(key));
 	}
 
 	@Override
