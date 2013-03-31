@@ -39,15 +39,14 @@ public class DoubleHandler extends AbstractTypeHandler<Double> {
 	}
 
 	@Override
-	public Double readFromJSON(Class<?> cls, JSONObject obj, String key)
-			throws JSONException {
-		return obj.getDouble(key);
+	public Object getJSONValue(Object val) {
+		return (Double) val;
 	}
 
 	@Override
-	public void putToJSONObject(JSONObject obj, String key, Object val)
+	public Double readFromJSON(Class<?> cls, JSONObject obj, String key)
 			throws JSONException {
-		obj.put(key, (Double) val);
+		return obj.getDouble(key);
 	}
 
 	@Override

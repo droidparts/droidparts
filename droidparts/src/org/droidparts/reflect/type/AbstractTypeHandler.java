@@ -31,10 +31,9 @@ public abstract class AbstractTypeHandler<T> implements SQL.DDL {
 
 	public abstract String getDBColumnType();
 
-	public abstract T readFromJSON(Class<?> cls, JSONObject obj, String key)
-			throws JSONException;
+	public abstract Object getJSONValue(Object val);
 
-	public abstract void putToJSONObject(JSONObject obj, String key, Object val)
+	public abstract T readFromJSON(Class<?> cls, JSONObject obj, String key)
 			throws JSONException;
 
 	public abstract void putToContentValues(ContentValues cv, String key,

@@ -39,6 +39,11 @@ public class BooleanHandler extends AbstractTypeHandler<Boolean> {
 	}
 
 	@Override
+	public Object getJSONValue(Object val) {
+		return (Boolean) val;
+	}
+
+	@Override
 	public Boolean readFromJSON(Class<?> cls, JSONObject obj, String key)
 			throws JSONException {
 		try {
@@ -47,12 +52,6 @@ public class BooleanHandler extends AbstractTypeHandler<Boolean> {
 			// XXX
 			return obj.getInt(key) == 1;
 		}
-	}
-
-	@Override
-	public void putToJSONObject(JSONObject obj, String key, Object val)
-			throws JSONException {
-		obj.put(key, (Boolean) val);
 	}
 
 	@Override

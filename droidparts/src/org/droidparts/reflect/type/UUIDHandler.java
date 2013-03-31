@@ -38,15 +38,14 @@ public class UUIDHandler extends AbstractTypeHandler<UUID> {
 	}
 
 	@Override
-	public UUID readFromJSON(Class<?> cls, JSONObject obj, String key)
-			throws JSONException {
-		return UUID.fromString(obj.getString(key));
+	public Object getJSONValue(Object val) {
+		return val.toString();
 	}
 
 	@Override
-	public void putToJSONObject(JSONObject obj, String key, Object val)
+	public UUID readFromJSON(Class<?> cls, JSONObject obj, String key)
 			throws JSONException {
-		obj.put(key, val.toString());
+		return UUID.fromString(obj.getString(key));
 	}
 
 	@Override

@@ -37,15 +37,14 @@ public class JSONObjectHandler extends AbstractTypeHandler<JSONObject> {
 	}
 
 	@Override
-	public JSONObject readFromJSON(Class<?> cls, JSONObject obj, String key)
-			throws JSONException {
-		return new JSONObject(obj.getString(key));
+	public Object getJSONValue(Object val) {
+		return val.toString();
 	}
 
 	@Override
-	public void putToJSONObject(JSONObject obj, String key, Object val)
+	public JSONObject readFromJSON(Class<?> cls, JSONObject obj, String key)
 			throws JSONException {
-		obj.put(key, val.toString());
+		return new JSONObject(obj.getString(key));
 	}
 
 	@Override

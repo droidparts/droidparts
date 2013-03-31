@@ -39,15 +39,14 @@ public class IntegerHandler extends AbstractTypeHandler<Integer> {
 	}
 
 	@Override
-	public Integer readFromJSON(Class<?> cls, JSONObject obj, String key)
-			throws JSONException {
-		return obj.getInt(key);
+	public Object getJSONValue(Object val) {
+		return (Integer) val;
 	}
 
 	@Override
-	public void putToJSONObject(JSONObject obj, String key, Object val)
+	public Integer readFromJSON(Class<?> cls, JSONObject obj, String key)
 			throws JSONException {
-		obj.put(key, (Integer) val);
+		return obj.getInt(key);
 	}
 
 	@Override

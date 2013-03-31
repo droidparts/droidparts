@@ -24,7 +24,9 @@ import static org.droidparts.reflect.util.ReflectionUtils.listAnnotatedFields;
 import static org.droidparts.reflect.util.TypeHelper.isArray;
 import static org.droidparts.reflect.util.TypeHelper.isBoolean;
 import static org.droidparts.reflect.util.TypeHelper.isByte;
+import static org.droidparts.reflect.util.TypeHelper.isCharacter;
 import static org.droidparts.reflect.util.TypeHelper.isCollection;
+import static org.droidparts.reflect.util.TypeHelper.isDouble;
 import static org.droidparts.reflect.util.TypeHelper.isEntity;
 import static org.droidparts.reflect.util.TypeHelper.isFloat;
 import static org.droidparts.reflect.util.TypeHelper.isInteger;
@@ -193,9 +195,10 @@ public final class FieldSpecBuilder {
 		for (FieldSpec<ColumnAnn> spec : columnSpecs) {
 			if (spec.ann.nullable) {
 				Class<?> fieldType = spec.field.getType();
-				if (isBoolean(fieldType) || isByte(fieldType)
-						|| isFloat(fieldType) || isInteger(fieldType)
-						|| isLong(fieldType) || isShort(fieldType)) {
+				if (isByte(fieldType) || isShort(fieldType)
+						|| isInteger(fieldType) || isLong(fieldType)
+						|| isFloat(fieldType) || isDouble(fieldType)
+						|| isBoolean(fieldType) || isCharacter(fieldType)) {
 					L.w("%s can't be null.", fieldType.getSimpleName());
 					spec.ann.nullable = false;
 				}

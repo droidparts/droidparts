@@ -38,15 +38,14 @@ public class JSONArrayHandler extends AbstractTypeHandler<JSONArray> {
 	}
 
 	@Override
-	public JSONArray readFromJSON(Class<?> cls, JSONObject obj, String key)
-			throws JSONException {
-		return new JSONArray(obj.getString(key));
+	public Object getJSONValue(Object val) {
+		return val.toString();
 	}
 
 	@Override
-	public void putToJSONObject(JSONObject obj, String key, Object val)
+	public JSONArray readFromJSON(Class<?> cls, JSONObject obj, String key)
 			throws JSONException {
-		obj.put(key, val.toString());
+		return new JSONArray(obj.getString(key));
 	}
 
 	@Override

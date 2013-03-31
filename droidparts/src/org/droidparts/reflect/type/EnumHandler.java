@@ -40,15 +40,14 @@ public class EnumHandler extends AbstractTypeHandler<Enum<?>> {
 	}
 
 	@Override
-	public Enum<?> readFromJSON(Class<?> cls, JSONObject obj, String key)
-			throws JSONException {
-		return instantiateEnum(cls, obj.getString(key));
+	public Object getJSONValue(Object val) {
+		return val.toString();
 	}
 
 	@Override
-	public void putToJSONObject(JSONObject obj, String key, Object val)
+	public Enum<?> readFromJSON(Class<?> cls, JSONObject obj, String key)
 			throws JSONException {
-		obj.put(key, val.toString());
+		return instantiateEnum(cls, obj.getString(key));
 	}
 
 	@Override

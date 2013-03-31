@@ -38,15 +38,14 @@ public class DateHandler extends AbstractTypeHandler<Date> {
 	}
 
 	@Override
-	public Date readFromJSON(Class<?> cls, JSONObject obj, String key)
-			throws JSONException {
-		return new Date(obj.getLong(key));
+	public Object getJSONValue(Object val) {
+		return ((Date) val).getTime();
 	}
 
 	@Override
-	public void putToJSONObject(JSONObject obj, String key, Object val)
+	public Date readFromJSON(Class<?> cls, JSONObject obj, String key)
 			throws JSONException {
-		obj.put(key, ((Date) val).getTime());
+		return new Date(obj.getLong(key));
 	}
 
 	@Override

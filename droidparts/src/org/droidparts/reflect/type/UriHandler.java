@@ -38,15 +38,14 @@ public class UriHandler extends AbstractTypeHandler<Uri> {
 	}
 
 	@Override
-	public Uri readFromJSON(Class<?> cls, JSONObject obj, String key)
-			throws JSONException {
-		return Uri.parse(obj.getString(key));
+	public Object getJSONValue(Object val) {
+		return val.toString();
 	}
 
 	@Override
-	public void putToJSONObject(JSONObject obj, String key, Object val)
+	public Uri readFromJSON(Class<?> cls, JSONObject obj, String key)
 			throws JSONException {
-		obj.put(key, val.toString());
+		return Uri.parse(obj.getString(key));
 	}
 
 	@Override

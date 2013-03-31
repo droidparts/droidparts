@@ -39,15 +39,14 @@ public class ByteHandler extends AbstractTypeHandler<Byte> {
 	}
 
 	@Override
-	public Byte readFromJSON(Class<?> cls, JSONObject obj, String key)
-			throws JSONException {
-		return Byte.valueOf(obj.getString(key));
+	public Object getJSONValue(Object val) {
+		return (Byte) val;
 	}
 
 	@Override
-	public void putToJSONObject(JSONObject obj, String key, Object val)
+	public Byte readFromJSON(Class<?> cls, JSONObject obj, String key)
 			throws JSONException {
-		obj.put(key, (Byte) val);
+		return Byte.valueOf(obj.getString(key));
 	}
 
 	@Override
