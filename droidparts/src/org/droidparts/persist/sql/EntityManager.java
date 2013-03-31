@@ -162,7 +162,7 @@ public class EntityManager<EntityType extends Entity> extends
 			cv.putNull(key);
 			return;
 		}
-		TypeHandler<T> handler = TypeHandlerRegistry.get(valueType);
+		TypeHandler<T> handler = TypeHandlerRegistry.getHandler(valueType);
 		if (handler != null) {
 			handler.putToContentValues(valueType, arrCollItemType, cv, key,
 					(T) value);
@@ -179,7 +179,7 @@ public class EntityManager<EntityType extends Entity> extends
 		if (cursor.isNull(columnIndex)) {
 			return null;
 		}
-		TypeHandler<T> handler = TypeHandlerRegistry.get(valType);
+		TypeHandler<T> handler = TypeHandlerRegistry.getHandler(valType);
 		if (handler != null) {
 			return handler.readFromCursor(valType, arrCollItemType, cursor,
 					columnIndex);

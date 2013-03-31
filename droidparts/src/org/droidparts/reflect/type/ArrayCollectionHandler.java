@@ -17,16 +17,13 @@ package org.droidparts.reflect.type;
 
 import static org.droidparts.reflect.util.ReflectionUtils.instantiate;
 import static org.droidparts.reflect.util.TypeHelper.isArray;
-import static org.droidparts.reflect.util.TypeHelper.isDate;
-import static org.droidparts.reflect.util.TypeHelper.isEnum;
 import static org.droidparts.reflect.util.TypeHelper.isModel;
-import static org.droidparts.reflect.util.TypeHelper.isUUID;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Date;
+import java.util.List;
 
 import org.droidparts.model.Model;
 import org.droidparts.persist.json.JSONSerializer;
@@ -59,48 +56,27 @@ public class ArrayCollectionHandler extends TypeHandler<Object> {
 	@Override
 	public <V> Object convertForJSON(Class<Object> valType,
 			Class<V> arrCollItemType, Object val) {
-		final ArrayList<Object> list = new ArrayList<Object>();
-		if (isArray(valType)) {
-			list.addAll(Arrays.asList(Arrays2.toObjectArr(val)));
-		} else {
-			list.addAll((Collection<?>) val);
-		}
-		JSONArray jArr = new JSONArray();
-		if (isModel(arrCollItemType)) {
-			JSONSerializer serializer = new JSONSerializer(arrCollItemType,
-					null);
-			try {
-				jArr = serializer.serialize(list);
-			} catch (JSONException e) {
-				throw new IllegalArgumentException(e);
+		TypeHandler<V> handler = TypeHandlerRegistry
+				.getHandler(arrCollItemType);
+		if (handler != null) {
+			ArrayList<V> list = arrOrCollToList(valType, arrCollItemType, val);
+			JSONArray vals = new JSONArray();
+			for (V obj : list) {
+				Object jObj = handler
+						.convertForJSON(arrCollItemType, null, obj);
+				vals.put(jObj);
 			}
+			return vals;
 		} else {
-			// XXX
-			boolean isDate = isDate(arrCollItemType);
-			boolean toString = isUUID(arrCollItemType)
-					|| isEnum(arrCollItemType);
-			for (Object o : list) {
-				if (isDate) {
-					o = ((Date) o).getTime();
-				} else if (toString) {
-					o = o.toString();
-				}
-				jArr.put(o);
-			}
+			throw new IllegalArgumentException("Unable to convert to "
+					+ arrCollItemType + ".");
 		}
-		return jArr;
-	}
-
-	@Override
-	public <V> Object convertFromJSON(Class<Object> valType,
-			Class<V> arrCollItemType, Object val) {
-		// TODO
-		return super.convertFromJSON(valType, arrCollItemType, val);
 	}
 
 	@Override
 	protected <V> Object parseFromString(Class<Object> valType,
 			Class<V> arrCollItemType, String str) {
+		// XXX
 		JSONArray jArr;
 		try {
 			jArr = new JSONArray(str);
@@ -151,13 +127,13 @@ public class ArrayCollectionHandler extends TypeHandler<Object> {
 				for (int i = 0; i < arr.length; i++) {
 					arr2[i] = arr[i].toString();
 				}
-				TypeHandler<V> arrItemHandler = TypeHandlerRegistry
-						.get(arrCollItemType);
-				if (arrItemHandler == null) {
+				TypeHandler<V> handler = TypeHandlerRegistry
+						.getHandler(arrCollItemType);
+				if (handler == null) {
 					throw new IllegalArgumentException("Unable to convert to "
 							+ arrCollItemType + ".");
 				}
-				return arrItemHandler.parseTypeArr(arrCollItemType, arr2);
+				return handler.parseTypeArr(arrCollItemType, arr2);
 			}
 		} else {
 			return coll;
@@ -168,49 +144,63 @@ public class ArrayCollectionHandler extends TypeHandler<Object> {
 	public <V> void putToContentValues(Class<Object> valueType,
 			Class<V> arrCollItemType, ContentValues cv, String key, Object val)
 			throws IllegalArgumentException {
-		final ArrayList<Object> list = new ArrayList<Object>();
-		if (isArray(valueType)) {
-			list.addAll(Arrays.asList(Arrays2.toObjectArr(val)));
-		} else {
-			list.addAll((Collection<?>) val);
-		}
-		if (isDate(arrCollItemType)) {
-			for (int i = 0; i < list.size(); i++) {
-				Long timestamp = ((Date) list.get(i)).getTime();
-				list.set(i, timestamp);
+		TypeHandler<V> handler = TypeHandlerRegistry
+				.getHandler(arrCollItemType);
+		if (handler != null) {
+			ArrayList<V> list = arrOrCollToList(valueType, arrCollItemType, val);
+			ArrayList<Object> vals = new ArrayList<Object>();
+			for (V obj : list) {
+				Object jObj = handler
+						.convertForJSON(arrCollItemType, null, obj);
+				vals.add(jObj);
 			}
+			String strVal = Strings.join(vals, SEP, null);
+			cv.put(key, strVal);
+		} else {
+			throw new IllegalArgumentException("Unable to convert to "
+					+ arrCollItemType + ".");
 		}
-		String strVal = Strings.join(list, SEP, null);
-		cv.put(key, strVal);
 	}
 
 	@Override
 	public <V> Object readFromCursor(Class<Object> valType,
 			Class<V> arrCollItemType, Cursor cursor, int columnIndex)
 			throws IllegalArgumentException {
-		TypeHandler<V> arrItemHandler = TypeHandlerRegistry
-				.get(arrCollItemType);
-		if (arrItemHandler == null) {
+		TypeHandler<V> handler = TypeHandlerRegistry
+				.getHandler(arrCollItemType);
+		if (handler != null) {
+			String str = cursor.getString(columnIndex);
+			String[] parts = (str.length() > 0) ? str.split("\\" + SEP)
+					: new String[0];
+			if (isArray(valType)) {
+				return handler.parseTypeArr(arrCollItemType, parts);
+			} else {
+				@SuppressWarnings("unchecked")
+				Collection<Object> coll = (Collection<Object>) instantiate(valType);
+				coll.addAll(handler.parseTypeColl(arrCollItemType, parts));
+				return coll;
+			}
+		} else {
 			throw new IllegalArgumentException("Unable to convert to "
 					+ arrCollItemType + ".");
-		}
-		String str = cursor.getString(columnIndex);
-		String[] parts = (str.length() > 0) ? str.split("\\" + SEP)
-				: new String[0];
-		if (isArray(valType)) {
-			return arrItemHandler.parseTypeArr(arrCollItemType, parts);
-		} else {
-			@SuppressWarnings("unchecked")
-			Collection<Object> coll = (Collection<Object>) instantiate(valType);
-			coll.addAll(arrItemHandler.parseTypeColl(arrCollItemType, parts));
-			return coll;
 		}
 	}
 
 	@Override
 	public Object parseTypeArr(Class<Object> valType, String[] arr) {
-		// TODO Auto-generated method stub
-		return null;
+		throw new UnsupportedOperationException();
+	}
+
+	@SuppressWarnings("unchecked")
+	private <T> ArrayList<T> arrOrCollToList(Class<?> valType,
+			Class<T> arrCollItemType, Object val) {
+		ArrayList<T> list = new ArrayList<T>();
+		if (isArray(valType)) {
+			list.addAll((List<T>) Arrays.asList(Arrays2.toObjectArr(val)));
+		} else {
+			list.addAll((Collection<T>) val);
+		}
+		return list;
 	}
 
 	@SuppressWarnings("unchecked")

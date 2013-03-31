@@ -70,7 +70,8 @@ public class TypeHandlerRegistry {
 	}
 
 	@SuppressWarnings("unchecked")
-	public static <T> TypeHandler<T> get(Class<T> cls) {
+	public static <T> TypeHandler<T> getHandler(Class<T> cls)
+			throws IllegalArgumentException {
 		TypeHandler<?> handler = map.get(cls);
 		if (handler == null) {
 			for (TypeHandler<?> h : handlers) {

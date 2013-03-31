@@ -99,7 +99,7 @@ public class JSONSerializer<ModelType extends Model> {
 		if (val == null) {
 			obj.put(key, NULL);
 		} else {
-			TypeHandler<T> handler = TypeHandlerRegistry.get(valType);
+			TypeHandler<T> handler = TypeHandlerRegistry.getHandler(valType);
 			if (handler != null) {
 				@SuppressWarnings("unchecked")
 				Object jsonVal = handler.convertForJSON(valType,
@@ -120,7 +120,7 @@ public class JSONSerializer<ModelType extends Model> {
 		if (NULL.equals(jsonVal)) {
 			return jsonVal;
 		} else {
-			TypeHandler<T> handler = TypeHandlerRegistry.get(valType);
+			TypeHandler<T> handler = TypeHandlerRegistry.getHandler(valType);
 			if (handler != null) {
 				Object val = obj.get(key);
 				return handler.convertFromJSON(valType, arrCollItemType, val);

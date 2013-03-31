@@ -246,7 +246,7 @@ public final class PersistUtils implements SQL.DDL {
 
 	private static String getColumnType(Class<?> fieldType,
 			Class<?> arrCollItemType) {
-		TypeHandler<?> handler = TypeHandlerRegistry.get(fieldType);
+		TypeHandler<?> handler = TypeHandlerRegistry.getHandler(fieldType);
 		if (handler != null) {
 			return handler.getDBColumnType();
 		}
