@@ -39,7 +39,7 @@ public class ShortHandler extends AbstractTypeHandler<Short> {
 	}
 
 	@Override
-	public Object getJSONValue(Object val) {
+	public Object convertToJSONValue(Object val) {
 		return (Short) val;
 	}
 

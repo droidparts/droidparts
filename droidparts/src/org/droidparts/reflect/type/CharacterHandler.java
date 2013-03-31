@@ -39,7 +39,7 @@ public class CharacterHandler extends AbstractTypeHandler<Character> {
 	}
 
 	@Override
-	public Object getJSONValue(Object val) {
+	public Object convertToJSONValue(Object val) {
 		return (Character) val;
 	}
 

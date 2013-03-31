@@ -39,7 +39,7 @@ public class ByteHandler extends AbstractTypeHandler<Byte> {
 	}
 
 	@Override
-	public Object getJSONValue(Object val) {
+	public Object convertToJSONValue(Object val) {
 		return (Byte) val;
 	}
 

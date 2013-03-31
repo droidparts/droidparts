@@ -39,7 +39,7 @@ public class IntegerHandler extends AbstractTypeHandler<Integer> {
 	}
 
 	@Override
-	public Object getJSONValue(Object val) {
+	public Object convertToJSONValue(Object val) {
 		return (Integer) val;
 	}
 

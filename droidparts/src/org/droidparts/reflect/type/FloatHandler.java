@@ -39,7 +39,7 @@ public class FloatHandler extends AbstractTypeHandler<Float> {
 	}
 
 	@Override
-	public Object getJSONValue(Object val) {
+	public Object convertToJSONValue(Object val) {
 		return (Float) val;
 	}
 

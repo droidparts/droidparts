@@ -35,7 +35,7 @@ public class ByteArrayHandler extends AbstractTypeHandler<byte[]> {
 	}
 
 	@Override
-	public Object getJSONValue(Object val) {
+	public Object convertToJSONValue(Object val) {
 		return (byte[]) val;
 	}
 

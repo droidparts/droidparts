@@ -39,7 +39,7 @@ public class LongHandler extends AbstractTypeHandler<Long> {
 	}
 
 	@Override
-	public Object getJSONValue(Object val) {
+	public Object convertToJSONValue(Object val) {
 		return (Long) val;
 	}
 

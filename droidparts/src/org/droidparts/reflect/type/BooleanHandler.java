@@ -39,7 +39,7 @@ public class BooleanHandler extends AbstractTypeHandler<Boolean> {
 	}
 
 	@Override
-	public Object getJSONValue(Object val) {
+	public Object convertToJSONValue(Object val) {
 		return (Boolean) val;
 	}
 
