@@ -18,7 +18,6 @@ package org.droidparts.reflect.type;
 import java.util.ArrayList;
 
 import org.droidparts.contract.SQL;
-import org.droidparts.reflect.util.TypeHandlerRegistry;
 
 import android.content.ContentValues;
 import android.database.Cursor;
@@ -50,15 +49,15 @@ public abstract class TypeHandler<T> implements SQL.DDL {
 	public abstract T readFromCursor(Class<T> cls, Cursor cursor,
 			int columnIndex) throws IllegalArgumentException;
 
+	// say hello to arrays of primitives
 	public abstract Object parseTypeArr(Class<T> arrValType, String[] arr);
 
-	public static <T> ArrayList<T> parseTypeColl(Class<T> valCls,
-			String[] valStrArr) throws IllegalArgumentException {
+	public ArrayList<T> parseTypeColl(Class<T> valCls, String[] arr)
+			throws IllegalArgumentException {
 		ArrayList<T> list = new ArrayList<T>();
-		TypeHandler<T> handler = TypeHandlerRegistry.get(valCls);
-		for (String str : valStrArr) {
+		for (String str : arr) {
 			try {
-				list.add(handler.parseFromString(valCls, str));
+				list.add(parseFromString(valCls, str));
 			} catch (Exception e) {
 				throw new IllegalArgumentException("Unable to convert '" + str
 						+ "' to " + valCls.getSimpleName() + ".");
