@@ -49,7 +49,7 @@ public class ByteArrayHandler extends TypeHandler<byte[]> {
 	}
 
 	@Override
-	public Object parseTypeArr(Class<?> arrValType, String[] arr) {
+	public Object parseTypeArr(Class<byte[]> arrValType, String[] arr) {
 		throw new UnsupportedOperationException();
 	}
 

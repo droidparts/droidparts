@@ -153,8 +153,8 @@ public class JSONSerializer<ModelType extends Model> {
 		}
 	}
 
-	protected <T> Object readFromJSON(Class<T> fieldType,
-			Class<?> arrCollItemType, JSONObject obj, String key)
+	protected <T, V> Object readFromJSON(Class<T> fieldType,
+			Class<V> arrCollItemType, JSONObject obj, String key)
 			throws Exception {
 		Object jsonVal = obj.get(key);
 		if (NULL.equals(jsonVal)) {
@@ -217,7 +217,7 @@ public class JSONSerializer<ModelType extends Model> {
 					for (int i = 0; i < arr.length; i++) {
 						arr2[i] = arr[i].toString();
 					}
-					TypeHandler<?> handler2 = TypeHandlerRegistry
+					TypeHandler<V> handler2 = TypeHandlerRegistry
 							.get(arrCollItemType);
 					if (handler2 == null) {
 						throw new IllegalArgumentException(

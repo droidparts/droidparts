@@ -49,7 +49,7 @@ public class StringHandler extends TypeHandler<String> {
 	}
 
 	@Override
-	public Object parseTypeArr(Class<?> arrValType, String[] arr) {
+	public Object parseTypeArr(Class<String> arrValType, String[] arr) {
 		return arr;
 	}
 

@@ -58,7 +58,7 @@ public class BitmapHandler extends TypeHandler<Bitmap> {
 	}
 
 	@Override
-	public Object parseTypeArr(Class<?> arrValType, String[] arr) {
+	public Object parseTypeArr(Class<Bitmap> arrValType, String[] arr) {
 		throw new UnsupportedOperationException();
 	}
 

@@ -50,10 +50,9 @@ public abstract class TypeHandler<T> implements SQL.DDL {
 	public abstract T readFromCursor(Class<T> cls, Cursor cursor,
 			int columnIndex) throws IllegalArgumentException;
 
-	public abstract Object parseTypeArr(Class<?> arrValType, String[] arr);
+	public abstract Object parseTypeArr(Class<T> arrValType, String[] arr);
 
-	// XXX
-	public static <T> ArrayList<T> toTypeColl(Class<T> valCls,
+	public static <T> ArrayList<T> parseTypeColl(Class<T> valCls,
 			String[] valStrArr) throws IllegalArgumentException {
 		ArrayList<T> list = new ArrayList<T>();
 		TypeHandler<T> handler = TypeHandlerRegistry.get(valCls);

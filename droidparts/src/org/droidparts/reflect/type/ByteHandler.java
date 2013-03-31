@@ -52,8 +52,8 @@ public class ByteHandler extends TypeHandler<Byte> {
 	}
 
 	@Override
-	public Object parseTypeArr(Class<?> arrValType, String[] arr) {
-		ArrayList<Byte> list = toTypeColl(Byte.class, arr);
+	public Object parseTypeArr(Class<Byte> arrValType, String[] arr) {
+		ArrayList<Byte> list = parseTypeColl(arrValType, arr);
 		Byte[] tArr = list.toArray(new Byte[list.size()]);
 		return (arrValType == byte.class) ? toPrimitive(tArr) : tArr;
 	}

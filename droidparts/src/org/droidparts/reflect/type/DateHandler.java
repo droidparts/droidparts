@@ -56,8 +56,8 @@ public class DateHandler extends TypeHandler<Date> {
 	}
 
 	@Override
-	public Object parseTypeArr(Class<?> arrValType, String[] arr) {
-		ArrayList<Date> list = toTypeColl(Date.class, arr);
+	public Object parseTypeArr(Class<Date> arrValType, String[] arr) {
+		ArrayList<Date> list = parseTypeColl(arrValType, arr);
 		return list.toArray(new Date[list.size()]);
 	}
 

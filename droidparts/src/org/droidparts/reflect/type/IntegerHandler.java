@@ -53,8 +53,8 @@ public class IntegerHandler extends TypeHandler<Integer> {
 	}
 
 	@Override
-	public Object parseTypeArr(Class<?> arrValType, String[] arr) {
-		ArrayList<Integer> list = toTypeColl(Integer.class, arr);
+	public Object parseTypeArr(Class<Integer> arrValType, String[] arr) {
+		ArrayList<Integer> list = parseTypeColl(arrValType, arr);
 		Integer[] tArr = list.toArray(new Integer[list.size()]);
 		return (arrValType == int.class) ? toPrimitive(tArr) : tArr;
 	}

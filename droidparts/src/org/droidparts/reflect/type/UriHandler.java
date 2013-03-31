@@ -56,8 +56,8 @@ public class UriHandler extends TypeHandler<Uri> {
 	}
 
 	@Override
-	public Object parseTypeArr(Class<?> arrValType, String[] arr) {
-		ArrayList<Uri> list = toTypeColl(Uri.class, arr);
+	public Object parseTypeArr(Class<Uri> arrValType, String[] arr) {
+		ArrayList<Uri> list = parseTypeColl(arrValType, arr);
 		return list.toArray(new Uri[list.size()]);
 	}
 

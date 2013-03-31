@@ -236,7 +236,7 @@ public class EntityManager<EntityType extends Entity> extends
 			} else {
 				@SuppressWarnings("unchecked")
 				Collection<Object> coll = (Collection<Object>) instantiate(valType);
-				coll.addAll(TypeHandler.toTypeColl(arrCollItemType, parts));
+				coll.addAll(TypeHandler.parseTypeColl(arrCollItemType, parts));
 				return (T) coll;
 			}
 		} else {

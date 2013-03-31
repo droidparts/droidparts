@@ -52,8 +52,8 @@ public class ShortHandler extends TypeHandler<Short> {
 	}
 
 	@Override
-	public Object parseTypeArr(Class<?> arrValType, String[] arr) {
-		ArrayList<Short> list = toTypeColl(Short.class, arr);
+	public Object parseTypeArr(Class<Short> arrValType, String[] arr) {
+		ArrayList<Short> list = parseTypeColl(arrValType, arr);
 		Short[] tArr = list.toArray(new Short[list.size()]);
 		return (arrValType == short.class) ? toPrimitive(tArr) : tArr;
 	}

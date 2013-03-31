@@ -59,9 +59,8 @@ public class EnumHandler extends TypeHandler<Enum<?>> {
 	}
 
 	@Override
-	public Object parseTypeArr(Class<?> arrValType, String[] arr) {
-		@SuppressWarnings({ "rawtypes", "unchecked" })
-		ArrayList<? extends Enum> list = (ArrayList<? extends Enum>) toTypeColl(
+	public Object parseTypeArr(Class<Enum<?>> arrValType, String[] arr) {
+		ArrayList<? extends Enum<?>> list = (ArrayList<? extends Enum<?>>) parseTypeColl(
 				arrValType, arr);
 		Object enumArr = Array.newInstance(arrValType, list.size());
 		for (int i = 0; i < list.size(); i++) {

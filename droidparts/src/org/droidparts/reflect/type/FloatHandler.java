@@ -52,8 +52,8 @@ public class FloatHandler extends TypeHandler<Float> {
 	}
 
 	@Override
-	public Object parseTypeArr(Class<?> arrValType, String[] arr) {
-		ArrayList<Float> list = toTypeColl(Float.class, arr);
+	public Object parseTypeArr(Class<Float> arrValType, String[] arr) {
+		ArrayList<Float> list = parseTypeColl(arrValType, arr);
 		Float[] tArr = list.toArray(new Float[list.size()]);
 		return (arrValType == float.class) ? toPrimitive(tArr) : tArr;
 	}

@@ -52,8 +52,8 @@ public class LongHandler extends TypeHandler<Long> {
 	}
 
 	@Override
-	public Object parseTypeArr(Class<?> arrValType, String[] arr) {
-		ArrayList<Long> list = toTypeColl(Long.class, arr);
+	public Object parseTypeArr(Class<Long> arrValType, String[] arr) {
+		ArrayList<Long> list = parseTypeColl(arrValType, arr);
 		Long[] tArr = list.toArray(new Long[list.size()]);
 		return (arrValType == long.class) ? toPrimitive(tArr) : tArr;
 	}

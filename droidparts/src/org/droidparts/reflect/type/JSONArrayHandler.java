@@ -66,8 +66,8 @@ public class JSONArrayHandler extends TypeHandler<JSONArray> {
 	}
 
 	@Override
-	public Object parseTypeArr(Class<?> arrValType, String[] arr) {
-		ArrayList<JSONArray> list = toTypeColl(JSONArray.class, arr);
+	public Object parseTypeArr(Class<JSONArray> arrValType, String[] arr) {
+		ArrayList<JSONArray> list = parseTypeColl(arrValType, arr);
 		return list.toArray(new JSONArray[list.size()]);
 	}
 

@@ -53,8 +53,8 @@ public class DoubleHandler extends TypeHandler<Double> {
 	}
 
 	@Override
-	public Object parseTypeArr(Class<?> arrValType, String[] arr) {
-		ArrayList<Double> list = toTypeColl(Double.class, arr);
+	public Object parseTypeArr(Class<Double> arrValType, String[] arr) {
+		ArrayList<Double> list = parseTypeColl(arrValType, arr);
 		Double[] tArr = list.toArray(new Double[list.size()]);
 		return (arrValType == double.class) ? toPrimitive(tArr) : tArr;
 	}

@@ -66,8 +66,8 @@ public class JSONObjectHandler extends TypeHandler<JSONObject> {
 	}
 
 	@Override
-	public Object parseTypeArr(Class<?> arrValType, String[] arr) {
-		ArrayList<JSONObject> list = toTypeColl(JSONObject.class, arr);
+	public Object parseTypeArr(Class<JSONObject> arrValType, String[] arr) {
+		ArrayList<JSONObject> list = parseTypeColl(arrValType, arr);
 		return list.toArray(new JSONObject[list.size()]);
 	}
 

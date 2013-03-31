@@ -56,8 +56,8 @@ public class BooleanHandler extends TypeHandler<Boolean> {
 	}
 
 	@Override
-	public Object parseTypeArr(Class<?> arrValType, String[] arr) {
-		ArrayList<Boolean> list = toTypeColl(Boolean.class, arr);
+	public Object parseTypeArr(Class<Boolean> arrValType, String[] arr) {
+		ArrayList<Boolean> list = parseTypeColl(arrValType, arr);
 		Boolean[] tArr = list.toArray(new Boolean[list.size()]);
 		return (arrValType == boolean.class) ? toPrimitive(tArr) : tArr;
 	}

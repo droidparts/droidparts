@@ -56,8 +56,8 @@ public class UUIDHandler extends TypeHandler<UUID> {
 	}
 
 	@Override
-	public Object parseTypeArr(Class<?> arrValType, String[] arr) {
-		ArrayList<UUID> list = toTypeColl(UUID.class, arr);
+	public Object parseTypeArr(Class<UUID> arrValType, String[] arr) {
+		ArrayList<UUID> list = parseTypeColl(arrValType, arr);
 		return list.toArray(new UUID[list.size()]);
 	}
 

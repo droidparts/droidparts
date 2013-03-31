@@ -53,8 +53,8 @@ public class CharacterHandler extends TypeHandler<Character> {
 	}
 
 	@Override
-	public Object parseTypeArr(Class<?> arrValType, String[] arr) {
-		ArrayList<Character> list = toTypeColl(Character.class, arr);
+	public Object parseTypeArr(Class<Character> arrValType, String[] arr) {
+		ArrayList<Character> list = parseTypeColl(arrValType, arr);
 		Character[] tArr = list.toArray(new Character[list.size()]);
 		return (arrValType == char.class) ? toPrimitive(tArr) : tArr;
 	}
