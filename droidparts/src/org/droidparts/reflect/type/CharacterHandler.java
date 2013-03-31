@@ -39,11 +39,6 @@ public class CharacterHandler extends AbstractTypeHandler<Character> {
 	}
 
 	@Override
-	public Object convertToJSONValue(Object val) {
-		return (Character) val;
-	}
-
-	@Override
 	public Character readFromJSON(Class<?> cls, JSONObject obj, String key)
 			throws JSONException {
 		return fromString(obj.getString(key));

@@ -39,11 +39,6 @@ public class LongHandler extends AbstractTypeHandler<Long> {
 	}
 
 	@Override
-	public Object convertToJSONValue(Object val) {
-		return (Long) val;
-	}
-
-	@Override
 	public Long readFromJSON(Class<?> cls, JSONObject obj, String key)
 			throws JSONException {
 		return obj.getLong(key);

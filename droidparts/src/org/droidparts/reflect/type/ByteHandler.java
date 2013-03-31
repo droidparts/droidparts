@@ -39,11 +39,6 @@ public class ByteHandler extends AbstractTypeHandler<Byte> {
 	}
 
 	@Override
-	public Object convertToJSONValue(Object val) {
-		return (Byte) val;
-	}
-
-	@Override
 	public Byte readFromJSON(Class<?> cls, JSONObject obj, String key)
 			throws JSONException {
 		return Byte.valueOf(obj.getString(key));

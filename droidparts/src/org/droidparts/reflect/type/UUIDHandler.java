@@ -38,7 +38,7 @@ public class UUIDHandler extends AbstractTypeHandler<UUID> {
 	}
 
 	@Override
-	public Object convertToJSONValue(Object val) {
+	public Object convertToJSONValue(UUID val) {
 		return val.toString();
 	}
 

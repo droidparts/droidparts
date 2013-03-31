@@ -38,8 +38,8 @@ public class DateHandler extends AbstractTypeHandler<Date> {
 	}
 
 	@Override
-	public Object convertToJSONValue(Object val) {
-		return ((Date) val).getTime();
+	public Object convertToJSONValue(Date val) {
+		return val.getTime();
 	}
 
 	@Override

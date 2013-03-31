@@ -106,16 +106,16 @@ public class JSONSerializer<ModelType extends Model> {
 	}
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
-	protected void putToJSONObject(JSONObject obj, String key,
-			Class<?> valType, Class<?> arrCollItemType, Object val)
+	protected <T> void putToJSONObject(JSONObject obj, String key,
+			Class<T> valType, Class<?> arrCollItemType, Object val)
 			throws Exception {
 		if (val == null) {
 			obj.put(key, NULL);
 			return;
 		}
-		AbstractTypeHandler<?> handler = TypeHandlerRegistry.get(valType);
+		AbstractTypeHandler<T> handler = TypeHandlerRegistry.get(valType);
 		if (handler != null) {
-			Object jsonVal = handler.convertToJSONValue(val);
+			Object jsonVal = handler.convertToJSONValue((T) val);
 			obj.put(key, jsonVal);
 			return;
 		}

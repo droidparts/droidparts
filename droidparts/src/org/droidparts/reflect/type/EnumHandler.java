@@ -40,7 +40,7 @@ public class EnumHandler extends AbstractTypeHandler<Enum<?>> {
 	}
 
 	@Override
-	public Object convertToJSONValue(Object val) {
+	public Object convertToJSONValue(Enum<?> val) {
 		return val.toString();
 	}
 

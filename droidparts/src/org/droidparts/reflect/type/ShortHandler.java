@@ -39,11 +39,6 @@ public class ShortHandler extends AbstractTypeHandler<Short> {
 	}
 
 	@Override
-	public Object convertToJSONValue(Object val) {
-		return (Short) val;
-	}
-
-	@Override
 	public Short readFromJSON(Class<?> cls, JSONObject obj, String key)
 			throws JSONException {
 		return (short) obj.getInt(key);

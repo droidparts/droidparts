@@ -39,11 +39,6 @@ public class BooleanHandler extends AbstractTypeHandler<Boolean> {
 	}
 
 	@Override
-	public Object convertToJSONValue(Object val) {
-		return (Boolean) val;
-	}
-
-	@Override
 	public Boolean readFromJSON(Class<?> cls, JSONObject obj, String key)
 			throws JSONException {
 		try {

@@ -38,7 +38,7 @@ public class UriHandler extends AbstractTypeHandler<Uri> {
 	}
 
 	@Override
-	public Object convertToJSONValue(Object val) {
+	public Object convertToJSONValue(Uri val) {
 		return val.toString();
 	}
 

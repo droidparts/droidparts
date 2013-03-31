@@ -39,11 +39,6 @@ public class FloatHandler extends AbstractTypeHandler<Float> {
 	}
 
 	@Override
-	public Object convertToJSONValue(Object val) {
-		return (Float) val;
-	}
-
-	@Override
 	public Float readFromJSON(Class<?> cls, JSONObject obj, String key)
 			throws JSONException {
 		return (float) obj.getDouble(key);

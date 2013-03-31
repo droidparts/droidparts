@@ -35,11 +35,6 @@ public class StringHandler extends AbstractTypeHandler<String> {
 	}
 
 	@Override
-	public Object convertToJSONValue(Object val) {
-		return (String) val;
-	}
-
-	@Override
 	public String readFromJSON(Class<?> cls, JSONObject obj, String key)
 			throws JSONException {
 		return obj.getString(key);

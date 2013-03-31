@@ -37,7 +37,7 @@ public class JSONObjectHandler extends AbstractTypeHandler<JSONObject> {
 	}
 
 	@Override
-	public Object convertToJSONValue(Object val) {
+	public Object convertToJSONValue(JSONObject val) {
 		return val.toString();
 	}
 

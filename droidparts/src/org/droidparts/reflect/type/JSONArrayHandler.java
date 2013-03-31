@@ -38,7 +38,7 @@ public class JSONArrayHandler extends AbstractTypeHandler<JSONArray> {
 	}
 
 	@Override
-	public Object convertToJSONValue(Object val) {
+	public Object convertToJSONValue(JSONArray val) {
 		return val.toString();
 	}
 
