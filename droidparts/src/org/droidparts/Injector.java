@@ -15,30 +15,30 @@
  */
 package org.droidparts;
 
-import static org.droidparts.type.FieldSpecBuilder.getInjectSpecs;
-import static org.droidparts.type.ReflectionUtils.setFieldVal;
+import static org.droidparts.inner.FieldSpecBuilder.getInjectSpecs;
+import static org.droidparts.inner.ReflectionUtils.setFieldVal;
 
 import java.lang.reflect.Field;
 
-import org.droidparts.type.ann.Ann;
-import org.droidparts.type.ann.FieldSpec;
-import org.droidparts.type.ann.inject.InjectAnn;
-import org.droidparts.type.ann.inject.InjectBundleExtraAnn;
-import org.droidparts.type.ann.inject.InjectDependencyAnn;
-import org.droidparts.type.ann.inject.InjectFragmentAnn;
-import org.droidparts.type.ann.inject.InjectParentActivityAnn;
-import org.droidparts.type.ann.inject.InjectResourceAnn;
-import org.droidparts.type.ann.inject.InjectSystemServiceAnn;
-import org.droidparts.type.ann.inject.InjectViewAnn;
-import org.droidparts.type.reader.BundleExtraReader;
-import org.droidparts.type.reader.DependencyReader;
-import org.droidparts.type.reader.NativeFragmentReader;
-import org.droidparts.type.reader.NativeParentActivityReader;
-import org.droidparts.type.reader.ResourceReader;
-import org.droidparts.type.reader.SupportFragmentReader;
-import org.droidparts.type.reader.SupportParentActivityReader;
-import org.droidparts.type.reader.SystemServiceReader;
-import org.droidparts.type.reader.ViewAndPreferenceReader;
+import org.droidparts.inner.ann.Ann;
+import org.droidparts.inner.ann.FieldSpec;
+import org.droidparts.inner.ann.inject.InjectAnn;
+import org.droidparts.inner.ann.inject.InjectBundleExtraAnn;
+import org.droidparts.inner.ann.inject.InjectDependencyAnn;
+import org.droidparts.inner.ann.inject.InjectFragmentAnn;
+import org.droidparts.inner.ann.inject.InjectParentActivityAnn;
+import org.droidparts.inner.ann.inject.InjectResourceAnn;
+import org.droidparts.inner.ann.inject.InjectSystemServiceAnn;
+import org.droidparts.inner.ann.inject.InjectViewAnn;
+import org.droidparts.inner.reader.BundleExtraReader;
+import org.droidparts.inner.reader.DependencyReader;
+import org.droidparts.inner.reader.NativeFragmentReader;
+import org.droidparts.inner.reader.NativeParentActivityReader;
+import org.droidparts.inner.reader.ResourceReader;
+import org.droidparts.inner.reader.SupportFragmentReader;
+import org.droidparts.inner.reader.SupportParentActivityReader;
+import org.droidparts.inner.reader.SystemServiceReader;
+import org.droidparts.inner.reader.ViewAndPreferenceReader;
 import org.droidparts.util.L;
 
 import android.app.Activity;

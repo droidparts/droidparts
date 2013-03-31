@@ -15,8 +15,8 @@
  */
 package org.droidparts.model;
 
-import static org.droidparts.type.ReflectionUtils.getFieldVal;
-import static org.droidparts.type.ReflectionUtils.listAnnotatedFields;
+import static org.droidparts.inner.ReflectionUtils.getFieldVal;
+import static org.droidparts.inner.ReflectionUtils.listAnnotatedFields;
 
 import java.io.Serializable;
 import java.lang.reflect.Field;

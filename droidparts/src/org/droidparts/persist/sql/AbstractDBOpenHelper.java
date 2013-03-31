@@ -15,14 +15,14 @@
  */
 package org.droidparts.persist.sql;
 
-import static org.droidparts.type.FieldSpecBuilder.getTableColumnSpecs;
-import static org.droidparts.type.FieldSpecBuilder.getTableName;
+import static org.droidparts.inner.FieldSpecBuilder.getTableColumnSpecs;
+import static org.droidparts.inner.FieldSpecBuilder.getTableName;
 
 import java.util.ArrayList;
 
 import org.droidparts.contract.SQL;
+import org.droidparts.inner.PersistUtils;
 import org.droidparts.model.Entity;
-import org.droidparts.util.PersistUtils;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;

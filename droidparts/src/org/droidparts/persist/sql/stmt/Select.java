@@ -15,7 +15,7 @@
  */
 package org.droidparts.persist.sql.stmt;
 
-import static org.droidparts.util.PersistUtils.getRowCount;
+import static org.droidparts.inner.PersistUtils.getRowCount;
 import static org.droidparts.util.Strings.join;
 
 import java.util.ArrayList;

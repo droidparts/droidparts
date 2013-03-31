@@ -17,7 +17,7 @@ package org.droidparts.net.image;
 
 import static android.graphics.Color.TRANSPARENT;
 import static org.droidparts.contract.Constants.BUFFER_SIZE;
-import static org.droidparts.util.io.IOUtils.silentlyClose;
+import static org.droidparts.util.misc.IOUtils.silentlyClose;
 
 import java.io.BufferedInputStream;
 import java.io.ByteArrayOutputStream;
@@ -25,12 +25,12 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ThreadPoolExecutor;
 
 import org.droidparts.contract.HTTP.Header;
+import org.droidparts.net.concurrent.BackgroundExecutor;
 import org.droidparts.net.image.cache.BitmapDiskCache;
 import org.droidparts.net.image.cache.BitmapMemoryCache;
 import org.droidparts.net.rest.HTTPResponse;
 import org.droidparts.net.rest.RESTClient;
 import org.droidparts.util.L;
-import org.droidparts.util.concurrent.BackgroundExecutor;
 
 import android.content.Context;
 import android.graphics.Bitmap;

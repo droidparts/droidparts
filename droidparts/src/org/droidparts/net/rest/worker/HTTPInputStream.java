@@ -30,7 +30,7 @@ import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.droidparts.net.rest.HTTPException;
 import org.droidparts.util.L;
-import org.droidparts.util.io.IOUtils;
+import org.droidparts.util.misc.IOUtils;
 
 public class HTTPInputStream extends BufferedInputStream {
 

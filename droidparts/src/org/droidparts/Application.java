@@ -15,7 +15,7 @@
  */
 package org.droidparts;
 
-import org.droidparts.type.ReflectionUtils;
+import org.droidparts.inner.ReflectionUtils;
 
 public class Application extends android.app.Application {
 

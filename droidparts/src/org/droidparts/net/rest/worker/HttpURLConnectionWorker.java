@@ -19,7 +19,7 @@ import static org.droidparts.contract.Constants.UTF8;
 import static org.droidparts.contract.HTTP.Header.ACCEPT_CHARSET;
 import static org.droidparts.contract.HTTP.Header.ACCEPT_ENCODING;
 import static org.droidparts.contract.HTTP.Header.CONTENT_TYPE;
-import static org.droidparts.util.io.IOUtils.silentlyClose;
+import static org.droidparts.util.misc.IOUtils.silentlyClose;
 
 import java.io.File;
 import java.io.OutputStream;

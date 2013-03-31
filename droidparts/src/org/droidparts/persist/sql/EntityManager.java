@@ -16,24 +16,24 @@
 package org.droidparts.persist.sql;
 
 import static java.util.Arrays.asList;
-import static org.droidparts.type.FieldSpecBuilder.getTableColumnSpecs;
-import static org.droidparts.type.ReflectionUtils.getFieldVal;
-import static org.droidparts.type.ReflectionUtils.instantiate;
-import static org.droidparts.type.ReflectionUtils.setFieldVal;
-import static org.droidparts.type.TypeHelper.isEntity;
+import static org.droidparts.inner.FieldSpecBuilder.getTableColumnSpecs;
+import static org.droidparts.inner.ReflectionUtils.getFieldVal;
+import static org.droidparts.inner.ReflectionUtils.instantiate;
+import static org.droidparts.inner.ReflectionUtils.setFieldVal;
+import static org.droidparts.inner.TypeHelper.isEntity;
 
 import java.lang.reflect.Field;
 import java.util.HashSet;
 
 import org.droidparts.Injector;
 import org.droidparts.annotation.inject.InjectDependency;
+import org.droidparts.inner.FieldSpecBuilder;
+import org.droidparts.inner.ReflectionUtils;
+import org.droidparts.inner.TypeHandlerRegistry;
+import org.droidparts.inner.ann.FieldSpec;
+import org.droidparts.inner.ann.sql.ColumnAnn;
+import org.droidparts.inner.handler.AbstractTypeHandler;
 import org.droidparts.model.Entity;
-import org.droidparts.type.FieldSpecBuilder;
-import org.droidparts.type.ReflectionUtils;
-import org.droidparts.type.TypeHandlerRegistry;
-import org.droidparts.type.ann.FieldSpec;
-import org.droidparts.type.ann.sql.ColumnAnn;
-import org.droidparts.type.handler.AbstractTypeHandler;
 
 import android.content.ContentValues;
 import android.content.Context;

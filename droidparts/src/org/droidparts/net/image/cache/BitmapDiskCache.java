@@ -16,8 +16,8 @@
 package org.droidparts.net.image.cache;
 
 import static org.droidparts.contract.Constants.BUFFER_SIZE;
-import static org.droidparts.util.io.IOUtils.getFileList;
-import static org.droidparts.util.io.IOUtils.silentlyClose;
+import static org.droidparts.util.misc.IOUtils.getFileList;
+import static org.droidparts.util.misc.IOUtils.silentlyClose;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -28,7 +28,7 @@ import java.io.FileOutputStream;
 
 import org.droidparts.util.AppUtils;
 import org.droidparts.util.L;
-import org.droidparts.util.crypto.HashCalc;
+import org.droidparts.util.misc.HashCalc;
 
 import android.content.Context;
 import android.graphics.Bitmap;

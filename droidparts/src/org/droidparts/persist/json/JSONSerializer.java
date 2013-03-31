@@ -15,23 +15,23 @@
  */
 package org.droidparts.persist.json;
 
-import static org.droidparts.type.FieldSpecBuilder.getJsonKeySpecs;
-import static org.droidparts.type.ReflectionUtils.getFieldVal;
-import static org.droidparts.type.ReflectionUtils.instantiate;
-import static org.droidparts.type.ReflectionUtils.setFieldVal;
+import static org.droidparts.inner.FieldSpecBuilder.getJsonKeySpecs;
+import static org.droidparts.inner.ReflectionUtils.getFieldVal;
+import static org.droidparts.inner.ReflectionUtils.instantiate;
+import static org.droidparts.inner.ReflectionUtils.setFieldVal;
 import static org.json.JSONObject.NULL;
 
 import java.util.ArrayList;
 import java.util.Collection;
 
 import org.droidparts.Injector;
+import org.droidparts.inner.PersistUtils;
+import org.droidparts.inner.TypeHandlerRegistry;
+import org.droidparts.inner.ann.FieldSpec;
+import org.droidparts.inner.ann.json.KeyAnn;
+import org.droidparts.inner.handler.AbstractTypeHandler;
 import org.droidparts.model.Model;
-import org.droidparts.type.TypeHandlerRegistry;
-import org.droidparts.type.ann.FieldSpec;
-import org.droidparts.type.ann.json.KeyAnn;
-import org.droidparts.type.handler.AbstractTypeHandler;
 import org.droidparts.util.L;
-import org.droidparts.util.PersistUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;

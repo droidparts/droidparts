@@ -21,7 +21,7 @@ import static android.content.pm.PackageManager.DONT_KILL_APP;
 import static android.content.pm.PackageManager.GET_META_DATA;
 import static android.provider.Settings.Secure.ANDROID_ID;
 import static org.droidparts.contract.Constants.BUFFER_SIZE;
-import static org.droidparts.util.io.IOUtils.silentlyClose;
+import static org.droidparts.util.misc.IOUtils.silentlyClose;
 
 import java.io.BufferedReader;
 import java.io.File;
