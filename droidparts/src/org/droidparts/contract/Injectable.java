@@ -13,15 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License. 
  */
-package org.droidparts.inject.reader;
+package org.droidparts.contract;
 
-import android.app.Fragment;
+public interface Injectable {
 
-public class NativeParentActivityReader {
-
-	public static Object getVal(Object fragmentObj) {
-		Fragment fragment = (Fragment) fragmentObj;
-		return fragment.getActivity();
-	}
+	void onPreInject();
 
 }

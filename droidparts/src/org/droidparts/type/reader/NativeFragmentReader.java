@@ -13,28 +13,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License. 
  */
-package org.droidparts.inject.reader;
+package org.droidparts.type.reader;
 
 import java.lang.reflect.Field;
 
 import org.droidparts.type.ann.inject.InjectFragmentAnn;
 import org.droidparts.util.inner.ResourceUtils;
 
+import android.app.Activity;
+import android.app.Fragment;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
 
-public class SupportFragmentReader {
+public class NativeFragmentReader {
 
 	public static Object getVal(Object fragmentActivityObj,
 			InjectFragmentAnn ann, Field field) {
-		FragmentActivity fragmentActivity = (FragmentActivity) fragmentActivityObj;
+		Activity fragmentActivity = (Activity) fragmentActivityObj;
 		int fragmentId = ann.id;
 		if (fragmentId == 0) {
 			fragmentId = ResourceUtils.getResourceId(fragmentActivity,
 					field.getName());
 		}
-		return fragmentActivity.getSupportFragmentManager().findFragmentById(
+		return fragmentActivity.getFragmentManager().findFragmentById(
 				fragmentId);
 	}
 

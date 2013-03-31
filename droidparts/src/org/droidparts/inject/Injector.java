@@ -20,15 +20,6 @@ import static org.droidparts.type.ReflectionUtils.setFieldVal;
 
 import java.lang.reflect.Field;
 
-import org.droidparts.inject.reader.BundleExtraReader;
-import org.droidparts.inject.reader.DependencyReader;
-import org.droidparts.inject.reader.NativeFragmentReader;
-import org.droidparts.inject.reader.NativeParentActivityReader;
-import org.droidparts.inject.reader.ResourceReader;
-import org.droidparts.inject.reader.SupportFragmentReader;
-import org.droidparts.inject.reader.SupportParentActivityReader;
-import org.droidparts.inject.reader.SystemServiceReader;
-import org.droidparts.inject.reader.ViewAndPreferenceReader;
 import org.droidparts.type.ann.Ann;
 import org.droidparts.type.ann.FieldSpec;
 import org.droidparts.type.ann.inject.InjectAnn;
@@ -39,6 +30,15 @@ import org.droidparts.type.ann.inject.InjectParentActivityAnn;
 import org.droidparts.type.ann.inject.InjectResourceAnn;
 import org.droidparts.type.ann.inject.InjectSystemServiceAnn;
 import org.droidparts.type.ann.inject.InjectViewAnn;
+import org.droidparts.type.reader.BundleExtraReader;
+import org.droidparts.type.reader.DependencyReader;
+import org.droidparts.type.reader.NativeFragmentReader;
+import org.droidparts.type.reader.NativeParentActivityReader;
+import org.droidparts.type.reader.ResourceReader;
+import org.droidparts.type.reader.SupportFragmentReader;
+import org.droidparts.type.reader.SupportParentActivityReader;
+import org.droidparts.type.reader.SystemServiceReader;
+import org.droidparts.type.reader.ViewAndPreferenceReader;
 import org.droidparts.util.L;
 
 import android.app.Activity;

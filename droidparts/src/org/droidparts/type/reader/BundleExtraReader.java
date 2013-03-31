@@ -13,10 +13,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License. 
  */
-package org.droidparts.inject;
+package org.droidparts.type.reader;
 
-public interface Injectable {
+import org.droidparts.type.ann.inject.InjectBundleExtraAnn;
 
-	void onPreInject();
+import android.os.Bundle;
+
+public class BundleExtraReader {
+
+	public static Object getVal(InjectBundleExtraAnn ann, Bundle data)
+			throws Exception {
+		Object val = data.get(ann.key);
+		if (val == null && !ann.optional) {
+			throw new Exception("Bundle missing required key: " + ann.key);
+		} else {
+			return val;
+		}
+	}
 
 }

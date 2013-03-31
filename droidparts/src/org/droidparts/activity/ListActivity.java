@@ -15,7 +15,7 @@
  */
 package org.droidparts.activity;
 
-import org.droidparts.inject.Injectable;
+import org.droidparts.contract.Injectable;
 import org.droidparts.inject.Injector;
 
 import android.os.Bundle;

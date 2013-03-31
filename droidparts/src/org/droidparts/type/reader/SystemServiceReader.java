@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License. 
  */
-package org.droidparts.inject.reader;
+package org.droidparts.type.reader;
 
 import static org.droidparts.util.Strings.isEmpty;
 

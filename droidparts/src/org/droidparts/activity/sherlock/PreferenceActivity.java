@@ -15,7 +15,7 @@
  */
 package org.droidparts.activity.sherlock;
 
-import org.droidparts.inject.Injectable;
+import org.droidparts.contract.Injectable;
 import org.droidparts.inject.Injector;
 
 import android.content.Intent;
