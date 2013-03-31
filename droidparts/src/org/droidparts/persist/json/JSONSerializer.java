@@ -15,10 +15,10 @@
  */
 package org.droidparts.persist.json;
 
-import static org.droidparts.reflect.FieldSpecBuilder.getJsonKeySpecs;
-import static org.droidparts.reflect.util.ReflectionUtils.getFieldVal;
-import static org.droidparts.reflect.util.ReflectionUtils.instantiate;
-import static org.droidparts.reflect.util.ReflectionUtils.setFieldVal;
+import static org.droidparts.type.FieldSpecBuilder.getJsonKeySpecs;
+import static org.droidparts.type.ReflectionUtils.getFieldVal;
+import static org.droidparts.type.ReflectionUtils.instantiate;
+import static org.droidparts.type.ReflectionUtils.setFieldVal;
 import static org.json.JSONObject.NULL;
 
 import java.util.ArrayList;
@@ -26,10 +26,10 @@ import java.util.Collection;
 
 import org.droidparts.inject.Injector;
 import org.droidparts.model.Model;
-import org.droidparts.reflect.ann.FieldSpec;
-import org.droidparts.reflect.ann.json.KeyAnn;
-import org.droidparts.reflect.type.TypeHandler;
-import org.droidparts.reflect.util.TypeHandlerRegistry;
+import org.droidparts.type.TypeHandlerRegistry;
+import org.droidparts.type.ann.FieldSpec;
+import org.droidparts.type.ann.json.KeyAnn;
+import org.droidparts.type.handler.AbstractTypeHandler;
 import org.droidparts.util.L;
 import org.droidparts.util.PersistUtils;
 import org.json.JSONArray;
@@ -99,7 +99,7 @@ public class JSONSerializer<ModelType extends Model> {
 		if (val == null) {
 			obj.put(key, NULL);
 		} else {
-			TypeHandler<T> handler = TypeHandlerRegistry
+			AbstractTypeHandler<T> handler = TypeHandlerRegistry
 					.getHandlerOrThrow(valType);
 			@SuppressWarnings("unchecked")
 			Object jsonVal = handler.convertForJSON(valType, arrCollItemType,
@@ -115,7 +115,7 @@ public class JSONSerializer<ModelType extends Model> {
 		if (NULL.equals(jsonVal)) {
 			return jsonVal;
 		} else {
-			TypeHandler<T> handler = TypeHandlerRegistry
+			AbstractTypeHandler<T> handler = TypeHandlerRegistry
 					.getHandlerOrThrow(valType);
 			Object val = obj.get(key);
 			return handler.convertFromJSON(valType, arrCollItemType, val);

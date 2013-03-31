@@ -20,7 +20,7 @@ import static org.droidparts.util.Strings.isEmpty;
 import java.lang.reflect.Field;
 import java.util.HashMap;
 
-import org.droidparts.reflect.ann.inject.InjectSystemServiceAnn;
+import org.droidparts.type.ann.inject.InjectSystemServiceAnn;
 import org.droidparts.util.L;
 
 import android.content.Context;

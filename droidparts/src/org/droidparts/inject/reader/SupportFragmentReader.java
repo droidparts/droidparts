@@ -17,7 +17,7 @@ package org.droidparts.inject.reader;
 
 import java.lang.reflect.Field;
 
-import org.droidparts.reflect.ann.inject.InjectFragmentAnn;
+import org.droidparts.type.ann.inject.InjectFragmentAnn;
 import org.droidparts.util.inner.ResourceUtils;
 
 import android.os.Bundle;

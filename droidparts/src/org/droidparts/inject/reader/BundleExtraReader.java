@@ -15,7 +15,7 @@
  */
 package org.droidparts.inject.reader;
 
-import org.droidparts.reflect.ann.inject.InjectBundleExtraAnn;
+import org.droidparts.type.ann.inject.InjectBundleExtraAnn;
 
 import android.os.Bundle;
 

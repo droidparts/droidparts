@@ -16,11 +16,11 @@
 package org.droidparts.persist.sql;
 
 import static java.util.Arrays.asList;
-import static org.droidparts.reflect.FieldSpecBuilder.getTableColumnSpecs;
-import static org.droidparts.reflect.util.ReflectionUtils.getFieldVal;
-import static org.droidparts.reflect.util.ReflectionUtils.instantiate;
-import static org.droidparts.reflect.util.ReflectionUtils.setFieldVal;
-import static org.droidparts.reflect.util.TypeHelper.isEntity;
+import static org.droidparts.type.FieldSpecBuilder.getTableColumnSpecs;
+import static org.droidparts.type.ReflectionUtils.getFieldVal;
+import static org.droidparts.type.ReflectionUtils.instantiate;
+import static org.droidparts.type.ReflectionUtils.setFieldVal;
+import static org.droidparts.type.TypeHelper.isEntity;
 
 import java.lang.reflect.Field;
 import java.util.HashSet;
@@ -28,12 +28,12 @@ import java.util.HashSet;
 import org.droidparts.annotation.inject.InjectDependency;
 import org.droidparts.inject.Injector;
 import org.droidparts.model.Entity;
-import org.droidparts.reflect.FieldSpecBuilder;
-import org.droidparts.reflect.ann.FieldSpec;
-import org.droidparts.reflect.ann.sql.ColumnAnn;
-import org.droidparts.reflect.type.TypeHandler;
-import org.droidparts.reflect.util.ReflectionUtils;
-import org.droidparts.reflect.util.TypeHandlerRegistry;
+import org.droidparts.type.FieldSpecBuilder;
+import org.droidparts.type.ReflectionUtils;
+import org.droidparts.type.TypeHandlerRegistry;
+import org.droidparts.type.ann.FieldSpec;
+import org.droidparts.type.ann.sql.ColumnAnn;
+import org.droidparts.type.handler.AbstractTypeHandler;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -162,7 +162,7 @@ public class EntityManager<EntityType extends Entity> extends
 		if (value == null) {
 			cv.putNull(key);
 		} else {
-			TypeHandler<T> handler = TypeHandlerRegistry
+			AbstractTypeHandler<T> handler = TypeHandlerRegistry
 					.getHandlerOrThrow(valueType);
 			handler.putToContentValues(valueType, arrCollItemType, cv, key,
 					(T) value);
@@ -175,7 +175,7 @@ public class EntityManager<EntityType extends Entity> extends
 		if (cursor.isNull(columnIndex)) {
 			return null;
 		} else {
-			TypeHandler<T> handler = TypeHandlerRegistry
+			AbstractTypeHandler<T> handler = TypeHandlerRegistry
 					.getHandlerOrThrow(valType);
 			return handler.readFromCursor(valType, arrCollItemType, cursor,
 					columnIndex);

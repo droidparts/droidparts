@@ -15,8 +15,8 @@
  */
 package org.droidparts.inject;
 
-import static org.droidparts.reflect.FieldSpecBuilder.getInjectSpecs;
-import static org.droidparts.reflect.util.ReflectionUtils.setFieldVal;
+import static org.droidparts.type.FieldSpecBuilder.getInjectSpecs;
+import static org.droidparts.type.ReflectionUtils.setFieldVal;
 
 import java.lang.reflect.Field;
 
@@ -29,16 +29,16 @@ import org.droidparts.inject.reader.SupportFragmentReader;
 import org.droidparts.inject.reader.SupportParentActivityReader;
 import org.droidparts.inject.reader.SystemServiceReader;
 import org.droidparts.inject.reader.ViewAndPreferenceReader;
-import org.droidparts.reflect.ann.Ann;
-import org.droidparts.reflect.ann.FieldSpec;
-import org.droidparts.reflect.ann.inject.InjectAnn;
-import org.droidparts.reflect.ann.inject.InjectBundleExtraAnn;
-import org.droidparts.reflect.ann.inject.InjectDependencyAnn;
-import org.droidparts.reflect.ann.inject.InjectFragmentAnn;
-import org.droidparts.reflect.ann.inject.InjectParentActivityAnn;
-import org.droidparts.reflect.ann.inject.InjectResourceAnn;
-import org.droidparts.reflect.ann.inject.InjectSystemServiceAnn;
-import org.droidparts.reflect.ann.inject.InjectViewAnn;
+import org.droidparts.type.ann.Ann;
+import org.droidparts.type.ann.FieldSpec;
+import org.droidparts.type.ann.inject.InjectAnn;
+import org.droidparts.type.ann.inject.InjectBundleExtraAnn;
+import org.droidparts.type.ann.inject.InjectDependencyAnn;
+import org.droidparts.type.ann.inject.InjectFragmentAnn;
+import org.droidparts.type.ann.inject.InjectParentActivityAnn;
+import org.droidparts.type.ann.inject.InjectResourceAnn;
+import org.droidparts.type.ann.inject.InjectSystemServiceAnn;
+import org.droidparts.type.ann.inject.InjectViewAnn;
 import org.droidparts.util.L;
 
 import android.app.Activity;

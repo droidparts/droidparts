@@ -15,15 +15,15 @@
  */
 package org.droidparts.inject.reader;
 
-import static org.droidparts.reflect.util.TypeHelper.isArray;
-import static org.droidparts.reflect.util.TypeHelper.isBoolean;
-import static org.droidparts.reflect.util.TypeHelper.isDrawable;
-import static org.droidparts.reflect.util.TypeHelper.isInteger;
-import static org.droidparts.reflect.util.TypeHelper.isString;
+import static org.droidparts.type.TypeHelper.isArray;
+import static org.droidparts.type.TypeHelper.isBoolean;
+import static org.droidparts.type.TypeHelper.isDrawable;
+import static org.droidparts.type.TypeHelper.isInteger;
+import static org.droidparts.type.TypeHelper.isString;
 
 import java.lang.reflect.Field;
 
-import org.droidparts.reflect.ann.inject.InjectResourceAnn;
+import org.droidparts.type.ann.inject.InjectResourceAnn;
 
 import android.content.Context;
 import android.content.res.Resources;

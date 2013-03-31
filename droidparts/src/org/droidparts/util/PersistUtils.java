@@ -16,8 +16,8 @@
 package org.droidparts.util;
 
 import static java.util.Arrays.asList;
-import static org.droidparts.reflect.FieldSpecBuilder.getTableName;
-import static org.droidparts.reflect.util.TypeHelper.isEntity;
+import static org.droidparts.type.FieldSpecBuilder.getTableName;
+import static org.droidparts.type.TypeHelper.isEntity;
 import static org.droidparts.util.Strings.join;
 import static org.json.JSONObject.NULL;
 
@@ -30,10 +30,10 @@ import org.droidparts.contract.DB.Column;
 import org.droidparts.contract.SQL;
 import org.droidparts.model.Entity;
 import org.droidparts.persist.sql.AbstractEntityManager;
-import org.droidparts.reflect.ann.FieldSpec;
-import org.droidparts.reflect.ann.sql.ColumnAnn;
-import org.droidparts.reflect.type.TypeHandler;
-import org.droidparts.reflect.util.TypeHandlerRegistry;
+import org.droidparts.type.TypeHandlerRegistry;
+import org.droidparts.type.ann.FieldSpec;
+import org.droidparts.type.ann.sql.ColumnAnn;
+import org.droidparts.type.handler.AbstractTypeHandler;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -244,7 +244,7 @@ public final class PersistUtils implements SQL.DDL {
 
 	private static String getColumnType(Class<?> fieldType,
 			Class<?> arrCollItemType) {
-		TypeHandler<?> handler = TypeHandlerRegistry.getHandler(fieldType);
+		AbstractTypeHandler<?> handler = TypeHandlerRegistry.getHandler(fieldType);
 		if (handler != null) {
 			return handler.getDBColumnType();
 		} else {

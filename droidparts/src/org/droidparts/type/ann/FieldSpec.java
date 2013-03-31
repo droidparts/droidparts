@@ -13,27 +13,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License. 
  */
-package org.droidparts;
+package org.droidparts.type.ann;
 
-import org.droidparts.inject.Injector;
-import org.droidparts.type.ReflectionUtils;
+import java.lang.reflect.Field;
 
-public class Application extends android.app.Application {
+public class FieldSpec<AnnType extends Ann<?>> {
 
-	@Override
-	public void onCreate() {
-		super.onCreate();
-		Injector inj = Injector.get();
-		inj.setUp(this);
-		inj.inject(this, this);
-		// http://code.google.com/p/android/issues/detail?id=20915
-		ReflectionUtils.classForName("android.os.AsyncTask");
+	public final Field field;
+	public final Class<?> arrCollItemType;
+
+	public final AnnType ann;
+
+	public FieldSpec(Field field, Class<?> arrCollItemType, AnnType ann) {
+		this.field = field;
+		this.arrCollItemType = arrCollItemType;
+		this.ann = ann;
 	}
 
 	@Override
-	public void onTerminate() {
-		// XXX doesn't get called
-		Injector.get().tearDown();
+	public String toString() {
+		return getClass().getSimpleName() + ", fieldName:" + field.getName()
+				+ ", fieldType:" + field.getType() + ", arrCollItemType:"
+				+ arrCollItemType + ", ann:" + ann;
 	}
 
 }

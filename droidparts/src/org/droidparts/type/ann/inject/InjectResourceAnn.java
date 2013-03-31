@@ -13,27 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License. 
  */
-package org.droidparts;
+package org.droidparts.type.ann.inject;
 
-import org.droidparts.inject.Injector;
-import org.droidparts.type.ReflectionUtils;
+import org.droidparts.annotation.inject.InjectResource;
 
-public class Application extends android.app.Application {
+public final class InjectResourceAnn extends InjectAnn<InjectResource> {
 
-	@Override
-	public void onCreate() {
-		super.onCreate();
-		Injector inj = Injector.get();
-		inj.setUp(this);
-		inj.inject(this, this);
-		// http://code.google.com/p/android/issues/detail?id=20915
-		ReflectionUtils.classForName("android.os.AsyncTask");
+	public final int id;
+
+	public InjectResourceAnn(InjectResource annotation) {
+		super(InjectResource.class);
+		id = annotation.value();
 	}
-
-	@Override
-	public void onTerminate() {
-		// XXX doesn't get called
-		Injector.get().tearDown();
-	}
-
 }

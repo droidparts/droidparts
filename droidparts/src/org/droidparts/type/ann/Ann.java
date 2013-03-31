@@ -13,27 +13,36 @@
  * See the License for the specific language governing permissions and
  * limitations under the License. 
  */
-package org.droidparts;
+package org.droidparts.type.ann;
 
-import org.droidparts.inject.Injector;
-import org.droidparts.type.ReflectionUtils;
+import java.lang.annotation.Annotation;
 
-public class Application extends android.app.Application {
+public abstract class Ann<T extends Annotation> {
 
-	@Override
-	public void onCreate() {
-		super.onCreate();
-		Injector inj = Injector.get();
-		inj.setUp(this);
-		inj.inject(this, this);
-		// http://code.google.com/p/android/issues/detail?id=20915
-		ReflectionUtils.classForName("android.os.AsyncTask");
+	private final Class<T> cls;
+
+	public Ann(Class<T> cls) {
+		this.cls = cls;
 	}
 
 	@Override
-	public void onTerminate() {
-		// XXX doesn't get called
-		Injector.get().tearDown();
+	public boolean equals(Object o) {
+		if (o == this) {
+			return true;
+		} else if (o instanceof Ann) {
+			return cls.equals(((Ann<?>) o).cls);
+		} else {
+			return false;
+		}
 	}
 
+	@Override
+	public int hashCode() {
+		return cls.hashCode();
+	}
+
+	@Override
+	public String toString() {
+		return cls.getSimpleName();
+	}
 }
