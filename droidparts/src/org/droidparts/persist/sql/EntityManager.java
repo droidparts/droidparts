@@ -21,12 +21,10 @@ import static org.droidparts.reflect.util.ReflectionUtils.getFieldVal;
 import static org.droidparts.reflect.util.ReflectionUtils.instantiate;
 import static org.droidparts.reflect.util.ReflectionUtils.setFieldVal;
 import static org.droidparts.reflect.util.TypeHelper.isArray;
-import static org.droidparts.reflect.util.TypeHelper.isBitmap;
 import static org.droidparts.reflect.util.TypeHelper.isCollection;
 import static org.droidparts.reflect.util.TypeHelper.isDate;
 import static org.droidparts.reflect.util.TypeHelper.isEntity;
 
-import java.io.ByteArrayOutputStream;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -50,9 +48,6 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.graphics.Bitmap;
-import android.graphics.Bitmap.CompressFormat;
-import android.graphics.BitmapFactory;
 
 public class EntityManager<EntityType extends Entity> extends
 		AbstractEntityManager<EntityType> {
@@ -186,12 +181,7 @@ public class EntityManager<EntityType extends Entity> extends
 			return;
 		}
 		// TODO
-		if (isBitmap(valueType)) {
-			Bitmap bm = (Bitmap) value;
-			ByteArrayOutputStream baos = new ByteArrayOutputStream();
-			bm.compress(CompressFormat.PNG, 0, baos);
-			cv.put(key, baos.toByteArray());
-		} else if (isEntity(valueType)) {
+		if (isEntity(valueType)) {
 			Long id = (value != null) ? ((Entity) value).id : null;
 			cv.put(key, id);
 		} else if (isArray(valueType) || isCollection(valueType)) {
@@ -226,10 +216,7 @@ public class EntityManager<EntityType extends Entity> extends
 			return handler.readFromCursor(valType, cursor, columnIndex);
 		}
 		// TODO
-		if (isBitmap(valType)) {
-			byte[] arr = cursor.getBlob(columnIndex);
-			return (T) BitmapFactory.decodeByteArray(arr, 0, arr.length);
-		} else if (isEntity(valType)) {
+		if (isEntity(valType)) {
 			long id = cursor.getLong(columnIndex);
 			@SuppressWarnings("unchecked")
 			Entity entity = instantiate((Class<Entity>) valType);

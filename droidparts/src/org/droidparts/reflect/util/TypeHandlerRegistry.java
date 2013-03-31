@@ -18,7 +18,7 @@ package org.droidparts.reflect.util;
 import java.util.HashMap;
 import java.util.HashSet;
 
-import org.droidparts.reflect.type.TypeHandler;
+import org.droidparts.reflect.type.BitmapHandler;
 import org.droidparts.reflect.type.BooleanHandler;
 import org.droidparts.reflect.type.ByteArrayHandler;
 import org.droidparts.reflect.type.ByteHandler;
@@ -33,6 +33,7 @@ import org.droidparts.reflect.type.JSONObjectHandler;
 import org.droidparts.reflect.type.LongHandler;
 import org.droidparts.reflect.type.ShortHandler;
 import org.droidparts.reflect.type.StringHandler;
+import org.droidparts.reflect.type.TypeHandler;
 import org.droidparts.reflect.type.UUIDHandler;
 import org.droidparts.reflect.type.UriHandler;
 
@@ -59,6 +60,7 @@ public class TypeHandlerRegistry {
 		handlers.add(new ByteArrayHandler());
 		handlers.add(new JSONObjectHandler());
 		handlers.add(new JSONArrayHandler());
+		handlers.add(new BitmapHandler());
 	}
 
 	@SuppressWarnings("unchecked")
