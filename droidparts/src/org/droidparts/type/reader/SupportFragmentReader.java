@@ -17,8 +17,8 @@ package org.droidparts.type.reader;
 
 import java.lang.reflect.Field;
 
+import org.droidparts.type.ReflectionUtils;
 import org.droidparts.type.ann.inject.InjectFragmentAnn;
-import org.droidparts.util.inner.ResourceUtils;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -31,7 +31,7 @@ public class SupportFragmentReader {
 		FragmentActivity fragmentActivity = (FragmentActivity) fragmentActivityObj;
 		int fragmentId = ann.id;
 		if (fragmentId == 0) {
-			fragmentId = ResourceUtils.getResourceId(fragmentActivity,
+			fragmentId = ReflectionUtils.getResourceId(fragmentActivity,
 					field.getName());
 		}
 		return fragmentActivity.getSupportFragmentManager().findFragmentById(

@@ -13,27 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License. 
  */
-package org.droidparts.net;
+package org.droidparts.net.image.cache;
 
-import android.graphics.Bitmap.CompressFormat;
-import android.util.Pair;
+import android.graphics.Bitmap;
+import android.util.LruCache;
 
-public abstract class AbstractImageReshaper implements ImageReshaper {
+public class StockBitmapLruCache extends LruCache<String, Bitmap> implements
+		BitmapMemoryCache.BitmapLruCache {
 
-	// slow, supports transparency
-	public static final Pair<CompressFormat, Integer> PNG = Pair.create(
-			CompressFormat.PNG, 100);
-	// fast
-	public static final Pair<CompressFormat, Integer> JPEG = Pair.create(
-			CompressFormat.JPEG, 80);
-
-	@Override
-	public Pair<CompressFormat, Integer> getCacheFormat(String contentType) {
-		if ("image/png".equals(contentType)) {
-			return PNG;
-		} else {
-			return JPEG;
-		}
+	public StockBitmapLruCache(int maxSize) {
+		super(maxSize);
 	}
 
 }

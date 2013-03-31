@@ -13,19 +13,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License. 
  */
-package org.droidparts.net;
+package org.droidparts;
 
-import android.widget.ImageView;
+import org.droidparts.persist.sql.AbstractDBOpenHelper;
 
-public interface ImageFetchListener {
+import android.content.Context;
+import android.database.sqlite.SQLiteDatabase;
 
-	void onTaskAdded(ImageView imageView);
+public abstract class AbstractDependencyProvider {
 
-	void onDownloadProgressChanged(ImageView imageView, int kBTotal,
-			int kBReceived);
+	protected final Context ctx;
 
-	void onDownloadFailed(ImageView imageView, Exception e);
+	public AbstractDependencyProvider(Context ctx) {
+		this.ctx = ctx.getApplicationContext();
+	}
 
-	void onTaskCompleted(ImageView imageView);
+	public final SQLiteDatabase getDB() {
+		return getDBOpenHelper().getWritableDatabase();
+	}
+
+	public abstract AbstractDBOpenHelper getDBOpenHelper();
 
 }

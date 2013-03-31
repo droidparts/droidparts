@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License. 
  */
-package org.droidparts.http.worker;
+package org.droidparts.net.rest.worker;
 
 import static org.droidparts.contract.Constants.BUFFER_SIZE;
 import static org.droidparts.util.Strings.isNotEmpty;
@@ -28,7 +28,7 @@ import java.util.zip.InflaterInputStream;
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
-import org.droidparts.http.HTTPException;
+import org.droidparts.net.rest.HTTPException;
 import org.droidparts.util.L;
 import org.droidparts.util.io.IOUtils;
 

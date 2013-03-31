@@ -15,8 +15,8 @@
  */
 package org.droidparts.adapter.cursor;
 
+import org.droidparts.Injector;
 import org.droidparts.annotation.inject.InjectSystemService;
-import org.droidparts.inject.Injector;
 
 import android.content.Context;
 import android.database.Cursor;

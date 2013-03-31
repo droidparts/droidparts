@@ -24,7 +24,7 @@ import static org.json.JSONObject.NULL;
 import java.util.ArrayList;
 import java.util.Collection;
 
-import org.droidparts.inject.Injector;
+import org.droidparts.Injector;
 import org.droidparts.model.Model;
 import org.droidparts.type.TypeHandlerRegistry;
 import org.droidparts.type.ann.FieldSpec;

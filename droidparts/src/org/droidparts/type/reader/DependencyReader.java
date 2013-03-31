@@ -21,8 +21,8 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 
+import org.droidparts.AbstractDependencyProvider;
 import org.droidparts.contract.Constants.ManifestMeta;
-import org.droidparts.inject.AbstractDependencyProvider;
 import org.droidparts.util.L;
 
 import android.content.Context;

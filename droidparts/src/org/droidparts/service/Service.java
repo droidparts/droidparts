@@ -15,7 +15,7 @@
  */
 package org.droidparts.service;
 
-import org.droidparts.inject.Injector;
+import org.droidparts.Injector;
 
 public abstract class Service extends android.app.Service {
 

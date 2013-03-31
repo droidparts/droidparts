@@ -15,7 +15,7 @@
  */
 package org.droidparts.task;
 
-import org.droidparts.inject.Injector;
+import org.droidparts.Injector;
 import org.droidparts.task.listener.AsyncTaskProgressListener;
 import org.droidparts.task.listener.AsyncTaskResultListener;
 import org.droidparts.util.L;

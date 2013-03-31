@@ -13,16 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License. 
  */
-package org.droidparts.net.cache;
+package org.droidparts.net.image;
 
 import android.graphics.Bitmap;
-import android.util.LruCache;
+import android.graphics.Bitmap.CompressFormat;
+import android.util.Pair;
 
-public class StockBitmapLruCache extends LruCache<String, Bitmap> implements
-		BitmapMemoryCache.BitmapLruCache {
+public interface ImageReshaper {
 
-	public StockBitmapLruCache(int maxSize) {
-		super(maxSize);
-	}
+	String getId();
+
+	Bitmap reshape(Bitmap bm);
+
+	Pair<CompressFormat, Integer> getCacheFormat(String contentType);
 
 }

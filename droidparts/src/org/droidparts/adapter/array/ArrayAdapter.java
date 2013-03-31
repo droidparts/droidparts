@@ -17,8 +17,8 @@ package org.droidparts.adapter.array;
 
 import java.util.List;
 
+import org.droidparts.Injector;
 import org.droidparts.annotation.inject.InjectSystemService;
-import org.droidparts.inject.Injector;
 
 import android.content.Context;
 import android.view.LayoutInflater;

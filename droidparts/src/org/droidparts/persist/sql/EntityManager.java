@@ -25,8 +25,8 @@ import static org.droidparts.type.TypeHelper.isEntity;
 import java.lang.reflect.Field;
 import java.util.HashSet;
 
+import org.droidparts.Injector;
 import org.droidparts.annotation.inject.InjectDependency;
-import org.droidparts.inject.Injector;
 import org.droidparts.model.Entity;
 import org.droidparts.type.FieldSpecBuilder;
 import org.droidparts.type.ReflectionUtils;

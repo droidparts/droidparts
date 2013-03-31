@@ -26,6 +26,8 @@ import java.util.List;
 import org.droidparts.util.Arrays2;
 import org.droidparts.util.L;
 
+import android.content.Context;
+
 public final class ReflectionUtils {
 
 	public static <ValType> ValType getFieldVal(Object obj, Field field)
@@ -157,6 +159,19 @@ public final class ReflectionUtils {
 			}
 		}
 		return varArgs;
+	}
+
+	public static int getResourceId(Context ctx, String resourceName) {
+		return getId(ctx, "id", resourceName);
+	}
+
+	public static int getStringId(Context ctx, String stringName) {
+		return getId(ctx, "string", stringName);
+	}
+
+	private static int getId(Context ctx, String type, String name) {
+		return ctx.getResources().getIdentifier(name, type,
+				ctx.getPackageName());
 	}
 
 }

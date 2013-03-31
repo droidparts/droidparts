@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License. 
  */
-package org.droidparts.net.cache;
+package org.droidparts.net.image.cache;
 
 import static android.content.Context.ACTIVITY_SERVICE;
 import static org.droidparts.util.ui.BitmapUtils.getSize;

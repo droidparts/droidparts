@@ -1,6 +1,6 @@
 package org.droidparts.sample;
 
-import org.droidparts.inject.AbstractDependencyProvider;
+import org.droidparts.AbstractDependencyProvider;
 import org.droidparts.persist.sql.AbstractDBOpenHelper;
 import org.droidparts.sample.db.DBOpenHelper;
 import org.droidparts.sample.json.EntrySerializer;

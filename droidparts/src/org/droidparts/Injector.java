@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License. 
  */
-package org.droidparts.inject;
+package org.droidparts;
 
 import static org.droidparts.type.FieldSpecBuilder.getInjectSpecs;
 import static org.droidparts.type.ReflectionUtils.setFieldVal;

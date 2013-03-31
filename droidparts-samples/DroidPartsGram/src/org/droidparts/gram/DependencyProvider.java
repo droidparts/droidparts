@@ -15,11 +15,11 @@
  */
 package org.droidparts.gram;
 
+import org.droidparts.AbstractDependencyProvider;
 import org.droidparts.gram.persist.DBOpenHelper;
 import org.droidparts.gram.persist.ImageEntityManager;
 import org.droidparts.gram.persist.PrefsManager;
-import org.droidparts.inject.AbstractDependencyProvider;
-import org.droidparts.net.ImageFetcher;
+import org.droidparts.net.image.ImageFetcher;
 import org.droidparts.persist.sql.AbstractDBOpenHelper;
 
 import android.content.Context;

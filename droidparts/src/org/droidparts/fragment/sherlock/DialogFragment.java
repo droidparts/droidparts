@@ -15,7 +15,7 @@
  */
 package org.droidparts.fragment.sherlock;
 
-import org.droidparts.inject.Injector;
+import org.droidparts.Injector;
 import org.droidparts.util.inner.SecretFragmentsSupportUtil;
 
 import android.os.Bundle;

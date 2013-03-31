@@ -20,8 +20,8 @@ import static org.droidparts.util.Strings.isEmpty;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 
+import org.droidparts.Injector;
 import org.droidparts.contract.Constants.ManifestMeta;
-import org.droidparts.inject.Injector;
 
 import android.content.Context;
 import android.content.pm.ApplicationInfo;

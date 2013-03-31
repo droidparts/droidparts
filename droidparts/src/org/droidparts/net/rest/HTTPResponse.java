@@ -13,13 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License. 
  */
-package org.droidparts.http;
+package org.droidparts.net.rest;
 
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-import org.droidparts.http.worker.HTTPInputStream;
+import org.droidparts.net.rest.worker.HTTPInputStream;
 import org.droidparts.util.L;
 
 public class HTTPResponse {

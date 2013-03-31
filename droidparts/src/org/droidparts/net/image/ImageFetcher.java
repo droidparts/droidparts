@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License. 
  */
-package org.droidparts.net;
+package org.droidparts.net.image;
 
 import static android.graphics.Color.TRANSPARENT;
 import static org.droidparts.contract.Constants.BUFFER_SIZE;
@@ -25,10 +25,10 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ThreadPoolExecutor;
 
 import org.droidparts.contract.HTTP.Header;
-import org.droidparts.http.HTTPResponse;
-import org.droidparts.http.RESTClient;
-import org.droidparts.net.cache.BitmapDiskCache;
-import org.droidparts.net.cache.BitmapMemoryCache;
+import org.droidparts.net.image.cache.BitmapDiskCache;
+import org.droidparts.net.image.cache.BitmapMemoryCache;
+import org.droidparts.net.rest.HTTPResponse;
+import org.droidparts.net.rest.RESTClient;
 import org.droidparts.util.L;
 import org.droidparts.util.concurrent.BackgroundExecutor;
 

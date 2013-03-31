@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License. 
  */
-package org.droidparts.http;
+package org.droidparts.net.rest;
 
 import java.net.HttpURLConnection;
 import java.util.Date;
@@ -25,9 +25,9 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpPut;
 import org.droidparts.contract.HTTP.Header;
 import org.droidparts.contract.HTTP.Method;
-import org.droidparts.http.worker.HTTPWorker;
-import org.droidparts.http.worker.HttpClientWorker;
-import org.droidparts.http.worker.HttpURLConnectionWorker;
+import org.droidparts.net.rest.worker.HTTPWorker;
+import org.droidparts.net.rest.worker.HttpClientWorker;
+import org.droidparts.net.rest.worker.HttpURLConnectionWorker;
 import org.droidparts.util.L;
 
 import android.content.Context;
