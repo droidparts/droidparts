@@ -20,13 +20,11 @@ import static org.droidparts.util.Arrays2.toPrimitive;
 import java.util.ArrayList;
 
 import org.droidparts.reflect.util.TypeHelper;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import android.content.ContentValues;
 import android.database.Cursor;
 
-public class CharacterHandler extends AbstractTypeHandler<Character> {
+public class CharacterHandler extends TypeHandler<Character> {
 
 	@Override
 	public boolean canHandle(Class<?> cls) {
@@ -39,9 +37,8 @@ public class CharacterHandler extends AbstractTypeHandler<Character> {
 	}
 
 	@Override
-	public Character readFromJSON(Class<?> cls, JSONObject obj, String key)
-			throws JSONException {
-		return fromString(obj.getString(key));
+	protected Character parseFromString(Class<Character> cls, String str) {
+		return Character.valueOf((str.length() == 0) ? ' ' : str.charAt(0));
 	}
 
 	@Override
@@ -50,8 +47,9 @@ public class CharacterHandler extends AbstractTypeHandler<Character> {
 	}
 
 	@Override
-	public Character readFromCursor(Class<?> cls, Cursor cursor, int columnIndex) {
-		return fromString(cursor.getString(columnIndex));
+	public Character readFromCursor(Class<Character> cls, Cursor cursor,
+			int columnIndex) {
+		return parseFromString(cls, cursor.getString(columnIndex));
 	}
 
 	@Override
@@ -61,7 +59,4 @@ public class CharacterHandler extends AbstractTypeHandler<Character> {
 		return (arrValType == char.class) ? toPrimitive(tArr) : tArr;
 	}
 
-	private Character fromString(String str) {
-		return Character.valueOf((str.length() == 0) ? ' ' : str.charAt(0));
-	}
 }

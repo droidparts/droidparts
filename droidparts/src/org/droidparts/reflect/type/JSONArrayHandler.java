@@ -20,12 +20,11 @@ import java.util.ArrayList;
 import org.droidparts.reflect.util.TypeHelper;
 import org.json.JSONArray;
 import org.json.JSONException;
-import org.json.JSONObject;
 
 import android.content.ContentValues;
 import android.database.Cursor;
 
-public class JSONArrayHandler extends AbstractTypeHandler<JSONArray> {
+public class JSONArrayHandler extends TypeHandler<JSONArray> {
 
 	@Override
 	public boolean canHandle(Class<?> cls) {
@@ -38,14 +37,17 @@ public class JSONArrayHandler extends AbstractTypeHandler<JSONArray> {
 	}
 
 	@Override
-	public Object convertToJSONValue(JSONArray val) {
+	public Object convertForJSON(JSONArray val) {
 		return val.toString();
 	}
 
 	@Override
-	public JSONArray readFromJSON(Class<?> cls, JSONObject obj, String key)
-			throws JSONException {
-		return new JSONArray(obj.getString(key));
+	protected JSONArray parseFromString(Class<JSONArray> cls, String str) {
+		try {
+			return new JSONArray(str);
+		} catch (JSONException e) {
+			throw new IllegalArgumentException(e);
+		}
 	}
 
 	@Override
@@ -54,8 +56,8 @@ public class JSONArrayHandler extends AbstractTypeHandler<JSONArray> {
 	}
 
 	@Override
-	public JSONArray readFromCursor(Class<?> cls, Cursor cursor, int columnIndex)
-			throws IllegalArgumentException {
+	public JSONArray readFromCursor(Class<JSONArray> cls, Cursor cursor,
+			int columnIndex) throws IllegalArgumentException {
 		try {
 			return new JSONArray(cursor.getString(columnIndex));
 		} catch (JSONException e) {

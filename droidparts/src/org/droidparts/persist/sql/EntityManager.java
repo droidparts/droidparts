@@ -40,7 +40,7 @@ import org.droidparts.model.Entity;
 import org.droidparts.reflect.FieldSpecBuilder;
 import org.droidparts.reflect.ann.FieldSpec;
 import org.droidparts.reflect.ann.sql.ColumnAnn;
-import org.droidparts.reflect.type.AbstractTypeHandler;
+import org.droidparts.reflect.type.TypeHandler;
 import org.droidparts.reflect.util.ReflectionUtils;
 import org.droidparts.reflect.util.TypeHandlerRegistry;
 import org.droidparts.util.Arrays2;
@@ -180,7 +180,7 @@ public class EntityManager<EntityType extends Entity> extends
 			cv.putNull(key);
 			return;
 		}
-		AbstractTypeHandler<?> handler = TypeHandlerRegistry.get(valueType);
+		TypeHandler<?> handler = TypeHandlerRegistry.get(valueType);
 		if (handler != null) {
 			handler.putToContentValues(cv, key, value);
 			return;
@@ -215,29 +215,29 @@ public class EntityManager<EntityType extends Entity> extends
 		}
 	}
 
-	protected Object readFromCursor(Cursor cursor, int columnIndex,
-			Class<?> valType, Class<?> arrCollItemType)
+	protected <T, V> T readFromCursor(Cursor cursor, int columnIndex,
+			Class<T> valType, Class<V> arrCollItemType)
 			throws IllegalArgumentException {
 		if (cursor.isNull(columnIndex)) {
 			return null;
 		}
-		AbstractTypeHandler<?> handler = TypeHandlerRegistry.get(valType);
+		TypeHandler<T> handler = TypeHandlerRegistry.get(valType);
 		if (handler != null) {
 			return handler.readFromCursor(valType, cursor, columnIndex);
 		}
 		// TODO
 		if (isBitmap(valType)) {
 			byte[] arr = cursor.getBlob(columnIndex);
-			return BitmapFactory.decodeByteArray(arr, 0, arr.length);
+			return (T) BitmapFactory.decodeByteArray(arr, 0, arr.length);
 		} else if (isEntity(valType)) {
 			long id = cursor.getLong(columnIndex);
 			@SuppressWarnings("unchecked")
 			Entity entity = instantiate((Class<Entity>) valType);
 			entity.id = id;
-			return entity;
+			return (T) entity;
 		} else if (isArray(valType) || isCollection(valType)) {
-			handler = TypeHandlerRegistry.get(arrCollItemType);
-			if (handler == null) {
+			TypeHandler<V> handler2 = TypeHandlerRegistry.get(arrCollItemType);
+			if (handler2 == null) {
 				throw new IllegalArgumentException("Unable to convert to "
 						+ arrCollItemType + ".");
 			}
@@ -245,12 +245,12 @@ public class EntityManager<EntityType extends Entity> extends
 			String[] parts = (str.length() > 0) ? str.split("\\" + SEP)
 					: new String[0];
 			if (isArray(valType)) {
-				return handler.parseTypeArr(arrCollItemType, parts);
+				return (T) handler2.parseTypeArr(arrCollItemType, parts);
 			} else {
 				@SuppressWarnings("unchecked")
 				Collection<Object> coll = (Collection<Object>) instantiate(valType);
-				coll.addAll(AbstractTypeHandler.toTypeColl(arrCollItemType, parts));
-				return coll;
+				coll.addAll(TypeHandler.toTypeColl(arrCollItemType, parts));
+				return (T) coll;
 			}
 		} else {
 			throw new IllegalArgumentException("Need to manually read "

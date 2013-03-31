@@ -18,7 +18,7 @@ package org.droidparts.reflect.util;
 import java.util.HashMap;
 import java.util.HashSet;
 
-import org.droidparts.reflect.type.AbstractTypeHandler;
+import org.droidparts.reflect.type.TypeHandler;
 import org.droidparts.reflect.type.BooleanHandler;
 import org.droidparts.reflect.type.ByteArrayHandler;
 import org.droidparts.reflect.type.ByteHandler;
@@ -38,9 +38,9 @@ import org.droidparts.reflect.type.UriHandler;
 
 public class TypeHandlerRegistry {
 
-	private static final HashSet<AbstractTypeHandler<?>> handlers = new HashSet<AbstractTypeHandler<?>>();
+	private static final HashSet<TypeHandler<?>> handlers = new HashSet<TypeHandler<?>>();
 
-	private static final HashMap<Class<?>, AbstractTypeHandler<?>> map = new HashMap<Class<?>, AbstractTypeHandler<?>>();
+	private static final HashMap<Class<?>, TypeHandler<?>> map = new HashMap<Class<?>, TypeHandler<?>>();
 
 	static {
 		handlers.add(new BooleanHandler());
@@ -62,10 +62,10 @@ public class TypeHandlerRegistry {
 	}
 
 	@SuppressWarnings("unchecked")
-	public static <T> AbstractTypeHandler<T> get(Class<T> cls) {
-		AbstractTypeHandler<?> handler = map.get(cls);
+	public static <T> TypeHandler<T> get(Class<T> cls) {
+		TypeHandler<?> handler = map.get(cls);
 		if (handler == null) {
-			for (AbstractTypeHandler<?> h : handlers) {
+			for (TypeHandler<?> h : handlers) {
 				if (h.canHandle(cls)) {
 					handler = h;
 					map.put(cls, handler);
@@ -73,7 +73,7 @@ public class TypeHandlerRegistry {
 				}
 			}
 		}
-		return (AbstractTypeHandler<T>) handler;
+		return (TypeHandler<T>) handler;
 	}
 
 	private TypeHandlerRegistry() {

@@ -19,13 +19,11 @@ import java.util.ArrayList;
 import java.util.Date;
 
 import org.droidparts.reflect.util.TypeHelper;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import android.content.ContentValues;
 import android.database.Cursor;
 
-public class DateHandler extends AbstractTypeHandler<Date> {
+public class DateHandler extends TypeHandler<Date> {
 
 	@Override
 	public boolean canHandle(Class<?> cls) {
@@ -38,14 +36,13 @@ public class DateHandler extends AbstractTypeHandler<Date> {
 	}
 
 	@Override
-	public Object convertToJSONValue(Date val) {
+	public Object convertForJSON(Date val) {
 		return val.getTime();
 	}
 
 	@Override
-	public Date readFromJSON(Class<?> cls, JSONObject obj, String key)
-			throws JSONException {
-		return new Date(obj.getLong(key));
+	protected Date parseFromString(Class<Date> cls, String str) {
+		return new Date(Long.valueOf(str));
 	}
 
 	@Override
@@ -54,7 +51,7 @@ public class DateHandler extends AbstractTypeHandler<Date> {
 	}
 
 	@Override
-	public Date readFromCursor(Class<?> cls, Cursor cursor, int columnIndex) {
+	public Date readFromCursor(Class<Date> cls, Cursor cursor, int columnIndex) {
 		return new Date(cursor.getLong(columnIndex));
 	}
 

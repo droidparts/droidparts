@@ -16,13 +16,11 @@
 package org.droidparts.reflect.type;
 
 import org.droidparts.reflect.util.TypeHelper;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import android.content.ContentValues;
 import android.database.Cursor;
 
-public class ByteArrayHandler extends AbstractTypeHandler<byte[]> {
+public class ByteArrayHandler extends TypeHandler<byte[]> {
 
 	@Override
 	public boolean canHandle(Class<?> cls) {
@@ -35,9 +33,8 @@ public class ByteArrayHandler extends AbstractTypeHandler<byte[]> {
 	}
 
 	@Override
-	public byte[] readFromJSON(Class<?> cls, JSONObject obj, String key)
-			throws JSONException {
-		return (byte[]) obj.get(key);
+	protected byte[] parseFromString(Class<byte[]> cls, String str) {
+		throw new IllegalArgumentException();
 	}
 
 	@Override
@@ -46,7 +43,8 @@ public class ByteArrayHandler extends AbstractTypeHandler<byte[]> {
 	}
 
 	@Override
-	public byte[] readFromCursor(Class<?> cls, Cursor cursor, int columnIndex) {
+	public byte[] readFromCursor(Class<byte[]> cls, Cursor cursor,
+			int columnIndex) {
 		return cursor.getBlob(columnIndex);
 	}
 

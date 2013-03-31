@@ -19,13 +19,11 @@ import java.util.ArrayList;
 import java.util.UUID;
 
 import org.droidparts.reflect.util.TypeHelper;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import android.content.ContentValues;
 import android.database.Cursor;
 
-public class UUIDHandler extends AbstractTypeHandler<UUID> {
+public class UUIDHandler extends TypeHandler<UUID> {
 
 	@Override
 	public boolean canHandle(Class<?> cls) {
@@ -38,14 +36,13 @@ public class UUIDHandler extends AbstractTypeHandler<UUID> {
 	}
 
 	@Override
-	public Object convertToJSONValue(UUID val) {
+	public Object convertForJSON(UUID val) {
 		return val.toString();
 	}
 
 	@Override
-	public UUID readFromJSON(Class<?> cls, JSONObject obj, String key)
-			throws JSONException {
-		return UUID.fromString(obj.getString(key));
+	protected UUID parseFromString(Class<UUID> cls, String str) {
+		return UUID.fromString(str);
 	}
 
 	@Override
@@ -54,7 +51,7 @@ public class UUIDHandler extends AbstractTypeHandler<UUID> {
 	}
 
 	@Override
-	public UUID readFromCursor(Class<?> cls, Cursor cursor, int columnIndex) {
+	public UUID readFromCursor(Class<UUID> cls, Cursor cursor, int columnIndex) {
 		return UUID.fromString(cursor.getString(columnIndex));
 	}
 

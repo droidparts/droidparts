@@ -20,13 +20,11 @@ import static org.droidparts.util.Arrays2.toPrimitive;
 import java.util.ArrayList;
 
 import org.droidparts.reflect.util.TypeHelper;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import android.content.ContentValues;
 import android.database.Cursor;
 
-public class ByteHandler extends AbstractTypeHandler<Byte> {
+public class ByteHandler extends TypeHandler<Byte> {
 
 	@Override
 	public boolean canHandle(Class<?> cls) {
@@ -39,9 +37,8 @@ public class ByteHandler extends AbstractTypeHandler<Byte> {
 	}
 
 	@Override
-	public Byte readFromJSON(Class<?> cls, JSONObject obj, String key)
-			throws JSONException {
-		return Byte.valueOf(obj.getString(key));
+	protected Byte parseFromString(Class<Byte> cls, String str) {
+		return Byte.valueOf(str);
 	}
 
 	@Override
@@ -50,7 +47,7 @@ public class ByteHandler extends AbstractTypeHandler<Byte> {
 	}
 
 	@Override
-	public Byte readFromCursor(Class<?> cls, Cursor cursor, int columnIndex) {
+	public Byte readFromCursor(Class<Byte> cls, Cursor cursor, int columnIndex) {
 		return Byte.valueOf(cursor.getString(columnIndex));
 	}
 

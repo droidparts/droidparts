@@ -34,7 +34,7 @@ import org.droidparts.model.Entity;
 import org.droidparts.persist.sql.AbstractEntityManager;
 import org.droidparts.reflect.ann.FieldSpec;
 import org.droidparts.reflect.ann.sql.ColumnAnn;
-import org.droidparts.reflect.type.AbstractTypeHandler;
+import org.droidparts.reflect.type.TypeHandler;
 import org.droidparts.reflect.util.TypeHandlerRegistry;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -246,7 +246,7 @@ public final class PersistUtils implements SQL.DDL {
 
 	private static String getColumnType(Class<?> fieldType,
 			Class<?> arrCollItemType) {
-		AbstractTypeHandler<?> handler = TypeHandlerRegistry.get(fieldType);
+		TypeHandler<?> handler = TypeHandlerRegistry.get(fieldType);
 		if (handler != null) {
 			return handler.getDBColumnType();
 		}

@@ -19,29 +19,35 @@ import java.util.ArrayList;
 
 import org.droidparts.contract.SQL;
 import org.droidparts.reflect.util.TypeHandlerRegistry;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import android.content.ContentValues;
 import android.database.Cursor;
 
-public abstract class AbstractTypeHandler<T> implements SQL.DDL {
+public abstract class TypeHandler<T> implements SQL.DDL {
 
 	public abstract boolean canHandle(Class<?> cls);
 
 	public abstract String getDBColumnType();
 
-	public Object convertToJSONValue(T val) {
+	public Object convertForJSON(T val) {
 		return val;
 	}
 
-	public abstract T readFromJSON(Class<?> cls, JSONObject obj, String key)
-			throws JSONException;
+	@SuppressWarnings("unchecked")
+	public T convertFromJSON(Class<T> cls, Object val) {
+		if (cls.isAssignableFrom(val.getClass())) {
+			return (T) val;
+		} else {
+			return parseFromString(cls, val.toString());
+		}
+	}
+
+	protected abstract T parseFromString(Class<T> cls, String str);
 
 	public abstract void putToContentValues(ContentValues cv, String key,
 			Object val) throws IllegalArgumentException;
 
-	public abstract T readFromCursor(Class<?> cls, Cursor cursor,
+	public abstract T readFromCursor(Class<T> cls, Cursor cursor,
 			int columnIndex) throws IllegalArgumentException;
 
 	public abstract Object parseTypeArr(Class<?> arrValType, String[] arr);
@@ -49,23 +55,17 @@ public abstract class AbstractTypeHandler<T> implements SQL.DDL {
 	// XXX
 	public static <T> ArrayList<T> toTypeColl(Class<T> valCls,
 			String[] valStrArr) throws IllegalArgumentException {
-		ArrayList<Object> list = new ArrayList<Object>();
-		String key = "key";
-		JSONObject hackObj = new JSONObject();
-		AbstractTypeHandler<?> handler = TypeHandlerRegistry.get(valCls);
+		ArrayList<T> list = new ArrayList<T>();
+		TypeHandler<T> handler = TypeHandlerRegistry.get(valCls);
 		for (String str : valStrArr) {
 			try {
-				hackObj.put(key, str);
-				Object val = handler.readFromJSON(valCls, hackObj, key);
-				list.add(val);
-			} catch (JSONException e) {
+				list.add(handler.parseFromString(valCls, str));
+			} catch (Exception e) {
 				throw new IllegalArgumentException("Unable to convert '" + str
 						+ "' to " + valCls.getSimpleName() + ".");
 			}
 		}
-		@SuppressWarnings("unchecked")
-		ArrayList<T> typedList = (ArrayList<T>) list;
-		return typedList;
+		return list;
 	}
 
 }

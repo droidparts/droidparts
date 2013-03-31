@@ -20,13 +20,11 @@ import static org.droidparts.util.Arrays2.toPrimitive;
 import java.util.ArrayList;
 
 import org.droidparts.reflect.util.TypeHelper;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import android.content.ContentValues;
 import android.database.Cursor;
 
-public class BooleanHandler extends AbstractTypeHandler<Boolean> {
+public class BooleanHandler extends TypeHandler<Boolean> {
 
 	@Override
 	public boolean canHandle(Class<?> cls) {
@@ -39,14 +37,11 @@ public class BooleanHandler extends AbstractTypeHandler<Boolean> {
 	}
 
 	@Override
-	public Boolean readFromJSON(Class<?> cls, JSONObject obj, String key)
-			throws JSONException {
-		try {
-			return obj.getBoolean(key);
-		} catch (JSONException e) {
-			// XXX
-			return obj.getInt(key) == 1;
+	protected Boolean parseFromString(Class<Boolean> cls, String str) {
+		if ("1".equals(str)) {
+			str = "true";
 		}
+		return Boolean.valueOf(str);
 	}
 
 	@Override
@@ -55,7 +50,8 @@ public class BooleanHandler extends AbstractTypeHandler<Boolean> {
 	}
 
 	@Override
-	public Boolean readFromCursor(Class<?> cls, Cursor cursor, int columnIndex) {
+	public Boolean readFromCursor(Class<Boolean> cls, Cursor cursor,
+			int columnIndex) {
 		return (cursor.getInt(columnIndex) == 1);
 	}
 

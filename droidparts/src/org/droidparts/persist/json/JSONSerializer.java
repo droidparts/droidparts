@@ -37,7 +37,7 @@ import org.droidparts.inject.Injector;
 import org.droidparts.model.Model;
 import org.droidparts.reflect.ann.FieldSpec;
 import org.droidparts.reflect.ann.json.KeyAnn;
-import org.droidparts.reflect.type.AbstractTypeHandler;
+import org.droidparts.reflect.type.TypeHandler;
 import org.droidparts.reflect.util.TypeHandlerRegistry;
 import org.droidparts.util.Arrays2;
 import org.droidparts.util.L;
@@ -113,9 +113,9 @@ public class JSONSerializer<ModelType extends Model> {
 			obj.put(key, NULL);
 			return;
 		}
-		AbstractTypeHandler<T> handler = TypeHandlerRegistry.get(valType);
+		TypeHandler<T> handler = TypeHandlerRegistry.get(valType);
 		if (handler != null) {
-			Object jsonVal = handler.convertToJSONValue((T) val);
+			Object jsonVal = handler.convertForJSON((T) val);
 			obj.put(key, jsonVal);
 			return;
 		}
@@ -153,18 +153,20 @@ public class JSONSerializer<ModelType extends Model> {
 		}
 	}
 
-	protected Object readFromJSON(Class<?> fieldType, Class<?> arrCollItemType,
-			JSONObject obj, String key) throws Exception {
+	protected <T> Object readFromJSON(Class<T> fieldType,
+			Class<?> arrCollItemType, JSONObject obj, String key)
+			throws Exception {
 		Object jsonVal = obj.get(key);
 		if (NULL.equals(jsonVal)) {
 			return jsonVal;
 		}
 
-		AbstractTypeHandler<?> handler = TypeHandlerRegistry.get(fieldType);
+		TypeHandler<T> handler = TypeHandlerRegistry.get(fieldType);
 		Exception e = null;
 		if (handler != null) {
 			try {
-				return handler.readFromJSON(fieldType, obj, key);
+				Object val = obj.get(key);
+				return handler.convertFromJSON(fieldType, val);
 			} catch (Exception ex) {
 				e = ex;
 			}
@@ -215,12 +217,13 @@ public class JSONSerializer<ModelType extends Model> {
 					for (int i = 0; i < arr.length; i++) {
 						arr2[i] = arr[i].toString();
 					}
-					handler = TypeHandlerRegistry.get(arrCollItemType);
-					if (handler == null) {
+					TypeHandler<?> handler2 = TypeHandlerRegistry
+							.get(arrCollItemType);
+					if (handler2 == null) {
 						throw new IllegalArgumentException(
 								"Unable to convert to " + arrCollItemType + ".");
 					}
-					return handler.parseTypeArr(arrCollItemType, arr2);
+					return handler2.parseTypeArr(arrCollItemType, arr2);
 				}
 			} else {
 				return coll;

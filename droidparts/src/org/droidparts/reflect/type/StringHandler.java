@@ -16,13 +16,11 @@
 package org.droidparts.reflect.type;
 
 import org.droidparts.reflect.util.TypeHelper;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import android.content.ContentValues;
 import android.database.Cursor;
 
-public class StringHandler extends AbstractTypeHandler<String> {
+public class StringHandler extends TypeHandler<String> {
 
 	@Override
 	public boolean canHandle(Class<?> cls) {
@@ -35,9 +33,8 @@ public class StringHandler extends AbstractTypeHandler<String> {
 	}
 
 	@Override
-	public String readFromJSON(Class<?> cls, JSONObject obj, String key)
-			throws JSONException {
-		return obj.getString(key);
+	protected String parseFromString(Class<String> cls, String str) {
+		return str;
 	}
 
 	@Override
@@ -46,7 +43,8 @@ public class StringHandler extends AbstractTypeHandler<String> {
 	}
 
 	@Override
-	public String readFromCursor(Class<?> cls, Cursor cursor, int columnIndex) {
+	public String readFromCursor(Class<String> cls, Cursor cursor,
+			int columnIndex) {
 		return cursor.getString(columnIndex);
 	}
 

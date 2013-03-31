@@ -18,14 +18,12 @@ package org.droidparts.reflect.type;
 import java.util.ArrayList;
 
 import org.droidparts.reflect.util.TypeHelper;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.net.Uri;
 
-public class UriHandler extends AbstractTypeHandler<Uri> {
+public class UriHandler extends TypeHandler<Uri> {
 
 	@Override
 	public boolean canHandle(Class<?> cls) {
@@ -38,14 +36,13 @@ public class UriHandler extends AbstractTypeHandler<Uri> {
 	}
 
 	@Override
-	public Object convertToJSONValue(Uri val) {
+	public Object convertForJSON(Uri val) {
 		return val.toString();
 	}
 
 	@Override
-	public Uri readFromJSON(Class<?> cls, JSONObject obj, String key)
-			throws JSONException {
-		return Uri.parse(obj.getString(key));
+	protected Uri parseFromString(Class<Uri> cls, String str) {
+		return Uri.parse(str);
 	}
 
 	@Override
@@ -54,7 +51,7 @@ public class UriHandler extends AbstractTypeHandler<Uri> {
 	}
 
 	@Override
-	public Uri readFromCursor(Class<?> cls, Cursor cursor, int columnIndex) {
+	public Uri readFromCursor(Class<Uri> cls, Cursor cursor, int columnIndex) {
 		return Uri.parse(cursor.getString(columnIndex));
 	}
 

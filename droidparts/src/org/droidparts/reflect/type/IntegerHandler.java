@@ -20,13 +20,11 @@ import static org.droidparts.util.Arrays2.toPrimitive;
 import java.util.ArrayList;
 
 import org.droidparts.reflect.util.TypeHelper;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import android.content.ContentValues;
 import android.database.Cursor;
 
-public class IntegerHandler extends AbstractTypeHandler<Integer> {
+public class IntegerHandler extends TypeHandler<Integer> {
 
 	@Override
 	public boolean canHandle(Class<?> cls) {
@@ -39,9 +37,8 @@ public class IntegerHandler extends AbstractTypeHandler<Integer> {
 	}
 
 	@Override
-	public Integer readFromJSON(Class<?> cls, JSONObject obj, String key)
-			throws JSONException {
-		return obj.getInt(key);
+	protected Integer parseFromString(Class<Integer> cls, String str) {
+		return Integer.valueOf(str);
 	}
 
 	@Override
@@ -50,7 +47,8 @@ public class IntegerHandler extends AbstractTypeHandler<Integer> {
 	}
 
 	@Override
-	public Integer readFromCursor(Class<?> cls, Cursor cursor, int columnIndex) {
+	public Integer readFromCursor(Class<Integer> cls, Cursor cursor,
+			int columnIndex) {
 		return cursor.getInt(columnIndex);
 	}
 

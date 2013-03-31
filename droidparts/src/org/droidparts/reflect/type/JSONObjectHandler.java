@@ -24,7 +24,7 @@ import org.json.JSONObject;
 import android.content.ContentValues;
 import android.database.Cursor;
 
-public class JSONObjectHandler extends AbstractTypeHandler<JSONObject> {
+public class JSONObjectHandler extends TypeHandler<JSONObject> {
 
 	@Override
 	public boolean canHandle(Class<?> cls) {
@@ -37,14 +37,17 @@ public class JSONObjectHandler extends AbstractTypeHandler<JSONObject> {
 	}
 
 	@Override
-	public Object convertToJSONValue(JSONObject val) {
+	public Object convertForJSON(JSONObject val) {
 		return val.toString();
 	}
 
 	@Override
-	public JSONObject readFromJSON(Class<?> cls, JSONObject obj, String key)
-			throws JSONException {
-		return new JSONObject(obj.getString(key));
+	protected JSONObject parseFromString(Class<JSONObject> cls, String str) {
+		try {
+			return new JSONObject(str);
+		} catch (JSONException e) {
+			throw new IllegalArgumentException(e);
+		}
 	}
 
 	@Override
@@ -53,7 +56,7 @@ public class JSONObjectHandler extends AbstractTypeHandler<JSONObject> {
 	}
 
 	@Override
-	public JSONObject readFromCursor(Class<?> cls, Cursor cursor,
+	public JSONObject readFromCursor(Class<JSONObject> cls, Cursor cursor,
 			int columnIndex) throws IllegalArgumentException {
 		try {
 			return new JSONObject(cursor.getString(columnIndex));
