@@ -41,7 +41,7 @@ public class ImageListAdapter extends EntityCursorAdapter<Image> {
 	private Drawable placeholderDrawable;
 
 	public ImageListAdapter(Context ctx, Select<Image> select) {
-		super(ctx, Image.class, select);
+		super(Image.class, ctx, select);
 	}
 
 	@Override

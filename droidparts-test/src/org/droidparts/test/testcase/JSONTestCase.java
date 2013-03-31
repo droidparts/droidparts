@@ -21,7 +21,7 @@ public class JSONTestCase extends AndroidTestCase {
 
 	public void testPrimitives() throws Exception {
 		JSONSerializer<Primitives> serializer = new JSONSerializer<Primitives>(
-				getContext(), Primitives.class);
+				Primitives.class, getContext());
 		Primitives primitives = serializer.deserialize(getPrimitives());
 		assertNotNull(primitives.strArr);
 		//
@@ -51,7 +51,7 @@ public class JSONTestCase extends AndroidTestCase {
 	public void testNestedKeys() throws Exception {
 		assertEquals("obj->key", join(new String[] { "obj", "key" }, __, null));
 		JSONSerializer<Nested> serializer = new JSONSerializer<Nested>(
-				getContext(), Nested.class);
+				Nested.class, getContext());
 		Nested model = serializer.deserialize(getNested());
 		assertEquals("str", model.str);
 		JSONObject obj = serializer.serialize(model);

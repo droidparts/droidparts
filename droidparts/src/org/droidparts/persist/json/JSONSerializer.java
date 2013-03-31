@@ -55,17 +55,15 @@ public class JSONSerializer<ModelType extends Model> {
 	// ASCII GS (group separator), '->' for readability
 	public static final String __ = "->" + (char) 29;
 
-	private final Context ctx;
 	private final Class<ModelType> cls;
+	private Context ctx;
 
-	public JSONSerializer(Context ctx, Class<ModelType> cls) {
-		this(cls, ctx);
-		Injector.get().inject(ctx, this);
-	}
-
-	private JSONSerializer(Class<ModelType> cls, Context ctx) {
-		this.ctx = ctx.getApplicationContext();
+	public JSONSerializer(Class<ModelType> cls, Context ctx) {
 		this.cls = cls;
+		if (ctx != null) {
+			this.ctx = ctx.getApplicationContext();
+			Injector.get().inject(ctx, this);
+		}
 	}
 
 	public Context getContext() {
@@ -120,10 +118,7 @@ public class JSONSerializer<ModelType extends Model> {
 			return;
 		}
 		// TODO
-		if (isModel(valType)) {
-			JSONObject obj2 = subSerializer(valType).serialize((Model) val);
-			obj.put(key, obj2);
-		} else if (isArray(valType) || isCollection(valType)) {
+		if (isArray(valType) || isCollection(valType)) {
 			final ArrayList<Object> list = new ArrayList<Object>();
 			if (isArray(valType)) {
 				list.addAll(Arrays.asList(Arrays2.toObjectArr(val)));
@@ -171,10 +166,8 @@ public class JSONSerializer<ModelType extends Model> {
 				e = ex;
 			}
 		}
-
-		if (isModel(fieldType)) {
-			return subSerializer(fieldType).deserialize((JSONObject) jsonVal);
-		} else if (isArray(fieldType) || isCollection(fieldType)) {
+		// TODO
+		if (isArray(fieldType) || isCollection(fieldType)) {
 			String strVal = String.valueOf(jsonVal);
 			JSONArray jArr = (jsonVal instanceof JSONArray) ? (JSONArray) jsonVal
 					: new JSONArray(strVal);
@@ -315,7 +308,7 @@ public class JSONSerializer<ModelType extends Model> {
 
 	@SuppressWarnings("unchecked")
 	private JSONSerializer<Model> subSerializer(Class<?> cls) {
-		return new JSONSerializer<Model>((Class<Model>) cls, ctx);
+		return new JSONSerializer<Model>((Class<Model>) cls, null);
 	}
 
 	private void throwIfRequired(FieldSpec<KeyAnn> spec) throws JSONException {

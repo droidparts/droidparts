@@ -58,17 +58,16 @@ public class EntityManager<EntityType extends Entity> extends
 	@InjectDependency
 	private SQLiteDatabase db;
 
-	private final Context ctx;
 	private final Class<EntityType> cls;
+	private Context ctx;
 
-	public EntityManager(Context ctx, Class<EntityType> cls) {
-		this(ctx, cls, null);
+	public EntityManager(Class<EntityType> cls, Context ctx) {
+		this.cls = cls;
+		this.ctx = ctx.getApplicationContext();
 		Injector.get().inject(ctx, this);
 	}
 
-	protected EntityManager(Context ctx, Class<EntityType> cls,
-			SQLiteDatabase db) {
-		this.ctx = ctx.getApplicationContext();
+	protected EntityManager(Class<EntityType> cls, SQLiteDatabase db) {
 		this.cls = cls;
 		this.db = db;
 	}
@@ -182,10 +181,7 @@ public class EntityManager<EntityType extends Entity> extends
 			return;
 		}
 		// TODO
-		if (isEntity(valueType)) {
-			Long id = (value != null) ? ((Entity) value).id : null;
-			cv.put(key, id);
-		} else if (isArray(valueType) || isCollection(valueType)) {
+		if (isArray(valueType) || isCollection(valueType)) {
 			final ArrayList<Object> list = new ArrayList<Object>();
 			if (isArray(valueType)) {
 				list.addAll(Arrays.asList(Arrays2.toObjectArr(value)));
@@ -217,14 +213,9 @@ public class EntityManager<EntityType extends Entity> extends
 			return handler.readFromCursor(valType, cursor, columnIndex);
 		}
 		// TODO
-		if (isEntity(valType)) {
-			long id = cursor.getLong(columnIndex);
-			@SuppressWarnings("unchecked")
-			Entity entity = instantiate((Class<Entity>) valType);
-			entity.id = id;
-			return (T) entity;
-		} else if (isArray(valType) || isCollection(valType)) {
-			TypeHandler<V> arrItemHandler = TypeHandlerRegistry.get(arrCollItemType);
+		if (isArray(valType) || isCollection(valType)) {
+			TypeHandler<V> arrItemHandler = TypeHandlerRegistry
+					.get(arrCollItemType);
 			if (arrItemHandler == null) {
 				throw new IllegalArgumentException("Unable to convert to "
 						+ arrCollItemType + ".");
@@ -237,7 +228,8 @@ public class EntityManager<EntityType extends Entity> extends
 			} else {
 				@SuppressWarnings("unchecked")
 				Collection<Object> coll = (Collection<Object>) instantiate(valType);
-				coll.addAll(arrItemHandler.parseTypeColl(arrCollItemType, parts));
+				coll.addAll(arrItemHandler
+						.parseTypeColl(arrCollItemType, parts));
 				return (T) coll;
 			}
 		} else {
@@ -248,7 +240,6 @@ public class EntityManager<EntityType extends Entity> extends
 
 	@SuppressWarnings("unchecked")
 	private EntityManager<Entity> subManager(Field field) {
-		return new EntityManager<Entity>(ctx, (Class<Entity>) field.getType(),
-				db);
+		return new EntityManager<Entity>((Class<Entity>) field.getType(), db);
 	}
 }

@@ -253,8 +253,6 @@ public final class PersistUtils implements SQL.DDL {
 		// TODO
 		if (isArray(fieldType) || isCollection(fieldType)) {
 			return TEXT;
-		} else if (isEntity(fieldType)) {
-			return INTEGER;
 		}
 		// persist any other type as blob
 		return BLOB;

@@ -28,7 +28,7 @@ import android.content.Context;
 public class FilterEntityManager extends EntityManager<Filter> {
 
 	public FilterEntityManager(Context ctx) {
-		super(ctx, Filter.class);
+		super(Filter.class, ctx);
 	}
 
 	public void setIdOrCreateForName(Filter filter) {

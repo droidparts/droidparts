@@ -19,9 +19,9 @@ public class AlbumManager extends EntityManager<Album> implements DB {
 	private final EntityManager<Tag> tagManager;
 
 	public AlbumManager(Context ctx) {
-		super(ctx, Album.class);
-		albumToTagManager = new EntityManager<AlbumToTag>(ctx, AlbumToTag.class);
-		tagManager = new EntityManager<Tag>(ctx, Tag.class);
+		super(Album.class, ctx);
+		albumToTagManager = new EntityManager<AlbumToTag>(AlbumToTag.class, ctx);
+		tagManager = new EntityManager<Tag>(Tag.class, ctx);
 	}
 
 	public ArrayList<Tag> getTags(long albumId) {

@@ -8,7 +8,7 @@ import android.content.Context;
 public class EntrySerializer extends JSONSerializer<Entry> {
 
 	public EntrySerializer(Context ctx) {
-		super(ctx, Entry.class);
+		super(Entry.class, ctx);
 	}
 
 }
