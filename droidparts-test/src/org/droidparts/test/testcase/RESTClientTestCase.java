@@ -15,10 +15,10 @@
  */
 package org.droidparts.test.testcase;
 
-import org.droidparts.net.rest.HTTPException;
-import org.droidparts.net.rest.HTTPResponse;
-import org.droidparts.net.rest.RESTClient;
-import org.droidparts.net.rest.RESTClient2;
+import org.droidparts.net.http.HTTPException;
+import org.droidparts.net.http.HTTPResponse;
+import org.droidparts.net.http.RESTClient;
+import org.droidparts.net.http.RESTClient2;
 
 import android.test.AndroidTestCase;
 

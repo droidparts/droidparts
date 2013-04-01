@@ -13,13 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License. 
  */
-package org.droidparts.net.rest.worker;
+package org.droidparts.net.http.worker;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 
 import org.apache.http.auth.AuthScope;
-import org.droidparts.net.rest.CookieJar;
+import org.droidparts.net.http.CookieJar;
 
 public abstract class HTTPWorker {
 

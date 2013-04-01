@@ -26,10 +26,10 @@ import java.util.concurrent.ThreadPoolExecutor;
 
 import org.droidparts.contract.HTTP.Header;
 import org.droidparts.net.concurrent.BackgroundExecutor;
+import org.droidparts.net.http.HTTPResponse;
+import org.droidparts.net.http.RESTClient;
 import org.droidparts.net.image.cache.BitmapDiskCache;
 import org.droidparts.net.image.cache.BitmapMemoryCache;
-import org.droidparts.net.rest.HTTPResponse;
-import org.droidparts.net.rest.RESTClient;
 import org.droidparts.util.L;
 
 import android.content.Context;

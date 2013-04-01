@@ -14,7 +14,7 @@
  * limitations under the License. 
  */
 
-package org.droidparts.net.rest;
+package org.droidparts.net.http;
 
 import org.droidparts.contract.HTTP.ResponseCode;
 

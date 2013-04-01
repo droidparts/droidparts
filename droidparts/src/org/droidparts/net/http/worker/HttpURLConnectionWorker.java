@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License. 
  */
-package org.droidparts.net.rest.worker;
+package org.droidparts.net.http.worker;
 
 import static org.droidparts.contract.Constants.UTF8;
 import static org.droidparts.contract.HTTP.Header.ACCEPT_CHARSET;
@@ -34,9 +34,9 @@ import java.net.UnknownHostException;
 
 import org.apache.http.auth.AuthScope;
 import org.droidparts.contract.HTTP.Method;
-import org.droidparts.net.rest.CookieJar;
-import org.droidparts.net.rest.HTTPException;
-import org.droidparts.net.rest.HTTPResponse;
+import org.droidparts.net.http.CookieJar;
+import org.droidparts.net.http.HTTPException;
+import org.droidparts.net.http.HTTPResponse;
 import org.droidparts.util.L;
 
 import android.content.Context;

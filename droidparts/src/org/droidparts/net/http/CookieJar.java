@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License. 
  */
-package org.droidparts.net.rest;
+package org.droidparts.net.http;
 
 import static android.content.Context.MODE_PRIVATE;
 import static java.util.Collections.singletonList;

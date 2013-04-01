@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License. 
  */
-package org.droidparts.net.rest.worker;
+package org.droidparts.net.http.worker;
 
 import static org.apache.http.client.params.CookiePolicy.BROWSER_COMPATIBILITY;
 import static org.droidparts.contract.Constants.BUFFER_SIZE;
@@ -37,9 +37,9 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.params.HttpConnectionParams;
 import org.apache.http.params.HttpParams;
 import org.apache.http.params.HttpProtocolParams;
-import org.droidparts.net.rest.CookieJar;
-import org.droidparts.net.rest.HTTPException;
-import org.droidparts.net.rest.HTTPResponse;
+import org.droidparts.net.http.CookieJar;
+import org.droidparts.net.http.HTTPException;
+import org.droidparts.net.http.HTTPResponse;
 
 // For API < 10
 public class HttpClientWorker extends HTTPWorker {
