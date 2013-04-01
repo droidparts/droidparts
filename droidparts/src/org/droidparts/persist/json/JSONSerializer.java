@@ -17,7 +17,7 @@ package org.droidparts.persist.json;
 
 import static org.droidparts.inner.FieldSpecBuilder.getJsonKeySpecs;
 import static org.droidparts.inner.ReflectionUtils.getFieldVal;
-import static org.droidparts.inner.ReflectionUtils.instantiate;
+import static org.droidparts.inner.ReflectionUtils.newInstance;
 import static org.droidparts.inner.ReflectionUtils.setFieldVal;
 import static org.json.JSONObject.NULL;
 
@@ -69,7 +69,7 @@ public class JSONSerializer<ModelType extends Model> {
 	}
 
 	public ModelType deserialize(JSONObject obj) throws JSONException {
-		ModelType model = instantiate(cls);
+		ModelType model = newInstance(cls);
 		for (FieldSpec<KeyAnn> spec : getJsonKeySpecs(cls)) {
 			readFromJSONAndSetFieldVal(model, spec, obj, spec.ann.name);
 		}

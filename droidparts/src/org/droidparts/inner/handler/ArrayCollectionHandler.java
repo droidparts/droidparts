@@ -15,7 +15,7 @@
  */
 package org.droidparts.inner.handler;
 
-import static org.droidparts.inner.ReflectionUtils.instantiate;
+import static org.droidparts.inner.ReflectionUtils.newInstance;
 import static org.droidparts.inner.TypeHelper.isArray;
 import static org.droidparts.inner.TypeHelper.isModel;
 
@@ -91,7 +91,7 @@ public class ArrayCollectionHandler extends AbstractTypeHandler<Object> {
 		if (isArr) {
 			arr = new Object[jArr.length()];
 		} else {
-			coll = (Collection<Object>) instantiate(valType);
+			coll = (Collection<Object>) newInstance(valType);
 		}
 		boolean isModel = isModel(arrCollItemType);
 		JSONSerializer<Model> serializer = null;
@@ -165,7 +165,7 @@ public class ArrayCollectionHandler extends AbstractTypeHandler<Object> {
 			return handler.parseTypeArr(arrCollItemType, parts);
 		} else {
 			@SuppressWarnings("unchecked")
-			Collection<Object> coll = (Collection<Object>) instantiate(valType);
+			Collection<Object> coll = (Collection<Object>) newInstance(valType);
 			coll.addAll(handler.parseTypeColl(arrCollItemType, parts));
 			return coll;
 		}

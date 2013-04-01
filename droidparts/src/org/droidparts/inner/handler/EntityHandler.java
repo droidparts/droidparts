@@ -15,7 +15,7 @@
  */
 package org.droidparts.inner.handler;
 
-import static org.droidparts.inner.ReflectionUtils.instantiate;
+import static org.droidparts.inner.ReflectionUtils.newInstance;
 
 import org.droidparts.inner.TypeHelper;
 import org.droidparts.model.Entity;
@@ -49,7 +49,7 @@ public class EntityHandler extends ModelHandler {
 			Class<V> arrCollItemType, Cursor cursor, int columnIndex)
 			throws IllegalArgumentException {
 		long id = cursor.getLong(columnIndex);
-		Entity entity = (Entity) instantiate(valType);
+		Entity entity = (Entity) newInstance(valType);
 		entity.id = id;
 		return entity;
 	}

@@ -23,7 +23,7 @@ import org.json.JSONObject;
 
 import android.content.Context;
 
-public final class MiscUtils {
+public final class ResourceUtils {
 
 	public static void merge(JSONObject source, JSONObject target,
 			boolean overwrite) throws JSONException {
@@ -43,6 +43,19 @@ public final class MiscUtils {
 		String[] valuesArr = ctx.getResources().getStringArray(valuesArrId);
 		int idx = Arrays.asList(keysArr).indexOf(key);
 		return (idx != -1) ? valuesArr[idx] : null;
+	}
+
+	public static int getResourceId(Context ctx, String resourceName) {
+		return ResourceUtils.getId(ctx, "id", resourceName);
+	}
+
+	public static int getStringId(Context ctx, String stringName) {
+		return ResourceUtils.getId(ctx, "string", stringName);
+	}
+
+	private static int getId(Context ctx, String type, String name) {
+		return ctx.getResources().getIdentifier(name, type,
+				ctx.getPackageName());
 	}
 
 }

@@ -18,7 +18,7 @@ package org.droidparts.persist.sql;
 import static java.util.Arrays.asList;
 import static org.droidparts.inner.FieldSpecBuilder.getTableColumnSpecs;
 import static org.droidparts.inner.ReflectionUtils.getFieldVal;
-import static org.droidparts.inner.ReflectionUtils.instantiate;
+import static org.droidparts.inner.ReflectionUtils.newInstance;
 import static org.droidparts.inner.ReflectionUtils.setFieldVal;
 import static org.droidparts.inner.TypeHelper.isEntity;
 
@@ -66,7 +66,7 @@ public class EntityManager<EntityType extends Entity> extends
 
 	@Override
 	public EntityType readRow(Cursor cursor) {
-		EntityType entity = instantiate(cls);
+		EntityType entity = newInstance(cls);
 		for (FieldSpec<ColumnAnn> spec : getTableColumnSpecs(cls)) {
 			int colIdx = cursor.getColumnIndex(spec.ann.name);
 			if (colIdx >= 0) {

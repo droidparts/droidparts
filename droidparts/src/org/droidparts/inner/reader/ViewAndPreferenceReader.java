@@ -17,9 +17,9 @@ package org.droidparts.inner.reader;
 
 import java.lang.reflect.Field;
 
-import org.droidparts.inner.ReflectionUtils;
 import org.droidparts.inner.ann.inject.InjectViewAnn;
 import org.droidparts.util.L;
+import org.droidparts.util.misc.ResourceUtils;
 
 import android.content.Context;
 import android.preference.Preference;
@@ -41,9 +41,9 @@ public class ViewAndPreferenceReader {
 		if (viewOrPrefId == 0) {
 			String fieldName = field.getName();
 			if (isView) {
-				viewOrPrefId = ReflectionUtils.getResourceId(ctx, fieldName);
+				viewOrPrefId = ResourceUtils.getResourceId(ctx, fieldName);
 			} else {
-				viewOrPrefId = ReflectionUtils.getStringId(ctx, fieldName);
+				viewOrPrefId = ResourceUtils.getStringId(ctx, fieldName);
 			}
 		}
 		Object val;
