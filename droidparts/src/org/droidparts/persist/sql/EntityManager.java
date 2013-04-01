@@ -47,7 +47,7 @@ public class EntityManager<EntityType extends Entity> extends
 	private SQLiteDatabase db;
 
 	private final Class<EntityType> cls;
-	private Context ctx;
+	private final Context ctx;
 
 	public EntityManager(Class<EntityType> cls, Context ctx) {
 		this.cls = cls;
@@ -55,8 +55,10 @@ public class EntityManager<EntityType extends Entity> extends
 		Injector.get().inject(ctx, this);
 	}
 
-	protected EntityManager(Class<EntityType> cls, SQLiteDatabase db) {
+	protected EntityManager(Class<EntityType> cls, Context ctx,
+			SQLiteDatabase db) {
 		this.cls = cls;
+		this.ctx = ctx;
 		this.db = db;
 	}
 
@@ -184,6 +186,7 @@ public class EntityManager<EntityType extends Entity> extends
 
 	@SuppressWarnings("unchecked")
 	private EntityManager<Entity> subManager(Field field) {
-		return new EntityManager<Entity>((Class<Entity>) field.getType(), db);
+		return new EntityManager<Entity>((Class<Entity>) field.getType(), ctx,
+				db);
 	}
 }
