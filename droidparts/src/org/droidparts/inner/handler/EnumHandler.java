@@ -15,7 +15,7 @@
  */
 package org.droidparts.inner.handler;
 
-import static org.droidparts.inner.ReflectionUtils.instantiateEnum;
+import static org.droidparts.inner.ReflectionUtils.newEnum;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
@@ -55,7 +55,7 @@ public class EnumHandler extends AbstractTypeHandler<Enum<?>> {
 	@Override
 	protected <V> Enum<?> parseFromString(Class<Enum<?>> valType,
 			Class<V> arrCollItemType, String str) {
-		return instantiateEnum(valType, str);
+		return newEnum(valType, str);
 	}
 
 	@Override
@@ -67,7 +67,7 @@ public class EnumHandler extends AbstractTypeHandler<Enum<?>> {
 	@Override
 	public <V> Enum<?> readFromCursor(Class<Enum<?>> valType,
 			Class<V> arrCollItemType, Cursor cursor, int columnIndex) {
-		return instantiateEnum(valType, cursor.getString(columnIndex));
+		return newEnum(valType, cursor.getString(columnIndex));
 	}
 
 	@Override

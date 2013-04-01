@@ -73,7 +73,7 @@ public final class ReflectionUtils {
 		}
 	}
 
-	public static Enum<?> instantiateEnum(Class<?> enumClass, String enumStr) {
+	public static Enum<?> newEnum(Class<?> enumClass, String enumStr) {
 		@SuppressWarnings({ "rawtypes", "unchecked" })
 		Enum en = Enum.valueOf(enumClass.asSubclass(Enum.class), enumStr);
 		return en;

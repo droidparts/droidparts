@@ -19,7 +19,7 @@ import java.lang.reflect.Field;
 
 import org.droidparts.inner.ann.inject.InjectViewAnn;
 import org.droidparts.util.L;
-import org.droidparts.util.misc.ResourceUtils;
+import org.droidparts.util.ResourceUtils;
 
 import android.content.Context;
 import android.preference.Preference;

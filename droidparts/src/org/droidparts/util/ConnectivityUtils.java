@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License. 
  */
-package org.droidparts.util.misc;
+package org.droidparts.util;
 
 import static android.content.Context.CONNECTIVITY_SERVICE;
 import static android.net.ConnectivityManager.TYPE_WIFI;

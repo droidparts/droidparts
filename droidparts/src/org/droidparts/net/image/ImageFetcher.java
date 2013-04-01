@@ -17,7 +17,7 @@ package org.droidparts.net.image;
 
 import static android.graphics.Color.TRANSPARENT;
 import static org.droidparts.contract.Constants.BUFFER_SIZE;
-import static org.droidparts.util.misc.IOUtils.silentlyClose;
+import static org.droidparts.util.IOUtils.silentlyClose;
 
 import java.io.BufferedInputStream;
 import java.io.ByteArrayOutputStream;

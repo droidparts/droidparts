@@ -16,8 +16,8 @@
 package org.droidparts.net.image.cache;
 
 import static org.droidparts.contract.Constants.BUFFER_SIZE;
-import static org.droidparts.util.misc.IOUtils.getFileList;
-import static org.droidparts.util.misc.IOUtils.silentlyClose;
+import static org.droidparts.util.IOUtils.getFileList;
+import static org.droidparts.util.IOUtils.silentlyClose;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -26,9 +26,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 
-import org.droidparts.util.AppUtils;
+import org.droidparts.util.HashCalc;
 import org.droidparts.util.L;
-import org.droidparts.util.misc.HashCalc;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -44,7 +43,7 @@ public class BitmapDiskCache {
 
 	public static BitmapDiskCache getDefaultInstance(Context ctx) {
 		if (instance == null) {
-			File cacheDir = new AppUtils(ctx).getExternalCacheDir();
+			File cacheDir = ctx.getExternalCacheDir();
 			if (cacheDir != null) {
 				instance = new BitmapDiskCache(new File(cacheDir, DEFAULT_DIR));
 			} else {
