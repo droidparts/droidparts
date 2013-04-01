@@ -15,7 +15,7 @@
  */
 package org.droidparts;
 
-import static org.droidparts.inner.FieldSpecBuilder.getInjectSpecs;
+import static org.droidparts.inner.FieldSpecRegistry.getInjectSpecs;
 import static org.droidparts.inner.ReflectionUtils.setFieldVal;
 
 import java.lang.reflect.Field;

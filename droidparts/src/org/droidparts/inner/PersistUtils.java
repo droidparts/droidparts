@@ -16,7 +16,7 @@
 package org.droidparts.inner;
 
 import static java.util.Arrays.asList;
-import static org.droidparts.inner.FieldSpecBuilder.getTableName;
+import static org.droidparts.inner.FieldSpecRegistry.getTableName;
 import static org.droidparts.inner.TypeHelper.isEntity;
 import static org.droidparts.util.Strings.join;
 import static org.json.JSONObject.NULL;

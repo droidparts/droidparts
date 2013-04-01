@@ -15,7 +15,7 @@
  */
 package org.droidparts.persist.json;
 
-import static org.droidparts.inner.FieldSpecBuilder.getJsonKeySpecs;
+import static org.droidparts.inner.FieldSpecRegistry.getJsonKeySpecs;
 import static org.droidparts.inner.ReflectionUtils.getFieldVal;
 import static org.droidparts.inner.ReflectionUtils.newInstance;
 import static org.droidparts.inner.ReflectionUtils.setFieldVal;

@@ -16,7 +16,7 @@
 package org.droidparts.persist.sql;
 
 import static java.util.Arrays.asList;
-import static org.droidparts.inner.FieldSpecBuilder.getTableColumnSpecs;
+import static org.droidparts.inner.FieldSpecRegistry.getTableColumnSpecs;
 import static org.droidparts.inner.ReflectionUtils.getFieldVal;
 import static org.droidparts.inner.ReflectionUtils.newInstance;
 import static org.droidparts.inner.ReflectionUtils.setFieldVal;
@@ -27,7 +27,7 @@ import java.util.HashSet;
 
 import org.droidparts.Injector;
 import org.droidparts.annotation.inject.InjectDependency;
-import org.droidparts.inner.FieldSpecBuilder;
+import org.droidparts.inner.FieldSpecRegistry;
 import org.droidparts.inner.ReflectionUtils;
 import org.droidparts.inner.TypeHandlerRegistry;
 import org.droidparts.inner.ann.FieldSpec;
@@ -104,7 +104,7 @@ public class EntityManager<EntityType extends Entity> extends
 
 	@Override
 	protected String getTableName() {
-		return FieldSpecBuilder.getTableName(cls);
+		return FieldSpecRegistry.getTableName(cls);
 	}
 
 	@Override

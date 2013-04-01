@@ -49,7 +49,7 @@ import org.droidparts.model.Entity;
 import org.droidparts.model.Model;
 import org.droidparts.util.L;
 
-public final class FieldSpecBuilder {
+public final class FieldSpecRegistry {
 
 	// Inject
 
