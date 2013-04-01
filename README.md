@@ -24,7 +24,7 @@ Download
 <dependency>
   <groupId>org.droidparts</groupId>
   <artifactId>droidparts</artifactId>
-  <version>1.2.1</version>
+  <version>${version.from.jar.above}</version>
 </dependency>
 ```
 or use as a plain old Android library project.
