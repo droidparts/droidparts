@@ -21,22 +21,18 @@ import static android.content.pm.PackageManager.DONT_KILL_APP;
 import static android.content.pm.PackageManager.GET_META_DATA;
 import static android.provider.Settings.Secure.ANDROID_ID;
 import static org.droidparts.contract.Constants.BUFFER_SIZE;
-import static org.droidparts.util.io.IOUtils.silentlyClose;
+import static org.droidparts.util.IOUtils.silentlyClose;
 
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
-import android.annotation.TargetApi;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
-import android.os.Build;
-import android.os.Environment;
 import android.provider.Settings.Secure;
 
 public class AppUtils {
@@ -60,22 +56,6 @@ public class AppUtils {
 			L.w(e);
 		}
 		return verName;
-	}
-
-	@TargetApi(8)
-	public File getExternalCacheDir() {
-		if (Build.VERSION.SDK_INT > 7) {
-			File dir = ctx.getExternalCacheDir();
-			return dir;
-		} else {
-			File esd = Environment.getExternalStorageDirectory();
-			if (esd != null) {
-				return new File(esd, "/Android/data/" + ctx.getPackageName()
-						+ "/cache");
-			} else {
-				return null;
-			}
-		}
 	}
 
 	public boolean gotActivityForIntent(Intent intent) {

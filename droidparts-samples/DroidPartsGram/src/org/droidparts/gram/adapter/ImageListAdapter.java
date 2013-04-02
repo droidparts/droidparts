@@ -22,7 +22,7 @@ import org.droidparts.adapter.tag.IconText2Tag;
 import org.droidparts.annotation.inject.InjectDependency;
 import org.droidparts.gram.R;
 import org.droidparts.gram.model.Image;
-import org.droidparts.net.ImageFetcher;
+import org.droidparts.net.image.ImageFetcher;
 import org.droidparts.persist.sql.stmt.Select;
 
 import android.content.Context;
@@ -41,7 +41,7 @@ public class ImageListAdapter extends EntityCursorAdapter<Image> {
 	private Drawable placeholderDrawable;
 
 	public ImageListAdapter(Context ctx, Select<Image> select) {
-		super(ctx, Image.class, select);
+		super(Image.class, ctx, select);
 	}
 
 	@Override

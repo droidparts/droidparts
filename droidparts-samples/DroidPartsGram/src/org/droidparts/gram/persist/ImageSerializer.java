@@ -27,7 +27,7 @@ import android.content.Context;
 public class ImageSerializer extends JSONSerializer<Image> {
 
 	public ImageSerializer(Context ctx) {
-		super(ctx, Image.class);
+		super(Image.class, ctx);
 	}
 
 	@Override

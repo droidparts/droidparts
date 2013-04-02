@@ -8,7 +8,7 @@ import android.content.Context;
 public class AlbumSerializer extends JSONSerializer<Album> {
 
 	public AlbumSerializer(Context ctx) {
-		super(ctx, Album.class);
+		super(Album.class, ctx);
 	}
 
 }

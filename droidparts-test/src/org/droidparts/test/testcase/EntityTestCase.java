@@ -37,11 +37,11 @@ public class EntityTestCase extends AndroidTestCase implements DB {
 	@Override
 	protected void setUp() {
 		if (primitivesManager == null) {
-			primitivesManager = new EntityManager<Primitives>(getContext(),
-					Primitives.class);
-			albumToTagManager = new EntityManager<AlbumToTag>(getContext(),
-					AlbumToTag.class);
-			tagManager = new EntityManager<Tag>(getContext(), Tag.class);
+			primitivesManager = new EntityManager<Primitives>(Primitives.class,
+					getContext());
+			albumToTagManager = new EntityManager<AlbumToTag>(AlbumToTag.class,
+					getContext());
+			tagManager = new EntityManager<Tag>(Tag.class, getContext());
 			albumManager = new AlbumManager(getContext());
 			trackManager = new TrackManager(getContext());
 		}

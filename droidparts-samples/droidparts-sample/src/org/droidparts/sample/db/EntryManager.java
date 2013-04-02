@@ -8,7 +8,7 @@ import android.content.Context;
 public class EntryManager extends EntityManager<Entry> {
 
 	public EntryManager(Context ctx) {
-		super(ctx, Entry.class);
+		super(Entry.class, ctx);
 	}
 
 	@Override

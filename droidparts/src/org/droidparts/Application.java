@@ -15,8 +15,7 @@
  */
 package org.droidparts;
 
-import org.droidparts.inject.Injector;
-import org.droidparts.reflect.util.ReflectionUtils;
+import org.droidparts.inner.ReflectionUtils;
 
 public class Application extends android.app.Application {
 

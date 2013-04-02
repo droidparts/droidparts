@@ -15,7 +15,7 @@
  */
 package org.droidparts.adapter.tag;
 
-import org.droidparts.inject.Injector;
+import org.droidparts.Injector;
 
 import android.view.View;
 

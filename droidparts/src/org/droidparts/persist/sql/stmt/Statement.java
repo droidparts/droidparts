@@ -16,9 +16,9 @@
 package org.droidparts.persist.sql.stmt;
 
 import static java.util.Arrays.asList;
-import static org.droidparts.reflect.util.ReflectionUtils.varArgsHack;
-import static org.droidparts.util.PersistUtils.buildPlaceholders;
-import static org.droidparts.util.PersistUtils.toWhereArgs;
+import static org.droidparts.inner.PersistUtils.buildPlaceholders;
+import static org.droidparts.inner.PersistUtils.toWhereArgs;
+import static org.droidparts.inner.ReflectionUtils.varArgsHack;
 
 import java.util.ArrayList;
 import java.util.Arrays;

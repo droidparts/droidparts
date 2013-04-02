@@ -18,7 +18,7 @@ package org.droidparts.persist;
 import static android.content.Context.MODE_PRIVATE;
 import static org.droidparts.util.Strings.isEmpty;
 
-import org.droidparts.inject.Injector;
+import org.droidparts.Injector;
 
 import android.content.Context;
 import android.content.SharedPreferences;

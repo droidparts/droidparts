@@ -8,7 +8,7 @@ import android.content.Context;
 public class TrackManager extends EntityManager<Track> {
 
 	public TrackManager(Context ctx) {
-		super(ctx, Track.class);
+		super(Track.class, ctx);
 	}
 
 }

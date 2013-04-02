@@ -22,7 +22,7 @@ import org.droidparts.gram.contract.Instagram;
 import org.droidparts.gram.model.Image;
 import org.droidparts.gram.persist.ImageEntityManager;
 import org.droidparts.gram.persist.ImageSerializer;
-import org.droidparts.http.RESTClient2;
+import org.droidparts.net.http.RESTClient2;
 import org.droidparts.service.SimpleIntentService;
 import org.json.JSONArray;
 import org.json.JSONObject;

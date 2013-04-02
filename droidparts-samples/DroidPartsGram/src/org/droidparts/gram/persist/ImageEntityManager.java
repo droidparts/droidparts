@@ -26,7 +26,7 @@ public class ImageEntityManager extends EntityManager<Image> {
 	private final FilterEntityManager filterEntityManager;
 
 	public ImageEntityManager(Context ctx) {
-		super(ctx, Image.class);
+		super(Image.class, ctx);
 		filterEntityManager = new FilterEntityManager(ctx);
 	}
 

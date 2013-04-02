@@ -15,7 +15,7 @@
  */
 package org.droidparts.fragment.stock;
 
-import org.droidparts.inject.Injector;
+import org.droidparts.Injector;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;

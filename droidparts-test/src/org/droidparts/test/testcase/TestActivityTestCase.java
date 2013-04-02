@@ -1,6 +1,6 @@
 package org.droidparts.test.testcase;
 
-import org.droidparts.inject.Injector;
+import org.droidparts.Injector;
 import org.droidparts.test.R;
 import org.droidparts.test.activity.TestActivity;
 

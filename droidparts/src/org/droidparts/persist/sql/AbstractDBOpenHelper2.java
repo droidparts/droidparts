@@ -17,8 +17,8 @@ package org.droidparts.persist.sql;
 
 import java.io.File;
 
+import org.droidparts.util.IOUtils;
 import org.droidparts.util.L;
-import org.droidparts.util.io.IOUtils;
 
 import android.content.Context;
 

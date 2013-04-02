@@ -21,12 +21,12 @@ import java.util.concurrent.Callable;
 
 import org.droidparts.contract.DB;
 import org.droidparts.contract.SQL;
+import org.droidparts.inner.PersistUtils;
 import org.droidparts.model.Entity;
 import org.droidparts.persist.sql.stmt.Delete;
 import org.droidparts.persist.sql.stmt.Select;
 import org.droidparts.persist.sql.stmt.Update;
 import org.droidparts.util.L;
-import org.droidparts.util.PersistUtils;
 
 import android.content.ContentValues;
 import android.database.Cursor;

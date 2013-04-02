@@ -28,14 +28,14 @@ public abstract class EntityCursorAdapter<EntityType extends Entity> extends
 
 	protected final EntityManager<EntityType> entityManager;
 
-	public EntityCursorAdapter(Context ctx, Class<EntityType> entityCls) {
-		this(ctx, entityCls, null);
+	public EntityCursorAdapter(Class<EntityType> entityCls, Context ctx) {
+		this(entityCls, ctx, null);
 	}
 
-	public EntityCursorAdapter(Context ctx, Class<EntityType> entityCls,
+	public EntityCursorAdapter(Class<EntityType> entityCls, Context ctx,
 			AbstractSelect<EntityType> select) {
 		super(ctx, (select != null) ? select.execute() : null);
-		this.entityManager = new EntityManager<EntityType>(ctx, entityCls);
+		this.entityManager = new EntityManager<EntityType>(entityCls, ctx);
 	}
 
 	public void changeData(AbstractSelect<EntityType> select) {

@@ -15,9 +15,9 @@
  */
 package org.droidparts.activity.stock;
 
-import org.droidparts.inject.Injectable;
-import org.droidparts.inject.Injector;
-import org.droidparts.util.inner.SecretFragmentsStockUtil;
+import org.droidparts.Injector;
+import org.droidparts.contract.Injectable;
+import org.droidparts.inner.fragments.SecretFragmentsStockUtil;
 
 import android.app.Fragment;
 import android.os.Bundle;
