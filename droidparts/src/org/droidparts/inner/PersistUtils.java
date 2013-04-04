@@ -206,7 +206,7 @@ public final class PersistUtils implements SQL.DDL {
 		}
 		// http://www.sqlite.org/faq.html#q11
 		String tempTableName = table + "_tmp";
-		String columsStr = Strings.join(columnsToKeep, ",", null);
+		String columsStr = Strings.join(columnsToKeep, ", ", null);
 		ArrayList<String> statements = new ArrayList<String>();
 		statements.add("CREATE TEMPORARY TABLE " + tempTableName
 				+ OPENING_BRACE + columsStr + CLOSING_BRACE);
@@ -238,12 +238,12 @@ public final class PersistUtils implements SQL.DDL {
 
 	public static ArrayList<String> getTableNames(SQLiteDatabase db) {
 		return readStrings(db,
-				"SELECT name FROM sqlite_master WHERE type='table'");
+				"SELECT name FROM sqlite_master WHERE type='table'", 0);
 	}
 
 	public static ArrayList<String> getColumnNames(SQLiteDatabase db,
 			String table) {
-		return readStrings(db, "PRAGMA table_info(" + table + ")");
+		return readStrings(db, "PRAGMA table_info(" + table + ")", 1);
 	}
 
 	public static String getSQLCreate(String tableName,
@@ -296,11 +296,12 @@ public final class PersistUtils implements SQL.DDL {
 		sb.append("(").append(Column.ID).append(") ON DELETE CASCADE");
 	}
 
-	private static ArrayList<String> readStrings(SQLiteDatabase db, String query) {
+	private static ArrayList<String> readStrings(SQLiteDatabase db,
+			String query, int colIdx) {
 		ArrayList<String> tableNames = new ArrayList<String>();
 		Cursor c = db.rawQuery(query, null);
 		while (c.moveToNext()) {
-			tableNames.add(c.getString(0));
+			tableNames.add(c.getString(colIdx));
 		}
 		c.close();
 		return tableNames;
