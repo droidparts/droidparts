@@ -1,5 +1,5 @@
 1.3.0 /2013-04-01/:
-    * Refactored to use TypeHanlders for SQL & JSON interactions.
+    * Refactored to use TypeHandlers for SQL & JSON interactions.
     * Rearranged a bunch of stuff.
     * Cleaned up porn.xml files.
 
@@ -21,8 +21,8 @@
     * ClearableEditText: specify clear icon via xml & tweaks.
 
 1.1.1 /2013-02-23/:
-	* Cleaned up since merge.
-	* Extra L methods.
+    * Cleaned up since merge.
+    * Extra L methods.
 
 1.1.0 /2013-02-18/:
     * base, extra & fragments got merged into a single library. Thank ADT bug.

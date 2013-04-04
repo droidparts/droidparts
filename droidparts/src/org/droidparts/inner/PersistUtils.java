@@ -347,13 +347,13 @@ public final class PersistUtils implements SQL.DDL {
 
 	private static ArrayList<String> readStrings(SQLiteDatabase db,
 			String query, int colIdx) {
-		ArrayList<String> tableNames = new ArrayList<String>();
+		ArrayList<String> rows = new ArrayList<String>();
 		Cursor c = db.rawQuery(query, null);
 		while (c.moveToNext()) {
-			tableNames.add(c.getString(colIdx));
+			rows.add(c.getString(colIdx));
 		}
 		c.close();
-		return tableNames;
+		return rows;
 	}
 
 }
