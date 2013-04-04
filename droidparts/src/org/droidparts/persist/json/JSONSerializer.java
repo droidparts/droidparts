@@ -100,7 +100,7 @@ public class JSONSerializer<ModelType extends Model> {
 			obj.put(key, NULL);
 		} else {
 			AbstractTypeHandler<T> handler = TypeHandlerRegistry
-					.getHandlerOrThrow(valType);
+					.getHandler(valType);
 			@SuppressWarnings("unchecked")
 			Object jsonVal = handler.convertForJSON(valType, arrCollItemType,
 					(T) val);
@@ -116,7 +116,7 @@ public class JSONSerializer<ModelType extends Model> {
 			return jsonVal;
 		} else {
 			AbstractTypeHandler<T> handler = TypeHandlerRegistry
-					.getHandlerOrThrow(valType);
+					.getHandler(valType);
 			return handler.readFromJSON(valType, arrCollItemType, obj, key);
 		}
 	}

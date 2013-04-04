@@ -22,6 +22,7 @@ import static org.droidparts.util.Strings.join;
 import static org.json.JSONObject.NULL;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.concurrent.Callable;
@@ -34,6 +35,7 @@ import org.droidparts.inner.handler.AbstractTypeHandler;
 import org.droidparts.model.Entity;
 import org.droidparts.persist.sql.AbstractEntityManager;
 import org.droidparts.util.L;
+import org.droidparts.util.Strings;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -175,16 +177,11 @@ public final class PersistUtils implements SQL.DDL {
 		return (result != null);
 	}
 
-	public static boolean dropTables(SQLiteDatabase db,
+	public static ArrayList<String> getDropTables(SQLiteDatabase db,
 			String... optionalTableNames) {
 		HashSet<String> tableNames = new HashSet<String>();
 		if (optionalTableNames.length == 0) {
-			Cursor c = db.rawQuery(
-					"SELECT name FROM sqlite_master WHERE type='table'", null);
-			while (c.moveToNext()) {
-				tableNames.add(c.getString(0));
-			}
-			c.close();
+			tableNames.addAll(getTableNames(db));
 		} else {
 			tableNames.addAll(asList(optionalTableNames));
 		}
@@ -192,7 +189,36 @@ public final class PersistUtils implements SQL.DDL {
 		for (String tableName : tableNames) {
 			statements.add("DROP TABLE IF EXISTS " + tableName + ";");
 		}
-		return executeStatements(db, statements);
+		return statements;
+	}
+
+	public static ArrayList<String> getDropColumns(SQLiteDatabase db,
+			String table, String firstColumn, String... otherColumns) {
+		HashSet<String> columnsToDrop = new HashSet<String>();
+		columnsToDrop.add(firstColumn);
+		columnsToDrop.addAll(Arrays.asList(otherColumns));
+		ArrayList<String> presentClumns = getColumnNames(db, table);
+		ArrayList<String> columnsToKeep = new ArrayList<String>();
+		for (String col : presentClumns) {
+			if (!columnsToDrop.contains(col)) {
+				columnsToKeep.add(col);
+			}
+		}
+		// http://www.sqlite.org/faq.html#q11
+		String tempTableName = table + "_tmp";
+		String columsStr = Strings.join(columnsToKeep, ",", null);
+		ArrayList<String> statements = new ArrayList<String>();
+		statements.add("CREATE TEMPORARY TABLE " + tempTableName
+				+ OPENING_BRACE + columsStr + CLOSING_BRACE);
+		statements.add("INSERT INTO " + tempTableName + " SELECT " + columsStr
+				+ " FROM " + table + ";");
+		statements.add("DROP TABLE " + table + ";");
+		statements.add("CREATE TABLE " + table + OPENING_BRACE + columsStr
+				+ CLOSING_BRACE);
+		statements.add("INSERT INTO " + table + " SELECT " + columsStr
+				+ " FROM " + tempTableName + ";");
+		statements.add("DROP TABLE " + tempTableName + ";");
+		return statements;
 	}
 
 	public static String getCreateIndex(String table, boolean unique,
@@ -210,6 +236,16 @@ public final class PersistUtils implements SQL.DDL {
 		return sb.toString();
 	}
 
+	public static ArrayList<String> getTableNames(SQLiteDatabase db) {
+		return readStrings(db,
+				"SELECT name FROM sqlite_master WHERE type='table'");
+	}
+
+	public static ArrayList<String> getColumnNames(SQLiteDatabase db,
+			String table) {
+		return readStrings(db, "PRAGMA table_info(" + table + ")");
+	}
+
 	public static String getSQLCreate(String tableName,
 			FieldSpec<ColumnAnn>[] specs) {
 		StringBuilder sb = new StringBuilder();
@@ -221,11 +257,11 @@ public final class PersistUtils implements SQL.DDL {
 				// already got it
 				continue;
 			}
+			AbstractTypeHandler<?> handler = TypeHandlerRegistry
+					.getHandler(spec.field.getType());
 			sb.append(SEPARATOR);
-			String columnType = getColumnType(spec.field.getType(),
-					spec.arrCollItemType);
 			sb.append(spec.ann.name);
-			sb.append(columnType);
+			sb.append(handler.getDBColumnType());
 			if (!spec.ann.nullable) {
 				sb.append(NOT_NULL);
 			}
@@ -242,15 +278,10 @@ public final class PersistUtils implements SQL.DDL {
 		return sb.toString();
 	}
 
-	private static String getColumnType(Class<?> fieldType,
-			Class<?> arrCollItemType) {
-		AbstractTypeHandler<?> handler = TypeHandlerRegistry.getHandler(fieldType);
-		if (handler != null) {
-			return handler.getDBColumnType();
-		} else {
-			// persist any other type as blob
-			return BLOB;
-		}
+	public static String getAddColumns(String tableName,
+			FieldSpec<ColumnAnn>[] specs) {
+		// TODO
+		return null;
 	}
 
 	private static void appendForeignKeyDef(FieldSpec<ColumnAnn> spec,
@@ -263,6 +294,16 @@ public final class PersistUtils implements SQL.DDL {
 		sb.append(") REFERENCES ");
 		sb.append(foreignTableName);
 		sb.append("(").append(Column.ID).append(") ON DELETE CASCADE");
+	}
+
+	private static ArrayList<String> readStrings(SQLiteDatabase db, String query) {
+		ArrayList<String> tableNames = new ArrayList<String>();
+		Cursor c = db.rawQuery(query, null);
+		while (c.moveToNext()) {
+			tableNames.add(c.getString(0));
+		}
+		c.close();
+		return tableNames;
 	}
 
 }

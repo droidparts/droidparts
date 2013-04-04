@@ -52,6 +52,14 @@ public abstract class AbstractDBOpenHelper extends SQLiteOpenHelper implements
 
 	// helpers
 
+	protected final boolean createIndex(SQLiteDatabase db, String table,
+			boolean unique, String firstColumn, String... otherColumns) {
+		ArrayList<String> statements = new ArrayList<String>();
+		statements.add(PersistUtils.getCreateIndex(table, unique, firstColumn,
+				otherColumns));
+		return executeStatements(db, statements);
+	}
+
 	protected final boolean createTables(SQLiteDatabase db,
 			Class<? extends Entity>... entityClasses) {
 		ArrayList<String> statements = new ArrayList<String>();
@@ -63,22 +71,36 @@ public abstract class AbstractDBOpenHelper extends SQLiteOpenHelper implements
 		return executeStatements(db, statements);
 	}
 
-	protected final boolean createIndex(SQLiteDatabase db, String table,
-			boolean unique, String firstColumn, String... otherColumns) {
-		ArrayList<String> statements = new ArrayList<String>();
-		statements.add(PersistUtils.getCreateIndex(table, unique, firstColumn,
-				otherColumns));
+	protected final boolean dropTables(SQLiteDatabase db,
+			String... optionalTableNames) {
+		ArrayList<String> statements = PersistUtils.getDropTables(db,
+				optionalTableNames);
 		return executeStatements(db, statements);
 	}
 
-	protected final boolean dropTables(SQLiteDatabase db,
-			String... optionalTableNames) {
-		return PersistUtils.dropTables(db, optionalTableNames);
+	protected final boolean adjustColumnsToMatchEntities(SQLiteDatabase db,
+			Class<? extends Entity>... entityClasses) {
+		// TODO
+		// for (Class<? extends Entity> cls : entityClasses) {
+		// String tableName = getTableName(cls);
+		// FieldSpec<ColumnAnn>[] columnSpecs = getTableColumnSpecs(cls);
+		// ArrayList<String> presentColumns = PersistUtils.getColumnNames(db,
+		// tableName);
+		// ArrayList<String> columnsToCreate = new ArrayList<String>();
+		// ArrayList<String> columnsToDrop = new ArrayList<String>();
+		// PersistUtils.getAddColumns(tableName, columnSpecs);
+		// String query = PersistUtils.getSQLCreate(getTableName(cls),
+		// getTableColumnSpecs(cls));
+		// ArrayList<String> statements = PersistUtils.getDropColumns(db,
+		// table, firstColumn, otherColumns);
+		// }
+		// return executeStatements(db, statements);
+		return false;
 	}
 
 	protected final boolean executeStatements(SQLiteDatabase db,
-			ArrayList<String> queries) {
-		return PersistUtils.executeStatements(db, queries);
+			ArrayList<String> statements) {
+		return PersistUtils.executeStatements(db, statements);
 	}
 
 	//

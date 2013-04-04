@@ -165,7 +165,7 @@ public class EntityManager<EntityType extends Entity> extends
 			cv.putNull(key);
 		} else {
 			AbstractTypeHandler<T> handler = TypeHandlerRegistry
-					.getHandlerOrThrow(valueType);
+					.getHandler(valueType);
 			handler.putToContentValues(valueType, arrCollItemType, cv, key,
 					(T) value);
 		}
@@ -178,7 +178,7 @@ public class EntityManager<EntityType extends Entity> extends
 			return null;
 		} else {
 			AbstractTypeHandler<T> handler = TypeHandlerRegistry
-					.getHandlerOrThrow(valType);
+					.getHandler(valType);
 			return handler.readFromCursor(valType, arrCollItemType, cursor,
 					columnIndex);
 		}
