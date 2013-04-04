@@ -192,11 +192,60 @@ public final class PersistUtils implements SQL.DDL {
 		return statements;
 	}
 
+	public static ArrayList<String> getAddDropColumns(SQLiteDatabase db,
+			Class<? extends Entity> cls) {
+		ArrayList<String> statements = new ArrayList<String>();
+		ArrayList<FieldSpec<ColumnAnn>> columnsToAdd = new ArrayList<FieldSpec<ColumnAnn>>();
+		ArrayList<String> columnsToDrop = new ArrayList<String>();
+		String tableName = getTableName(cls);
+		FieldSpec<ColumnAnn>[] columnSpecs = FieldSpecRegistry
+				.getTableColumnSpecs(cls);
+		ArrayList<String> presentColumns = getColumnNames(db, tableName);
+		for (FieldSpec<ColumnAnn> spec : columnSpecs) {
+			if (!presentColumns.contains(spec.ann.name)) {
+				columnsToAdd.add(spec);
+			}
+		}
+		for (String column : presentColumns) {
+			boolean drop = true;
+			for (FieldSpec<ColumnAnn> spec : columnSpecs) {
+				if (column.equals(spec.ann.name)) {
+					drop = false;
+					break;
+				}
+			}
+			if (drop) {
+				columnsToDrop.add(column);
+			}
+		}
+		if (!columnsToDrop.isEmpty()) {
+			statements.addAll(getDropColumns(db, tableName,
+					columnsToDrop.toArray(new String[columnsToDrop.size()])));
+		}
+		if (!columnsToAdd.isEmpty()) {
+			statements.addAll(getAddColumns(cls, columnsToAdd));
+		}
+		return statements;
+	}
+
+	private static ArrayList<String> getAddColumns(Class<? extends Entity> cls,
+			ArrayList<FieldSpec<ColumnAnn>> specs) {
+		ArrayList<String> statements = new ArrayList<String>();
+		Entity entity = ReflectionUtils.newInstance(cls);
+		String tableName = getTableName(cls);
+		for (FieldSpec<ColumnAnn> spec : specs) {
+			Object defaultVal = ReflectionUtils.getFieldVal(entity, spec.field);
+			statements.add("ALTER TABLE " + tableName + " ADD COLUMN "
+					+ getBaseColumnDef(spec) + " DEFAULT "
+					+ String.valueOf(defaultVal) + ";");
+		}
+		return statements;
+	}
+
 	public static ArrayList<String> getDropColumns(SQLiteDatabase db,
-			String table, String firstColumn, String... otherColumns) {
+			String table, String... columns) {
 		HashSet<String> columnsToDrop = new HashSet<String>();
-		columnsToDrop.add(firstColumn);
-		columnsToDrop.addAll(Arrays.asList(otherColumns));
+		columnsToDrop.addAll(Arrays.asList(columns));
 		ArrayList<String> presentClumns = getColumnNames(db, table);
 		ArrayList<String> columnsToKeep = new ArrayList<String>();
 		for (String col : presentClumns) {
@@ -257,14 +306,8 @@ public final class PersistUtils implements SQL.DDL {
 				// already got it
 				continue;
 			}
-			AbstractTypeHandler<?> handler = TypeHandlerRegistry
-					.getHandler(spec.field.getType());
 			sb.append(SEPARATOR);
-			sb.append(spec.ann.name);
-			sb.append(handler.getDBColumnType());
-			if (!spec.ann.nullable) {
-				sb.append(NOT_NULL);
-			}
+			sb.append(getBaseColumnDef(spec));
 			if (spec.ann.unique) {
 				sb.append(UNIQUE);
 			}
@@ -278,10 +321,16 @@ public final class PersistUtils implements SQL.DDL {
 		return sb.toString();
 	}
 
-	public static String getAddColumns(String tableName,
-			FieldSpec<ColumnAnn>[] specs) {
-		// TODO
-		return null;
+	public static String getBaseColumnDef(FieldSpec<ColumnAnn> spec) {
+		StringBuilder sb = new StringBuilder();
+		sb.append(spec.ann.name);
+		AbstractTypeHandler<?> handler = TypeHandlerRegistry
+				.getHandler(spec.field.getType());
+		sb.append(handler.getDBColumnType());
+		if (!spec.ann.nullable) {
+			sb.append(NOT_NULL);
+		}
+		return sb.toString();
 	}
 
 	private static void appendForeignKeyDef(FieldSpec<ColumnAnn> spec,

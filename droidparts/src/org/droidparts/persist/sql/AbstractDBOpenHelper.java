@@ -78,24 +78,13 @@ public abstract class AbstractDBOpenHelper extends SQLiteOpenHelper implements
 		return executeStatements(db, statements);
 	}
 
-	protected final boolean adjustColumnsToMatchEntities(SQLiteDatabase db,
+	protected final boolean updateEntityTables(SQLiteDatabase db,
 			Class<? extends Entity>... entityClasses) {
-		// TODO
-		// for (Class<? extends Entity> cls : entityClasses) {
-		// String tableName = getTableName(cls);
-		// FieldSpec<ColumnAnn>[] columnSpecs = getTableColumnSpecs(cls);
-		// ArrayList<String> presentColumns = PersistUtils.getColumnNames(db,
-		// tableName);
-		// ArrayList<String> columnsToCreate = new ArrayList<String>();
-		// ArrayList<String> columnsToDrop = new ArrayList<String>();
-		// PersistUtils.getAddColumns(tableName, columnSpecs);
-		// String query = PersistUtils.getSQLCreate(getTableName(cls),
-		// getTableColumnSpecs(cls));
-		// ArrayList<String> statements = PersistUtils.getDropColumns(db,
-		// table, firstColumn, otherColumns);
-		// }
-		// return executeStatements(db, statements);
-		return false;
+		ArrayList<String> statements = new ArrayList<String>();
+		for (Class<? extends Entity> cls : entityClasses) {
+			statements.addAll(PersistUtils.getAddDropColumns(db, cls));
+		}
+		return executeStatements(db, statements);
 	}
 
 	protected final boolean executeStatements(SQLiteDatabase db,
