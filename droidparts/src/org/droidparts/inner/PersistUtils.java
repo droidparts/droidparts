@@ -192,7 +192,7 @@ public final class PersistUtils implements SQL.DDL {
 		return statements;
 	}
 
-	public static ArrayList<String> getAddDropColumns(SQLiteDatabase db,
+	public static ArrayList<String> getMigrateEntitities(SQLiteDatabase db,
 			Class<? extends Entity> cls) {
 		ArrayList<String> statements = new ArrayList<String>();
 		ArrayList<FieldSpec<ColumnAnn>> columnsToAdd = new ArrayList<FieldSpec<ColumnAnn>>();

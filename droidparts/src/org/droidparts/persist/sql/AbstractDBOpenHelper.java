@@ -78,11 +78,11 @@ public abstract class AbstractDBOpenHelper extends SQLiteOpenHelper implements
 		return executeStatements(db, statements);
 	}
 
-	protected final boolean updateEntityTables(SQLiteDatabase db,
+	protected final boolean migrateEntities(SQLiteDatabase db,
 			Class<? extends Entity>... entityClasses) {
 		ArrayList<String> statements = new ArrayList<String>();
 		for (Class<? extends Entity> cls : entityClasses) {
-			statements.addAll(PersistUtils.getAddDropColumns(db, cls));
+			statements.addAll(PersistUtils.getMigrateEntitities(db, cls));
 		}
 		return executeStatements(db, statements);
 	}
