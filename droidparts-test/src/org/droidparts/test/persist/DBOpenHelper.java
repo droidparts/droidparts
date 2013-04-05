@@ -1,6 +1,6 @@
 package org.droidparts.test.persist;
 
-import org.droidparts.persist.sql.AbstractDBOpenHelper2;
+import org.droidparts.persist.sql.AbstractDBOpenHelper;
 import org.droidparts.test.model.Album;
 import org.droidparts.test.model.AlbumToTag;
 import org.droidparts.test.model.Primitives;
@@ -10,7 +10,7 @@ import org.droidparts.test.model.Track;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 
-public class DBOpenHelper extends AbstractDBOpenHelper2 implements DB {
+public class DBOpenHelper extends AbstractDBOpenHelper implements DB {
 
 	public DBOpenHelper(Context ctx) {
 		super(ctx, null, 1);
