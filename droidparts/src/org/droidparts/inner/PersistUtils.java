@@ -253,10 +253,9 @@ public final class PersistUtils implements SQL.DDL {
 		StringBuilder sb = new StringBuilder();
 		sb.append(ALTER_TABLE).append(table);
 		sb.append(ADD_COLUMN).append(name).append(type);
-		if (nullable) {
-			sb.append(DEFAULT).append(defaultVal);
-		} else {
+		if (!nullable) {
 			sb.append(NOT_NULL);
+			sb.append(DEFAULT).append(defaultVal);
 		}
 		sb.append(";");
 		return sb.toString();
