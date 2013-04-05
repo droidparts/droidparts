@@ -26,7 +26,7 @@ import android.graphics.Bitmap;
 import android.graphics.Bitmap.CompressFormat;
 import android.graphics.BitmapFactory;
 
-public class BitmapHandler extends AbstractTypeHandler<Bitmap> {
+public class BitmapHandler extends TypeHandler<Bitmap> {
 
 	@Override
 	public boolean canHandle(Class<?> cls) {

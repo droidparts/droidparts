@@ -38,7 +38,7 @@ import org.json.JSONObject;
 import android.content.ContentValues;
 import android.database.Cursor;
 
-public class ArrayCollectionHandler extends AbstractTypeHandler<Object> {
+public class ArrayCollectionHandler extends TypeHandler<Object> {
 
 	// ASCII RS (record separator), '|' for readability
 	private static final String SEP = "|" + (char) 30;
@@ -63,7 +63,7 @@ public class ArrayCollectionHandler extends AbstractTypeHandler<Object> {
 	@Override
 	public <V> Object convertForJSON(Class<Object> valType,
 			Class<V> arrCollItemType, Object val) {
-		AbstractTypeHandler<V> handler = TypeHandlerRegistry
+		TypeHandler<V> handler = TypeHandlerRegistry
 				.getHandler(arrCollItemType);
 		ArrayList<V> list = arrOrCollToList(valType, arrCollItemType, val);
 		JSONArray vals = new JSONArray();
@@ -127,7 +127,7 @@ public class ArrayCollectionHandler extends AbstractTypeHandler<Object> {
 				for (int i = 0; i < arr.length; i++) {
 					arr2[i] = arr[i].toString();
 				}
-				AbstractTypeHandler<V> handler = TypeHandlerRegistry
+				TypeHandler<V> handler = TypeHandlerRegistry
 						.getHandler(arrCollItemType);
 				return handler.parseTypeArr(arrCollItemType, arr2);
 			}
@@ -140,7 +140,7 @@ public class ArrayCollectionHandler extends AbstractTypeHandler<Object> {
 	public <V> void putToContentValues(Class<Object> valueType,
 			Class<V> arrCollItemType, ContentValues cv, String key, Object val)
 			throws IllegalArgumentException {
-		AbstractTypeHandler<V> handler = TypeHandlerRegistry
+		TypeHandler<V> handler = TypeHandlerRegistry
 				.getHandler(arrCollItemType);
 		ArrayList<V> list = arrOrCollToList(valueType, arrCollItemType, val);
 		ArrayList<Object> vals = new ArrayList<Object>();
@@ -156,7 +156,7 @@ public class ArrayCollectionHandler extends AbstractTypeHandler<Object> {
 	public <V> Object readFromCursor(Class<Object> valType,
 			Class<V> arrCollItemType, Cursor cursor, int columnIndex)
 			throws IllegalArgumentException {
-		AbstractTypeHandler<V> handler = TypeHandlerRegistry
+		TypeHandler<V> handler = TypeHandlerRegistry
 				.getHandler(arrCollItemType);
 		String str = cursor.getString(columnIndex);
 		String[] parts = (str.length() > 0) ? str.split("\\" + SEP)

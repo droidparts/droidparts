@@ -1,6 +1,5 @@
 package org.droidparts.test.persist;
 
-import org.droidparts.model.Entity;
 import org.droidparts.persist.sql.AbstractDBOpenHelper2;
 import org.droidparts.test.model.Album;
 import org.droidparts.test.model.AlbumToTag;
@@ -17,15 +16,11 @@ public class DBOpenHelper extends AbstractDBOpenHelper2 implements DB {
 		super(ctx, null, 1);
 	}
 
-	@Override
 	@SuppressWarnings("unchecked")
-	protected Class<? extends Entity>[] getEntityClasses() {
-		return new Class[] { Primitives.class, Tag.class, Album.class,
-				Track.class, AlbumToTag.class };
-	}
-
 	@Override
-	protected void onCreateExtra(SQLiteDatabase db) {
+	protected void onCreateTables(SQLiteDatabase db) {
+		createTables(db, Primitives.class, Tag.class, Album.class, Track.class,
+				AlbumToTag.class);
 		createIndex(db, Table.ALBUM_TO_TAG, true, Column.ALBUM_ID,
 				Column.TAG_ID);
 	}

@@ -32,7 +32,7 @@ import org.droidparts.inner.ReflectionUtils;
 import org.droidparts.inner.TypeHandlerRegistry;
 import org.droidparts.inner.ann.FieldSpec;
 import org.droidparts.inner.ann.sql.ColumnAnn;
-import org.droidparts.inner.handler.AbstractTypeHandler;
+import org.droidparts.inner.handler.TypeHandler;
 import org.droidparts.model.Entity;
 
 import android.content.ContentValues;
@@ -164,7 +164,7 @@ public class EntityManager<EntityType extends Entity> extends
 		if (value == null) {
 			cv.putNull(key);
 		} else {
-			AbstractTypeHandler<T> handler = TypeHandlerRegistry
+			TypeHandler<T> handler = TypeHandlerRegistry
 					.getHandler(valueType);
 			handler.putToContentValues(valueType, arrCollItemType, cv, key,
 					(T) value);
@@ -177,7 +177,7 @@ public class EntityManager<EntityType extends Entity> extends
 		if (cursor.isNull(columnIndex)) {
 			return null;
 		} else {
-			AbstractTypeHandler<T> handler = TypeHandlerRegistry
+			TypeHandler<T> handler = TypeHandlerRegistry
 					.getHandler(valType);
 			return handler.readFromCursor(valType, arrCollItemType, cursor,
 					columnIndex);

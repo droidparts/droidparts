@@ -24,7 +24,7 @@ import org.json.JSONObject;
 import android.content.ContentValues;
 import android.database.Cursor;
 
-public abstract class AbstractTypeHandler<T> implements SQL.DDL {
+public abstract class TypeHandler<T> implements SQL.DDL {
 
 	public abstract boolean canHandle(Class<?> cls);
 

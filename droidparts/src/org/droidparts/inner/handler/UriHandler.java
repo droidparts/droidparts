@@ -25,7 +25,7 @@ import android.content.ContentValues;
 import android.database.Cursor;
 import android.net.Uri;
 
-public class UriHandler extends AbstractTypeHandler<Uri> {
+public class UriHandler extends TypeHandler<Uri> {
 
 	@Override
 	public boolean canHandle(Class<?> cls) {

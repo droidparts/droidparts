@@ -24,7 +24,7 @@ import org.json.JSONObject;
 import android.content.ContentValues;
 import android.database.Cursor;
 
-public class JSONObjectHandler extends AbstractTypeHandler<JSONObject> {
+public class JSONObjectHandler extends TypeHandler<JSONObject> {
 
 	@Override
 	public boolean canHandle(Class<?> cls) {

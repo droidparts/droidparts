@@ -26,7 +26,7 @@ import org.json.JSONObject;
 import android.content.ContentValues;
 import android.database.Cursor;
 
-public class ShortHandler extends AbstractTypeHandler<Short> {
+public class ShortHandler extends TypeHandler<Short> {
 
 	@Override
 	public boolean canHandle(Class<?> cls) {

@@ -42,9 +42,7 @@ public abstract class AbstractDBOpenHelper extends SQLiteOpenHelper implements
 		return ctx;
 	}
 
-	protected abstract Class<? extends Entity>[] getEntityClasses();
-
-	protected void onCreateExtra(SQLiteDatabase db) {
+	protected void onCreateTables(SQLiteDatabase db) {
 	}
 
 	protected void onOpenExtra(SQLiteDatabase db) {
@@ -97,8 +95,7 @@ public abstract class AbstractDBOpenHelper extends SQLiteOpenHelper implements
 	@Override
 	public final void onCreate(SQLiteDatabase db) {
 		onOpen(db);
-		createTables(db, getEntityClasses());
-		onCreateExtra(db);
+		onCreateTables(db);
 	}
 
 	@Override
