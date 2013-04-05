@@ -22,7 +22,6 @@ import static org.droidparts.util.Strings.join;
 import static org.json.JSONObject.NULL;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.concurrent.Callable;
@@ -35,10 +34,10 @@ import org.droidparts.inner.handler.AbstractTypeHandler;
 import org.droidparts.model.Entity;
 import org.droidparts.persist.sql.AbstractEntityManager;
 import org.droidparts.util.L;
-import org.droidparts.util.Strings;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteDatabase;
@@ -167,7 +166,7 @@ public final class PersistUtils implements SQL.DDL {
 			@Override
 			public Boolean call() throws Exception {
 				for (String statement : statements) {
-					L.d(statement);
+					L.i(statement);
 					db.execSQL(statement);
 				}
 				return Boolean.TRUE;
@@ -192,36 +191,8 @@ public final class PersistUtils implements SQL.DDL {
 		return statements;
 	}
 
-	public static ArrayList<String> getDropObsoleteColumns(SQLiteDatabase db,
-			Class<? extends Entity> cls) {
-		String tableName = getTableName(cls);
-		FieldSpec<ColumnAnn>[] columnSpecs = FieldSpecRegistry
-				.getTableColumnSpecs(cls);
-		ArrayList<String> presentColumns = getColumnNames(db, tableName);
-
-		ArrayList<String> columns = new ArrayList<String>();
-		for (String column : presentColumns) {
-			boolean drop = true;
-			for (FieldSpec<ColumnAnn> spec : columnSpecs) {
-				if (column.equals(spec.ann.name)) {
-					drop = false;
-					break;
-				}
-			}
-			if (drop) {
-				columns.add(column);
-			}
-		}
-
-		ArrayList<String> statements = new ArrayList<String>();
-		if (!columns.isEmpty()) {
-			String[] arr = columns.toArray(new String[columns.size()]);
-			statements.addAll(getDropColumns(db, tableName, arr));
-		}
-		return statements;
-	}
-
-	public static ArrayList<String> getAddMissingColumns(SQLiteDatabase db,
+	@SuppressWarnings("unchecked")
+	public static <T> ArrayList<String> getAddMissingColumns(SQLiteDatabase db,
 			Class<? extends Entity> cls) {
 		String tableName = getTableName(cls);
 		FieldSpec<ColumnAnn>[] columnSpecs = FieldSpecRegistry
@@ -238,9 +209,15 @@ public final class PersistUtils implements SQL.DDL {
 		ArrayList<String> statements = new ArrayList<String>();
 		for (FieldSpec<ColumnAnn> spec : columns) {
 			Entity entity = ReflectionUtils.newInstance(cls);
-			AbstractTypeHandler<?> handler = TypeHandlerRegistry
+			AbstractTypeHandler<T> handler = (AbstractTypeHandler<T>) TypeHandlerRegistry
 					.getHandler(spec.field.getType());
 			Object defaultVal = ReflectionUtils.getFieldVal(entity, spec.field);
+			//
+			ContentValues cv = new ContentValues();
+			handler.putToContentValues((Class<T>) spec.field.getType(),
+					spec.arrCollItemType, cv, "key", (T) defaultVal);
+			defaultVal = cv.get("key");
+			//
 			String statement = getAddColumn(tableName, spec.ann.name,
 					handler.getDBColumnType(), spec.ann.nullable, defaultVal);
 			statements.add(statement);
@@ -259,34 +236,6 @@ public final class PersistUtils implements SQL.DDL {
 		}
 		sb.append(";");
 		return sb.toString();
-	}
-
-	public static ArrayList<String> getDropColumns(SQLiteDatabase db,
-			String table, String... columns) {
-		HashSet<String> columnsToDrop = new HashSet<String>();
-		columnsToDrop.addAll(Arrays.asList(columns));
-		ArrayList<String> presentClumns = getColumnNames(db, table);
-		ArrayList<String> columnsToKeep = new ArrayList<String>();
-		for (String col : presentClumns) {
-			if (!columnsToDrop.contains(col)) {
-				columnsToKeep.add(col);
-			}
-		}
-		// http://www.sqlite.org/faq.html#q11
-		String tempTableName = table + "_tmp";
-		String columsStr = Strings.join(columnsToKeep, ", ", null);
-		ArrayList<String> statements = new ArrayList<String>();
-		statements.add("CREATE TEMPORARY TABLE " + tempTableName
-				+ OPENING_BRACE + columsStr + CLOSING_BRACE);
-		statements.add("INSERT INTO " + tempTableName + " SELECT " + columsStr
-				+ " FROM " + table + ";");
-		statements.add("DROP TABLE " + table + ";");
-		statements.add("CREATE TABLE " + table + OPENING_BRACE + columsStr
-				+ CLOSING_BRACE);
-		statements.add("INSERT INTO " + table + " SELECT " + columsStr
-				+ " FROM " + tempTableName + ";");
-		statements.add("DROP TABLE " + tempTableName + ";");
-		return statements;
 	}
 
 	public static String getCreateIndex(String table, boolean unique,

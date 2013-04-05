@@ -71,13 +71,6 @@ public abstract class AbstractDBOpenHelper extends SQLiteOpenHelper implements
 		return executeStatements(db, statements);
 	}
 
-	protected final boolean dropTables(SQLiteDatabase db,
-			String... optionalTableNames) {
-		ArrayList<String> statements = PersistUtils.getDropTables(db,
-				optionalTableNames);
-		return executeStatements(db, statements);
-	}
-
 	protected final boolean addMissingColumns(SQLiteDatabase db,
 			Class<? extends Entity>... entityClasses) {
 		ArrayList<String> statements = new ArrayList<String>();
@@ -87,12 +80,10 @@ public abstract class AbstractDBOpenHelper extends SQLiteOpenHelper implements
 		return executeStatements(db, statements);
 	}
 
-	protected final boolean dropObsoleteColumns(SQLiteDatabase db,
-			Class<? extends Entity>... entityClasses) {
-		ArrayList<String> statements = new ArrayList<String>();
-		for (Class<? extends Entity> cls : entityClasses) {
-			statements.addAll(PersistUtils.getDropObsoleteColumns(db, cls));
-		}
+	protected final boolean dropTables(SQLiteDatabase db,
+			String... optionalTableNames) {
+		ArrayList<String> statements = PersistUtils.getDropTables(db,
+				optionalTableNames);
 		return executeStatements(db, statements);
 	}
 
