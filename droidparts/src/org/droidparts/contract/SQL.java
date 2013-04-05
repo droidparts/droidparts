@@ -43,6 +43,9 @@ public interface SQL {
 
 	public interface DDL {
 		String CREATE_TABLE = "CREATE TABLE ";
+		String ALTER_TABLE = "ALTER TABLE ";
+
+		String ADD_COLUMN = " ADD COLUMN ";
 
 		String CREATE_INDEX = "CREATE INDEX ";
 		String CREATE_UNIQUE_INDEX = "CREATE UNIQUE INDEX ";
@@ -59,6 +62,7 @@ public interface SQL {
 
 		String PK = DB.Column.ID + " INTEGER PRIMARY KEY";
 		String NOT_NULL = " NOT NULL";
+		String DEFAULT = " DEFAULT ";
 		String UNIQUE = " UNIQUE";
 	}
 

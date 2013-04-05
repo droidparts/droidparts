@@ -124,7 +124,7 @@ public class Select<EntityType extends Entity> extends Statement<EntityType>
 			groupByStr = join(groupBy, ", ", null);
 		}
 		orderByStr = null;
-		if (orderBy.size() > 0) {
+		if (!orderBy.isEmpty()) {
 			ArrayList<String> list = new ArrayList<String>();
 			for (String key : orderBy.keySet()) {
 				list.add(key + (orderBy.get(key) ? ASC : DESC));
