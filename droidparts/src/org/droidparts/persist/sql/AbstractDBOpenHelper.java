@@ -42,8 +42,7 @@ public abstract class AbstractDBOpenHelper extends SQLiteOpenHelper implements
 		return ctx;
 	}
 
-	protected void onCreateTables(SQLiteDatabase db) {
-	}
+	protected abstract void onCreateTables(SQLiteDatabase db);
 
 	protected void onOpenExtra(SQLiteDatabase db) {
 	}
