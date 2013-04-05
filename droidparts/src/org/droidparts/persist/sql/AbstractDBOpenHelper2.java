@@ -50,6 +50,7 @@ public abstract class AbstractDBOpenHelper2 extends AbstractDBOpenHelper {
 				fileTo.delete();
 			}
 			IOUtils.copy(fileFrom, fileTo);
+			L.i("Copied db to '%s'.", fileTo.getAbsolutePath());
 		} else {
 			L.e("No DB file at %s.", dbFilePath);
 		}
