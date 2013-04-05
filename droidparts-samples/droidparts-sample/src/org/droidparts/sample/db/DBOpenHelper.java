@@ -1,7 +1,7 @@
 package org.droidparts.sample.db;
 
-import org.droidparts.model.Entity;
 import org.droidparts.persist.sql.AbstractDBOpenHelper;
+import org.droidparts.sample.model.Entry;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
@@ -18,7 +18,7 @@ public class DBOpenHelper extends AbstractDBOpenHelper {
 	@SuppressWarnings("unchecked")
 	@Override
 	protected void onCreateTables(SQLiteDatabase db) {
-		createTables(db, Entity.class);
+		createTables(db, Entry.class);
 	}
 
 	@Override
