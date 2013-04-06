@@ -122,7 +122,7 @@ public class IOUtils {
 
 	}
 
-	public void dumpDBToCacheDir(Context ctx, SQLiteDatabase db) {
+	public static void dumpDBToCacheDir(Context ctx, SQLiteDatabase db) {
 		String dbFilePath = db.getPath();
 		String dbFileName = dbFilePath.substring(dbFilePath.lastIndexOf('/',
 				dbFilePath.length()));
