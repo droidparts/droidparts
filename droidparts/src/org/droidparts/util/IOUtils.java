@@ -32,7 +32,6 @@ import java.net.URLEncoder;
 import java.nio.channels.FileChannel;
 import java.util.ArrayList;
 
-
 public class IOUtils {
 
 	public static String urlEncode(String str) {
@@ -105,6 +104,9 @@ public class IOUtils {
 	}
 
 	public static void copy(File fileFrom, File fileTo) throws IOException {
+		if (fileTo.exists()) {
+			fileTo.delete();
+		}
 		FileChannel src = null;
 		FileChannel dst = null;
 		try {

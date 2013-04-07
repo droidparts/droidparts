@@ -16,9 +16,8 @@
 package org.droidparts.inner;
 
 import java.util.HashMap;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 
-import org.droidparts.inner.handler.AbstractTypeHandler;
 import org.droidparts.inner.handler.ArrayCollectionHandler;
 import org.droidparts.inner.handler.BitmapHandler;
 import org.droidparts.inner.handler.BooleanHandler;
@@ -37,14 +36,15 @@ import org.droidparts.inner.handler.LongHandler;
 import org.droidparts.inner.handler.ModelHandler;
 import org.droidparts.inner.handler.ShortHandler;
 import org.droidparts.inner.handler.StringHandler;
+import org.droidparts.inner.handler.TypeHandler;
 import org.droidparts.inner.handler.UUIDHandler;
 import org.droidparts.inner.handler.UriHandler;
 
 public class TypeHandlerRegistry {
 
-	private static final HashSet<AbstractTypeHandler<?>> handlers = new HashSet<AbstractTypeHandler<?>>();
+	private static final LinkedHashSet<TypeHandler<?>> handlers = new LinkedHashSet<TypeHandler<?>>();
 
-	private static final HashMap<Class<?>, AbstractTypeHandler<?>> map = new HashMap<Class<?>, AbstractTypeHandler<?>>();
+	private static final HashMap<Class<?>, TypeHandler<?>> map = new HashMap<Class<?>, TypeHandler<?>>();
 
 	static {
 		handlers.add(new BooleanHandler());
@@ -70,11 +70,11 @@ public class TypeHandlerRegistry {
 	}
 
 	@SuppressWarnings("unchecked")
-	public static <T> AbstractTypeHandler<T> getHandler(Class<T> cls)
+	public static <T> TypeHandler<T> getHandler(Class<T> cls)
 			throws IllegalArgumentException {
-		AbstractTypeHandler<?> handler = map.get(cls);
+		TypeHandler<?> handler = map.get(cls);
 		if (handler == null) {
-			for (AbstractTypeHandler<?> h : handlers) {
+			for (TypeHandler<?> h : handlers) {
 				if (h.canHandle(cls)) {
 					handler = h;
 					map.put(cls, handler);
@@ -82,17 +82,16 @@ public class TypeHandlerRegistry {
 				}
 			}
 		}
-		return (AbstractTypeHandler<T>) handler;
-	}
-
-	public static <T> AbstractTypeHandler<T> getHandlerOrThrow(Class<T> cls) {
-		AbstractTypeHandler<T> handler = getHandler(cls);
 		if (handler != null) {
-			return handler;
+			return (TypeHandler<T>) handler;
 		} else {
 			throw new IllegalArgumentException("No handler for '"
 					+ cls.getName() + "'.");
 		}
+	}
+
+	public static void addTypeHandler(TypeHandler<?> handler) {
+		handlers.add(handler);
 	}
 
 	private TypeHandlerRegistry() {

@@ -1,6 +1,5 @@
 package org.droidparts.sample.db;
 
-import org.droidparts.model.Entity;
 import org.droidparts.persist.sql.AbstractDBOpenHelper;
 import org.droidparts.sample.model.Entry;
 
@@ -16,11 +15,10 @@ public class DBOpenHelper extends AbstractDBOpenHelper {
 		super(ctx, DB_FILE, DB_VER);
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
-	protected Class<? extends Entity>[] getEntityClasses() {
-		@SuppressWarnings("unchecked")
-		Class<? extends Entity>[] arr = new Class[] { Entry.class };
-		return arr;
+	protected void onCreateTables(SQLiteDatabase db) {
+		createTables(db, Entry.class);
 	}
 
 	@Override

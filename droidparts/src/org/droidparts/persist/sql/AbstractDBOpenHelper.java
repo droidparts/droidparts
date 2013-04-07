@@ -42,15 +42,20 @@ public abstract class AbstractDBOpenHelper extends SQLiteOpenHelper implements
 		return ctx;
 	}
 
-	protected abstract Class<? extends Entity>[] getEntityClasses();
-
-	protected void onCreateExtra(SQLiteDatabase db) {
-	}
+	protected abstract void onCreateTables(SQLiteDatabase db);
 
 	protected void onOpenExtra(SQLiteDatabase db) {
 	}
 
 	// helpers
+
+	protected final boolean createIndex(SQLiteDatabase db, String table,
+			boolean unique, String firstColumn, String... otherColumns) {
+		ArrayList<String> statements = new ArrayList<String>();
+		statements.add(PersistUtils.getCreateIndex(table, unique, firstColumn,
+				otherColumns));
+		return executeStatements(db, statements);
+	}
 
 	protected final boolean createTables(SQLiteDatabase db,
 			Class<? extends Entity>... entityClasses) {
@@ -63,22 +68,25 @@ public abstract class AbstractDBOpenHelper extends SQLiteOpenHelper implements
 		return executeStatements(db, statements);
 	}
 
-	protected final boolean createIndex(SQLiteDatabase db, String table,
-			boolean unique, String firstColumn, String... otherColumns) {
+	protected final boolean addMissingColumns(SQLiteDatabase db,
+			Class<? extends Entity>... entityClasses) {
 		ArrayList<String> statements = new ArrayList<String>();
-		statements.add(PersistUtils.getCreateIndex(table, unique, firstColumn,
-				otherColumns));
+		for (Class<? extends Entity> cls : entityClasses) {
+			statements.addAll(PersistUtils.getAddMissingColumns(db, cls));
+		}
 		return executeStatements(db, statements);
 	}
 
 	protected final boolean dropTables(SQLiteDatabase db,
 			String... optionalTableNames) {
-		return PersistUtils.dropTables(db, optionalTableNames);
+		ArrayList<String> statements = PersistUtils.getDropTables(db,
+				optionalTableNames);
+		return executeStatements(db, statements);
 	}
 
 	protected final boolean executeStatements(SQLiteDatabase db,
-			ArrayList<String> queries) {
-		return PersistUtils.executeStatements(db, queries);
+			ArrayList<String> statements) {
+		return PersistUtils.executeStatements(db, statements);
 	}
 
 	//
@@ -86,8 +94,7 @@ public abstract class AbstractDBOpenHelper extends SQLiteOpenHelper implements
 	@Override
 	public final void onCreate(SQLiteDatabase db) {
 		onOpen(db);
-		createTables(db, getEntityClasses());
-		onCreateExtra(db);
+		onCreateTables(db);
 	}
 
 	@Override

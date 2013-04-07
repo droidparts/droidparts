@@ -26,7 +26,7 @@ import org.json.JSONObject;
 import android.content.ContentValues;
 import android.database.Cursor;
 
-public class FloatHandler extends AbstractTypeHandler<Float> {
+public class FloatHandler extends TypeHandler<Float> {
 
 	@Override
 	public boolean canHandle(Class<?> cls) {

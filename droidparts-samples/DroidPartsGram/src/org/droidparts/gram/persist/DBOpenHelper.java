@@ -18,7 +18,6 @@ package org.droidparts.gram.persist;
 import org.droidparts.gram.contract.DB;
 import org.droidparts.gram.model.Filter;
 import org.droidparts.gram.model.Image;
-import org.droidparts.model.Entity;
 import org.droidparts.persist.sql.AbstractDBOpenHelper;
 
 import android.content.Context;
@@ -30,15 +29,10 @@ public class DBOpenHelper extends AbstractDBOpenHelper {
 		super(ctx, DB.FILE, DB.VERSION);
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
-	protected Class<? extends Entity>[] getEntityClasses() {
-		@SuppressWarnings("unchecked")
-		Class<? extends Entity>[] arr = new Class[] { Filter.class, Image.class };
-		return arr;
-	}
-
-	@Override
-	protected void onCreateExtra(SQLiteDatabase db) {
+	protected void onCreateTables(SQLiteDatabase db) {
+		createTables(db, Filter.class, Image.class);
 		createIndex(db, DB.Table.IMAGES, false, DB.Column.CAPTION);
 	}
 

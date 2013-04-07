@@ -29,7 +29,7 @@ import org.droidparts.inner.PersistUtils;
 import org.droidparts.inner.TypeHandlerRegistry;
 import org.droidparts.inner.ann.FieldSpec;
 import org.droidparts.inner.ann.json.KeyAnn;
-import org.droidparts.inner.handler.AbstractTypeHandler;
+import org.droidparts.inner.handler.TypeHandler;
 import org.droidparts.model.Model;
 import org.droidparts.util.L;
 import org.json.JSONArray;
@@ -99,8 +99,8 @@ public class JSONSerializer<ModelType extends Model> {
 		if (val == null) {
 			obj.put(key, NULL);
 		} else {
-			AbstractTypeHandler<T> handler = TypeHandlerRegistry
-					.getHandlerOrThrow(valType);
+			TypeHandler<T> handler = TypeHandlerRegistry
+					.getHandler(valType);
 			@SuppressWarnings("unchecked")
 			Object jsonVal = handler.convertForJSON(valType, arrCollItemType,
 					(T) val);
@@ -115,8 +115,8 @@ public class JSONSerializer<ModelType extends Model> {
 		if (NULL.equals(jsonVal)) {
 			return jsonVal;
 		} else {
-			AbstractTypeHandler<T> handler = TypeHandlerRegistry
-					.getHandlerOrThrow(valType);
+			TypeHandler<T> handler = TypeHandlerRegistry
+					.getHandler(valType);
 			return handler.readFromJSON(valType, arrCollItemType, obj, key);
 		}
 	}

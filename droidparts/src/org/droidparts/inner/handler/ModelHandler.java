@@ -24,7 +24,7 @@ import org.json.JSONObject;
 import android.content.ContentValues;
 import android.database.Cursor;
 
-public class ModelHandler extends AbstractTypeHandler<Model> {
+public class ModelHandler extends TypeHandler<Model> {
 
 	@Override
 	public boolean canHandle(Class<?> cls) {

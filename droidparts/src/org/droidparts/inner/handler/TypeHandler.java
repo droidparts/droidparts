@@ -24,7 +24,7 @@ import org.json.JSONObject;
 import android.content.ContentValues;
 import android.database.Cursor;
 
-public abstract class AbstractTypeHandler<T> implements SQL.DDL {
+public abstract class TypeHandler<T> implements SQL.DDL {
 
 	public abstract boolean canHandle(Class<?> cls);
 
@@ -53,16 +53,11 @@ public abstract class AbstractTypeHandler<T> implements SQL.DDL {
 	// say hello to arrays of primitives
 	public abstract Object parseTypeArr(Class<T> valType, String[] arr);
 
-	public ArrayList<T> parseTypeColl(Class<T> valType, String[] arr)
+	public final ArrayList<T> parseTypeColl(Class<T> valType, String[] arr)
 			throws IllegalArgumentException {
 		ArrayList<T> list = new ArrayList<T>();
 		for (String str : arr) {
-			try {
-				list.add(parseFromString(valType, null, str));
-			} catch (Exception e) {
-				throw new IllegalArgumentException("Unable to convert '" + str
-						+ "' to " + valType.getSimpleName() + ".");
-			}
+			list.add(parseFromString(valType, null, str));
 		}
 		return list;
 	}
