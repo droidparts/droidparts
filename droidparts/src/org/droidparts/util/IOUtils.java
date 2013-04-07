@@ -32,9 +32,6 @@ import java.net.URLEncoder;
 import java.nio.channels.FileChannel;
 import java.util.ArrayList;
 
-import android.content.Context;
-import android.database.sqlite.SQLiteDatabase;
-
 public class IOUtils {
 
 	public static String urlEncode(String str) {
@@ -120,19 +117,6 @@ public class IOUtils {
 			silentlyClose(src, dst);
 		}
 
-	}
-
-	public static void dumpDBToCacheDir(Context ctx, SQLiteDatabase db) {
-		String dbFilePath = db.getPath();
-		String dbFileName = dbFilePath.substring(dbFilePath.lastIndexOf('/',
-				dbFilePath.length()));
-		File fileTo = new File(ctx.getExternalCacheDir(), dbFileName);
-		try {
-			IOUtils.copy(new File(dbFilePath), fileTo);
-			L.i("Copied DB file to '%s'.", fileTo.getAbsolutePath());
-		} catch (IOException e) {
-			L.w(e);
-		}
 	}
 
 }
