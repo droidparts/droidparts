@@ -203,7 +203,7 @@ public final class FieldSpecRegistry {
 				}
 			} else if (spec.ann.eager) {
 				if (!isEntity(fieldType) && !isEntity(spec.componentType)) {
-					L.wtf("%s can't be eager.", fieldType.getSimpleName());
+					L.w("%s can't be eager.", fieldType.getSimpleName());
 					spec.ann.eager = false;
 				}
 			}
