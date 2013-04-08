@@ -15,8 +15,6 @@
  */
 package org.droidparts.inner.handler;
 
-import java.util.ArrayList;
-
 import org.droidparts.inner.TypeHelper;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -65,12 +63,6 @@ public class UriHandler extends TypeHandler<Uri> {
 	public <V> Uri readFromCursor(Class<Uri> valType, Class<V> arrCollItemType,
 			Cursor cursor, int columnIndex) {
 		return Uri.parse(cursor.getString(columnIndex));
-	}
-
-	@Override
-	public Object parseTypeArr(Class<Uri> valType, String[] arr) {
-		ArrayList<Uri> list = parseTypeColl(valType, arr);
-		return list.toArray(new Uri[list.size()]);
 	}
 
 }

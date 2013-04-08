@@ -15,7 +15,6 @@
  */
 package org.droidparts.inner.handler;
 
-import java.util.ArrayList;
 import java.util.UUID;
 
 import org.droidparts.inner.TypeHelper;
@@ -65,12 +64,6 @@ public class UUIDHandler extends TypeHandler<UUID> {
 	public <V> UUID readFromCursor(Class<UUID> valType,
 			Class<V> arrCollItemType, Cursor cursor, int columnIndex) {
 		return UUID.fromString(cursor.getString(columnIndex));
-	}
-
-	@Override
-	public Object parseTypeArr(Class<UUID> valType, String[] arr) {
-		ArrayList<UUID> list = parseTypeColl(valType, arr);
-		return list.toArray(new UUID[list.size()]);
 	}
 
 }

@@ -15,7 +15,6 @@
  */
 package org.droidparts.inner.handler;
 
-import java.util.ArrayList;
 import java.util.Date;
 
 import org.droidparts.inner.TypeHelper;
@@ -69,12 +68,6 @@ public class DateHandler extends TypeHandler<Date> {
 	public <V> Date readFromCursor(Class<Date> valType,
 			Class<V> arrCollItemType, Cursor cursor, int columnIndex) {
 		return new Date(cursor.getLong(columnIndex));
-	}
-
-	@Override
-	public Object parseTypeArr(Class<Date> valType, String[] arr) {
-		ArrayList<Date> list = parseTypeColl(valType, arr);
-		return list.toArray(new Date[list.size()]);
 	}
 
 }

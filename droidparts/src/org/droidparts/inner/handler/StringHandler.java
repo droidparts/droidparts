@@ -59,9 +59,4 @@ public class StringHandler extends TypeHandler<String> {
 		return cursor.getString(columnIndex);
 	}
 
-	@Override
-	public Object parseTypeArr(Class<String> valType, String[] arr) {
-		return arr;
-	}
-
 }

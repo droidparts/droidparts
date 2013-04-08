@@ -15,8 +15,6 @@
  */
 package org.droidparts.inner.handler;
 
-import java.util.ArrayList;
-
 import org.droidparts.inner.TypeHelper;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -68,19 +66,12 @@ public class JSONObjectHandler extends TypeHandler<JSONObject> {
 
 	@Override
 	public <V> JSONObject readFromCursor(Class<JSONObject> valType,
-			Class<V> arrCollItemType, Cursor cursor, int columnIndex)
-			throws IllegalArgumentException {
+			Class<V> arrCollItemType, Cursor cursor, int columnIndex) {
 		try {
 			return new JSONObject(cursor.getString(columnIndex));
 		} catch (JSONException e) {
 			throw new IllegalArgumentException(e);
 		}
-	}
-
-	@Override
-	public Object parseTypeArr(Class<JSONObject> valType, String[] arr) {
-		ArrayList<JSONObject> list = parseTypeColl(valType, arr);
-		return list.toArray(new JSONObject[list.size()]);
 	}
 
 }

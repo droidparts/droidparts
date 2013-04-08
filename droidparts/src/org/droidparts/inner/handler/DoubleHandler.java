@@ -15,10 +15,6 @@
  */
 package org.droidparts.inner.handler;
 
-import static org.droidparts.util.Arrays2.toPrimitive;
-
-import java.util.ArrayList;
-
 import org.droidparts.inner.TypeHelper;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -61,13 +57,6 @@ public class DoubleHandler extends TypeHandler<Double> {
 	public <V> Double readFromCursor(Class<Double> valType,
 			Class<V> arrCollItemType, Cursor cursor, int columnIndex) {
 		return cursor.getDouble(columnIndex);
-	}
-
-	@Override
-	public Object parseTypeArr(Class<Double> valType, String[] arr) {
-		ArrayList<Double> list = parseTypeColl(valType, arr);
-		Double[] tArr = list.toArray(new Double[list.size()]);
-		return (valType == double.class) ? toPrimitive(tArr) : tArr;
 	}
 
 }

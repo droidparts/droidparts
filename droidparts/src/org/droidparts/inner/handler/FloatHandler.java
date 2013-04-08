@@ -15,10 +15,6 @@
  */
 package org.droidparts.inner.handler;
 
-import static org.droidparts.util.Arrays2.toPrimitive;
-
-import java.util.ArrayList;
-
 import org.droidparts.inner.TypeHelper;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -61,13 +57,6 @@ public class FloatHandler extends TypeHandler<Float> {
 	public <V> Float readFromCursor(Class<Float> valType,
 			Class<V> arrCollItemType, Cursor cursor, int columnIndex) {
 		return cursor.getFloat(columnIndex);
-	}
-
-	@Override
-	public Object parseTypeArr(Class<Float> valType, String[] arr) {
-		ArrayList<Float> list = parseTypeColl(valType, arr);
-		Float[] tArr = list.toArray(new Float[list.size()]);
-		return (valType == float.class) ? toPrimitive(tArr) : tArr;
 	}
 
 }

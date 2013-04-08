@@ -15,10 +15,6 @@
  */
 package org.droidparts.inner.handler;
 
-import static org.droidparts.util.Arrays2.toPrimitive;
-
-import java.util.ArrayList;
-
 import org.droidparts.inner.TypeHelper;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -60,13 +56,6 @@ public class ByteHandler extends TypeHandler<Byte> {
 	public <V> Byte readFromCursor(Class<Byte> valType,
 			Class<V> arrCollItemType, Cursor cursor, int columnIndex) {
 		return Byte.valueOf(cursor.getString(columnIndex));
-	}
-
-	@Override
-	public Object parseTypeArr(Class<Byte> valType, String[] arr) {
-		ArrayList<Byte> list = parseTypeColl(valType, arr);
-		Byte[] tArr = list.toArray(new Byte[list.size()]);
-		return (valType == byte.class) ? toPrimitive(tArr) : tArr;
 	}
 
 }

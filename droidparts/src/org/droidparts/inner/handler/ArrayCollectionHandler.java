@@ -129,7 +129,7 @@ public class ArrayCollectionHandler extends TypeHandler<Object> {
 				}
 				TypeHandler<V> handler = TypeHandlerRegistry
 						.getHandler(arrCollItemType);
-				return handler.parseTypeArr(arrCollItemType, arr2);
+				return parseTypeArr(handler, arrCollItemType, arr2);
 			}
 		} else {
 			return coll;
@@ -144,9 +144,10 @@ public class ArrayCollectionHandler extends TypeHandler<Object> {
 				.getHandler(arrCollItemType);
 		ArrayList<V> list = arrOrCollToList(valueType, arrCollItemType, val);
 		ArrayList<Object> vals = new ArrayList<Object>();
+		ContentValues tmpCV = new ContentValues();
 		for (V obj : list) {
-			Object jObj = handler.convertForJSON(arrCollItemType, null, obj);
-			vals.add(jObj);
+			handler.putToContentValues(arrCollItemType, null, tmpCV, "key", obj);
+			vals.add(tmpCV.get("key"));
 		}
 		String strVal = Strings.join(vals, SEP, null);
 		cv.put(key, strVal);
@@ -154,26 +155,20 @@ public class ArrayCollectionHandler extends TypeHandler<Object> {
 
 	@Override
 	public <V> Object readFromCursor(Class<Object> valType,
-			Class<V> arrCollItemType, Cursor cursor, int columnIndex)
-			throws IllegalArgumentException {
+			Class<V> arrCollItemType, Cursor cursor, int columnIndex) {
 		TypeHandler<V> handler = TypeHandlerRegistry
 				.getHandler(arrCollItemType);
 		String str = cursor.getString(columnIndex);
 		String[] parts = (str.length() > 0) ? str.split("\\" + SEP)
 				: new String[0];
 		if (isArray(valType)) {
-			return handler.parseTypeArr(arrCollItemType, parts);
+			return parseTypeArr(handler, arrCollItemType, parts);
 		} else {
 			@SuppressWarnings("unchecked")
 			Collection<Object> coll = (Collection<Object>) newInstance(valType);
-			coll.addAll(handler.parseTypeColl(arrCollItemType, parts));
+			coll.addAll(parseTypeColl(handler, arrCollItemType, parts));
 			return coll;
 		}
-	}
-
-	@Override
-	public Object parseTypeArr(Class<Object> valType, String[] arr) {
-		throw new UnsupportedOperationException();
 	}
 
 	@SuppressWarnings("unchecked")
@@ -191,6 +186,26 @@ public class ArrayCollectionHandler extends TypeHandler<Object> {
 	@SuppressWarnings("unchecked")
 	private JSONSerializer<Model> subSerializer(Class<?> cls) {
 		return new JSONSerializer<Model>((Class<Model>) cls, null);
+	}
+
+	// say hello to arrays of primitives
+	public final <T> Object parseTypeArr(TypeHandler<T> handler,
+			Class<T> valType, String[] arr) {
+		ArrayList<T> list = parseTypeColl(handler, valType, arr);
+		Object objArr = Array.newInstance(valType, list.size());
+		for (int i = 0; i < list.size(); i++) {
+			Array.set(objArr, i, list.get(i));
+		}
+		return objArr;
+	}
+
+	public final <T> ArrayList<T> parseTypeColl(TypeHandler<T> handler,
+			Class<T> valType, String[] arr) {
+		ArrayList<T> list = new ArrayList<T>();
+		for (String str : arr) {
+			list.add(handler.parseFromString(valType, null, str));
+		}
+		return list;
 	}
 
 }

@@ -17,9 +17,6 @@ package org.droidparts.inner.handler;
 
 import static org.droidparts.inner.ReflectionUtils.newEnum;
 
-import java.lang.reflect.Array;
-import java.util.ArrayList;
-
 import org.droidparts.inner.TypeHelper;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -68,17 +65,6 @@ public class EnumHandler extends TypeHandler<Enum<?>> {
 	public <V> Enum<?> readFromCursor(Class<Enum<?>> valType,
 			Class<V> arrCollItemType, Cursor cursor, int columnIndex) {
 		return newEnum(valType, cursor.getString(columnIndex));
-	}
-
-	@Override
-	public Object parseTypeArr(Class<Enum<?>> valType, String[] arr) {
-		ArrayList<? extends Enum<?>> list = (ArrayList<? extends Enum<?>>) parseTypeColl(
-				valType, arr);
-		Object enumArr = Array.newInstance(valType, list.size());
-		for (int i = 0; i < list.size(); i++) {
-			Array.set(enumArr, i, list.get(i));
-		}
-		return enumArr;
 	}
 
 }

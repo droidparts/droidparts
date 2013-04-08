@@ -15,10 +15,6 @@
  */
 package org.droidparts.inner.handler;
 
-import static org.droidparts.util.Arrays2.toPrimitive;
-
-import java.util.ArrayList;
-
 import org.droidparts.inner.TypeHelper;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -63,11 +59,10 @@ public class IntegerHandler extends TypeHandler<Integer> {
 		return cursor.getInt(columnIndex);
 	}
 
-	@Override
-	public Object parseTypeArr(Class<Integer> valType, String[] arr) {
-		ArrayList<Integer> list = parseTypeColl(valType, arr);
-		Integer[] tArr = list.toArray(new Integer[list.size()]);
-		return (valType == int.class) ? toPrimitive(tArr) : tArr;
-	}
+	// @Override
+	// public Object parseTypeArr(Class<Integer> valType, String[] arr) {
+	// Integer[] tArr = (Integer[]) super.parseTypeArr(valType, arr);
+	// return (valType == int.class) ? toPrimitive(tArr) : tArr;
+	// }
 
 }

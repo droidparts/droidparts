@@ -38,15 +38,13 @@ public class ModelHandler extends TypeHandler<Model> {
 
 	@Override
 	public <V> void putToContentValues(Class<Model> valueType,
-			Class<V> arrCollItemType, ContentValues cv, String key, Model val)
-			throws IllegalArgumentException {
+			Class<V> arrCollItemType, ContentValues cv, String key, Model val) {
 		throw new UnsupportedOperationException();
 	}
 
 	@Override
 	public <V> Model readFromCursor(Class<Model> valType,
-			Class<V> arrCollItemType, Cursor cursor, int columnIndex)
-			throws IllegalArgumentException {
+			Class<V> arrCollItemType, Cursor cursor, int columnIndex) {
 		throw new UnsupportedOperationException();
 	}
 
@@ -79,11 +77,6 @@ public class ModelHandler extends TypeHandler<Model> {
 		} catch (JSONException e) {
 			throw new IllegalArgumentException(e);
 		}
-	}
-
-	@Override
-	public Object parseTypeArr(Class<Model> valType, String[] arr) {
-		throw new UnsupportedOperationException();
 	}
 
 }

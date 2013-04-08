@@ -65,9 +65,4 @@ public class BitmapHandler extends TypeHandler<Bitmap> {
 		return BitmapFactory.decodeByteArray(arr, 0, arr.length);
 	}
 
-	@Override
-	public Object parseTypeArr(Class<Bitmap> valType, String[] arr) {
-		throw new UnsupportedOperationException();
-	}
-
 }

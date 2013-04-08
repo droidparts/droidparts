@@ -15,10 +15,6 @@
  */
 package org.droidparts.inner.handler;
 
-import static org.droidparts.util.Arrays2.toPrimitive;
-
-import java.util.ArrayList;
-
 import org.droidparts.inner.TypeHelper;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -60,13 +56,6 @@ public class LongHandler extends TypeHandler<Long> {
 	public <V> Long readFromCursor(Class<Long> valType,
 			Class<V> arrCollItemType, Cursor cursor, int columnIndex) {
 		return cursor.getLong(columnIndex);
-	}
-
-	@Override
-	public Object parseTypeArr(Class<Long> valType, String[] arr) {
-		ArrayList<Long> list = parseTypeColl(valType, arr);
-		Long[] tArr = list.toArray(new Long[list.size()]);
-		return (valType == long.class) ? toPrimitive(tArr) : tArr;
 	}
 
 }

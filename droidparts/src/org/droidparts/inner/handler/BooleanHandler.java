@@ -15,10 +15,6 @@
  */
 package org.droidparts.inner.handler;
 
-import static org.droidparts.util.Arrays2.toPrimitive;
-
-import java.util.ArrayList;
-
 import org.droidparts.inner.TypeHelper;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -68,13 +64,6 @@ public class BooleanHandler extends TypeHandler<Boolean> {
 	public <V> Boolean readFromCursor(Class<Boolean> valType,
 			Class<V> arrCollItemType, Cursor cursor, int columnIndex) {
 		return (cursor.getInt(columnIndex) == 1);
-	}
-
-	@Override
-	public Object parseTypeArr(Class<Boolean> valType, String[] arr) {
-		ArrayList<Boolean> list = parseTypeColl(valType, arr);
-		Boolean[] tArr = list.toArray(new Boolean[list.size()]);
-		return (valType == boolean.class) ? toPrimitive(tArr) : tArr;
 	}
 
 }
