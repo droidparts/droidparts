@@ -61,16 +61,17 @@ public class ArrayCollectionHandler extends TypeHandler<Object> {
 	}
 
 	@Override
-	public <V> Object convertForJSON(Class<Object> valType,
-			Class<V> componentType, Object val) {
+	public <V> void putToJSON(Class<Object> valType, Class<V> componentType,
+			JSONObject obj, String key, Object val) throws JSONException {
 		TypeHandler<V> handler = TypeHandlerRegistry.getHandler(componentType);
 		ArrayList<V> list = arrOrCollToList(valType, componentType, val);
 		JSONArray vals = new JSONArray();
-		for (V obj : list) {
-			Object jObj = handler.convertForJSON(componentType, null, obj);
-			vals.put(jObj);
+		JSONObject tmpObj = new JSONObject();
+		for (V value : list) {
+			handler.putToJSON(componentType, null, tmpObj, "key", value);
+			vals.put(tmpObj.get("key"));
 		}
-		return vals;
+		obj.put(key, vals);
 	}
 
 	@SuppressWarnings("unchecked")

@@ -37,9 +37,9 @@ public class EnumHandler extends TypeHandler<Enum<?>> {
 	}
 
 	@Override
-	public <V> Object convertForJSON(Class<Enum<?>> valType,
-			Class<V> componentType, Enum<?> val) {
-		return val.toString();
+	public <V> void putToJSON(Class<Enum<?>> valType, Class<V> componentType,
+			JSONObject obj, String key, Enum<?> val) throws JSONException {
+		obj.put(key, val.toString());
 	}
 
 	@Override

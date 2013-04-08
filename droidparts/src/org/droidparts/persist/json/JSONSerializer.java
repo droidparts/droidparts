@@ -93,6 +93,7 @@ public class JSONSerializer<ModelType extends Model> {
 		return list;
 	}
 
+	@SuppressWarnings("unchecked")
 	protected <T> void putToJSONObject(JSONObject obj, String key,
 			Class<T> valType, Class<?> componentType, Object val)
 			throws Exception {
@@ -100,10 +101,7 @@ public class JSONSerializer<ModelType extends Model> {
 			obj.put(key, NULL);
 		} else {
 			TypeHandler<T> handler = TypeHandlerRegistry.getHandler(valType);
-			@SuppressWarnings("unchecked")
-			Object jsonVal = handler.convertForJSON(valType, componentType,
-					(T) val);
-			obj.put(key, jsonVal);
+			handler.putToJSON(valType, componentType, obj, key, (T) val);
 		}
 	}
 

@@ -49,15 +49,12 @@ public class ModelHandler extends TypeHandler<Model> {
 	}
 
 	@Override
-	public <V> Object convertForJSON(Class<Model> valType,
-			Class<V> componentType, Model val) {
+	public <V> void putToJSON(Class<Model> valType, Class<V> componentType,
+			JSONObject obj, String key, Model val) throws JSONException {
 		@SuppressWarnings("unchecked")
 		Class<Model> cls = (Class<Model>) val.getClass();
-		try {
-			return new JSONSerializer<Model>(cls, null).serialize(val);
-		} catch (JSONException e) {
-			throw new IllegalArgumentException(e);
-		}
+		JSONObject valStr = new JSONSerializer<Model>(cls, null).serialize(val);
+		obj.put(key, valStr);
 	}
 
 	@Override

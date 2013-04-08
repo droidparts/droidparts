@@ -35,9 +35,10 @@ public class JSONObjectHandler extends TypeHandler<JSONObject> {
 	}
 
 	@Override
-	public <V> Object convertForJSON(Class<JSONObject> valType,
-			Class<V> componentType, JSONObject val) {
-		return val.toString();
+	public <V> void putToJSON(Class<JSONObject> valType,
+			Class<V> componentType, JSONObject obj, String key, JSONObject val)
+			throws JSONException {
+		obj.put(key, val.toString());
 	}
 
 	@Override

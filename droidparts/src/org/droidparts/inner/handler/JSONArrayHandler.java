@@ -36,9 +36,9 @@ public class JSONArrayHandler extends TypeHandler<JSONArray> {
 	}
 
 	@Override
-	public <V> Object convertForJSON(Class<JSONArray> valType,
-			Class<V> componentType, JSONArray val) {
-		return val.toString();
+	public <V> void putToJSON(Class<JSONArray> valType, Class<V> componentType,
+			JSONObject obj, String key, JSONArray val) throws JSONException {
+		obj.put(key, val.toString());
 	}
 
 	@Override

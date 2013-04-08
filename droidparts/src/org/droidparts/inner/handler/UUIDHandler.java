@@ -37,9 +37,9 @@ public class UUIDHandler extends TypeHandler<UUID> {
 	}
 
 	@Override
-	public <V> Object convertForJSON(Class<UUID> valType,
-			Class<V> componentType, UUID val) {
-		return val.toString();
+	public <V> void putToJSON(Class<UUID> valType, Class<V> componentType,
+			JSONObject obj, String key, UUID val) throws JSONException {
+		obj.put(key, val.toString());
 	}
 
 	@Override

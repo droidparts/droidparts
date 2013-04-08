@@ -36,9 +36,9 @@ public class UriHandler extends TypeHandler<Uri> {
 	}
 
 	@Override
-	public <V> Object convertForJSON(Class<Uri> valType,
-			Class<V> componentType, Uri val) {
-		return val.toString();
+	public <V> void putToJSON(Class<Uri> valType, Class<V> componentType,
+			JSONObject obj, String key, Uri val) throws JSONException {
+		obj.put(key, val.toString());
 	}
 
 	@Override

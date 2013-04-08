@@ -37,6 +37,12 @@ public class DateHandler extends TypeHandler<Date> {
 	}
 
 	@Override
+	public <V> void putToJSON(Class<Date> valType, Class<V> componentType,
+			JSONObject obj, String key, Date val) throws JSONException {
+		obj.put(key, val.getTime());
+	}
+
+	@Override
 	public <V> Date readFromJSON(Class<Date> valType, Class<V> componentType,
 			JSONObject obj, String key) throws JSONException {
 		try {
@@ -50,12 +56,6 @@ public class DateHandler extends TypeHandler<Date> {
 	protected <V> Date parseFromString(Class<Date> valType,
 			Class<V> componentType, String str) {
 		return new Date(Long.valueOf(str));
-	}
-
-	@Override
-	public <V> Object convertForJSON(Class<Date> valType,
-			Class<V> componentType, Date val) {
-		return val.getTime();
 	}
 
 	@Override
