@@ -96,7 +96,8 @@ public class ArrayCollectionHandler extends TypeHandler<Object> {
 		boolean isModel = isModel(arrCollElementType);
 		JSONSerializer<Model> serializer = null;
 		if (isModel) {
-			serializer = subSerializer(arrCollElementType);
+			serializer = new JSONSerializer<Model>(
+					(Class<Model>) arrCollElementType, null);
 		}
 		for (int i = 0; i < jArr.length(); i++) {
 			Object obj1;
@@ -165,10 +166,7 @@ public class ArrayCollectionHandler extends TypeHandler<Object> {
 		if (isArray(valType)) {
 			return parseTypeArr(handler, arrCollElementType, parts);
 		} else {
-			@SuppressWarnings("unchecked")
-			Collection<Object> coll = (Collection<Object>) newInstance(valType);
-			coll.addAll(parseTypeColl(handler, arrCollElementType, parts));
-			return coll;
+			return parseTypeColl(handler, valType, arrCollElementType, parts);
 		}
 	}
 
@@ -184,29 +182,26 @@ public class ArrayCollectionHandler extends TypeHandler<Object> {
 		return list;
 	}
 
-	@SuppressWarnings("unchecked")
-	private JSONSerializer<Model> subSerializer(Class<?> cls) {
-		return new JSONSerializer<Model>((Class<Model>) cls, null);
-	}
-
 	// say hello to arrays of primitives
-	public final <T> Object parseTypeArr(TypeHandler<T> handler,
+	private final <T> Object parseTypeArr(TypeHandler<T> handler,
 			Class<T> valType, String[] arr) {
-		ArrayList<T> list = parseTypeColl(handler, valType, arr);
-		Object objArr = Array.newInstance(valType, list.size());
-		for (int i = 0; i < list.size(); i++) {
-			Array.set(objArr, i, list.get(i));
+		Object objArr = Array.newInstance(valType, arr.length);
+		for (int i = 0; i < arr.length; i++) {
+			T item = handler.parseFromString(valType, null, arr[i]);
+			Array.set(objArr, i, item);
 		}
 		return objArr;
 	}
 
-	public final <T> ArrayList<T> parseTypeColl(TypeHandler<T> handler,
-			Class<T> valType, String[] arr) {
-		ArrayList<T> list = new ArrayList<T>();
-		for (String str : arr) {
-			list.add(handler.parseFromString(valType, null, str));
+	private final <T> Collection<T> parseTypeColl(TypeHandler<T> handler,
+			Class<Object> collType, Class<T> arrCollElementType, String[] arr) {
+		@SuppressWarnings("unchecked")
+		Collection<T> coll = (Collection<T>) newInstance(collType);
+		for (int i = 0; i < arr.length; i++) {
+			T item = handler.parseFromString(arrCollElementType, null, arr[i]);
+			coll.add(item);
 		}
-		return list;
+		return coll;
 	}
 
 }
