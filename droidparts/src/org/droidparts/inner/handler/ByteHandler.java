@@ -35,27 +35,26 @@ public class ByteHandler extends TypeHandler<Byte> {
 	}
 
 	@Override
-	public <V> Byte readFromJSON(Class<Byte> valType,
-			Class<V> arrCollElementType, JSONObject obj, String key)
-			throws JSONException {
-		return parseFromString(valType, arrCollElementType, obj.getString(key));
+	public <V> Byte readFromJSON(Class<Byte> valType, Class<V> componentType,
+			JSONObject obj, String key) throws JSONException {
+		return parseFromString(valType, componentType, obj.getString(key));
 	}
 
 	@Override
 	protected <V> Byte parseFromString(Class<Byte> valType,
-			Class<V> arrCollElementType, String str) {
+			Class<V> componentType, String str) {
 		return Byte.valueOf(str);
 	}
 
 	@Override
 	public <V> void putToContentValues(Class<Byte> valueType,
-			Class<V> arrCollElementType, ContentValues cv, String key, Byte val) {
+			Class<V> componentType, ContentValues cv, String key, Byte val) {
 		cv.put(key, val);
 	}
 
 	@Override
-	public <V> Byte readFromCursor(Class<Byte> valType,
-			Class<V> arrCollElementType, Cursor cursor, int columnIndex) {
+	public <V> Byte readFromCursor(Class<Byte> valType, Class<V> componentType,
+			Cursor cursor, int columnIndex) {
 		return Byte.valueOf(cursor.getString(columnIndex));
 	}
 

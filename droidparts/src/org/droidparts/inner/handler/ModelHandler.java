@@ -38,19 +38,19 @@ public class ModelHandler extends TypeHandler<Model> {
 
 	@Override
 	public <V> void putToContentValues(Class<Model> valueType,
-			Class<V> arrCollElementType, ContentValues cv, String key, Model val) {
+			Class<V> componentType, ContentValues cv, String key, Model val) {
 		throw new UnsupportedOperationException();
 	}
 
 	@Override
 	public <V> Model readFromCursor(Class<Model> valType,
-			Class<V> arrCollElementType, Cursor cursor, int columnIndex) {
+			Class<V> componentType, Cursor cursor, int columnIndex) {
 		throw new UnsupportedOperationException();
 	}
 
 	@Override
 	public <V> Object convertForJSON(Class<Model> valType,
-			Class<V> arrCollElementType, Model val) {
+			Class<V> componentType, Model val) {
 		@SuppressWarnings("unchecked")
 		Class<Model> cls = (Class<Model>) val.getClass();
 		try {
@@ -61,16 +61,15 @@ public class ModelHandler extends TypeHandler<Model> {
 	}
 
 	@Override
-	public <V> Model readFromJSON(Class<Model> valType,
-			Class<V> arrCollElementType, JSONObject obj, String key)
-			throws JSONException {
+	public <V> Model readFromJSON(Class<Model> valType, Class<V> componentType,
+			JSONObject obj, String key) throws JSONException {
 		return new JSONSerializer<Model>(valType, null).deserialize(obj
 				.getJSONObject(key));
 	}
 
 	@Override
 	protected <V> Model parseFromString(Class<Model> valType,
-			Class<V> arrCollElementType, String str) {
+			Class<V> componentType, String str) {
 		try {
 			return new JSONSerializer<Model>(valType, null)
 					.deserialize(new JSONObject(str));

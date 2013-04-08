@@ -28,22 +28,22 @@ public abstract class TypeHandler<T> implements SQL.DDL {
 
 	public abstract String getDBColumnType();
 
-	public <V> Object convertForJSON(Class<T> valType,
-			Class<V> arrCollElementType, T val) {
+	public <V> Object convertForJSON(Class<T> valType, Class<V> componentType,
+			T val) {
 		return val;
 	}
 
 	public abstract <V> T readFromJSON(Class<T> valType,
-			Class<V> arrCollElementType, JSONObject obj, String key)
+			Class<V> componentType, JSONObject obj, String key)
 			throws JSONException;
 
 	protected abstract <V> T parseFromString(Class<T> valType,
-			Class<V> arrCollElementType, String str);
+			Class<V> componentType, String str);
 
 	public abstract <V> void putToContentValues(Class<T> valueType,
-			Class<V> arrCollElementType, ContentValues cv, String key, T val);
+			Class<V> componentType, ContentValues cv, String key, T val);
 
 	public abstract <V> T readFromCursor(Class<T> valType,
-			Class<V> arrCollElementType, Cursor cursor, int columnIndex);
+			Class<V> componentType, Cursor cursor, int columnIndex);
 
 }

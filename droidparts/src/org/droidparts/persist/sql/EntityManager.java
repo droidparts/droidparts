@@ -73,7 +73,7 @@ public class EntityManager<EntityType extends Entity> extends
 			int colIdx = cursor.getColumnIndex(spec.ann.name);
 			if (colIdx >= 0) {
 				Object columnVal = readFromCursor(cursor, colIdx,
-						spec.field.getType(), spec.arrCollElementType);
+						spec.field.getType(), spec.componentType);
 				if (columnVal != null || spec.ann.nullable) {
 					setFieldVal(entity, spec.field, columnVal);
 				}
@@ -115,7 +115,7 @@ public class EntityManager<EntityType extends Entity> extends
 		for (FieldSpec<ColumnAnn> spec : getTableColumnSpecs(cls)) {
 			Object columnVal = getFieldVal(item, spec.field);
 			putToContentValues(cv, spec.ann.name, spec.field.getType(),
-					spec.arrCollElementType, columnVal);
+					spec.componentType, columnVal);
 		}
 		return cv;
 	}
@@ -159,25 +159,25 @@ public class EntityManager<EntityType extends Entity> extends
 
 	@SuppressWarnings("unchecked")
 	protected <T, V> void putToContentValues(ContentValues cv, String key,
-			Class<T> valueType, Class<V> arrCollElementType, Object value)
+			Class<T> valueType, Class<V> componentType, Object value)
 			throws IllegalArgumentException {
 		if (value == null) {
 			cv.putNull(key);
 		} else {
 			TypeHandler<T> handler = TypeHandlerRegistry.getHandler(valueType);
-			handler.putToContentValues(valueType, arrCollElementType, cv, key,
+			handler.putToContentValues(valueType, componentType, cv, key,
 					(T) value);
 		}
 	}
 
 	protected <T, V> Object readFromCursor(Cursor cursor, int columnIndex,
-			Class<T> valType, Class<V> arrCollElementType)
+			Class<T> valType, Class<V> componentType)
 			throws IllegalArgumentException {
 		if (cursor.isNull(columnIndex)) {
 			return null;
 		} else {
 			TypeHandler<T> handler = TypeHandlerRegistry.getHandler(valType);
-			return handler.readFromCursor(valType, arrCollElementType, cursor,
+			return handler.readFromCursor(valType, componentType, cursor,
 					columnIndex);
 		}
 	}

@@ -101,14 +101,13 @@ public final class FieldSpecRegistry {
 				ColumnAnn columnAnn = (ColumnAnn) getFieldAnn(ColumnAnn.class,
 						cls, field);
 				if (columnAnn != null) {
-					Class<?> arrCollElementType = getArrCollItemType(field);
+					Class<?> componentType = getArrCollItemType(field);
 					ColumnAnn ann = new ColumnAnn();
 					ann.name = getColumnName(columnAnn, field);
 					ann.nullable = columnAnn.nullable;
 					ann.unique = columnAnn.unique;
 					ann.eager = columnAnn.eager;
-					list.add(new FieldSpec<ColumnAnn>(field,
-							arrCollElementType, ann));
+					list.add(new FieldSpec<ColumnAnn>(field, componentType, ann));
 				}
 			}
 			sanitizeFields(list);
@@ -127,11 +126,11 @@ public final class FieldSpecRegistry {
 			for (Field field : listAnnotatedFields(cls)) {
 				KeyAnn keyAnn = (KeyAnn) getFieldAnn(KeyAnn.class, cls, field);
 				if (keyAnn != null) {
-					Class<?> arrCollElementType = getArrCollItemType(field);
+					Class<?> componentType = getArrCollItemType(field);
 					KeyAnn ann = new KeyAnn();
 					ann.name = getKeyName(keyAnn, field);
 					ann.optional = keyAnn.optional;
-					list.add(new FieldSpec<KeyAnn>(field, arrCollElementType,
+					list.add(new FieldSpec<KeyAnn>(field, componentType,
 							(KeyAnn) ann));
 				}
 			}

@@ -94,28 +94,28 @@ public class JSONSerializer<ModelType extends Model> {
 	}
 
 	protected <T> void putToJSONObject(JSONObject obj, String key,
-			Class<T> valType, Class<?> arrCollElementType, Object val)
+			Class<T> valType, Class<?> componentType, Object val)
 			throws Exception {
 		if (val == null) {
 			obj.put(key, NULL);
 		} else {
 			TypeHandler<T> handler = TypeHandlerRegistry.getHandler(valType);
 			@SuppressWarnings("unchecked")
-			Object jsonVal = handler.convertForJSON(valType,
-					arrCollElementType, (T) val);
+			Object jsonVal = handler.convertForJSON(valType, componentType,
+					(T) val);
 			obj.put(key, jsonVal);
 		}
 	}
 
 	protected <T, V> Object readFromJSON(Class<T> valType,
-			Class<V> arrCollElementType, JSONObject obj, String key)
+			Class<V> componentType, JSONObject obj, String key)
 			throws Exception {
 		Object jsonVal = obj.get(key);
 		if (NULL.equals(jsonVal)) {
 			return jsonVal;
 		} else {
 			TypeHandler<T> handler = TypeHandlerRegistry.getHandler(valType);
-			return handler.readFromJSON(valType, arrCollElementType, obj, key);
+			return handler.readFromJSON(valType, componentType, obj, key);
 		}
 	}
 
@@ -142,7 +142,7 @@ public class JSONSerializer<ModelType extends Model> {
 			Object columnVal = getFieldVal(item, spec.field);
 			try {
 				putToJSONObject(obj, key, spec.field.getType(),
-						spec.arrCollElementType, columnVal);
+						spec.componentType, columnVal);
 			} catch (Exception e) {
 				if (spec.ann.optional) {
 					L.w("Failded to serialize %s.%s: %s.", cls.getSimpleName(),
@@ -169,7 +169,7 @@ public class JSONSerializer<ModelType extends Model> {
 		} else if (obj.has(key)) {
 			try {
 				Object val = readFromJSON(spec.field.getType(),
-						spec.arrCollElementType, obj, key);
+						spec.componentType, obj, key);
 				if (!NULL.equals(val)) {
 					setFieldVal(model, spec.field, val);
 				} else {

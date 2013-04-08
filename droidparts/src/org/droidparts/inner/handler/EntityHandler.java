@@ -38,13 +38,13 @@ public class EntityHandler extends ModelHandler {
 
 	@Override
 	public <V> void putToContentValues(Class<Model> valueType,
-			Class<V> arrCollElementType, ContentValues cv, String key, Model val) {
+			Class<V> componentType, ContentValues cv, String key, Model val) {
 		cv.put(key, ((Entity) val).id);
 	}
 
 	@Override
 	public <V> Entity readFromCursor(Class<Model> valType,
-			Class<V> arrCollElementType, Cursor cursor, int columnIndex) {
+			Class<V> componentType, Cursor cursor, int columnIndex) {
 		long id = cursor.getLong(columnIndex);
 		Entity entity = (Entity) newInstance(valType);
 		entity.id = id;
@@ -53,10 +53,10 @@ public class EntityHandler extends ModelHandler {
 
 	@Override
 	protected <V> Model parseFromString(Class<Model> valType,
-			Class<V> arrCollElementType, String str) {
+			Class<V> componentType, String str) {
 		if (str.startsWith("{")) {
 			// XXX it's a JSON Object
-			return super.parseFromString(valType, arrCollElementType, str);
+			return super.parseFromString(valType, componentType, str);
 		} else {
 			Entity entity = (Entity) newInstance(valType);
 			entity.id = Long.valueOf(str);

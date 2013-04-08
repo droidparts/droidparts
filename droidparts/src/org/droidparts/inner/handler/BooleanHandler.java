@@ -36,19 +36,18 @@ public class BooleanHandler extends TypeHandler<Boolean> {
 
 	@Override
 	public <V> Boolean readFromJSON(Class<Boolean> valType,
-			Class<V> arrCollElementType, JSONObject obj, String key)
+			Class<V> componentType, JSONObject obj, String key)
 			throws JSONException {
 		try {
 			return obj.getBoolean(key);
 		} catch (JSONException e) {
-			return parseFromString(valType, arrCollElementType,
-					obj.getString(key));
+			return parseFromString(valType, componentType, obj.getString(key));
 		}
 	}
 
 	@Override
 	protected <V> Boolean parseFromString(Class<Boolean> valType,
-			Class<V> arrCollElementType, String str) {
+			Class<V> componentType, String str) {
 		if ("1".equals(str)) {
 			str = "true";
 		}
@@ -57,14 +56,13 @@ public class BooleanHandler extends TypeHandler<Boolean> {
 
 	@Override
 	public <V> void putToContentValues(Class<Boolean> valueType,
-			Class<V> arrCollElementType, ContentValues cv, String key,
-			Boolean val) {
+			Class<V> componentType, ContentValues cv, String key, Boolean val) {
 		cv.put(key, val);
 	}
 
 	@Override
 	public <V> Boolean readFromCursor(Class<Boolean> valType,
-			Class<V> arrCollElementType, Cursor cursor, int columnIndex) {
+			Class<V> componentType, Cursor cursor, int columnIndex) {
 		return (cursor.getInt(columnIndex) == 1);
 	}
 

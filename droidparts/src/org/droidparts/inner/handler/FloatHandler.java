@@ -35,27 +35,26 @@ public class FloatHandler extends TypeHandler<Float> {
 	}
 
 	@Override
-	public <V> Float readFromJSON(Class<Float> valType,
-			Class<V> arrCollElementType, JSONObject obj, String key)
-			throws JSONException {
+	public <V> Float readFromJSON(Class<Float> valType, Class<V> componentType,
+			JSONObject obj, String key) throws JSONException {
 		return (float) obj.getDouble(key);
 	}
 
 	@Override
 	protected <V> Float parseFromString(Class<Float> valType,
-			Class<V> arrCollElementType, String str) {
+			Class<V> componentType, String str) {
 		return Float.valueOf(str);
 	}
 
 	@Override
 	public <V> void putToContentValues(Class<Float> valueType,
-			Class<V> arrCollElementType, ContentValues cv, String key, Float val) {
+			Class<V> componentType, ContentValues cv, String key, Float val) {
 		cv.put(key, val);
 	}
 
 	@Override
 	public <V> Float readFromCursor(Class<Float> valType,
-			Class<V> arrCollElementType, Cursor cursor, int columnIndex) {
+			Class<V> componentType, Cursor cursor, int columnIndex) {
 		return cursor.getFloat(columnIndex);
 	}
 

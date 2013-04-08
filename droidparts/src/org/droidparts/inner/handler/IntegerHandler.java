@@ -36,27 +36,26 @@ public class IntegerHandler extends TypeHandler<Integer> {
 
 	@Override
 	public <V> Integer readFromJSON(Class<Integer> valType,
-			Class<V> arrCollElementType, JSONObject obj, String key)
+			Class<V> componentType, JSONObject obj, String key)
 			throws JSONException {
 		return obj.getInt(key);
 	}
 
 	@Override
 	protected <V> Integer parseFromString(Class<Integer> valType,
-			Class<V> arrCollElementType, String str) {
+			Class<V> componentType, String str) {
 		return Integer.valueOf(str);
 	}
 
 	@Override
 	public <V> void putToContentValues(Class<Integer> valueType,
-			Class<V> arrCollElementType, ContentValues cv, String key,
-			Integer val) {
+			Class<V> componentType, ContentValues cv, String key, Integer val) {
 		cv.put(key, val);
 	}
 
 	@Override
 	public <V> Integer readFromCursor(Class<Integer> valType,
-			Class<V> arrCollElementType, Cursor cursor, int columnIndex) {
+			Class<V> componentType, Cursor cursor, int columnIndex) {
 		return cursor.getInt(columnIndex);
 	}
 

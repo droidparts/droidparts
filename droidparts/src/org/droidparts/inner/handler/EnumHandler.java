@@ -38,33 +38,32 @@ public class EnumHandler extends TypeHandler<Enum<?>> {
 
 	@Override
 	public <V> Object convertForJSON(Class<Enum<?>> valType,
-			Class<V> arrCollElementType, Enum<?> val) {
+			Class<V> componentType, Enum<?> val) {
 		return val.toString();
 	}
 
 	@Override
 	public <V> Enum<?> readFromJSON(Class<Enum<?>> valType,
-			Class<V> arrCollElementType, JSONObject obj, String key)
+			Class<V> componentType, JSONObject obj, String key)
 			throws JSONException {
-		return parseFromString(valType, arrCollElementType, obj.getString(key));
+		return parseFromString(valType, componentType, obj.getString(key));
 	}
 
 	@Override
 	protected <V> Enum<?> parseFromString(Class<Enum<?>> valType,
-			Class<V> arrCollElementType, String str) {
+			Class<V> componentType, String str) {
 		return newEnum(valType, str);
 	}
 
 	@Override
 	public <V> void putToContentValues(Class<Enum<?>> valueType,
-			Class<V> arrCollElementType, ContentValues cv, String key,
-			Enum<?> val) {
+			Class<V> componentType, ContentValues cv, String key, Enum<?> val) {
 		cv.put(key, val.toString());
 	}
 
 	@Override
 	public <V> Enum<?> readFromCursor(Class<Enum<?>> valType,
-			Class<V> arrCollElementType, Cursor cursor, int columnIndex) {
+			Class<V> componentType, Cursor cursor, int columnIndex) {
 		return newEnum(valType, cursor.getString(columnIndex));
 	}
 

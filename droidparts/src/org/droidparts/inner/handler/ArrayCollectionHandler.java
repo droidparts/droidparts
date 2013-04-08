@@ -55,20 +55,19 @@ public class ArrayCollectionHandler extends TypeHandler<Object> {
 
 	@Override
 	public <V> Object readFromJSON(Class<Object> valType,
-			Class<V> arrCollElementType, JSONObject obj, String key)
+			Class<V> componentType, JSONObject obj, String key)
 			throws JSONException {
-		return parseFromString(valType, arrCollElementType, obj.getString(key));
+		return parseFromString(valType, componentType, obj.getString(key));
 	}
 
 	@Override
 	public <V> Object convertForJSON(Class<Object> valType,
-			Class<V> arrCollElementType, Object val) {
-		TypeHandler<V> handler = TypeHandlerRegistry
-				.getHandler(arrCollElementType);
-		ArrayList<V> list = arrOrCollToList(valType, arrCollElementType, val);
+			Class<V> componentType, Object val) {
+		TypeHandler<V> handler = TypeHandlerRegistry.getHandler(componentType);
+		ArrayList<V> list = arrOrCollToList(valType, componentType, val);
 		JSONArray vals = new JSONArray();
 		for (V obj : list) {
-			Object jObj = handler.convertForJSON(arrCollElementType, null, obj);
+			Object jObj = handler.convertForJSON(componentType, null, obj);
 			vals.put(jObj);
 		}
 		return vals;
@@ -77,7 +76,7 @@ public class ArrayCollectionHandler extends TypeHandler<Object> {
 	@SuppressWarnings("unchecked")
 	@Override
 	protected <V> Object parseFromString(Class<Object> valType,
-			Class<V> arrCollElementType, String str) {
+			Class<V> componentType, String str) {
 		// XXX
 		JSONArray jArr;
 		try {
@@ -93,11 +92,11 @@ public class ArrayCollectionHandler extends TypeHandler<Object> {
 		} else {
 			coll = (Collection<Object>) newInstance(valType);
 		}
-		boolean isModel = isModel(arrCollElementType);
+		boolean isModel = isModel(componentType);
 		JSONSerializer<Model> serializer = null;
 		if (isModel) {
 			serializer = new JSONSerializer<Model>(
-					(Class<Model>) arrCollElementType, null);
+					(Class<Model>) componentType, null);
 		}
 		for (int i = 0; i < jArr.length(); i++) {
 			Object obj1;
@@ -117,8 +116,7 @@ public class ArrayCollectionHandler extends TypeHandler<Object> {
 		}
 		if (isArr) {
 			if (isModel) {
-				Object modelArr = Array.newInstance(arrCollElementType,
-						arr.length);
+				Object modelArr = Array.newInstance(componentType, arr.length);
 				for (int i = 0; i < arr.length; i++) {
 					Array.set(modelArr, i, arr[i]);
 				}
@@ -129,8 +127,8 @@ public class ArrayCollectionHandler extends TypeHandler<Object> {
 					arr2[i] = arr[i].toString();
 				}
 				TypeHandler<V> handler = TypeHandlerRegistry
-						.getHandler(arrCollElementType);
-				return parseTypeArr(handler, arrCollElementType, arr2);
+						.getHandler(componentType);
+				return parseTypeArr(handler, componentType, arr2);
 			}
 		} else {
 			return coll;
@@ -139,16 +137,14 @@ public class ArrayCollectionHandler extends TypeHandler<Object> {
 
 	@Override
 	public <V> void putToContentValues(Class<Object> valueType,
-			Class<V> arrCollElementType, ContentValues cv, String key,
-			Object val) throws IllegalArgumentException {
-		TypeHandler<V> handler = TypeHandlerRegistry
-				.getHandler(arrCollElementType);
-		ArrayList<V> list = arrOrCollToList(valueType, arrCollElementType, val);
+			Class<V> componentType, ContentValues cv, String key, Object val)
+			throws IllegalArgumentException {
+		TypeHandler<V> handler = TypeHandlerRegistry.getHandler(componentType);
+		ArrayList<V> list = arrOrCollToList(valueType, componentType, val);
 		ArrayList<Object> vals = new ArrayList<Object>();
 		ContentValues tmpCV = new ContentValues();
 		for (V obj : list) {
-			handler.putToContentValues(arrCollElementType, null, tmpCV, "key",
-					obj);
+			handler.putToContentValues(componentType, null, tmpCV, "key", obj);
 			vals.add(tmpCV.get("key"));
 		}
 		String strVal = Strings.join(vals, SEP, null);
@@ -157,22 +153,21 @@ public class ArrayCollectionHandler extends TypeHandler<Object> {
 
 	@Override
 	public <V> Object readFromCursor(Class<Object> valType,
-			Class<V> arrCollElementType, Cursor cursor, int columnIndex) {
-		TypeHandler<V> handler = TypeHandlerRegistry
-				.getHandler(arrCollElementType);
+			Class<V> componentType, Cursor cursor, int columnIndex) {
+		TypeHandler<V> handler = TypeHandlerRegistry.getHandler(componentType);
 		String str = cursor.getString(columnIndex);
 		String[] parts = (str.length() > 0) ? str.split("\\" + SEP)
 				: new String[0];
 		if (isArray(valType)) {
-			return parseTypeArr(handler, arrCollElementType, parts);
+			return parseTypeArr(handler, componentType, parts);
 		} else {
-			return parseTypeColl(handler, valType, arrCollElementType, parts);
+			return parseTypeColl(handler, valType, componentType, parts);
 		}
 	}
 
 	@SuppressWarnings("unchecked")
 	private <T> ArrayList<T> arrOrCollToList(Class<?> valType,
-			Class<T> arrCollElementType, Object val) {
+			Class<T> componentType, Object val) {
 		ArrayList<T> list = new ArrayList<T>();
 		if (isArray(valType)) {
 			list.addAll((List<T>) Arrays.asList(Arrays2.toObjectArr(val)));
@@ -194,11 +189,11 @@ public class ArrayCollectionHandler extends TypeHandler<Object> {
 	}
 
 	private final <T> Collection<T> parseTypeColl(TypeHandler<T> handler,
-			Class<Object> collType, Class<T> arrCollElementType, String[] arr) {
+			Class<Object> collType, Class<T> componentType, String[] arr) {
 		@SuppressWarnings("unchecked")
 		Collection<T> coll = (Collection<T>) newInstance(collType);
 		for (int i = 0; i < arr.length; i++) {
-			T item = handler.parseFromString(arrCollElementType, null, arr[i]);
+			T item = handler.parseFromString(componentType, null, arr[i]);
 			coll.add(item);
 		}
 		return coll;

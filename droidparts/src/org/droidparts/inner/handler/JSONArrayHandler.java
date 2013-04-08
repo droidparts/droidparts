@@ -37,20 +37,20 @@ public class JSONArrayHandler extends TypeHandler<JSONArray> {
 
 	@Override
 	public <V> Object convertForJSON(Class<JSONArray> valType,
-			Class<V> arrCollElementType, JSONArray val) {
+			Class<V> componentType, JSONArray val) {
 		return val.toString();
 	}
 
 	@Override
 	public <V> JSONArray readFromJSON(Class<JSONArray> valType,
-			Class<V> arrCollElementType, JSONObject obj, String key)
+			Class<V> componentType, JSONObject obj, String key)
 			throws JSONException {
-		return parseFromString(valType, arrCollElementType, obj.getString(key));
+		return parseFromString(valType, componentType, obj.getString(key));
 	}
 
 	@Override
 	protected <V> JSONArray parseFromString(Class<JSONArray> valType,
-			Class<V> arrCollElementType, String str) {
+			Class<V> componentType, String str) {
 		try {
 			return new JSONArray(str);
 		} catch (JSONException e) {
@@ -60,14 +60,13 @@ public class JSONArrayHandler extends TypeHandler<JSONArray> {
 
 	@Override
 	public <V> void putToContentValues(Class<JSONArray> valueType,
-			Class<V> arrCollElementType, ContentValues cv, String key,
-			JSONArray val) {
+			Class<V> componentType, ContentValues cv, String key, JSONArray val) {
 		cv.put(key, val.toString());
 	}
 
 	@Override
 	public <V> JSONArray readFromCursor(Class<JSONArray> valType,
-			Class<V> arrCollElementType, Cursor cursor, int columnIndex) {
+			Class<V> componentType, Cursor cursor, int columnIndex) {
 		try {
 			return new JSONArray(cursor.getString(columnIndex));
 		} catch (JSONException e) {

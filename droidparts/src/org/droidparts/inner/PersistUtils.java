@@ -215,7 +215,7 @@ public final class PersistUtils implements SQL.DDL {
 			//
 			ContentValues cv = new ContentValues();
 			handler.putToContentValues((Class<T>) spec.field.getType(),
-					spec.arrCollElementType, cv, "key", (T) defaultVal);
+					spec.componentType, cv, "key", (T) defaultVal);
 			defaultVal = cv.get("key");
 			//
 			String statement = getAddColumn(tableName, spec.ann.name,

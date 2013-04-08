@@ -36,27 +36,26 @@ public class DoubleHandler extends TypeHandler<Double> {
 
 	@Override
 	public <V> Double readFromJSON(Class<Double> valType,
-			Class<V> arrCollElementType, JSONObject obj, String key)
+			Class<V> componentType, JSONObject obj, String key)
 			throws JSONException {
 		return obj.getDouble(key);
 	}
 
 	@Override
 	protected <V> Double parseFromString(Class<Double> valType,
-			Class<V> arrCollElementType, String str) {
+			Class<V> componentType, String str) {
 		return Double.valueOf(str);
 	}
 
 	@Override
 	public <V> void putToContentValues(Class<Double> valueType,
-			Class<V> arrCollElementType, ContentValues cv, String key,
-			Double val) {
+			Class<V> componentType, ContentValues cv, String key, Double val) {
 		cv.put(key, val);
 	}
 
 	@Override
 	public <V> Double readFromCursor(Class<Double> valType,
-			Class<V> arrCollElementType, Cursor cursor, int columnIndex) {
+			Class<V> componentType, Cursor cursor, int columnIndex) {
 		return cursor.getDouble(columnIndex);
 	}
 

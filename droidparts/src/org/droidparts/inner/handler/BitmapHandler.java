@@ -40,20 +40,19 @@ public class BitmapHandler extends TypeHandler<Bitmap> {
 
 	@Override
 	public <V> Bitmap readFromJSON(Class<Bitmap> valType,
-			Class<V> arrCollElementType, JSONObject obj, String key) {
+			Class<V> componentType, JSONObject obj, String key) {
 		throw new UnsupportedOperationException();
 	}
 
 	@Override
 	protected <V> Bitmap parseFromString(Class<Bitmap> valType,
-			Class<V> arrCollElementType, String str) {
+			Class<V> componentType, String str) {
 		throw new UnsupportedOperationException();
 	}
 
 	@Override
 	public <V> void putToContentValues(Class<Bitmap> valueType,
-			Class<V> arrCollElementType, ContentValues cv, String key,
-			Bitmap val) {
+			Class<V> componentType, ContentValues cv, String key, Bitmap val) {
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		val.compress(CompressFormat.PNG, 0, baos);
 		cv.put(key, baos.toByteArray());
@@ -61,7 +60,7 @@ public class BitmapHandler extends TypeHandler<Bitmap> {
 
 	@Override
 	public <V> Bitmap readFromCursor(Class<Bitmap> valType,
-			Class<V> arrCollElementType, Cursor cursor, int columnIndex) {
+			Class<V> componentType, Cursor cursor, int columnIndex) {
 		byte[] arr = cursor.getBlob(columnIndex);
 		return BitmapFactory.decodeByteArray(arr, 0, arr.length);
 	}

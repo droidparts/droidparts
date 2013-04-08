@@ -38,32 +38,31 @@ public class UUIDHandler extends TypeHandler<UUID> {
 
 	@Override
 	public <V> Object convertForJSON(Class<UUID> valType,
-			Class<V> arrCollElementType, UUID val) {
+			Class<V> componentType, UUID val) {
 		return val.toString();
 	}
 
 	@Override
-	public <V> UUID readFromJSON(Class<UUID> valType,
-			Class<V> arrCollElementType, JSONObject obj, String key)
-			throws JSONException {
-		return parseFromString(valType, arrCollElementType, obj.getString(key));
+	public <V> UUID readFromJSON(Class<UUID> valType, Class<V> componentType,
+			JSONObject obj, String key) throws JSONException {
+		return parseFromString(valType, componentType, obj.getString(key));
 	}
 
 	@Override
 	protected <V> UUID parseFromString(Class<UUID> valType,
-			Class<V> arrCollElementType, String str) {
+			Class<V> componentType, String str) {
 		return UUID.fromString(str);
 	}
 
 	@Override
 	public <V> void putToContentValues(Class<UUID> valueType,
-			Class<V> arrCollElementType, ContentValues cv, String key, UUID val) {
+			Class<V> componentType, ContentValues cv, String key, UUID val) {
 		cv.put(key, val.toString());
 	}
 
 	@Override
-	public <V> UUID readFromCursor(Class<UUID> valType,
-			Class<V> arrCollElementType, Cursor cursor, int columnIndex) {
+	public <V> UUID readFromCursor(Class<UUID> valType, Class<V> componentType,
+			Cursor cursor, int columnIndex) {
 		return UUID.fromString(cursor.getString(columnIndex));
 	}
 
