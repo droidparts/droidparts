@@ -18,7 +18,7 @@ package org.droidparts.inner;
 import static org.droidparts.inner.AnnBuilder.getClassAnn;
 import static org.droidparts.inner.AnnBuilder.getFieldAnn;
 import static org.droidparts.inner.AnnBuilder.getFieldAnns;
-import static org.droidparts.inner.ReflectionUtils.getArrayType;
+import static org.droidparts.inner.ReflectionUtils.getArrayComponentType;
 import static org.droidparts.inner.ReflectionUtils.getFieldGenericArgs;
 import static org.droidparts.inner.ReflectionUtils.listAnnotatedFields;
 import static org.droidparts.inner.TypeHelper.isArray;
@@ -101,7 +101,7 @@ public final class FieldSpecRegistry {
 				ColumnAnn columnAnn = (ColumnAnn) getFieldAnn(ColumnAnn.class,
 						cls, field);
 				if (columnAnn != null) {
-					Class<?> componentType = getArrCollItemType(field);
+					Class<?> componentType = getComponentType(field);
 					ColumnAnn ann = new ColumnAnn();
 					ann.name = getColumnName(columnAnn, field);
 					ann.nullable = columnAnn.nullable;
@@ -126,7 +126,7 @@ public final class FieldSpecRegistry {
 			for (Field field : listAnnotatedFields(cls)) {
 				KeyAnn keyAnn = (KeyAnn) getFieldAnn(KeyAnn.class, cls, field);
 				if (keyAnn != null) {
-					Class<?> componentType = getArrCollItemType(field);
+					Class<?> componentType = getComponentType(field);
 					KeyAnn ann = new KeyAnn();
 					ann.name = getKeyName(keyAnn, field);
 					ann.optional = keyAnn.optional;
@@ -151,16 +151,17 @@ public final class FieldSpecRegistry {
 
 	// Utils
 
-	private static Class<?> getArrCollItemType(Field field) {
-		Class<?> argType = null;
+	private static Class<?> getComponentType(Field field) {
+		Class<?> componentType = null;
 		Class<?> fieldType = field.getType();
 		if (isArray(fieldType)) {
-			argType = getArrayType(fieldType);
+			componentType = getArrayComponentType(fieldType);
 		} else if (isCollection(fieldType)) {
 			Class<?>[] genericArgs = getFieldGenericArgs(field);
-			argType = (genericArgs.length > 0) ? genericArgs[0] : Object.class;
+			componentType = (genericArgs.length > 0) ? genericArgs[0]
+					: Object.class;
 		}
-		return argType;
+		return componentType;
 	}
 
 	// JSON

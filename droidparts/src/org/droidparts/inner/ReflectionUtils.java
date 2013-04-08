@@ -103,7 +103,7 @@ public final class ReflectionUtils {
 		return fields;
 	}
 
-	public static Class<?> getArrayType(Class<?> arrCls) {
+	public static Class<?> getArrayComponentType(Class<?> arrCls) {
 		if (arrCls == byte[].class) {
 			return byte.class;
 		} else if (arrCls == short[].class) {
