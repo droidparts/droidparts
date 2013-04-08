@@ -110,7 +110,7 @@ public final class FieldSpecRegistry {
 					list.add(new FieldSpec<ColumnAnn>(field, componentType, ann));
 				}
 			}
-			sanitizeFields(list);
+			sanitizeSpecs(list);
 			specs = list.toArray(new FieldSpec[list.size()]);
 			columnSpecCache.put(cls, specs);
 		}
@@ -189,7 +189,7 @@ public final class FieldSpecRegistry {
 
 	private static final String ID_SUFFIX = "_id";
 
-	private static void sanitizeFields(
+	private static void sanitizeSpecs(
 			ArrayList<FieldSpec<ColumnAnn>> columnSpecs) {
 		for (FieldSpec<ColumnAnn> spec : columnSpecs) {
 			Class<?> fieldType = spec.field.getType();

@@ -87,13 +87,15 @@ public class EntityManager<EntityType extends Entity> extends
 		HashSet<String> columnNameSet = new HashSet<String>(asList(columnNames));
 		boolean fillAll = columnNameSet.isEmpty();
 		for (FieldSpec<ColumnAnn> spec : getTableColumnSpecs(cls)) {
-			if (isEntity(spec.field.getType())
-					&& (fillAll || columnNameSet.contains(spec.ann.name))) {
-				Entity foreignEntity = ReflectionUtils.getFieldVal(item,
-						spec.field);
-				if (foreignEntity != null) {
-					Object obj = subManager(spec.field).read(foreignEntity.id);
-					setFieldVal(item, spec.field, obj);
+			if (fillAll || columnNameSet.contains(spec.ann.name)) {
+				if (isEntity(spec.field.getType())) {
+					Entity foreignEntity = ReflectionUtils.getFieldVal(item,
+							spec.field);
+					if (foreignEntity != null) {
+						Object obj = subManager(spec.field).read(
+								foreignEntity.id);
+						setFieldVal(item, spec.field, obj);
+					}
 				}
 			}
 		}
