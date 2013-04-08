@@ -38,19 +38,19 @@ public class ModelHandler extends TypeHandler<Model> {
 
 	@Override
 	public <V> void putToContentValues(Class<Model> valueType,
-			Class<V> arrCollItemType, ContentValues cv, String key, Model val) {
+			Class<V> arrCollElementType, ContentValues cv, String key, Model val) {
 		throw new UnsupportedOperationException();
 	}
 
 	@Override
 	public <V> Model readFromCursor(Class<Model> valType,
-			Class<V> arrCollItemType, Cursor cursor, int columnIndex) {
+			Class<V> arrCollElementType, Cursor cursor, int columnIndex) {
 		throw new UnsupportedOperationException();
 	}
 
 	@Override
 	public <V> Object convertForJSON(Class<Model> valType,
-			Class<V> arrCollItemType, Model val) {
+			Class<V> arrCollElementType, Model val) {
 		@SuppressWarnings("unchecked")
 		Class<Model> cls = (Class<Model>) val.getClass();
 		try {
@@ -62,7 +62,7 @@ public class ModelHandler extends TypeHandler<Model> {
 
 	@Override
 	public <V> Model readFromJSON(Class<Model> valType,
-			Class<V> arrCollItemType, JSONObject obj, String key)
+			Class<V> arrCollElementType, JSONObject obj, String key)
 			throws JSONException {
 		return new JSONSerializer<Model>(valType, null).deserialize(obj
 				.getJSONObject(key));
@@ -70,7 +70,7 @@ public class ModelHandler extends TypeHandler<Model> {
 
 	@Override
 	protected <V> Model parseFromString(Class<Model> valType,
-			Class<V> arrCollItemType, String str) {
+			Class<V> arrCollElementType, String str) {
 		try {
 			return new JSONSerializer<Model>(valType, null)
 					.deserialize(new JSONObject(str));

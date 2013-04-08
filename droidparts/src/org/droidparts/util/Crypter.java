@@ -22,7 +22,6 @@ import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 
-
 public class Crypter {
 
 	private final byte[] seed;

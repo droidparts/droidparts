@@ -37,36 +37,38 @@ public class DateHandler extends TypeHandler<Date> {
 	}
 
 	@Override
-	public <V> Date readFromJSON(Class<Date> valType, Class<V> arrCollItemType,
-			JSONObject obj, String key) throws JSONException {
+	public <V> Date readFromJSON(Class<Date> valType,
+			Class<V> arrCollElementType, JSONObject obj, String key)
+			throws JSONException {
 		try {
 			return new Date(obj.getLong(key));
 		} catch (Exception e) {
-			return parseFromString(valType, arrCollItemType, obj.getString(key));
+			return parseFromString(valType, arrCollElementType,
+					obj.getString(key));
 		}
 	}
 
 	@Override
 	protected <V> Date parseFromString(Class<Date> valType,
-			Class<V> arrCollItemType, String str) {
+			Class<V> arrCollElementType, String str) {
 		return new Date(Long.valueOf(str));
 	}
 
 	@Override
 	public <V> Object convertForJSON(Class<Date> valType,
-			Class<V> arrCollItemType, Date val) {
+			Class<V> arrCollElementType, Date val) {
 		return val.getTime();
 	}
 
 	@Override
 	public <V> void putToContentValues(Class<Date> valueType,
-			Class<V> arrCollItemType, ContentValues cv, String key, Date val) {
+			Class<V> arrCollElementType, ContentValues cv, String key, Date val) {
 		cv.put(key, val.getTime());
 	}
 
 	@Override
 	public <V> Date readFromCursor(Class<Date> valType,
-			Class<V> arrCollItemType, Cursor cursor, int columnIndex) {
+			Class<V> arrCollElementType, Cursor cursor, int columnIndex) {
 		return new Date(cursor.getLong(columnIndex));
 	}
 

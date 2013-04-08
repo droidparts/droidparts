@@ -36,27 +36,27 @@ public class CharacterHandler extends TypeHandler<Character> {
 
 	@Override
 	public <V> Character readFromJSON(Class<Character> valType,
-			Class<V> arrCollItemType, JSONObject obj, String key)
+			Class<V> arrCollElementType, JSONObject obj, String key)
 			throws JSONException {
-		return parseFromString(valType, arrCollItemType, obj.getString(key));
+		return parseFromString(valType, arrCollElementType, obj.getString(key));
 	}
 
 	@Override
 	protected <V> Character parseFromString(Class<Character> valType,
-			Class<V> arrCollItemType, String str) {
+			Class<V> arrCollElementType, String str) {
 		return Character.valueOf((str.length() == 0) ? ' ' : str.charAt(0));
 	}
 
 	@Override
 	public <V> void putToContentValues(Class<Character> valueType,
-			Class<V> arrCollItemType, ContentValues cv, String key,
+			Class<V> arrCollElementType, ContentValues cv, String key,
 			Character val) {
 		cv.put(key, String.valueOf(val));
 	}
 
 	@Override
 	public <V> Character readFromCursor(Class<Character> valType,
-			Class<V> arrCollItemType, Cursor cursor, int columnIndex) {
+			Class<V> arrCollElementType, Cursor cursor, int columnIndex) {
 		return parseFromString(valType, null, cursor.getString(columnIndex));
 	}
 

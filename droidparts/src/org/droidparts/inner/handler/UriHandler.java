@@ -37,31 +37,32 @@ public class UriHandler extends TypeHandler<Uri> {
 
 	@Override
 	public <V> Object convertForJSON(Class<Uri> valType,
-			Class<V> arrCollItemType, Uri val) {
+			Class<V> arrCollElementType, Uri val) {
 		return val.toString();
 	}
 
 	@Override
-	public <V> Uri readFromJSON(Class<Uri> valType, Class<V> arrCollItemType,
-			JSONObject obj, String key) throws JSONException {
-		return parseFromString(valType, arrCollItemType, obj.getString(key));
+	public <V> Uri readFromJSON(Class<Uri> valType,
+			Class<V> arrCollElementType, JSONObject obj, String key)
+			throws JSONException {
+		return parseFromString(valType, arrCollElementType, obj.getString(key));
 	}
 
 	@Override
 	protected <V> Uri parseFromString(Class<Uri> valType,
-			Class<V> arrCollItemType, String str) {
+			Class<V> arrCollElementType, String str) {
 		return Uri.parse(str);
 	}
 
 	@Override
 	public <V> void putToContentValues(Class<Uri> valueType,
-			Class<V> arrCollItemType, ContentValues cv, String key, Uri val) {
+			Class<V> arrCollElementType, ContentValues cv, String key, Uri val) {
 		cv.put(key, val.toString());
 	}
 
 	@Override
-	public <V> Uri readFromCursor(Class<Uri> valType, Class<V> arrCollItemType,
-			Cursor cursor, int columnIndex) {
+	public <V> Uri readFromCursor(Class<Uri> valType,
+			Class<V> arrCollElementType, Cursor cursor, int columnIndex) {
 		return Uri.parse(cursor.getString(columnIndex));
 	}
 

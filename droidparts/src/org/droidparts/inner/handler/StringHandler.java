@@ -36,26 +36,27 @@ public class StringHandler extends TypeHandler<String> {
 
 	@Override
 	public <V> String readFromJSON(Class<String> valType,
-			Class<V> arrCollItemType, JSONObject obj, String key)
+			Class<V> arrCollElementType, JSONObject obj, String key)
 			throws JSONException {
 		return obj.getString(key);
 	}
 
 	@Override
 	protected <V> String parseFromString(Class<String> valType,
-			Class<V> arrCollItemType, String str) {
+			Class<V> arrCollElementType, String str) {
 		return str;
 	}
 
 	@Override
 	public <V> void putToContentValues(Class<String> valueType,
-			Class<V> arrCollItemType, ContentValues cv, String key, String val) {
+			Class<V> arrCollElementType, ContentValues cv, String key,
+			String val) {
 		cv.put(key, val);
 	}
 
 	@Override
 	public <V> String readFromCursor(Class<String> valType,
-			Class<V> arrCollItemType, Cursor cursor, int columnIndex) {
+			Class<V> arrCollElementType, Cursor cursor, int columnIndex) {
 		return cursor.getString(columnIndex);
 	}
 

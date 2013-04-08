@@ -36,20 +36,20 @@ public class JSONObjectHandler extends TypeHandler<JSONObject> {
 
 	@Override
 	public <V> Object convertForJSON(Class<JSONObject> valType,
-			Class<V> arrCollItemType, JSONObject val) {
+			Class<V> arrCollElementType, JSONObject val) {
 		return val.toString();
 	}
 
 	@Override
 	public <V> JSONObject readFromJSON(Class<JSONObject> valType,
-			Class<V> arrCollItemType, JSONObject obj, String key)
+			Class<V> arrCollElementType, JSONObject obj, String key)
 			throws JSONException {
-		return parseFromString(valType, arrCollItemType, obj.getString(key));
+		return parseFromString(valType, arrCollElementType, obj.getString(key));
 	}
 
 	@Override
 	protected <V> JSONObject parseFromString(Class<JSONObject> valType,
-			Class<V> arrCollItemType, String str) {
+			Class<V> arrCollElementType, String str) {
 		try {
 			return new JSONObject(str);
 		} catch (JSONException e) {
@@ -59,14 +59,14 @@ public class JSONObjectHandler extends TypeHandler<JSONObject> {
 
 	@Override
 	public <V> void putToContentValues(Class<JSONObject> valueType,
-			Class<V> arrCollItemType, ContentValues cv, String key,
+			Class<V> arrCollElementType, ContentValues cv, String key,
 			JSONObject val) {
 		cv.put(key, val.toString());
 	}
 
 	@Override
 	public <V> JSONObject readFromCursor(Class<JSONObject> valType,
-			Class<V> arrCollItemType, Cursor cursor, int columnIndex) {
+			Class<V> arrCollElementType, Cursor cursor, int columnIndex) {
 		try {
 			return new JSONObject(cursor.getString(columnIndex));
 		} catch (JSONException e) {

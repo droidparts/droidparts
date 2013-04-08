@@ -34,8 +34,8 @@ public abstract class SingleFragmentActivity<F extends Fragment> extends
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		fragment = onCreateFragment();
-		SecretFragmentsSupportUtil.singleFragmentActivityAddFragmentToContentView(this,
-				fragment);
+		SecretFragmentsSupportUtil
+				.singleFragmentActivityAddFragmentToContentView(this, fragment);
 	}
 
 	protected F getFragment() {

@@ -94,30 +94,28 @@ public class JSONSerializer<ModelType extends Model> {
 	}
 
 	protected <T> void putToJSONObject(JSONObject obj, String key,
-			Class<T> valType, Class<?> arrCollItemType, Object val)
+			Class<T> valType, Class<?> arrCollElementType, Object val)
 			throws Exception {
 		if (val == null) {
 			obj.put(key, NULL);
 		} else {
-			TypeHandler<T> handler = TypeHandlerRegistry
-					.getHandler(valType);
+			TypeHandler<T> handler = TypeHandlerRegistry.getHandler(valType);
 			@SuppressWarnings("unchecked")
-			Object jsonVal = handler.convertForJSON(valType, arrCollItemType,
-					(T) val);
+			Object jsonVal = handler.convertForJSON(valType,
+					arrCollElementType, (T) val);
 			obj.put(key, jsonVal);
 		}
 	}
 
 	protected <T, V> Object readFromJSON(Class<T> valType,
-			Class<V> arrCollItemType, JSONObject obj, String key)
+			Class<V> arrCollElementType, JSONObject obj, String key)
 			throws Exception {
 		Object jsonVal = obj.get(key);
 		if (NULL.equals(jsonVal)) {
 			return jsonVal;
 		} else {
-			TypeHandler<T> handler = TypeHandlerRegistry
-					.getHandler(valType);
-			return handler.readFromJSON(valType, arrCollItemType, obj, key);
+			TypeHandler<T> handler = TypeHandlerRegistry.getHandler(valType);
+			return handler.readFromJSON(valType, arrCollElementType, obj, key);
 		}
 	}
 
@@ -144,7 +142,7 @@ public class JSONSerializer<ModelType extends Model> {
 			Object columnVal = getFieldVal(item, spec.field);
 			try {
 				putToJSONObject(obj, key, spec.field.getType(),
-						spec.arrCollItemType, columnVal);
+						spec.arrCollElementType, columnVal);
 			} catch (Exception e) {
 				if (spec.ann.optional) {
 					L.w("Failded to serialize %s.%s: %s.", cls.getSimpleName(),
@@ -171,7 +169,7 @@ public class JSONSerializer<ModelType extends Model> {
 		} else if (obj.has(key)) {
 			try {
 				Object val = readFromJSON(spec.field.getType(),
-						spec.arrCollItemType, obj, key);
+						spec.arrCollElementType, obj, key);
 				if (!NULL.equals(val)) {
 					setFieldVal(model, spec.field, val);
 				} else {

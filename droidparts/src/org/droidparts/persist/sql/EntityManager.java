@@ -73,7 +73,7 @@ public class EntityManager<EntityType extends Entity> extends
 			int colIdx = cursor.getColumnIndex(spec.ann.name);
 			if (colIdx >= 0) {
 				Object columnVal = readFromCursor(cursor, colIdx,
-						spec.field.getType(), spec.arrCollItemType);
+						spec.field.getType(), spec.arrCollElementType);
 				if (columnVal != null || spec.ann.nullable) {
 					setFieldVal(entity, spec.field, columnVal);
 				}
@@ -115,7 +115,7 @@ public class EntityManager<EntityType extends Entity> extends
 		for (FieldSpec<ColumnAnn> spec : getTableColumnSpecs(cls)) {
 			Object columnVal = getFieldVal(item, spec.field);
 			putToContentValues(cv, spec.ann.name, spec.field.getType(),
-					spec.arrCollItemType, columnVal);
+					spec.arrCollElementType, columnVal);
 		}
 		return cv;
 	}
@@ -159,27 +159,25 @@ public class EntityManager<EntityType extends Entity> extends
 
 	@SuppressWarnings("unchecked")
 	protected <T, V> void putToContentValues(ContentValues cv, String key,
-			Class<T> valueType, Class<V> arrCollItemType, Object value)
+			Class<T> valueType, Class<V> arrCollElementType, Object value)
 			throws IllegalArgumentException {
 		if (value == null) {
 			cv.putNull(key);
 		} else {
-			TypeHandler<T> handler = TypeHandlerRegistry
-					.getHandler(valueType);
-			handler.putToContentValues(valueType, arrCollItemType, cv, key,
+			TypeHandler<T> handler = TypeHandlerRegistry.getHandler(valueType);
+			handler.putToContentValues(valueType, arrCollElementType, cv, key,
 					(T) value);
 		}
 	}
 
 	protected <T, V> Object readFromCursor(Cursor cursor, int columnIndex,
-			Class<T> valType, Class<V> arrCollItemType)
+			Class<T> valType, Class<V> arrCollElementType)
 			throws IllegalArgumentException {
 		if (cursor.isNull(columnIndex)) {
 			return null;
 		} else {
-			TypeHandler<T> handler = TypeHandlerRegistry
-					.getHandler(valType);
-			return handler.readFromCursor(valType, arrCollItemType, cursor,
+			TypeHandler<T> handler = TypeHandlerRegistry.getHandler(valType);
+			return handler.readFromCursor(valType, arrCollElementType, cursor,
 					columnIndex);
 		}
 	}

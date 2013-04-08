@@ -17,7 +17,6 @@ package org.droidparts.adapter.array;
 
 import java.util.List;
 
-
 import android.widget.Spinner;
 
 public class SpinnerAdapter<T> extends ArrayAdapter<T> {

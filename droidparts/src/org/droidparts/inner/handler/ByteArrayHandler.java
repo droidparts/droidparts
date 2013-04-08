@@ -35,25 +35,26 @@ public class ByteArrayHandler extends TypeHandler<byte[]> {
 
 	@Override
 	public <V> byte[] readFromJSON(Class<byte[]> valType,
-			Class<V> arrCollItemType, JSONObject obj, String key) {
+			Class<V> arrCollElementType, JSONObject obj, String key) {
 		throw new UnsupportedOperationException();
 	}
 
 	@Override
 	protected <V> byte[] parseFromString(Class<byte[]> valType,
-			Class<V> arrCollItemType, String str) {
+			Class<V> arrCollElementType, String str) {
 		throw new UnsupportedOperationException();
 	}
 
 	@Override
 	public <V> void putToContentValues(Class<byte[]> valueType,
-			Class<V> arrCollItemType, ContentValues cv, String key, byte[] val) {
+			Class<V> arrCollElementType, ContentValues cv, String key,
+			byte[] val) {
 		cv.put(key, val);
 	}
 
 	@Override
 	public <V> byte[] readFromCursor(Class<byte[]> valType,
-			Class<V> arrCollItemType, Cursor cursor, int columnIndex) {
+			Class<V> arrCollElementType, Cursor cursor, int columnIndex) {
 		return cursor.getBlob(columnIndex);
 	}
 

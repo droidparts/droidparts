@@ -36,26 +36,26 @@ public class ShortHandler extends TypeHandler<Short> {
 
 	@Override
 	public <V> Short readFromJSON(Class<Short> valType,
-			Class<V> arrCollItemType, JSONObject obj, String key)
+			Class<V> arrCollElementType, JSONObject obj, String key)
 			throws JSONException {
-		return parseFromString(valType, arrCollItemType, obj.getString(key));
+		return parseFromString(valType, arrCollElementType, obj.getString(key));
 	}
 
 	@Override
 	protected <V> Short parseFromString(Class<Short> valType,
-			Class<V> arrCollItemType, String str) {
+			Class<V> arrCollElementType, String str) {
 		return Short.valueOf(str);
 	}
 
 	@Override
 	public <V> void putToContentValues(Class<Short> valueType,
-			Class<V> arrCollItemType, ContentValues cv, String key, Short val) {
+			Class<V> arrCollElementType, ContentValues cv, String key, Short val) {
 		cv.put(key, val);
 	}
 
 	@Override
 	public <V> Short readFromCursor(Class<Short> valType,
-			Class<V> arrCollItemType, Cursor cursor, int columnIndex) {
+			Class<V> arrCollElementType, Cursor cursor, int columnIndex) {
 		return cursor.getShort(columnIndex);
 	}
 }

@@ -79,7 +79,8 @@ public abstract class TabbedFragmentActivity extends FragmentActivity {
 		addTab(fragmentsOnTab.size(), tab, tabFragments);
 	}
 
-	public void addTab(int position, ActionBar.Tab tab, Fragment... tabFragments) {
+	public void addTab(int position, ActionBar.Tab tab,
+			Fragment... tabFragments) {
 		tab.setTabListener(tabListener);
 		getSupportActionBar().addTab(tab, position);
 		fragmentsOnTab.add(position, tabFragments);

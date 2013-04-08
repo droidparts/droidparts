@@ -35,26 +35,27 @@ public class LongHandler extends TypeHandler<Long> {
 	}
 
 	@Override
-	public <V> Long readFromJSON(Class<Long> valType, Class<V> arrCollItemType,
-			JSONObject obj, String key) throws JSONException {
+	public <V> Long readFromJSON(Class<Long> valType,
+			Class<V> arrCollElementType, JSONObject obj, String key)
+			throws JSONException {
 		return obj.getLong(key);
 	}
 
 	@Override
 	protected <V> Long parseFromString(Class<Long> valType,
-			Class<V> arrCollItemType, String str) {
+			Class<V> arrCollElementType, String str) {
 		return Long.valueOf(str);
 	}
 
 	@Override
 	public <V> void putToContentValues(Class<Long> valueType,
-			Class<V> arrCollItemType, ContentValues cv, String key, Long val) {
+			Class<V> arrCollElementType, ContentValues cv, String key, Long val) {
 		cv.put(key, val);
 	}
 
 	@Override
 	public <V> Long readFromCursor(Class<Long> valType,
-			Class<V> arrCollItemType, Cursor cursor, int columnIndex) {
+			Class<V> arrCollElementType, Cursor cursor, int columnIndex) {
 		return cursor.getLong(columnIndex);
 	}
 

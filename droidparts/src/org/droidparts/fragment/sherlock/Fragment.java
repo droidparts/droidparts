@@ -22,8 +22,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-public class Fragment extends
-		com.actionbarsherlock.app.SherlockFragment {
+public class Fragment extends com.actionbarsherlock.app.SherlockFragment {
 
 	private boolean injected;
 
