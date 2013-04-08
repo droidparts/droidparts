@@ -192,14 +192,19 @@ public final class FieldSpecRegistry {
 	private static void sanitizeFields(
 			ArrayList<FieldSpec<ColumnAnn>> columnSpecs) {
 		for (FieldSpec<ColumnAnn> spec : columnSpecs) {
+			Class<?> fieldType = spec.field.getType();
 			if (spec.ann.nullable) {
-				Class<?> fieldType = spec.field.getType();
 				if (isByte(fieldType) || isShort(fieldType)
 						|| isInteger(fieldType) || isLong(fieldType)
 						|| isFloat(fieldType) || isDouble(fieldType)
 						|| isBoolean(fieldType) || isCharacter(fieldType)) {
 					L.w("%s can't be null.", fieldType.getSimpleName());
 					spec.ann.nullable = false;
+				}
+			} else if (spec.ann.eager) {
+				if (!isEntity(fieldType) && !isEntity(spec.componentType)) {
+					L.wtf("%s can't be eager.", fieldType.getSimpleName());
+					spec.ann.eager = false;
 				}
 			}
 		}
