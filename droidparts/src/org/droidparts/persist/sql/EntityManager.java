@@ -20,15 +20,17 @@ import static org.droidparts.inner.FieldSpecRegistry.getTableColumnSpecs;
 import static org.droidparts.inner.ReflectionUtils.getFieldVal;
 import static org.droidparts.inner.ReflectionUtils.newInstance;
 import static org.droidparts.inner.ReflectionUtils.setFieldVal;
+import static org.droidparts.inner.TypeHelper.isArray;
+import static org.droidparts.inner.TypeHelper.isCollection;
 import static org.droidparts.inner.TypeHelper.isEntity;
 
-import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
 
 import org.droidparts.Injector;
 import org.droidparts.annotation.inject.InjectDependency;
 import org.droidparts.inner.FieldSpecRegistry;
-import org.droidparts.inner.ReflectionUtils;
 import org.droidparts.inner.TypeHandlerRegistry;
 import org.droidparts.inner.ann.FieldSpec;
 import org.droidparts.inner.ann.sql.ColumnAnn;
@@ -88,13 +90,42 @@ public class EntityManager<EntityType extends Entity> extends
 		boolean fillAll = columnNameSet.isEmpty();
 		for (FieldSpec<ColumnAnn> spec : getTableColumnSpecs(cls)) {
 			if (fillAll || columnNameSet.contains(spec.ann.name)) {
-				if (isEntity(spec.field.getType())) {
-					Entity foreignEntity = ReflectionUtils.getFieldVal(item,
-							spec.field);
+				Class<?> fieldType = spec.field.getType();
+				if (isEntity(fieldType)) {
+					Entity foreignEntity = getFieldVal(item, spec.field);
 					if (foreignEntity != null) {
-						Object obj = subManager(spec.field).read(
-								foreignEntity.id);
+						EntityManager<Entity> manager = subManager(spec.field
+								.getType());
+						Object obj = manager.read(foreignEntity.id);
 						setFieldVal(item, spec.field, obj);
+					}
+				} else if ((isArray(fieldType) || isCollection(fieldType))
+						&& isEntity(spec.componentType)) {
+					EntityManager<Entity> manager = subManager(spec.componentType);
+					if (isArray(fieldType)) {
+						Entity[] arr = getFieldVal(item, spec.field);
+						if (arr != null) {
+							for (int i = 0; i < arr.length; i++) {
+								Entity ent = arr[i];
+								if (ent != null) {
+									arr[i] = manager.read(ent.id);
+								}
+							}
+						}
+					} else {
+						Collection<Entity> coll = getFieldVal(item, spec.field);
+						if (coll != null) {
+							ArrayList<Entity> entities = new ArrayList<Entity>(
+									coll.size());
+							for (Entity ent : coll) {
+								if (ent != null) {
+									entities.add(manager.read(ent.id));
+								}
+							}
+							coll.clear();
+							coll.addAll(entities);
+						}
+
 					}
 				}
 			}
@@ -125,12 +156,38 @@ public class EntityManager<EntityType extends Entity> extends
 	@Override
 	protected void createForeignKeys(EntityType item) {
 		for (FieldSpec<ColumnAnn> spec : getTableColumnSpecs(cls)) {
-			if (isEntity(spec.field.getType())) {
-				Entity foreignEntity = ReflectionUtils.getFieldVal(item,
-						spec.field);
+			Class<?> fieldType = spec.field.getType();
+			if (isEntity(fieldType)) {
+				Entity foreignEntity = getFieldVal(item, spec.field);
 				if (foreignEntity != null && foreignEntity.id == 0) {
-					subManager(spec.field).create(foreignEntity);
+					subManager(spec.field.getType()).create(foreignEntity);
 				}
+			} else if ((isArray(fieldType) || isCollection(fieldType))
+					&& isEntity(spec.componentType)) {
+				ArrayList<Entity> toCreate = new ArrayList<Entity>();
+				if (isArray(fieldType)) {
+					Entity[] arr = getFieldVal(item, spec.field);
+					if (arr != null) {
+						for (Entity ent : arr) {
+							if (ent != null && ent.id == 0) {
+								toCreate.add(ent);
+							}
+						}
+					}
+				} else {
+					Collection<Entity> coll = getFieldVal(item, spec.field);
+					if (coll != null) {
+						for (Entity ent : coll) {
+							if (ent != null && ent.id == 0) {
+								toCreate.add(ent);
+							}
+						}
+					}
+				}
+				if (!toCreate.isEmpty()) {
+					subManager(spec.componentType).create(toCreate);
+				}
+
 			}
 		}
 	}
@@ -185,8 +242,7 @@ public class EntityManager<EntityType extends Entity> extends
 	}
 
 	@SuppressWarnings("unchecked")
-	private EntityManager<Entity> subManager(Field field) {
-		return new EntityManager<Entity>((Class<Entity>) field.getType(), ctx,
-				db);
+	private EntityManager<Entity> subManager(Class<?> entityType) {
+		return new EntityManager<Entity>((Class<Entity>) entityType, ctx, db);
 	}
 }
