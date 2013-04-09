@@ -15,7 +15,6 @@
  */
 package org.droidparts.inner.handler;
 
-import java.util.ArrayList;
 import java.util.Date;
 
 import org.droidparts.inner.TypeHelper;
@@ -38,43 +37,37 @@ public class DateHandler extends TypeHandler<Date> {
 	}
 
 	@Override
-	public <V> Date readFromJSON(Class<Date> valType, Class<V> arrCollItemType,
+	public <V> void putToJSON(Class<Date> valType, Class<V> componentType,
+			JSONObject obj, String key, Date val) throws JSONException {
+		obj.put(key, val.getTime());
+	}
+
+	@Override
+	public <V> Date readFromJSON(Class<Date> valType, Class<V> componentType,
 			JSONObject obj, String key) throws JSONException {
 		try {
 			return new Date(obj.getLong(key));
 		} catch (Exception e) {
-			return parseFromString(valType, arrCollItemType, obj.getString(key));
+			return parseFromString(valType, componentType, obj.getString(key));
 		}
 	}
 
 	@Override
 	protected <V> Date parseFromString(Class<Date> valType,
-			Class<V> arrCollItemType, String str) {
+			Class<V> componentType, String str) {
 		return new Date(Long.valueOf(str));
 	}
 
 	@Override
-	public <V> Object convertForJSON(Class<Date> valType,
-			Class<V> arrCollItemType, Date val) {
-		return val.getTime();
-	}
-
-	@Override
 	public <V> void putToContentValues(Class<Date> valueType,
-			Class<V> arrCollItemType, ContentValues cv, String key, Date val) {
+			Class<V> componentType, ContentValues cv, String key, Date val) {
 		cv.put(key, val.getTime());
 	}
 
 	@Override
-	public <V> Date readFromCursor(Class<Date> valType,
-			Class<V> arrCollItemType, Cursor cursor, int columnIndex) {
+	public <V> Date readFromCursor(Class<Date> valType, Class<V> componentType,
+			Cursor cursor, int columnIndex) {
 		return new Date(cursor.getLong(columnIndex));
-	}
-
-	@Override
-	public Object parseTypeArr(Class<Date> valType, String[] arr) {
-		ArrayList<Date> list = parseTypeColl(valType, arr);
-		return list.toArray(new Date[list.size()]);
 	}
 
 }

@@ -15,10 +15,6 @@
  */
 package org.droidparts.inner.handler;
 
-import static org.droidparts.util.Arrays2.toPrimitive;
-
-import java.util.ArrayList;
-
 import org.droidparts.inner.TypeHelper;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -40,35 +36,27 @@ public class CharacterHandler extends TypeHandler<Character> {
 
 	@Override
 	public <V> Character readFromJSON(Class<Character> valType,
-			Class<V> arrCollItemType, JSONObject obj, String key)
+			Class<V> componentType, JSONObject obj, String key)
 			throws JSONException {
-		return parseFromString(valType, arrCollItemType, obj.getString(key));
+		return parseFromString(valType, componentType, obj.getString(key));
 	}
 
 	@Override
 	protected <V> Character parseFromString(Class<Character> valType,
-			Class<V> arrCollItemType, String str) {
+			Class<V> componentType, String str) {
 		return Character.valueOf((str.length() == 0) ? ' ' : str.charAt(0));
 	}
 
 	@Override
 	public <V> void putToContentValues(Class<Character> valueType,
-			Class<V> arrCollItemType, ContentValues cv, String key,
-			Character val) {
+			Class<V> componentType, ContentValues cv, String key, Character val) {
 		cv.put(key, String.valueOf(val));
 	}
 
 	@Override
 	public <V> Character readFromCursor(Class<Character> valType,
-			Class<V> arrCollItemType, Cursor cursor, int columnIndex) {
+			Class<V> componentType, Cursor cursor, int columnIndex) {
 		return parseFromString(valType, null, cursor.getString(columnIndex));
-	}
-
-	@Override
-	public Object parseTypeArr(Class<Character> valType, String[] arr) {
-		ArrayList<Character> list = parseTypeColl(valType, arr);
-		Character[] tArr = list.toArray(new Character[list.size()]);
-		return (valType == char.class) ? toPrimitive(tArr) : tArr;
 	}
 
 }

@@ -15,10 +15,6 @@
  */
 package org.droidparts.inner.handler;
 
-import static org.droidparts.util.Arrays2.toPrimitive;
-
-import java.util.ArrayList;
-
 import org.droidparts.inner.TypeHelper;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -40,18 +36,18 @@ public class BooleanHandler extends TypeHandler<Boolean> {
 
 	@Override
 	public <V> Boolean readFromJSON(Class<Boolean> valType,
-			Class<V> arrCollItemType, JSONObject obj, String key)
+			Class<V> componentType, JSONObject obj, String key)
 			throws JSONException {
 		try {
 			return obj.getBoolean(key);
 		} catch (JSONException e) {
-			return parseFromString(valType, arrCollItemType, obj.getString(key));
+			return parseFromString(valType, componentType, obj.getString(key));
 		}
 	}
 
 	@Override
 	protected <V> Boolean parseFromString(Class<Boolean> valType,
-			Class<V> arrCollItemType, String str) {
+			Class<V> componentType, String str) {
 		if ("1".equals(str)) {
 			str = "true";
 		}
@@ -60,21 +56,14 @@ public class BooleanHandler extends TypeHandler<Boolean> {
 
 	@Override
 	public <V> void putToContentValues(Class<Boolean> valueType,
-			Class<V> arrCollItemType, ContentValues cv, String key, Boolean val) {
+			Class<V> componentType, ContentValues cv, String key, Boolean val) {
 		cv.put(key, val);
 	}
 
 	@Override
 	public <V> Boolean readFromCursor(Class<Boolean> valType,
-			Class<V> arrCollItemType, Cursor cursor, int columnIndex) {
+			Class<V> componentType, Cursor cursor, int columnIndex) {
 		return (cursor.getInt(columnIndex) == 1);
-	}
-
-	@Override
-	public Object parseTypeArr(Class<Boolean> valType, String[] arr) {
-		ArrayList<Boolean> list = parseTypeColl(valType, arr);
-		Boolean[] tArr = list.toArray(new Boolean[list.size()]);
-		return (valType == boolean.class) ? toPrimitive(tArr) : tArr;
 	}
 
 }

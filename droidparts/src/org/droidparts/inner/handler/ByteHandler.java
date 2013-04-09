@@ -15,10 +15,6 @@
  */
 package org.droidparts.inner.handler;
 
-import static org.droidparts.util.Arrays2.toPrimitive;
-
-import java.util.ArrayList;
-
 import org.droidparts.inner.TypeHelper;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -39,34 +35,27 @@ public class ByteHandler extends TypeHandler<Byte> {
 	}
 
 	@Override
-	public <V> Byte readFromJSON(Class<Byte> valType, Class<V> arrCollItemType,
+	public <V> Byte readFromJSON(Class<Byte> valType, Class<V> componentType,
 			JSONObject obj, String key) throws JSONException {
-		return parseFromString(valType, arrCollItemType, obj.getString(key));
+		return parseFromString(valType, componentType, obj.getString(key));
 	}
 
 	@Override
 	protected <V> Byte parseFromString(Class<Byte> valType,
-			Class<V> arrCollItemType, String str) {
+			Class<V> componentType, String str) {
 		return Byte.valueOf(str);
 	}
 
 	@Override
 	public <V> void putToContentValues(Class<Byte> valueType,
-			Class<V> arrCollItemType, ContentValues cv, String key, Byte val) {
+			Class<V> componentType, ContentValues cv, String key, Byte val) {
 		cv.put(key, val);
 	}
 
 	@Override
-	public <V> Byte readFromCursor(Class<Byte> valType,
-			Class<V> arrCollItemType, Cursor cursor, int columnIndex) {
+	public <V> Byte readFromCursor(Class<Byte> valType, Class<V> componentType,
+			Cursor cursor, int columnIndex) {
 		return Byte.valueOf(cursor.getString(columnIndex));
-	}
-
-	@Override
-	public Object parseTypeArr(Class<Byte> valType, String[] arr) {
-		ArrayList<Byte> list = parseTypeColl(valType, arr);
-		Byte[] tArr = list.toArray(new Byte[list.size()]);
-		return (valType == byte.class) ? toPrimitive(tArr) : tArr;
 	}
 
 }

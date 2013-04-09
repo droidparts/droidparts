@@ -20,15 +20,17 @@ import static org.droidparts.inner.FieldSpecRegistry.getTableColumnSpecs;
 import static org.droidparts.inner.ReflectionUtils.getFieldVal;
 import static org.droidparts.inner.ReflectionUtils.newInstance;
 import static org.droidparts.inner.ReflectionUtils.setFieldVal;
+import static org.droidparts.inner.TypeHelper.isArray;
+import static org.droidparts.inner.TypeHelper.isCollection;
 import static org.droidparts.inner.TypeHelper.isEntity;
 
-import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
 
 import org.droidparts.Injector;
 import org.droidparts.annotation.inject.InjectDependency;
 import org.droidparts.inner.FieldSpecRegistry;
-import org.droidparts.inner.ReflectionUtils;
 import org.droidparts.inner.TypeHandlerRegistry;
 import org.droidparts.inner.ann.FieldSpec;
 import org.droidparts.inner.ann.sql.ColumnAnn;
@@ -73,7 +75,7 @@ public class EntityManager<EntityType extends Entity> extends
 			int colIdx = cursor.getColumnIndex(spec.ann.name);
 			if (colIdx >= 0) {
 				Object columnVal = readFromCursor(cursor, colIdx,
-						spec.field.getType(), spec.arrCollItemType);
+						spec.field.getType(), spec.componentType);
 				if (columnVal != null || spec.ann.nullable) {
 					setFieldVal(entity, spec.field, columnVal);
 				}
@@ -87,13 +89,44 @@ public class EntityManager<EntityType extends Entity> extends
 		HashSet<String> columnNameSet = new HashSet<String>(asList(columnNames));
 		boolean fillAll = columnNameSet.isEmpty();
 		for (FieldSpec<ColumnAnn> spec : getTableColumnSpecs(cls)) {
-			if (isEntity(spec.field.getType())
-					&& (fillAll || columnNameSet.contains(spec.ann.name))) {
-				Entity foreignEntity = ReflectionUtils.getFieldVal(item,
-						spec.field);
-				if (foreignEntity != null) {
-					Object obj = subManager(spec.field).read(foreignEntity.id);
-					setFieldVal(item, spec.field, obj);
+			if (fillAll || columnNameSet.contains(spec.ann.name)) {
+				Class<?> fieldType = spec.field.getType();
+				if (isEntity(fieldType)) {
+					Entity foreignEntity = getFieldVal(item, spec.field);
+					if (foreignEntity != null) {
+						EntityManager<Entity> manager = subManager(spec.field
+								.getType());
+						Object obj = manager.read(foreignEntity.id);
+						setFieldVal(item, spec.field, obj);
+					}
+				} else if ((isArray(fieldType) || isCollection(fieldType))
+						&& isEntity(spec.componentType)) {
+					EntityManager<Entity> manager = subManager(spec.componentType);
+					if (isArray(fieldType)) {
+						Entity[] arr = getFieldVal(item, spec.field);
+						if (arr != null) {
+							for (int i = 0; i < arr.length; i++) {
+								Entity ent = arr[i];
+								if (ent != null) {
+									arr[i] = manager.read(ent.id);
+								}
+							}
+						}
+					} else {
+						Collection<Entity> coll = getFieldVal(item, spec.field);
+						if (coll != null) {
+							ArrayList<Entity> entities = new ArrayList<Entity>(
+									coll.size());
+							for (Entity ent : coll) {
+								if (ent != null) {
+									entities.add(manager.read(ent.id));
+								}
+							}
+							coll.clear();
+							coll.addAll(entities);
+						}
+
+					}
 				}
 			}
 		}
@@ -115,7 +148,7 @@ public class EntityManager<EntityType extends Entity> extends
 		for (FieldSpec<ColumnAnn> spec : getTableColumnSpecs(cls)) {
 			Object columnVal = getFieldVal(item, spec.field);
 			putToContentValues(cv, spec.ann.name, spec.field.getType(),
-					spec.arrCollItemType, columnVal);
+					spec.componentType, columnVal);
 		}
 		return cv;
 	}
@@ -123,12 +156,38 @@ public class EntityManager<EntityType extends Entity> extends
 	@Override
 	protected void createForeignKeys(EntityType item) {
 		for (FieldSpec<ColumnAnn> spec : getTableColumnSpecs(cls)) {
-			if (isEntity(spec.field.getType())) {
-				Entity foreignEntity = ReflectionUtils.getFieldVal(item,
-						spec.field);
+			Class<?> fieldType = spec.field.getType();
+			if (isEntity(fieldType)) {
+				Entity foreignEntity = getFieldVal(item, spec.field);
 				if (foreignEntity != null && foreignEntity.id == 0) {
-					subManager(spec.field).create(foreignEntity);
+					subManager(spec.field.getType()).create(foreignEntity);
 				}
+			} else if ((isArray(fieldType) || isCollection(fieldType))
+					&& isEntity(spec.componentType)) {
+				ArrayList<Entity> toCreate = new ArrayList<Entity>();
+				if (isArray(fieldType)) {
+					Entity[] arr = getFieldVal(item, spec.field);
+					if (arr != null) {
+						for (Entity ent : arr) {
+							if (ent != null && ent.id == 0) {
+								toCreate.add(ent);
+							}
+						}
+					}
+				} else {
+					Collection<Entity> coll = getFieldVal(item, spec.field);
+					if (coll != null) {
+						for (Entity ent : coll) {
+							if (ent != null && ent.id == 0) {
+								toCreate.add(ent);
+							}
+						}
+					}
+				}
+				if (!toCreate.isEmpty()) {
+					subManager(spec.componentType).create(toCreate);
+				}
+
 			}
 		}
 	}
@@ -159,34 +218,31 @@ public class EntityManager<EntityType extends Entity> extends
 
 	@SuppressWarnings("unchecked")
 	protected <T, V> void putToContentValues(ContentValues cv, String key,
-			Class<T> valueType, Class<V> arrCollItemType, Object value)
+			Class<T> valueType, Class<V> componentType, Object value)
 			throws IllegalArgumentException {
 		if (value == null) {
 			cv.putNull(key);
 		} else {
-			TypeHandler<T> handler = TypeHandlerRegistry
-					.getHandler(valueType);
-			handler.putToContentValues(valueType, arrCollItemType, cv, key,
+			TypeHandler<T> handler = TypeHandlerRegistry.getHandler(valueType);
+			handler.putToContentValues(valueType, componentType, cv, key,
 					(T) value);
 		}
 	}
 
 	protected <T, V> Object readFromCursor(Cursor cursor, int columnIndex,
-			Class<T> valType, Class<V> arrCollItemType)
+			Class<T> valType, Class<V> componentType)
 			throws IllegalArgumentException {
 		if (cursor.isNull(columnIndex)) {
 			return null;
 		} else {
-			TypeHandler<T> handler = TypeHandlerRegistry
-					.getHandler(valType);
-			return handler.readFromCursor(valType, arrCollItemType, cursor,
+			TypeHandler<T> handler = TypeHandlerRegistry.getHandler(valType);
+			return handler.readFromCursor(valType, componentType, cursor,
 					columnIndex);
 		}
 	}
 
 	@SuppressWarnings("unchecked")
-	private EntityManager<Entity> subManager(Field field) {
-		return new EntityManager<Entity>((Class<Entity>) field.getType(), ctx,
-				db);
+	private EntityManager<Entity> subManager(Class<?> entityType) {
+		return new EntityManager<Entity>((Class<Entity>) entityType, ctx, db);
 	}
 }

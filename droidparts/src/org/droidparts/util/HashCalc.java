@@ -20,7 +20,6 @@ import static org.droidparts.contract.Constants.UTF8;
 import java.math.BigInteger;
 import java.security.MessageDigest;
 
-
 public class HashCalc {
 
 	public static final String SHA1 = "SHA-1";

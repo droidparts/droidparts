@@ -38,52 +38,41 @@ public class ModelHandler extends TypeHandler<Model> {
 
 	@Override
 	public <V> void putToContentValues(Class<Model> valueType,
-			Class<V> arrCollItemType, ContentValues cv, String key, Model val)
-			throws IllegalArgumentException {
+			Class<V> componentType, ContentValues cv, String key, Model val) {
 		throw new UnsupportedOperationException();
 	}
 
 	@Override
 	public <V> Model readFromCursor(Class<Model> valType,
-			Class<V> arrCollItemType, Cursor cursor, int columnIndex)
-			throws IllegalArgumentException {
+			Class<V> componentType, Cursor cursor, int columnIndex) {
 		throw new UnsupportedOperationException();
 	}
 
 	@Override
-	public <V> Object convertForJSON(Class<Model> valType,
-			Class<V> arrCollItemType, Model val) {
+	public <V> void putToJSON(Class<Model> valType, Class<V> componentType,
+			JSONObject obj, String key, Model val) throws JSONException {
 		@SuppressWarnings("unchecked")
 		Class<Model> cls = (Class<Model>) val.getClass();
-		try {
-			return new JSONSerializer<Model>(cls, null).serialize(val);
-		} catch (JSONException e) {
-			throw new IllegalArgumentException(e);
-		}
+		JSONObject valStr = new JSONSerializer<Model>(cls, null).serialize(val);
+		obj.put(key, valStr);
 	}
 
 	@Override
-	public <V> Model readFromJSON(Class<Model> valType,
-			Class<V> arrCollItemType, JSONObject obj, String key)
-			throws JSONException {
+	public <V> Model readFromJSON(Class<Model> valType, Class<V> componentType,
+			JSONObject obj, String key) throws JSONException {
 		return new JSONSerializer<Model>(valType, null).deserialize(obj
 				.getJSONObject(key));
 	}
 
 	@Override
 	protected <V> Model parseFromString(Class<Model> valType,
-			Class<V> arrCollItemType, String str) {
+			Class<V> componentType, String str) {
 		try {
 			return new JSONSerializer<Model>(valType, null)
 					.deserialize(new JSONObject(str));
 		} catch (JSONException e) {
 			throw new IllegalArgumentException(e);
 		}
-	}
-
-	@Override
-	public Object parseTypeArr(Class<Model> valType, String[] arr) {
-		throw new UnsupportedOperationException();
 	}
 
 }

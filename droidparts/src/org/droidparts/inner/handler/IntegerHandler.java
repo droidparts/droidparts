@@ -15,10 +15,6 @@
  */
 package org.droidparts.inner.handler;
 
-import static org.droidparts.util.Arrays2.toPrimitive;
-
-import java.util.ArrayList;
-
 import org.droidparts.inner.TypeHelper;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -40,34 +36,33 @@ public class IntegerHandler extends TypeHandler<Integer> {
 
 	@Override
 	public <V> Integer readFromJSON(Class<Integer> valType,
-			Class<V> arrCollItemType, JSONObject obj, String key)
+			Class<V> componentType, JSONObject obj, String key)
 			throws JSONException {
 		return obj.getInt(key);
 	}
 
 	@Override
 	protected <V> Integer parseFromString(Class<Integer> valType,
-			Class<V> arrCollItemType, String str) {
+			Class<V> componentType, String str) {
 		return Integer.valueOf(str);
 	}
 
 	@Override
 	public <V> void putToContentValues(Class<Integer> valueType,
-			Class<V> arrCollItemType, ContentValues cv, String key, Integer val) {
+			Class<V> componentType, ContentValues cv, String key, Integer val) {
 		cv.put(key, val);
 	}
 
 	@Override
 	public <V> Integer readFromCursor(Class<Integer> valType,
-			Class<V> arrCollItemType, Cursor cursor, int columnIndex) {
+			Class<V> componentType, Cursor cursor, int columnIndex) {
 		return cursor.getInt(columnIndex);
 	}
 
-	@Override
-	public Object parseTypeArr(Class<Integer> valType, String[] arr) {
-		ArrayList<Integer> list = parseTypeColl(valType, arr);
-		Integer[] tArr = list.toArray(new Integer[list.size()]);
-		return (valType == int.class) ? toPrimitive(tArr) : tArr;
-	}
+	// @Override
+	// public Object parseTypeArr(Class<Integer> valType, String[] arr) {
+	// Integer[] tArr = (Integer[]) super.parseTypeArr(valType, arr);
+	// return (valType == int.class) ? toPrimitive(tArr) : tArr;
+	// }
 
 }

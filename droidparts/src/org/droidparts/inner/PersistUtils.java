@@ -215,7 +215,7 @@ public final class PersistUtils implements SQL.DDL {
 			//
 			ContentValues cv = new ContentValues();
 			handler.putToContentValues((Class<T>) spec.field.getType(),
-					spec.arrCollItemType, cv, "key", (T) defaultVal);
+					spec.componentType, cv, "key", (T) defaultVal);
 			defaultVal = cv.get("key");
 			//
 			String statement = getAddColumn(tableName, spec.ann.name,
@@ -276,8 +276,8 @@ public final class PersistUtils implements SQL.DDL {
 			}
 			sb.append(SEPARATOR);
 			sb.append(spec.ann.name);
-			TypeHandler<?> handler = TypeHandlerRegistry
-					.getHandler(spec.field.getType());
+			TypeHandler<?> handler = TypeHandlerRegistry.getHandler(spec.field
+					.getType());
 			sb.append(handler.getDBColumnType());
 			if (!spec.ann.nullable) {
 				sb.append(NOT_NULL);

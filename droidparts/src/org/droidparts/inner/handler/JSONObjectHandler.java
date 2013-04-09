@@ -15,8 +15,6 @@
  */
 package org.droidparts.inner.handler;
 
-import java.util.ArrayList;
-
 import org.droidparts.inner.TypeHelper;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -37,21 +35,22 @@ public class JSONObjectHandler extends TypeHandler<JSONObject> {
 	}
 
 	@Override
-	public <V> Object convertForJSON(Class<JSONObject> valType,
-			Class<V> arrCollItemType, JSONObject val) {
-		return val.toString();
+	public <V> void putToJSON(Class<JSONObject> valType,
+			Class<V> componentType, JSONObject obj, String key, JSONObject val)
+			throws JSONException {
+		obj.put(key, val.toString());
 	}
 
 	@Override
 	public <V> JSONObject readFromJSON(Class<JSONObject> valType,
-			Class<V> arrCollItemType, JSONObject obj, String key)
+			Class<V> componentType, JSONObject obj, String key)
 			throws JSONException {
-		return parseFromString(valType, arrCollItemType, obj.getString(key));
+		return parseFromString(valType, componentType, obj.getString(key));
 	}
 
 	@Override
 	protected <V> JSONObject parseFromString(Class<JSONObject> valType,
-			Class<V> arrCollItemType, String str) {
+			Class<V> componentType, String str) {
 		try {
 			return new JSONObject(str);
 		} catch (JSONException e) {
@@ -61,26 +60,18 @@ public class JSONObjectHandler extends TypeHandler<JSONObject> {
 
 	@Override
 	public <V> void putToContentValues(Class<JSONObject> valueType,
-			Class<V> arrCollItemType, ContentValues cv, String key,
-			JSONObject val) {
+			Class<V> componentType, ContentValues cv, String key, JSONObject val) {
 		cv.put(key, val.toString());
 	}
 
 	@Override
 	public <V> JSONObject readFromCursor(Class<JSONObject> valType,
-			Class<V> arrCollItemType, Cursor cursor, int columnIndex)
-			throws IllegalArgumentException {
+			Class<V> componentType, Cursor cursor, int columnIndex) {
 		try {
 			return new JSONObject(cursor.getString(columnIndex));
 		} catch (JSONException e) {
 			throw new IllegalArgumentException(e);
 		}
-	}
-
-	@Override
-	public Object parseTypeArr(Class<JSONObject> valType, String[] arr) {
-		ArrayList<JSONObject> list = parseTypeColl(valType, arr);
-		return list.toArray(new JSONObject[list.size()]);
 	}
 
 }

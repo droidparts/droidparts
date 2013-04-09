@@ -15,8 +15,6 @@
  */
 package org.droidparts.inner.handler;
 
-import java.util.ArrayList;
-
 import org.droidparts.inner.TypeHelper;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -38,39 +36,33 @@ public class UriHandler extends TypeHandler<Uri> {
 	}
 
 	@Override
-	public <V> Object convertForJSON(Class<Uri> valType,
-			Class<V> arrCollItemType, Uri val) {
-		return val.toString();
+	public <V> void putToJSON(Class<Uri> valType, Class<V> componentType,
+			JSONObject obj, String key, Uri val) throws JSONException {
+		obj.put(key, val.toString());
 	}
 
 	@Override
-	public <V> Uri readFromJSON(Class<Uri> valType, Class<V> arrCollItemType,
+	public <V> Uri readFromJSON(Class<Uri> valType, Class<V> componentType,
 			JSONObject obj, String key) throws JSONException {
-		return parseFromString(valType, arrCollItemType, obj.getString(key));
+		return parseFromString(valType, componentType, obj.getString(key));
 	}
 
 	@Override
 	protected <V> Uri parseFromString(Class<Uri> valType,
-			Class<V> arrCollItemType, String str) {
+			Class<V> componentType, String str) {
 		return Uri.parse(str);
 	}
 
 	@Override
 	public <V> void putToContentValues(Class<Uri> valueType,
-			Class<V> arrCollItemType, ContentValues cv, String key, Uri val) {
+			Class<V> componentType, ContentValues cv, String key, Uri val) {
 		cv.put(key, val.toString());
 	}
 
 	@Override
-	public <V> Uri readFromCursor(Class<Uri> valType, Class<V> arrCollItemType,
+	public <V> Uri readFromCursor(Class<Uri> valType, Class<V> componentType,
 			Cursor cursor, int columnIndex) {
 		return Uri.parse(cursor.getString(columnIndex));
-	}
-
-	@Override
-	public Object parseTypeArr(Class<Uri> valType, String[] arr) {
-		ArrayList<Uri> list = parseTypeColl(valType, arr);
-		return list.toArray(new Uri[list.size()]);
 	}
 
 }

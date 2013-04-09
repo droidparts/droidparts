@@ -1,8 +1,13 @@
+1.3.2 /2013-04-09/:
+    * Fixed Entity[] & Collection<Entity> persistence.
+    * Improved TypeHandler API.
+    * Misc tweaks.
+
 1.3.1 /2013-04-07/:
     * AbstractDBOpenHelper: override onCreateTables(...) & call createTables(...).
     * AbstractDBOpenHelper: added addMissingColumns(...) for simple migration.
     * Dropped AbstractDBOpenHelper2 & moved helper to ResourceUtils.
-    
+
 1.3.0 /2013-04-01/:
     * Refactored to use TypeHandlers for SQL & JSON interactions.
     * Rearranged a bunch of stuff.
@@ -19,7 +24,7 @@
     * Added MergeSelect.
     * RESTClient: If-Modified-Since & ETag support.
     * ImageFetcher tweaks.
-    
+
 1.1.5 /2013-03-08/:
     * Fixed porn.xml.
     * DBOpenHelper: a method to create tables for new Entities.
@@ -110,7 +115,7 @@
     * Improved dependency injection speed.
     * setReloadMenuItem => setActionBarReloadMenuItem(), setSupportProgressBarIndeterminateVisibility() => setActionBarLoadingIndicatorVisible().
     * Other tweaks & minor API changes.
-    
+
 0.8.0 /2012-09-26/:
     * EntityMananger: added readFirstFromCursor(), readAllFromCursor(), removed list().
     * Changed EntityCursorAdapter constructors, one of them now accepts Select object.

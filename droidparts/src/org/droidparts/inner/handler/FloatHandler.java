@@ -15,10 +15,6 @@
  */
 package org.droidparts.inner.handler;
 
-import static org.droidparts.util.Arrays2.toPrimitive;
-
-import java.util.ArrayList;
-
 import org.droidparts.inner.TypeHelper;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -39,35 +35,27 @@ public class FloatHandler extends TypeHandler<Float> {
 	}
 
 	@Override
-	public <V> Float readFromJSON(Class<Float> valType,
-			Class<V> arrCollItemType, JSONObject obj, String key)
-			throws JSONException {
+	public <V> Float readFromJSON(Class<Float> valType, Class<V> componentType,
+			JSONObject obj, String key) throws JSONException {
 		return (float) obj.getDouble(key);
 	}
 
 	@Override
 	protected <V> Float parseFromString(Class<Float> valType,
-			Class<V> arrCollItemType, String str) {
+			Class<V> componentType, String str) {
 		return Float.valueOf(str);
 	}
 
 	@Override
 	public <V> void putToContentValues(Class<Float> valueType,
-			Class<V> arrCollItemType, ContentValues cv, String key, Float val) {
+			Class<V> componentType, ContentValues cv, String key, Float val) {
 		cv.put(key, val);
 	}
 
 	@Override
 	public <V> Float readFromCursor(Class<Float> valType,
-			Class<V> arrCollItemType, Cursor cursor, int columnIndex) {
+			Class<V> componentType, Cursor cursor, int columnIndex) {
 		return cursor.getFloat(columnIndex);
-	}
-
-	@Override
-	public Object parseTypeArr(Class<Float> valType, String[] arr) {
-		ArrayList<Float> list = parseTypeColl(valType, arr);
-		Float[] tArr = list.toArray(new Float[list.size()]);
-		return (valType == float.class) ? toPrimitive(tArr) : tArr;
 	}
 
 }

@@ -15,7 +15,6 @@
  */
 package org.droidparts.inner.handler;
 
-import java.util.ArrayList;
 import java.util.UUID;
 
 import org.droidparts.inner.TypeHelper;
@@ -38,39 +37,33 @@ public class UUIDHandler extends TypeHandler<UUID> {
 	}
 
 	@Override
-	public <V> Object convertForJSON(Class<UUID> valType,
-			Class<V> arrCollItemType, UUID val) {
-		return val.toString();
+	public <V> void putToJSON(Class<UUID> valType, Class<V> componentType,
+			JSONObject obj, String key, UUID val) throws JSONException {
+		obj.put(key, val.toString());
 	}
 
 	@Override
-	public <V> UUID readFromJSON(Class<UUID> valType, Class<V> arrCollItemType,
+	public <V> UUID readFromJSON(Class<UUID> valType, Class<V> componentType,
 			JSONObject obj, String key) throws JSONException {
-		return parseFromString(valType, arrCollItemType, obj.getString(key));
+		return parseFromString(valType, componentType, obj.getString(key));
 	}
 
 	@Override
 	protected <V> UUID parseFromString(Class<UUID> valType,
-			Class<V> arrCollItemType, String str) {
+			Class<V> componentType, String str) {
 		return UUID.fromString(str);
 	}
 
 	@Override
 	public <V> void putToContentValues(Class<UUID> valueType,
-			Class<V> arrCollItemType, ContentValues cv, String key, UUID val) {
+			Class<V> componentType, ContentValues cv, String key, UUID val) {
 		cv.put(key, val.toString());
 	}
 
 	@Override
-	public <V> UUID readFromCursor(Class<UUID> valType,
-			Class<V> arrCollItemType, Cursor cursor, int columnIndex) {
+	public <V> UUID readFromCursor(Class<UUID> valType, Class<V> componentType,
+			Cursor cursor, int columnIndex) {
 		return UUID.fromString(cursor.getString(columnIndex));
-	}
-
-	@Override
-	public Object parseTypeArr(Class<UUID> valType, String[] arr) {
-		ArrayList<UUID> list = parseTypeColl(valType, arr);
-		return list.toArray(new UUID[list.size()]);
 	}
 
 }

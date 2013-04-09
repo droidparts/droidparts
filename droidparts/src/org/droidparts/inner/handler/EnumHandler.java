@@ -17,9 +17,6 @@ package org.droidparts.inner.handler;
 
 import static org.droidparts.inner.ReflectionUtils.newEnum;
 
-import java.lang.reflect.Array;
-import java.util.ArrayList;
-
 import org.droidparts.inner.TypeHelper;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -40,45 +37,34 @@ public class EnumHandler extends TypeHandler<Enum<?>> {
 	}
 
 	@Override
-	public <V> Object convertForJSON(Class<Enum<?>> valType,
-			Class<V> arrCollItemType, Enum<?> val) {
-		return val.toString();
+	public <V> void putToJSON(Class<Enum<?>> valType, Class<V> componentType,
+			JSONObject obj, String key, Enum<?> val) throws JSONException {
+		obj.put(key, val.toString());
 	}
 
 	@Override
 	public <V> Enum<?> readFromJSON(Class<Enum<?>> valType,
-			Class<V> arrCollItemType, JSONObject obj, String key)
+			Class<V> componentType, JSONObject obj, String key)
 			throws JSONException {
-		return parseFromString(valType, arrCollItemType, obj.getString(key));
+		return parseFromString(valType, componentType, obj.getString(key));
 	}
 
 	@Override
 	protected <V> Enum<?> parseFromString(Class<Enum<?>> valType,
-			Class<V> arrCollItemType, String str) {
+			Class<V> componentType, String str) {
 		return newEnum(valType, str);
 	}
 
 	@Override
 	public <V> void putToContentValues(Class<Enum<?>> valueType,
-			Class<V> arrCollItemType, ContentValues cv, String key, Enum<?> val) {
+			Class<V> componentType, ContentValues cv, String key, Enum<?> val) {
 		cv.put(key, val.toString());
 	}
 
 	@Override
 	public <V> Enum<?> readFromCursor(Class<Enum<?>> valType,
-			Class<V> arrCollItemType, Cursor cursor, int columnIndex) {
+			Class<V> componentType, Cursor cursor, int columnIndex) {
 		return newEnum(valType, cursor.getString(columnIndex));
-	}
-
-	@Override
-	public Object parseTypeArr(Class<Enum<?>> valType, String[] arr) {
-		ArrayList<? extends Enum<?>> list = (ArrayList<? extends Enum<?>>) parseTypeColl(
-				valType, arr);
-		Object enumArr = Array.newInstance(valType, list.size());
-		for (int i = 0; i < list.size(); i++) {
-			Array.set(enumArr, i, list.get(i));
-		}
-		return enumArr;
 	}
 
 }

@@ -15,8 +15,6 @@
  */
 package org.droidparts.inner.handler;
 
-import java.util.ArrayList;
-
 import org.droidparts.contract.SQL;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -30,36 +28,22 @@ public abstract class TypeHandler<T> implements SQL.DDL {
 
 	public abstract String getDBColumnType();
 
-	public <V> Object convertForJSON(Class<T> valType,
-			Class<V> arrCollItemType, T val) {
-		return val;
+	protected abstract <V> T parseFromString(Class<T> valType,
+			Class<V> componentType, String str);
+
+	public <V> void putToJSON(Class<T> valType, Class<V> componentType,
+			JSONObject obj, String key, T val) throws JSONException {
+		obj.put(key, val);
 	}
 
 	public abstract <V> T readFromJSON(Class<T> valType,
-			Class<V> arrCollItemType, JSONObject obj, String key)
+			Class<V> componentType, JSONObject obj, String key)
 			throws JSONException;
 
-	protected abstract <V> T parseFromString(Class<T> valType,
-			Class<V> arrCollItemType, String str);
-
 	public abstract <V> void putToContentValues(Class<T> valueType,
-			Class<V> arrCollItemType, ContentValues cv, String key, T val)
-			throws IllegalArgumentException;
+			Class<V> componentType, ContentValues cv, String key, T val);
 
 	public abstract <V> T readFromCursor(Class<T> valType,
-			Class<V> arrCollItemType, Cursor cursor, int columnIndex)
-			throws IllegalArgumentException;
-
-	// say hello to arrays of primitives
-	public abstract Object parseTypeArr(Class<T> valType, String[] arr);
-
-	public final ArrayList<T> parseTypeColl(Class<T> valType, String[] arr)
-			throws IllegalArgumentException {
-		ArrayList<T> list = new ArrayList<T>();
-		for (String str : arr) {
-			list.add(parseFromString(valType, null, str));
-		}
-		return list;
-	}
+			Class<V> componentType, Cursor cursor, int columnIndex);
 
 }

@@ -18,7 +18,7 @@ package org.droidparts.inner;
 import static org.droidparts.inner.AnnBuilder.getClassAnn;
 import static org.droidparts.inner.AnnBuilder.getFieldAnn;
 import static org.droidparts.inner.AnnBuilder.getFieldAnns;
-import static org.droidparts.inner.ReflectionUtils.getArrayType;
+import static org.droidparts.inner.ReflectionUtils.getArrayComponentType;
 import static org.droidparts.inner.ReflectionUtils.getFieldGenericArgs;
 import static org.droidparts.inner.ReflectionUtils.listAnnotatedFields;
 import static org.droidparts.inner.TypeHelper.isArray;
@@ -101,17 +101,16 @@ public final class FieldSpecRegistry {
 				ColumnAnn columnAnn = (ColumnAnn) getFieldAnn(ColumnAnn.class,
 						cls, field);
 				if (columnAnn != null) {
-					Class<?> arrCollItemType = getArrCollItemType(field);
+					Class<?> componentType = getComponentType(field);
 					ColumnAnn ann = new ColumnAnn();
 					ann.name = getColumnName(columnAnn, field);
 					ann.nullable = columnAnn.nullable;
 					ann.unique = columnAnn.unique;
 					ann.eager = columnAnn.eager;
-					list.add(new FieldSpec<ColumnAnn>(field, arrCollItemType,
-							ann));
+					list.add(new FieldSpec<ColumnAnn>(field, componentType, ann));
 				}
 			}
-			sanitizeFields(list);
+			sanitizeSpecs(list);
 			specs = list.toArray(new FieldSpec[list.size()]);
 			columnSpecCache.put(cls, specs);
 		}
@@ -127,11 +126,11 @@ public final class FieldSpecRegistry {
 			for (Field field : listAnnotatedFields(cls)) {
 				KeyAnn keyAnn = (KeyAnn) getFieldAnn(KeyAnn.class, cls, field);
 				if (keyAnn != null) {
-					Class<?> arrCollItemType = getArrCollItemType(field);
+					Class<?> componentType = getComponentType(field);
 					KeyAnn ann = new KeyAnn();
 					ann.name = getKeyName(keyAnn, field);
 					ann.optional = keyAnn.optional;
-					list.add(new FieldSpec<KeyAnn>(field, arrCollItemType,
+					list.add(new FieldSpec<KeyAnn>(field, componentType,
 							(KeyAnn) ann));
 				}
 			}
@@ -152,16 +151,17 @@ public final class FieldSpecRegistry {
 
 	// Utils
 
-	private static Class<?> getArrCollItemType(Field field) {
-		Class<?> argType = null;
+	private static Class<?> getComponentType(Field field) {
+		Class<?> componentType = null;
 		Class<?> fieldType = field.getType();
 		if (isArray(fieldType)) {
-			argType = getArrayType(fieldType);
+			componentType = getArrayComponentType(fieldType);
 		} else if (isCollection(fieldType)) {
 			Class<?>[] genericArgs = getFieldGenericArgs(field);
-			argType = (genericArgs.length > 0) ? genericArgs[0] : Object.class;
+			componentType = (genericArgs.length > 0) ? genericArgs[0]
+					: Object.class;
 		}
-		return argType;
+		return componentType;
 	}
 
 	// JSON
@@ -189,17 +189,22 @@ public final class FieldSpecRegistry {
 
 	private static final String ID_SUFFIX = "_id";
 
-	private static void sanitizeFields(
+	private static void sanitizeSpecs(
 			ArrayList<FieldSpec<ColumnAnn>> columnSpecs) {
 		for (FieldSpec<ColumnAnn> spec : columnSpecs) {
+			Class<?> fieldType = spec.field.getType();
 			if (spec.ann.nullable) {
-				Class<?> fieldType = spec.field.getType();
 				if (isByte(fieldType) || isShort(fieldType)
 						|| isInteger(fieldType) || isLong(fieldType)
 						|| isFloat(fieldType) || isDouble(fieldType)
 						|| isBoolean(fieldType) || isCharacter(fieldType)) {
 					L.w("%s can't be null.", fieldType.getSimpleName());
 					spec.ann.nullable = false;
+				}
+			} else if (spec.ann.eager) {
+				if (!isEntity(fieldType) && !isEntity(spec.componentType)) {
+					L.w("%s can't be eager.", fieldType.getSimpleName());
+					spec.ann.eager = false;
 				}
 			}
 		}
