@@ -152,7 +152,7 @@ public final class ReflectionUtils {
 			if (firstArg != null) {
 				Class<?> firstArgCls = firstArg.getClass();
 				if (isArray(firstArgCls)) {
-					varArgs = Arrays2.toObjectArr(firstArg);
+					varArgs = Arrays2.toObjectArray(firstArg);
 				}
 			}
 		}
