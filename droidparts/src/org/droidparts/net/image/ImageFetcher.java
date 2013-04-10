@@ -20,6 +20,7 @@ import static org.droidparts.contract.Constants.BUFFER_SIZE;
 import static org.droidparts.util.IOUtils.silentlyClose;
 
 import java.io.BufferedInputStream;
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -31,11 +32,11 @@ import org.droidparts.net.http.RESTClient;
 import org.droidparts.net.image.cache.BitmapDiskCache;
 import org.droidparts.net.image.cache.BitmapMemoryCache;
 import org.droidparts.util.L;
+import org.droidparts.util.ui.BitmapUtils;
 
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.CompressFormat;
-import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
@@ -60,6 +61,8 @@ public class ImageFetcher {
 
 	ImageFetchListener fetchListener;
 	private ImageReshaper reshaper;
+
+	private int reqWidth, reqHeight;
 	int crossFadeMillis = 0;
 
 	public ImageFetcher(Context ctx) {
@@ -87,6 +90,11 @@ public class ImageFetcher {
 	public void setReshaper(ImageReshaper reshaper) {
 		wip.clear();
 		this.reshaper = reshaper;
+	}
+
+	public void setSizeHint(int reqWidth, int requHeight) {
+		this.reqWidth = reqWidth;
+		this.reqHeight = requHeight;
 	}
 
 	public void setCrossFadeDuration(int millisec) {
@@ -169,7 +177,8 @@ public class ImageFetcher {
 				}
 			}
 			byte[] data = baos.toByteArray();
-			Bitmap bm = BitmapFactory.decodeByteArray(data, 0, data.length);
+			Bitmap bm = BitmapUtils.decodeScaled(
+					new ByteArrayInputStream(data), reqWidth, reqHeight);
 			if (bm != null) {
 				String contentType = resp.getHeaderString(Header.CONTENT_TYPE);
 				bmData = Pair.create(bm, Pair.create(contentType, data));
@@ -201,7 +210,7 @@ public class ImageFetcher {
 			}
 			if (bm == null) {
 				if (diskCache != null) {
-					bm = diskCache.get(key);
+					bm = diskCache.get(key, reqWidth, reqHeight);
 				}
 				if (bm != null) {
 					if (memoryCache != null) {
@@ -216,7 +225,7 @@ public class ImageFetcher {
 			}
 			if (bm == null) {
 				if (diskCache != null) {
-					bm = diskCache.get(imgUrl);
+					bm = diskCache.get(imgUrl, reqWidth, reqHeight);
 				}
 				if (bm != null) {
 					if (reshaper != null) {

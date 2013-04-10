@@ -19,7 +19,6 @@ import static org.droidparts.contract.Constants.BUFFER_SIZE;
 import static org.droidparts.util.IOUtils.getFileList;
 import static org.droidparts.util.IOUtils.silentlyClose;
 
-import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -28,11 +27,11 @@ import java.io.FileOutputStream;
 
 import org.droidparts.util.HashCalc;
 import org.droidparts.util.L;
+import org.droidparts.util.ui.BitmapUtils;
 
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.CompressFormat;
-import android.graphics.BitmapFactory;
 import android.util.Pair;
 
 public class BitmapDiskCache {
@@ -90,21 +89,21 @@ public class BitmapDiskCache {
 		}
 	}
 
-	public Bitmap get(String key) {
+	public Bitmap get(String key, int reqWidth, int reqHeight) {
 		Bitmap bm = null;
 		File file = getCachedFile(key);
 		if (file.exists()) {
-			BufferedInputStream bis = null;
+			FileInputStream fis = null;
 			try {
-				bis = new BufferedInputStream(new FileInputStream(file),
-						BUFFER_SIZE);
-				bm = BitmapFactory.decodeStream(bis);
-				// only after successful restore
-				file.setLastModified(System.currentTimeMillis());
+				fis = new FileInputStream(file);
+				bm = BitmapUtils.decodeScaled(fis, reqWidth, reqHeight);
+				if (bm != null) {
+					file.setLastModified(System.currentTimeMillis());
+				}
 			} catch (Exception e) {
 				L.w(e);
 			} finally {
-				silentlyClose(bis);
+				silentlyClose(fis);
 			}
 		}
 		if (bm == null) {
