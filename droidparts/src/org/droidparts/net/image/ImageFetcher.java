@@ -90,11 +90,12 @@ public class ImageFetcher {
 	public void setReshaper(ImageReshaper reshaper) {
 		wip.clear();
 		this.reshaper = reshaper;
-	}
-
-	public void setSizeHint(int reqWidth, int requHeight) {
-		this.reqWidth = reqWidth;
-		this.reqHeight = requHeight;
+		if (reshaper != null) {
+			reqWidth = reshaper.getWidthHint();
+			reqHeight = reshaper.getHeightHint();
+		} else {
+			reqWidth = reqHeight = 0;
+		}
 	}
 
 	public void setCrossFadeDuration(int millisec) {

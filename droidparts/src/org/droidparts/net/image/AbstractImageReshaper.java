@@ -28,6 +28,16 @@ public abstract class AbstractImageReshaper implements ImageReshaper {
 			CompressFormat.JPEG, 80);
 
 	@Override
+	public int getWidthHint() {
+		return 0;
+	}
+
+	@Override
+	public int getHeightHint() {
+		return 0;
+	}
+
+	@Override
 	public Pair<CompressFormat, Integer> getCacheFormat(String contentType) {
 		if ("image/png".equals(contentType)) {
 			return PNG;

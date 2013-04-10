@@ -23,6 +23,10 @@ public interface ImageReshaper {
 
 	String getId();
 
+	public int getWidthHint();
+
+	public int getHeightHint();
+
 	Bitmap reshape(Bitmap bm);
 
 	Pair<CompressFormat, Integer> getCacheFormat(String contentType);
