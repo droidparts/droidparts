@@ -15,7 +15,10 @@
  */
 package org.droidparts.util.ui;
 
+import java.io.IOException;
 import java.io.InputStream;
+
+import org.droidparts.util.L;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -76,12 +79,17 @@ public final class BitmapUtils {
 	public static Bitmap decodeScaled(InputStream is, int reqWidth,
 			int reqHeight) {
 		BitmapFactory.Options opts = null;
-		if (reqWidth > 0 && reqHeight > 0) {
+		if (reqWidth > 0 || reqHeight > 0) {
 			opts = new BitmapFactory.Options();
 			opts.inJustDecodeBounds = true;
 			BitmapFactory.decodeStream(is, null, opts);
 			opts.inSampleSize = calculateInSampleSize(opts, reqWidth, reqHeight);
 			opts.inJustDecodeBounds = false;
+			try {
+				is.reset();
+			} catch (IOException e) {
+				L.w(e);
+			}
 		}
 		return BitmapFactory.decodeStream(is, null, opts);
 	}

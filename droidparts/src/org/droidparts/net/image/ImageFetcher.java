@@ -202,7 +202,7 @@ public class ImageFetcher {
 		return bmData;
 	}
 
-	Bitmap getCachedReshaped(String imgUrl) {
+	protected Bitmap getCachedReshaped(String imgUrl) {
 		String key = getCacheKey(imgUrl);
 		Bitmap bm = null;
 		if (reshaper != null) {
