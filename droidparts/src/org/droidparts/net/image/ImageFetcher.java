@@ -267,7 +267,7 @@ public class ImageFetcher {
 	}
 
 	private String getCacheKey(String imgUrl) {
-		return (reshaper == null) ? imgUrl : (imgUrl + reshaper.getCacheKey());
+		return (reshaper == null) ? imgUrl : (imgUrl + reshaper.getCacheId());
 	}
 
 	private void runOnUiThread(Runnable r) {

@@ -21,7 +21,7 @@ import android.util.Pair;
 
 public interface ImageReshaper {
 
-	String getCacheKey();
+	String getCacheId();
 
 	Pair<CompressFormat, Integer> getCacheFormat(String contentType);
 
