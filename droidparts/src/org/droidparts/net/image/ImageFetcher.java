@@ -63,7 +63,6 @@ public class ImageFetcher {
 	ImageFetchListener fetchListener;
 	private ImageReshaper reshaper;
 
-	private int reqWidth, reqHeight;
 	int crossFadeMillis = 0;
 
 	public ImageFetcher(Context ctx) {
@@ -91,12 +90,6 @@ public class ImageFetcher {
 	public void setReshaper(ImageReshaper reshaper) {
 		wip.clear();
 		this.reshaper = reshaper;
-		if (reshaper != null) {
-			reqWidth = reshaper.getWidthHint();
-			reqHeight = reshaper.getHeightHint();
-		} else {
-			reqWidth = reqHeight = 0;
-		}
 	}
 
 	public void setCrossFadeDuration(int millisec) {
@@ -180,7 +173,8 @@ public class ImageFetcher {
 			}
 			byte[] data = baos.toByteArray();
 			Bitmap bm = BitmapUtils.decodeScaled(
-					new ByteArrayInputStream(data), reqWidth, reqHeight);
+					new ByteArrayInputStream(data), getWidthHint(),
+					getHeighthHint());
 			if (bm != null) {
 				String contentType = resp.getHeaderString(Header.CONTENT_TYPE);
 				bmData = Pair.create(bm, Pair.create(contentType, data));
@@ -213,7 +207,7 @@ public class ImageFetcher {
 			}
 			if (bm == null) {
 				if (diskCache != null) {
-					bm = diskCache.get(key, reqWidth, reqHeight);
+					bm = diskCache.get(key, getWidthHint(), getHeighthHint());
 				}
 				if (bm != null) {
 					if (memoryCache != null) {
@@ -228,7 +222,8 @@ public class ImageFetcher {
 			}
 			if (bm == null) {
 				if (diskCache != null) {
-					bm = diskCache.get(imgUrl, reqWidth, reqHeight);
+					bm = diskCache
+							.get(imgUrl, getWidthHint(), getHeighthHint());
 				}
 				if (bm != null) {
 					if (reshaper != null) {
@@ -268,6 +263,14 @@ public class ImageFetcher {
 
 	private String getCacheKey(String imgUrl) {
 		return (reshaper == null) ? imgUrl : (imgUrl + reshaper.getCacheId());
+	}
+
+	private int getWidthHint() {
+		return (reshaper != null) ? reshaper.getWidthHint() : 0;
+	}
+
+	private int getHeighthHint() {
+		return (reshaper != null) ? reshaper.getHeightHint() : 0;
 	}
 
 	private void runOnUiThread(Runnable r) {
