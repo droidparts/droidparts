@@ -21,14 +21,14 @@ import android.util.Pair;
 
 public interface ImageReshaper {
 
-	String getId();
+	String getCacheKey();
+
+	Pair<CompressFormat, Integer> getCacheFormat(String contentType);
 
 	public int getWidthHint();
 
 	public int getHeightHint();
 
 	Bitmap reshape(Bitmap bm);
-
-	Pair<CompressFormat, Integer> getCacheFormat(String contentType);
 
 }
