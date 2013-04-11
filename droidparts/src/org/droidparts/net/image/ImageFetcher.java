@@ -29,6 +29,7 @@ import org.droidparts.contract.HTTP.Header;
 import org.droidparts.net.concurrent.BackgroundExecutor;
 import org.droidparts.net.http.HTTPResponse;
 import org.droidparts.net.http.RESTClient;
+import org.droidparts.net.http.worker.HTTPWorker;
 import org.droidparts.net.image.cache.BitmapDiskCache;
 import org.droidparts.net.image.cache.BitmapMemoryCache;
 import org.droidparts.util.L;
@@ -185,6 +186,7 @@ public class ImageFetcher {
 				bmData = Pair.create(bm, Pair.create(contentType, data));
 			}
 		} catch (final Exception e) {
+			HTTPWorker.throwIfNetworkOnMainThreadException(e);
 			L.w("Failed to fetch %s.", imgUrl);
 			L.d(e);
 			if (fetchListener != null) {

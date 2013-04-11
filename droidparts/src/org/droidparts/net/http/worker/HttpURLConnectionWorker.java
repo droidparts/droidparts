@@ -111,6 +111,7 @@ public class HttpURLConnectionWorker extends HTTPWorker {
 			}
 			return conn;
 		} catch (Exception e) {
+			throwIfNetworkOnMainThreadException(e);
 			throw new HTTPException(e);
 		}
 	}
@@ -124,6 +125,7 @@ public class HttpURLConnectionWorker extends HTTPWorker {
 			os = conn.getOutputStream();
 			os.write(data.getBytes(UTF8));
 		} catch (Exception e) {
+			throwIfNetworkOnMainThreadException(e);
 			throw new HTTPException(e);
 		} finally {
 			silentlyClose(os);
@@ -158,6 +160,7 @@ public class HttpURLConnectionWorker extends HTTPWorker {
 		} catch (HTTPException e) {
 			throw e;
 		} catch (Exception e) {
+			throwIfNetworkOnMainThreadException(e);
 			throw new HTTPException(e);
 		}
 

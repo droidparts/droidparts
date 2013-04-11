@@ -113,6 +113,7 @@ public class HttpClientWorker extends HTTPWorker {
 		try {
 			return httpClient.execute(req);
 		} catch (Exception e) {
+			throwIfNetworkOnMainThreadException(e);
 			throw new HTTPException(e);
 		}
 	}
