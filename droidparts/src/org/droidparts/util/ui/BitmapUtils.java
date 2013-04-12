@@ -15,7 +15,13 @@
  */
 package org.droidparts.util.ui;
 
+import java.io.IOException;
+import java.io.InputStream;
+
+import org.droidparts.util.L;
+
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.PorterDuff.Mode;
@@ -68,6 +74,37 @@ public final class BitmapUtils {
 		canvas.drawBitmap(bm, rect, rect, paint);
 
 		return bmOut;
+	}
+
+	public static Bitmap decodeScaled(InputStream is, int reqWidth,
+			int reqHeight) {
+		BitmapFactory.Options opts = null;
+		if (reqWidth > 0 || reqHeight > 0) {
+			opts = new BitmapFactory.Options();
+			opts.inJustDecodeBounds = true;
+			BitmapFactory.decodeStream(is, null, opts);
+			opts.inSampleSize = calculateInSampleSize(opts, reqWidth, reqHeight);
+			opts.inJustDecodeBounds = false;
+			try {
+				is.reset();
+			} catch (IOException e) {
+				L.w(e);
+			}
+		}
+		return BitmapFactory.decodeStream(is, null, opts);
+	}
+
+	private static int calculateInSampleSize(BitmapFactory.Options options,
+			int reqWidth, int reqHeight) {
+		int height = options.outHeight;
+		int width = options.outWidth;
+		int inSampleSize = 1;
+		if (height > reqHeight || width > reqWidth) {
+			int heightRatio = Math.round((float) height / (float) reqHeight);
+			int widthRatio = Math.round((float) width / (float) reqWidth);
+			inSampleSize = heightRatio < widthRatio ? heightRatio : widthRatio;
+		}
+		return inSampleSize;
 	}
 
 }

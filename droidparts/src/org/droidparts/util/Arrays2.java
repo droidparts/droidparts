@@ -15,138 +15,11 @@
  */
 package org.droidparts.util;
 
+import java.lang.reflect.Array;
+
 public class Arrays2 {
 
-	public static byte[] toPrimitive(Byte[] arr) {
-		byte[] arr2 = new byte[arr.length];
-		for (int i = 0; i < arr.length; i++) {
-			arr2[i] = arr[i];
-		}
-		return arr2;
-	}
-
-	public static Byte[] toObject(byte[] arr) {
-		Byte[] arr2 = new Byte[arr.length];
-		for (int i = 0; i < arr.length; i++) {
-			arr2[i] = arr[i];
-		}
-		return arr2;
-	}
-
-	public static short[] toPrimitive(Short[] arr) {
-		short[] arr2 = new short[arr.length];
-		for (int i = 0; i < arr.length; i++) {
-			arr2[i] = arr[i];
-		}
-		return arr2;
-	}
-
-	public static Short[] toObject(short[] arr) {
-		Short[] arr2 = new Short[arr.length];
-		for (int i = 0; i < arr.length; i++) {
-			arr2[i] = arr[i];
-		}
-		return arr2;
-	}
-
-	public static int[] toPrimitive(Integer[] arr) {
-		int[] arr2 = new int[arr.length];
-		for (int i = 0; i < arr.length; i++) {
-			arr2[i] = arr[i];
-		}
-		return arr2;
-	}
-
-	public static Integer[] toObject(int[] arr) {
-		Integer[] arr2 = new Integer[arr.length];
-		for (int i = 0; i < arr.length; i++) {
-			arr2[i] = arr[i];
-		}
-		return arr2;
-	}
-
-	public static long[] toPrimitive(Long[] arr) {
-		long[] arr2 = new long[arr.length];
-		for (int i = 0; i < arr.length; i++) {
-			arr2[i] = arr[i];
-		}
-		return arr2;
-	}
-
-	public static Long[] toObject(long[] arr) {
-		Long[] arr2 = new Long[arr.length];
-		for (int i = 0; i < arr.length; i++) {
-			arr2[i] = arr[i];
-		}
-		return arr2;
-	}
-
-	public static float[] toPrimitive(Float[] arr) {
-		float[] arr2 = new float[arr.length];
-		for (int i = 0; i < arr.length; i++) {
-			arr2[i] = arr[i];
-		}
-		return arr2;
-	}
-
-	public static Float[] toObject(float[] arr) {
-		Float[] arr2 = new Float[arr.length];
-		for (int i = 0; i < arr.length; i++) {
-			arr2[i] = arr[i];
-		}
-		return arr2;
-	}
-
-	public static double[] toPrimitive(Double[] arr) {
-		double[] arr2 = new double[arr.length];
-		for (int i = 0; i < arr.length; i++) {
-			arr2[i] = arr[i];
-		}
-		return arr2;
-	}
-
-	public static Double[] toObject(double[] arr) {
-		Double[] arr2 = new Double[arr.length];
-		for (int i = 0; i < arr.length; i++) {
-			arr2[i] = arr[i];
-		}
-		return arr2;
-	}
-
-	public static boolean[] toPrimitive(Boolean[] arr) {
-		boolean[] arr2 = new boolean[arr.length];
-		for (int i = 0; i < arr.length; i++) {
-			arr2[i] = arr[i];
-		}
-		return arr2;
-	}
-
-	public static Boolean[] toObject(boolean[] arr) {
-		Boolean[] arr2 = new Boolean[arr.length];
-		for (int i = 0; i < arr.length; i++) {
-			arr2[i] = arr[i];
-		}
-		return arr2;
-	}
-
-	public static char[] toPrimitive(Character[] arr) {
-		char[] arr2 = new char[arr.length];
-		for (int i = 0; i < arr.length; i++) {
-			arr2[i] = arr[i];
-		}
-		return arr2;
-	}
-
-	public static Character[] toObject(char[] arr) {
-		Character[] arr2 = new Character[arr.length];
-		for (int i = 0; i < arr.length; i++) {
-			arr2[i] = arr[i];
-		}
-		return arr2;
-	}
-
-	public static Object[] toObjectArr(Object someArr) {
-		// as autoboxing won't work for Arrays.asList(int[] value)
+	public static Object[] toObjectArray(Object someArr) {
 		Class<?> arrCls = someArr.getClass();
 		if (arrCls == byte[].class) {
 			return toObject((byte[]) someArr);
@@ -165,9 +38,82 @@ public class Arrays2 {
 		} else if (arrCls == char[].class) {
 			return toObject((char[]) someArr);
 		} else {
-			// out of primitives
 			return (Object[]) someArr;
 		}
+	}
+
+	public static byte[] toPrimitive(Byte[] arr) {
+		return (byte[]) convertArray(byte.class, arr.length, arr);
+	}
+
+	public static Byte[] toObject(byte[] arr) {
+		return (Byte[]) convertArray(Byte.class, arr.length, arr);
+	}
+
+	public static short[] toPrimitive(Short[] arr) {
+		return (short[]) convertArray(short.class, arr.length, arr);
+	}
+
+	public static Short[] toObject(short[] arr) {
+		return (Short[]) convertArray(Short.class, arr.length, arr);
+	}
+
+	public static int[] toPrimitive(Integer[] arr) {
+		return (int[]) convertArray(int.class, arr.length, arr);
+	}
+
+	public static Integer[] toObject(int[] arr) {
+		return (Integer[]) convertArray(Integer.class, arr.length, arr);
+	}
+
+	public static long[] toPrimitive(Long[] arr) {
+		return (long[]) convertArray(long.class, arr.length, arr);
+	}
+
+	public static Long[] toObject(long[] arr) {
+		return (Long[]) convertArray(Long.class, arr.length, arr);
+	}
+
+	public static float[] toPrimitive(Float[] arr) {
+		return (float[]) convertArray(float.class, arr.length, arr);
+	}
+
+	public static Float[] toObject(float[] arr) {
+		return (Float[]) convertArray(Float.class, arr.length, arr);
+	}
+
+	public static double[] toPrimitive(Double[] arr) {
+		return (double[]) convertArray(double.class, arr.length, arr);
+	}
+
+	public static Double[] toObject(double[] arr) {
+		return (Double[]) convertArray(Double.class, arr.length, arr);
+	}
+
+	public static boolean[] toPrimitive(Boolean[] arr) {
+		return (boolean[]) convertArray(boolean.class, arr.length, arr);
+	}
+
+	public static Boolean[] toObject(boolean[] arr) {
+		return (Boolean[]) convertArray(Boolean.class, arr.length, arr);
+	}
+
+	public static char[] toPrimitive(Character[] arr) {
+		return (char[]) convertArray(char.class, arr.length, arr);
+	}
+
+	public static Character[] toObject(char[] arr) {
+		return (Character[]) convertArray(Character.class, arr.length, arr);
+	}
+
+	private static Object convertArray(Class<?> componentType, int size,
+			Object arr) {
+		Object arr2 = Array.newInstance(componentType, size);
+		for (int i = 0; i < size; i++) {
+			Object val = Array.get(arr, i);
+			Array.set(arr2, i, val);
+		}
+		return arr2;
 	}
 
 	protected Arrays2() {

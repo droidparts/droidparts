@@ -171,7 +171,7 @@ public class ArrayCollectionHandler extends TypeHandler<Object> {
 			Class<T> componentType, Object val) {
 		ArrayList<T> list = new ArrayList<T>();
 		if (isArray(valType)) {
-			list.addAll((List<T>) Arrays.asList(Arrays2.toObjectArr(val)));
+			list.addAll((List<T>) Arrays.asList(Arrays2.toObjectArray(val)));
 		} else {
 			list.addAll((Collection<T>) val);
 		}

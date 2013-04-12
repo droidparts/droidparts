@@ -20,6 +20,7 @@ import static org.droidparts.contract.Constants.BUFFER_SIZE;
 import static org.droidparts.util.IOUtils.silentlyClose;
 
 import java.io.BufferedInputStream;
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -28,14 +29,15 @@ import org.droidparts.contract.HTTP.Header;
 import org.droidparts.net.concurrent.BackgroundExecutor;
 import org.droidparts.net.http.HTTPResponse;
 import org.droidparts.net.http.RESTClient;
+import org.droidparts.net.http.worker.HTTPWorker;
 import org.droidparts.net.image.cache.BitmapDiskCache;
 import org.droidparts.net.image.cache.BitmapMemoryCache;
 import org.droidparts.util.L;
+import org.droidparts.util.ui.BitmapUtils;
 
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.CompressFormat;
-import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
@@ -60,6 +62,7 @@ public class ImageFetcher {
 
 	ImageFetchListener fetchListener;
 	private ImageReshaper reshaper;
+
 	int crossFadeMillis = 0;
 
 	public ImageFetcher(Context ctx) {
@@ -169,12 +172,15 @@ public class ImageFetcher {
 				}
 			}
 			byte[] data = baos.toByteArray();
-			Bitmap bm = BitmapFactory.decodeByteArray(data, 0, data.length);
+			Bitmap bm = BitmapUtils.decodeScaled(
+					new ByteArrayInputStream(data), getWidthHint(),
+					getHeighthHint());
 			if (bm != null) {
 				String contentType = resp.getHeaderString(Header.CONTENT_TYPE);
 				bmData = Pair.create(bm, Pair.create(contentType, data));
 			}
 		} catch (final Exception e) {
+			HTTPWorker.throwIfNetworkOnMainThreadException(e);
 			L.w("Failed to fetch %s.", imgUrl);
 			L.d(e);
 			if (fetchListener != null) {
@@ -192,7 +198,7 @@ public class ImageFetcher {
 		return bmData;
 	}
 
-	Bitmap getCachedReshaped(String imgUrl) {
+	protected Bitmap getCachedReshaped(String imgUrl) {
 		String key = getCacheKey(imgUrl);
 		Bitmap bm = null;
 		if (reshaper != null) {
@@ -201,7 +207,7 @@ public class ImageFetcher {
 			}
 			if (bm == null) {
 				if (diskCache != null) {
-					bm = diskCache.get(key);
+					bm = diskCache.get(key, getWidthHint(), getHeighthHint());
 				}
 				if (bm != null) {
 					if (memoryCache != null) {
@@ -216,7 +222,8 @@ public class ImageFetcher {
 			}
 			if (bm == null) {
 				if (diskCache != null) {
-					bm = diskCache.get(imgUrl);
+					bm = diskCache
+							.get(imgUrl, getWidthHint(), getHeighthHint());
 				}
 				if (bm != null) {
 					if (reshaper != null) {
@@ -255,7 +262,15 @@ public class ImageFetcher {
 	}
 
 	private String getCacheKey(String imgUrl) {
-		return (reshaper == null) ? imgUrl : (imgUrl + reshaper.getId());
+		return (reshaper == null) ? imgUrl : (imgUrl + reshaper.getCacheId());
+	}
+
+	private int getWidthHint() {
+		return (reshaper != null) ? reshaper.getWidthHint() : 0;
+	}
+
+	private int getHeighthHint() {
+		return (reshaper != null) ? reshaper.getHeightHint() : 0;
 	}
 
 	private void runOnUiThread(Runnable r) {

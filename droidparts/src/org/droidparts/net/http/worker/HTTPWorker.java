@@ -23,6 +23,13 @@ import org.droidparts.net.http.CookieJar;
 
 public abstract class HTTPWorker {
 
+	public static void throwIfNetworkOnMainThreadException(Exception e) {
+		if (e.getClass().getName()
+				.equals("android.os.NetworkOnMainThreadException")) {
+			throw (RuntimeException) e;
+		}
+	}
+
 	protected static final int SOCKET_OPERATION_TIMEOUT = 60 * 1000;
 
 	protected final HashMap<String, ArrayList<String>> headers = new HashMap<String, ArrayList<String>>();

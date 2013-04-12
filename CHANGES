@@ -1,3 +1,8 @@
+1.3.3 /2013-04-12/:
+    * ImageReshaper: provide image width, height hints to prevent OutOfMemoryError exceptions.  
+    * RESTClient: don't catch NetworkOnMainThreadException.
+    * Arrays2: less code.
+
 1.3.2 /2013-04-09/:
     * Fixed Entity[] & Collection<Entity> persistence.
     * Improved TypeHandler API.

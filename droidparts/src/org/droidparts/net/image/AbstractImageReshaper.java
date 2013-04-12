@@ -15,6 +15,7 @@
  */
 package org.droidparts.net.image;
 
+import android.graphics.Bitmap;
 import android.graphics.Bitmap.CompressFormat;
 import android.util.Pair;
 
@@ -34,6 +35,21 @@ public abstract class AbstractImageReshaper implements ImageReshaper {
 		} else {
 			return JPEG;
 		}
+	}
+
+	@Override
+	public int getWidthHint() {
+		return 0;
+	}
+
+	@Override
+	public int getHeightHint() {
+		return 0;
+	}
+
+	@Override
+	public Bitmap reshape(Bitmap bm) {
+		return bm;
 	}
 
 }
