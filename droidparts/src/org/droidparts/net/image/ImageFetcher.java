@@ -57,13 +57,16 @@ public class ImageFetcher {
 	final ThreadPoolExecutor cacheExecutor;
 	final ThreadPoolExecutor fetchExecutor;
 
+	final ConcurrentHashMap<ImageView, String> todo = new ConcurrentHashMap<ImageView, String>();
 	final ConcurrentHashMap<ImageView, Long> wip = new ConcurrentHashMap<ImageView, Long>();
 	private Handler handler;
 
 	ImageFetchListener fetchListener;
-	private ImageReshaper reshaper;
+	ImageReshaper reshaper;
 
 	int crossFadeMillis = 0;
+
+	volatile boolean paused;
 
 	public ImageFetcher(Context ctx) {
 		this(ctx, new BackgroundExecutor(2), new RESTClient(ctx),
@@ -97,19 +100,37 @@ public class ImageFetcher {
 		this.crossFadeMillis = millisec;
 	}
 
+	public void pause() {
+		paused = true;
+	}
+
+	public void resume(boolean executePendingTasks) {
+		if (executePendingTasks) {
+			for (ImageView iv : todo.keySet()) {
+				attachImage(iv, todo.get(iv));
+			}
+		}
+		todo.clear();
+		paused = false;
+	}
+
 	//
 
 	public void attachImage(ImageView imageView, String imgUrl) {
-		if (fetchListener != null) {
-			fetchListener.onTaskAdded(imageView);
+		if (paused) {
+			todo.put(imageView, imgUrl);
+		} else {
+			if (fetchListener != null) {
+				fetchListener.onTaskAdded(imageView);
+			}
+			long submitted = System.nanoTime();
+			wip.put(imageView, submitted);
+			Runnable r = new ReadFromCacheRunnable(this, imageView, imgUrl,
+					submitted);
+			cacheExecutor.remove(r);
+			fetchExecutor.remove(r);
+			cacheExecutor.execute(r);
 		}
-		long submitted = System.nanoTime();
-		wip.put(imageView, submitted);
-		Runnable r = new ReadFromCacheRunnable(this, imageView, imgUrl,
-				submitted);
-		cacheExecutor.remove(r);
-		fetchExecutor.remove(r);
-		cacheExecutor.execute(r);
 	}
 
 	public Bitmap getImage(String imgUrl) {
