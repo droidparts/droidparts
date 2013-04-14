@@ -105,13 +105,13 @@ public class ImageFetcher {
 	}
 
 	public void resume(boolean executePendingTasks) {
+		paused = false;
 		if (executePendingTasks) {
 			for (ImageView iv : todo.keySet()) {
 				attachImage(iv, todo.get(iv));
 			}
 		}
 		todo.clear();
-		paused = false;
 	}
 
 	//
