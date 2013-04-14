@@ -22,6 +22,7 @@ import static org.droidparts.util.IOUtils.silentlyClose;
 import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.util.LinkedHashMap;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ThreadPoolExecutor;
 
@@ -57,7 +58,7 @@ public class ImageFetcher {
 	final ThreadPoolExecutor cacheExecutor;
 	final ThreadPoolExecutor fetchExecutor;
 
-	final ConcurrentHashMap<ImageView, String> todo = new ConcurrentHashMap<ImageView, String>();
+	final LinkedHashMap<ImageView, String> todo = new LinkedHashMap<ImageView, String>();
 	final ConcurrentHashMap<ImageView, Long> wip = new ConcurrentHashMap<ImageView, Long>();
 	private Handler handler;
 
