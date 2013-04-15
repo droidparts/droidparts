@@ -38,6 +38,7 @@ public class ImageListFragment extends ListFragment implements
 	@Override
 	public void setContent(ImageListAdapter adapter) {
 		setListAdapter(adapter);
+		getListView().setOnScrollListener(adapter);
 	}
 
 	@Override

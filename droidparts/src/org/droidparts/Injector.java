@@ -199,13 +199,13 @@ public class Injector {
 	private static boolean useSupport() {
 		if (_useSupport == null) {
 			try {
-				Class.forName("com.actionbarsherlock.ActionBarSherlock");
+				Class.forName("android.support.v4.app.Fragment");
 				_useSupport = true;
 			} catch (Exception e) {
-				_useSupport = !nativeAvailable();
+				_useSupport = false;
 			}
 		}
-		return true;
+		return _useSupport;
 	}
 
 	private static boolean nativeAvailable() {

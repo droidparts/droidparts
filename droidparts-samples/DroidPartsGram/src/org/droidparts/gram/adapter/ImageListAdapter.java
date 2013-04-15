@@ -32,8 +32,11 @@ import android.text.Html;
 import android.text.Spanned;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AbsListView;
+import android.widget.AbsListView.OnScrollListener;
 
-public class ImageListAdapter extends EntityCursorAdapter<Image> {
+public class ImageListAdapter extends EntityCursorAdapter<Image> implements
+		OnScrollListener {
 
 	@InjectDependency
 	private ImageFetcher imageFetcher;
@@ -71,6 +74,23 @@ public class ImageListAdapter extends EntityCursorAdapter<Image> {
 		sb.append(" ");
 		sb.append(join(img.tags, ", ", null));
 		return Html.fromHtml(sb.toString());
+	}
+
+	@Override
+	public void onScrollStateChanged(AbsListView view, int scrollState) {
+		switch (scrollState) {
+		case OnScrollListener.SCROLL_STATE_FLING:
+			imageFetcher.pause();
+			break;
+		default:
+			imageFetcher.resume(true);
+		}
+	}
+
+	@Override
+	public void onScroll(AbsListView view, int firstVisibleItem,
+			int visibleItemCount, int totalItemCount) {
+		// n/a
 	}
 
 }
