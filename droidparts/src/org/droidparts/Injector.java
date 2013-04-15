@@ -202,7 +202,7 @@ public class Injector {
 				Class.forName("android.support.v4.app.Fragment");
 				_useSupport = true;
 			} catch (Exception e) {
-				_useSupport = !nativeAvailable();
+				_useSupport = false;
 			}
 		}
 		return _useSupport;
