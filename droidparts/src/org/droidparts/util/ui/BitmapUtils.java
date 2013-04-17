@@ -85,10 +85,12 @@ public final class BitmapUtils {
 			BitmapFactory.decodeStream(is, null, opts);
 			opts.inSampleSize = calculateInSampleSize(opts, reqWidth, reqHeight);
 			opts.inJustDecodeBounds = false;
-			try {
-				is.reset();
-			} catch (IOException e) {
-				L.w(e);
+			if (is.markSupported()) {
+				try {
+					is.reset();
+				} catch (IOException e) {
+					L.d(e);
+				}
 			}
 		}
 		return BitmapFactory.decodeStream(is, null, opts);
