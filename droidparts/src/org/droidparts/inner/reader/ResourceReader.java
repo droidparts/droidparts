@@ -30,7 +30,7 @@ import android.content.res.Resources;
 
 public class ResourceReader {
 
-	public static Object getVal(Context ctx, InjectResourceAnn ann, Field field)
+	static Object getVal(Context ctx, InjectResourceAnn ann, Field field)
 			throws Exception {
 		Resources res = ctx.getResources();
 		Class<?> cls = field.getType();

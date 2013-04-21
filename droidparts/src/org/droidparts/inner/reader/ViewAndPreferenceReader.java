@@ -28,7 +28,7 @@ import android.view.View;
 
 public class ViewAndPreferenceReader {
 
-	public static Object getVal(Context ctx, View rootView, InjectViewAnn ann,
+	static Object getVal(Context ctx, View rootView, InjectViewAnn ann,
 			Object target, Field field) throws Exception {
 		boolean isView = View.class.isAssignableFrom(field.getType());
 		boolean isPreference = Preference.class.isAssignableFrom(field

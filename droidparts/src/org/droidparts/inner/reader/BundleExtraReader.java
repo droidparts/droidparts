@@ -21,7 +21,7 @@ import android.os.Bundle;
 
 public class BundleExtraReader {
 
-	public static Object getVal(InjectBundleExtraAnn ann, Bundle data)
+	static Object getVal(InjectBundleExtraAnn ann, Bundle data)
 			throws Exception {
 		Object val = data.get(ann.key);
 		if (val == null && !ann.optional) {

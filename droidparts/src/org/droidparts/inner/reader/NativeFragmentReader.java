@@ -26,8 +26,8 @@ import android.os.Bundle;
 
 public class NativeFragmentReader {
 
-	public static Object getVal(Object fragmentActivityObj,
-			InjectFragmentAnn ann, Field field) {
+	static Object getVal(Object fragmentActivityObj, InjectFragmentAnn ann,
+			Field field) {
 		Activity fragmentActivity = (Activity) fragmentActivityObj;
 		int fragmentId = ann.id;
 		if (fragmentId == 0) {
@@ -38,7 +38,7 @@ public class NativeFragmentReader {
 				fragmentId);
 	}
 
-	public static Bundle getIntentExtras(Object obj) {
+	static Bundle getIntentExtras(Object obj) {
 		if (obj instanceof Fragment) {
 			return ((Fragment) obj).getArguments();
 		} else {

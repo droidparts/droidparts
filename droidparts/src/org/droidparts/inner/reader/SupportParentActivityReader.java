@@ -19,7 +19,7 @@ import android.support.v4.app.Fragment;
 
 public class SupportParentActivityReader {
 
-	public static Object getVal(Object fragmentObj) {
+	static Object getVal(Object fragmentObj) {
 		Fragment fragment = (Fragment) fragmentObj;
 		return fragment.getActivity();
 	}

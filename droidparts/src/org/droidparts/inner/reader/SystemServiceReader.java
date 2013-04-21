@@ -27,8 +27,8 @@ import android.content.Context;
 
 public class SystemServiceReader {
 
-	public static Object getVal(Context ctx, InjectSystemServiceAnn ann,
-			Field field) throws Exception {
+	static Object getVal(Context ctx, InjectSystemServiceAnn ann, Field field)
+			throws Exception {
 		String serviceName = ann.name;
 		String name = isEmpty(serviceName) ? serviceRegistry.get(field
 				.getType()) : serviceName;

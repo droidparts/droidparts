@@ -26,8 +26,8 @@ import android.support.v4.app.FragmentActivity;
 
 public class SupportFragmentReader {
 
-	public static Object getVal(Object fragmentActivityObj,
-			InjectFragmentAnn ann, Field field) {
+	static Object getVal(Object fragmentActivityObj, InjectFragmentAnn ann,
+			Field field) {
 		FragmentActivity fragmentActivity = (FragmentActivity) fragmentActivityObj;
 		int fragmentId = ann.id;
 		if (fragmentId == 0) {
@@ -38,7 +38,7 @@ public class SupportFragmentReader {
 				fragmentId);
 	}
 
-	public static Bundle getIntentExtras(Object obj) {
+	static Bundle getIntentExtras(Object obj) {
 		if (obj instanceof Fragment) {
 			return ((Fragment) obj).getArguments();
 		} else {
