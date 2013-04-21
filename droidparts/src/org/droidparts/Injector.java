@@ -110,9 +110,10 @@ public class Injector {
 	private static void inject(Context ctx, View root, Object target) {
 		long start = System.currentTimeMillis();
 		final Class<?> cls = target.getClass();
-		GeneratedInjector injector = GeneratedInjector.getInstance(target);
+		GeneratedInjector<Object> injector = GeneratedInjector
+				.getInstance(target);
 		if (injector != null) {
-			injector.inject(ctx, root, target);
+			injector.inject(ctx, root);
 		} else {
 			for (FieldSpec<InjectAnn<?>> spec : getInjectSpecs(cls)) {
 				try {

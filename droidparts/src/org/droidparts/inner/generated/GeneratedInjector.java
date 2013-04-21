@@ -20,23 +20,28 @@ import java.lang.reflect.Constructor;
 import android.content.Context;
 import android.view.View;
 
-public abstract class GeneratedInjector {
+public abstract class GeneratedInjector<T> {
 
 	private static final String SUFFIX = "$$DroidPartsInjector";
 
-	public static GeneratedInjector getInstance(Object enclosingInstance) {
+	public static <T> GeneratedInjector<T> getInstance(T enclosingInstance) {
 		Class<?> enclosingClass = enclosingInstance.getClass();
 		String clsName = enclosingClass.getName() + SUFFIX;
 		try {
-			Constructor<?> constr = Class.forName(clsName)
-					.getConstructor(enclosingClass);
-			return (GeneratedInjector) constr
+			Constructor<?> constr = Class.forName(clsName).getConstructor(
+					enclosingClass);
+			@SuppressWarnings("unchecked")
+			GeneratedInjector<T> inj = (GeneratedInjector<T>) constr
 					.newInstance(enclosingInstance);
+			inj.outer = enclosingInstance;
+			return inj;
 		} catch (Exception e) {
 			return null;
 		}
 	}
 
-	public abstract void inject(Context ctx, View root, Object target);
+	private T outer;
+
+	public abstract void inject(Context ctx, View root);
 
 }
