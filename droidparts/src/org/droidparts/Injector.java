@@ -20,6 +20,7 @@ import static org.droidparts.inner.ReflectionUtils.setFieldVal;
 
 import org.droidparts.inner.ann.FieldSpec;
 import org.droidparts.inner.ann.inject.InjectAnn;
+import org.droidparts.inner.generated.GeneratedInjector;
 import org.droidparts.inner.reader.DependencyReader;
 import org.droidparts.inner.reader.ValueReader;
 import org.droidparts.util.L;
@@ -109,17 +110,22 @@ public class Injector {
 	private static void inject(Context ctx, View root, Object target) {
 		long start = System.currentTimeMillis();
 		final Class<?> cls = target.getClass();
-		for (FieldSpec<InjectAnn<?>> spec : getInjectSpecs(cls)) {
-			try {
-				Object val = ValueReader.getVal(ctx, root, target,
-						spec.ann, spec.field);
-				if (val != null) {
-					setFieldVal(target, spec.field, val);
+		GeneratedInjector injector = GeneratedInjector.getInstance(target);
+		if (injector != null) {
+			injector.inject(ctx, root, target);
+		} else {
+			for (FieldSpec<InjectAnn<?>> spec : getInjectSpecs(cls)) {
+				try {
+					Object val = ValueReader.getVal(ctx, root, target,
+							spec.ann, spec.field);
+					if (val != null) {
+						setFieldVal(target, spec.field, val);
+					}
+				} catch (Throwable e) {
+					L.w("Failed to inject %s#%s: %s.", cls.getSimpleName(),
+							spec.field.getName(), e.getMessage());
+					L.d(e);
 				}
-			} catch (Throwable e) {
-				L.w("Failed to inject %s#%s: %s.", cls.getSimpleName(),
-						spec.field.getName(), e.getMessage());
-				L.d(e);
 			}
 		}
 		L.i("Injected into %s in %d ms.", cls.getSimpleName(),
