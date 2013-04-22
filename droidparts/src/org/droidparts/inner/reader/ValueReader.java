@@ -25,7 +25,6 @@ import org.droidparts.inner.ann.inject.InjectParentActivityAnn;
 import org.droidparts.inner.ann.inject.InjectResourceAnn;
 import org.droidparts.inner.ann.inject.InjectSystemServiceAnn;
 import org.droidparts.inner.ann.inject.InjectViewAnn;
-import org.droidparts.service.Service;
 
 import android.app.Activity;
 import android.content.Context;
@@ -77,8 +76,6 @@ public class ValueReader {
 		Bundle data = null;
 		if (obj instanceof Activity) {
 			data = ((Activity) obj).getIntent().getExtras();
-		} else if (obj instanceof Service) {
-			data = ((Service) obj).getIntent().getExtras();
 		} else if (useSupport()) {
 			data = SupportFragmentReader.getIntentExtras(obj);
 		} else if (nativeAvailable()) {

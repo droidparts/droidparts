@@ -17,21 +17,12 @@ package org.droidparts.service;
 
 import org.droidparts.Injector;
 
-import android.content.Intent;
-
 public abstract class Service extends android.app.Service {
 
-	private Intent intent;
-
 	@Override
-	public void onStart(Intent intent, int startId) {
-		super.onStart(intent, startId);
-		this.intent = intent;
+	public void onCreate() {
+		super.onCreate();
 		Injector.get().inject(this);
-	}
-
-	public Intent getIntent() {
-		return intent;
 	}
 
 }
