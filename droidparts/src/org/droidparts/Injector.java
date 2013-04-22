@@ -36,26 +36,6 @@ import android.view.View;
  */
 public class Injector {
 
-	public static Context getApplicationContext() {
-		return appCtx;
-	}
-
-	public static void setUp(Context ctx) {
-		setContext(ctx);
-		DependencyReader.init(ctx);
-	}
-
-	public static void tearDown() {
-		DependencyReader.tearDown();
-		appCtx = null;
-	}
-
-	public static <T> T getDependency(Context ctx, Class<T> cls)
-			throws RuntimeException {
-		setContext(ctx);
-		return DependencyReader.readVal(ctx, cls);
-	}
-
 	public static void inject(Activity act) {
 		setContext(act);
 		View root = act.findViewById(android.R.id.content).getRootView();
@@ -81,6 +61,26 @@ public class Injector {
 		Context ctx = view.getContext();
 		setContext(ctx);
 		inject(ctx, view, target);
+	}
+
+	public static <T> T getDependency(Context ctx, Class<T> cls)
+			throws RuntimeException {
+		setContext(ctx);
+		return DependencyReader.readVal(ctx, cls);
+	}
+
+	public static Context getApplicationContext() {
+		return appCtx;
+	}
+
+	public static void setUp(Context ctx) {
+		setContext(ctx);
+		DependencyReader.init(ctx);
+	}
+
+	public static void tearDown() {
+		DependencyReader.tearDown();
+		appCtx = null;
 	}
 
 	private static void setContext(Context ctx) {
