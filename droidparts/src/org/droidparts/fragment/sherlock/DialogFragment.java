@@ -34,9 +34,9 @@ public class DialogFragment extends
 			ViewGroup container, Bundle savedInstanceState) {
 		View view = onCreateView(savedInstanceState, inflater, container);
 		if (view != null) {
-			Injector.get().inject(view, this);
+			Injector.inject(view, this);
 		} else {
-			Injector.get().inject(getDialog(), this);
+			Injector.inject(getDialog(), this);
 		}
 		injected = true;
 		return view;

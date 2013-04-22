@@ -33,10 +33,10 @@ public class DialogFragment extends android.app.DialogFragment {
 			ViewGroup container, Bundle savedInstanceState) {
 		View view = onCreateView(savedInstanceState, inflater, container);
 		if (view != null) {
-			Injector.get().inject(view, this);
+			Injector.inject(view, this);
 			injected = true;
 		} else {
-			Injector.get().inject(getDialog(), this);
+			Injector.inject(getDialog(), this);
 		}
 		return view;
 	}

@@ -26,7 +26,7 @@ public class Activity extends android.app.Activity implements Injectable {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		onPreInject();
-		Injector.get().inject(this);
+		Injector.inject(this);
 	}
 
 	@Override

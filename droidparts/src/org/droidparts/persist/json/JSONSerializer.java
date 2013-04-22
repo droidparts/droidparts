@@ -52,7 +52,7 @@ public class JSONSerializer<ModelType extends Model> {
 		this.cls = cls;
 		if (ctx != null) {
 			this.ctx = ctx.getApplicationContext();
-			Injector.get().inject(ctx, this);
+			Injector.inject(ctx, this);
 		}
 	}
 

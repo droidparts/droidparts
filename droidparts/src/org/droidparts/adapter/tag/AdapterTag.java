@@ -22,7 +22,7 @@ import android.view.View;
 public abstract class AdapterTag {
 
 	public AdapterTag(View view) {
-		Injector.get().inject(view, this);
+		Injector.inject(view, this);
 	}
 
 }

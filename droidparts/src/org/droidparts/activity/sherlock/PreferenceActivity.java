@@ -32,7 +32,7 @@ public class PreferenceActivity extends
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		onPreInject();
-		Injector.get().inject(this);
+		Injector.inject(this);
 	}
 
 	@Override

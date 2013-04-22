@@ -40,62 +40,47 @@ public class Injector {
 		return appCtx;
 	}
 
-	public static Injector get() {
-		return Holder.INJECTOR;
-	}
-
-	public void setUp(Context ctx) {
+	public static void setUp(Context ctx) {
 		setContext(ctx);
 		DependencyReader.init(ctx);
 	}
 
-	public void tearDown() {
+	public static void tearDown() {
 		DependencyReader.tearDown();
 		appCtx = null;
 	}
 
-	public <T> T getDependency(Context ctx, Class<T> cls)
+	public static <T> T getDependency(Context ctx, Class<T> cls)
 			throws RuntimeException {
 		setContext(ctx);
 		return DependencyReader.readVal(ctx, cls);
 	}
 
-	public void inject(Activity act) {
+	public static void inject(Activity act) {
 		setContext(act);
 		View root = act.findViewById(android.R.id.content).getRootView();
 		inject(act, root, act);
 	}
 
-	public void inject(Service serv) {
+	public static void inject(Service serv) {
 		setContext(serv);
 		inject(serv, null, serv);
 	}
 
-	public void inject(Context ctx, Object target) {
+	public static void inject(Context ctx, Object target) {
 		setContext(ctx);
 		inject(ctx, null, target);
 	}
 
-	public void inject(Dialog dialog, Object target) {
+	public static void inject(Dialog dialog, Object target) {
 		View root = dialog.findViewById(android.R.id.content).getRootView();
 		inject(root, target);
 	}
 
-	public void inject(View view, Object target) {
+	public static void inject(View view, Object target) {
 		Context ctx = view.getContext();
 		setContext(ctx);
 		inject(ctx, view, target);
-	}
-
-	//
-
-	private static volatile Context appCtx;
-
-	static class Holder {
-		static final Injector INJECTOR = new Injector();
-	}
-
-	private Injector() {
 	}
 
 	private static void setContext(Context ctx) {
@@ -104,7 +89,7 @@ public class Injector {
 		}
 	}
 
-	//
+	private static volatile Context appCtx;
 
 	private static void inject(Context ctx, View root, Object target) {
 		long start = System.currentTimeMillis();
@@ -124,6 +109,9 @@ public class Injector {
 		}
 		L.i("Injected into %s in %d ms.", cls.getSimpleName(),
 				(System.currentTimeMillis() - start));
+	}
+
+	private Injector() {
 	}
 
 }

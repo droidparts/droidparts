@@ -27,8 +27,7 @@ public class TestActivityTestCase extends
 
 	public void testInjection2() {
 		Class<SQLiteDatabase> cls = SQLiteDatabase.class;
-		SQLiteDatabase dependency = Injector.get().getDependency(getActivity(),
-				cls);
+		SQLiteDatabase dependency = Injector.getDependency(getActivity(), cls);
 		assertNotNull(dependency);
 		assertTrue(cls.isAssignableFrom(dependency.getClass()));
 	}

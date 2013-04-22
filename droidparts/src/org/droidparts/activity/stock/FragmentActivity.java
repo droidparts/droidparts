@@ -36,7 +36,7 @@ public abstract class FragmentActivity extends android.app.Activity implements
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		onPreInject();
-		Injector.get().inject(this);
+		Injector.inject(this);
 	}
 
 	@Override

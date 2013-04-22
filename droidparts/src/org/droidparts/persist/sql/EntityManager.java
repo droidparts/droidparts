@@ -53,7 +53,7 @@ public class EntityManager<EntityType extends Entity> extends
 	public EntityManager(Class<EntityType> cls, Context ctx) {
 		this.cls = cls;
 		this.ctx = ctx.getApplicationContext();
-		Injector.get().inject(ctx, this);
+		Injector.inject(ctx, this);
 	}
 
 	protected EntityManager(Class<EntityType> cls, Context ctx,
