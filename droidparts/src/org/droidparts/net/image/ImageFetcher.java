@@ -119,6 +119,7 @@ public class ImageFetcher {
 
 	public void attachImage(ImageView imageView, String imgUrl) {
 		if (paused) {
+			todo.remove(imageView);
 			todo.put(imageView, imgUrl);
 		} else {
 			if (fetchListener != null) {
