@@ -57,7 +57,7 @@ public class Injector {
 	public <T> T getDependency(Context ctx, Class<T> cls)
 			throws RuntimeException {
 		setContext(ctx);
-		return DependencyReader.getVal(ctx, cls);
+		return DependencyReader.readVal(ctx, cls);
 	}
 
 	public void inject(Activity act) {
@@ -112,8 +112,7 @@ public class Injector {
 		FieldSpec<InjectAnn<?>>[] specs = FieldSpecRegistry.getInjectSpecs(cls);
 		for (FieldSpec<InjectAnn<?>> spec : specs) {
 			try {
-				Object val = ValueReader.getVal(ctx, root, target, spec.ann,
-						spec.field);
+				Object val = ValueReader.getVal(ctx, root, target, spec);
 				if (val != null) {
 					setFieldVal(target, spec.field, val);
 				}

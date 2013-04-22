@@ -15,9 +15,6 @@
  */
 package org.droidparts.inner.reader;
 
-import java.lang.reflect.Field;
-
-import org.droidparts.inner.ann.inject.InjectFragmentAnn;
 import org.droidparts.util.ResourceUtils;
 
 import android.app.Activity;
@@ -26,13 +23,12 @@ import android.os.Bundle;
 
 public class NativeFragmentReader {
 
-	static Object getVal(Object fragmentActivityObj, InjectFragmentAnn ann,
-			Field field) {
+	static Object readVal(Object fragmentActivityObj, int fragmentId,
+			String valName) {
 		Activity fragmentActivity = (Activity) fragmentActivityObj;
-		int fragmentId = ann.id;
 		if (fragmentId == 0) {
 			fragmentId = ResourceUtils.getResourceId(fragmentActivity,
-					field.getName());
+					valName);
 		}
 		return fragmentActivity.getFragmentManager().findFragmentById(
 				fragmentId);

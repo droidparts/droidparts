@@ -15,9 +15,8 @@
  */
 package org.droidparts.inner.reader;
 
-import java.lang.reflect.Field;
-
-import org.droidparts.inner.ann.Ann;
+import org.droidparts.inner.ann.FieldSpec;
+import org.droidparts.inner.ann.inject.InjectAnn;
 import org.droidparts.inner.ann.inject.InjectBundleExtraAnn;
 import org.droidparts.inner.ann.inject.InjectDependencyAnn;
 import org.droidparts.inner.ann.inject.InjectFragmentAnn;
@@ -26,65 +25,54 @@ import org.droidparts.inner.ann.inject.InjectResourceAnn;
 import org.droidparts.inner.ann.inject.InjectSystemServiceAnn;
 import org.droidparts.inner.ann.inject.InjectViewAnn;
 
-import android.app.Activity;
 import android.content.Context;
 import android.os.Build;
-import android.os.Bundle;
 import android.view.View;
 
 public class ValueReader {
 
 	public static Object getVal(Context ctx, View root, Object target,
-			Ann<?> ann, Field field) throws Exception {
-		Class<?> annType = ann.getClass();
+			FieldSpec<InjectAnn<?>> spec) throws Exception {
+		Class<?> annType = spec.ann.getClass();
+		Class<?> fieldType = spec.field.getType();
+		String fieldName = spec.field.getName();
+
 		Object val = null;
 		if (annType == InjectDependencyAnn.class) {
-			val = DependencyReader.getVal(ctx, field.getType());
+			val = DependencyReader.readVal(ctx, fieldType);
 		} else if (annType == InjectBundleExtraAnn.class) {
-			Bundle data = getBundle(target);
-			val = BundleExtraReader.getVal((InjectBundleExtraAnn) ann, data);
+			InjectBundleExtraAnn ann2 = (InjectBundleExtraAnn) spec.ann;
+			val = BundleExtraReader.readVal(target, ann2.key, ann2.optional);
 		} else if (annType == InjectResourceAnn.class) {
-			val = ResourceReader.getVal(ctx, (InjectResourceAnn) ann, field);
+			InjectResourceAnn ann2 = (InjectResourceAnn) spec.ann;
+			val = ResourceReader.readVal(ctx, ann2.id, fieldType);
 		} else if (annType == InjectSystemServiceAnn.class) {
-			val = SystemServiceReader.getVal(ctx, (InjectSystemServiceAnn) ann,
-					field);
+			InjectSystemServiceAnn ann2 = (InjectSystemServiceAnn) spec.ann;
+			val = SystemServiceReader.readVal(ctx, ann2.name, fieldType);
 		} else if (annType == InjectViewAnn.class) {
-			if (root == null) {
-				throw new IllegalArgumentException("Null View.");
-			}
-			val = ViewAndPreferenceReader.getVal(ctx, root,
-					(InjectViewAnn) ann, target, field);
+			InjectViewAnn ann2 = (InjectViewAnn) spec.ann;
+			int viewOrPrefId = ann2.id;
+			boolean click = ann2.click;
+			val = ViewAndPreferenceReader.readVal(ctx, root, viewOrPrefId,
+					click, target, fieldType, fieldName);
 		} else if (annType == InjectFragmentAnn.class) {
+			InjectFragmentAnn ann2 = (InjectFragmentAnn) spec.ann;
 			if (useSupport()) {
-				val = SupportFragmentReader.getVal(target,
-						(InjectFragmentAnn) ann, field);
+				val = SupportFragmentReader.readVal(target, ann2.id, fieldName);
 			} else if (nativeAvailable()) {
-				val = NativeFragmentReader.getVal(target,
-						(InjectFragmentAnn) ann, field);
+				val = NativeFragmentReader.readVal(target, ann2.id, fieldName);
 			}
 		} else if (annType == InjectParentActivityAnn.class) {
 			if (useSupport()) {
-				val = SupportParentActivityReader.getVal(target);
+				val = SupportParentActivityReader.readVal(target);
 			} else if (nativeAvailable()) {
-				val = NativeParentActivityReader.getVal(target);
+				val = NativeParentActivityReader.readVal(target);
 			}
 		}
 		return val;
 	}
 
-	private static Bundle getBundle(Object obj) {
-		if (obj instanceof Activity) {
-			return ((Activity) obj).getIntent().getExtras();
-		} else if (useSupport()) {
-			return SupportFragmentReader.getFragmentArguments(obj);
-		} else if (nativeAvailable()) {
-			return NativeFragmentReader.getFragmentArguments(obj);
-		} else {
-			throw new IllegalArgumentException();
-		}
-	}
-
-	private static boolean useSupport() {
+	static boolean useSupport() {
 		if (_useSupport == null) {
 			try {
 				Class.forName("android.support.v4.app.Fragment");
@@ -96,7 +84,7 @@ public class ValueReader {
 		return _useSupport;
 	}
 
-	private static boolean nativeAvailable() {
+	static boolean nativeAvailable() {
 		return Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB;
 	}
 

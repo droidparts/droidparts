@@ -15,9 +15,6 @@
  */
 package org.droidparts.inner.reader;
 
-import java.lang.reflect.Field;
-
-import org.droidparts.inner.ann.inject.InjectViewAnn;
 import org.droidparts.util.L;
 import org.droidparts.util.ResourceUtils;
 
@@ -28,22 +25,23 @@ import android.view.View;
 
 public class ViewAndPreferenceReader {
 
-	static Object getVal(Context ctx, View rootView, InjectViewAnn ann,
-			Object target, Field field) throws Exception {
-		boolean isView = View.class.isAssignableFrom(field.getType());
-		boolean isPreference = Preference.class.isAssignableFrom(field
-				.getType());
+	static Object readVal(Context ctx, View rootView, int viewOrPrefId,
+			boolean click, Object target, Class<?> valType, String valName)
+			throws Exception {
+		if (rootView == null) {
+			throw new IllegalArgumentException("Null View.");
+		}
+		boolean isView = View.class.isAssignableFrom(valType);
+		boolean isPreference = Preference.class.isAssignableFrom(valType);
 		if (!isView && !isPreference) {
 			throw new Exception("Not a View or Preference '"
-					+ field.getType().getName() + "'.");
+					+ valType.getName() + "'.");
 		}
-		int viewOrPrefId = ann.id;
 		if (viewOrPrefId == 0) {
-			String fieldName = field.getName();
 			if (isView) {
-				viewOrPrefId = ResourceUtils.getResourceId(ctx, fieldName);
+				viewOrPrefId = ResourceUtils.getResourceId(ctx, valName);
 			} else {
-				viewOrPrefId = ResourceUtils.getStringId(ctx, fieldName);
+				viewOrPrefId = ResourceUtils.getStringId(ctx, valName);
 			}
 		}
 		Object val;
@@ -54,7 +52,7 @@ public class ViewAndPreferenceReader {
 					.getText(viewOrPrefId));
 		}
 		if (val != null) {
-			if (ann.click) {
+			if (click) {
 				if (isView) {
 					if (target instanceof View.OnClickListener) {
 						((View) val)
