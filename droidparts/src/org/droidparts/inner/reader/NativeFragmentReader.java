@@ -38,12 +38,8 @@ public class NativeFragmentReader {
 				fragmentId);
 	}
 
-	static Bundle getIntentExtras(Object obj) {
-		if (obj instanceof Fragment) {
-			return ((Fragment) obj).getArguments();
-		} else {
-			return null;
-		}
+	static Bundle getFragmentArguments(Object fragmentObj) {
+		return ((Fragment) fragmentObj).getArguments();
 	}
 
 }

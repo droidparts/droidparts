@@ -41,7 +41,7 @@ public class ValueReader {
 		if (annType == InjectDependencyAnn.class) {
 			val = DependencyReader.getVal(ctx, field.getType());
 		} else if (annType == InjectBundleExtraAnn.class) {
-			Bundle data = getIntentExtras(target);
+			Bundle data = getBundle(target);
 			val = BundleExtraReader.getVal((InjectBundleExtraAnn) ann, data);
 		} else if (annType == InjectResourceAnn.class) {
 			val = ResourceReader.getVal(ctx, (InjectResourceAnn) ann, field);
@@ -72,16 +72,16 @@ public class ValueReader {
 		return val;
 	}
 
-	private static Bundle getIntentExtras(Object obj) {
-		Bundle data = null;
+	private static Bundle getBundle(Object obj) {
 		if (obj instanceof Activity) {
-			data = ((Activity) obj).getIntent().getExtras();
+			return ((Activity) obj).getIntent().getExtras();
 		} else if (useSupport()) {
-			data = SupportFragmentReader.getIntentExtras(obj);
+			return SupportFragmentReader.getFragmentArguments(obj);
 		} else if (nativeAvailable()) {
-			data = NativeFragmentReader.getIntentExtras(obj);
+			return NativeFragmentReader.getFragmentArguments(obj);
+		} else {
+			throw new IllegalArgumentException();
 		}
-		return data;
 	}
 
 	private static boolean useSupport() {
