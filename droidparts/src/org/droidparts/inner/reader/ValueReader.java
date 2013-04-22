@@ -51,10 +51,8 @@ public class ValueReader {
 			val = SystemServiceReader.readVal(ctx, ann2.name, fieldType);
 		} else if (annType == InjectViewAnn.class) {
 			InjectViewAnn ann2 = (InjectViewAnn) spec.ann;
-			int viewOrPrefId = ann2.id;
-			boolean click = ann2.click;
-			val = ViewAndPreferenceReader.readVal(ctx, root, viewOrPrefId,
-					click, target, fieldType, fieldName);
+			val = ViewAndPreferenceReader.readVal(ctx, root, ann2.id,
+					ann2.click, target, fieldType, fieldName);
 		} else if (annType == InjectFragmentAnn.class) {
 			InjectFragmentAnn ann2 = (InjectFragmentAnn) spec.ann;
 			if (useSupport()) {
