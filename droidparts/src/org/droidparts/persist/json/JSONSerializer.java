@@ -15,7 +15,6 @@
  */
 package org.droidparts.persist.json;
 
-import static org.droidparts.inner.FieldSpecRegistry.getJsonKeySpecs;
 import static org.droidparts.inner.ReflectionUtils.getFieldVal;
 import static org.droidparts.inner.ReflectionUtils.newInstance;
 import static org.droidparts.inner.ReflectionUtils.setFieldVal;
@@ -25,6 +24,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 import org.droidparts.Injector;
+import org.droidparts.inner.FieldSpecRegistry;
 import org.droidparts.inner.PersistUtils;
 import org.droidparts.inner.TypeHandlerRegistry;
 import org.droidparts.inner.ann.FieldSpec;
@@ -62,7 +62,8 @@ public class JSONSerializer<ModelType extends Model> {
 
 	public JSONObject serialize(ModelType item) throws JSONException {
 		JSONObject obj = new JSONObject();
-		for (FieldSpec<KeyAnn> spec : getJsonKeySpecs(cls)) {
+		FieldSpec<KeyAnn>[] keySpecs = FieldSpecRegistry.getJsonKeySpecs(cls);
+		for (FieldSpec<KeyAnn> spec : keySpecs) {
 			readFromModelAndPutToJSON(item, spec, obj, spec.ann.name);
 		}
 		return obj;
@@ -70,7 +71,8 @@ public class JSONSerializer<ModelType extends Model> {
 
 	public ModelType deserialize(JSONObject obj) throws JSONException {
 		ModelType model = newInstance(cls);
-		for (FieldSpec<KeyAnn> spec : getJsonKeySpecs(cls)) {
+		FieldSpec<KeyAnn>[] keySpecs = FieldSpecRegistry.getJsonKeySpecs(cls);
+		for (FieldSpec<KeyAnn> spec : keySpecs) {
 			readFromJSONAndSetFieldVal(model, spec, obj, spec.ann.name);
 		}
 		return model;
