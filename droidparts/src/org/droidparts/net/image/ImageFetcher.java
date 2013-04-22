@@ -380,9 +380,11 @@ public class ImageFetcher {
 				Long timestamp = imageFetcher.wip.get(imageView);
 				if (timestamp != null && timestamp == submitted) {
 					imageFetcher.wip.remove(imageView);
-					SetBitmapRunnable r = new SetBitmapRunnable(imageFetcher,
-							imageView, bm);
-					imageFetcher.runOnUiThread(r);
+					if (!imageFetcher.todo.containsKey(imageView)) {
+						SetBitmapRunnable r = new SetBitmapRunnable(
+								imageFetcher, imageView, bm);
+						imageFetcher.runOnUiThread(r);
+					}
 				}
 			}
 		}
