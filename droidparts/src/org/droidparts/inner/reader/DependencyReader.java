@@ -61,12 +61,12 @@ public class DependencyReader {
 	}
 
 	@SuppressWarnings("unchecked")
-	public static <T> T getVal(Context ctx, Class<T> cls)
+	public static <T> T readVal(Context ctx, Class<T> valType)
 			throws RuntimeException {
 		init(ctx);
 		T val = null;
 		if (dependencyProvider != null) {
-			Method method = methodRegistry.get(cls);
+			Method method = methodRegistry.get(valType);
 			try {
 				int paramCount = method.getGenericParameterTypes().length;
 				if (paramCount == 0) {
@@ -77,7 +77,7 @@ public class DependencyReader {
 			} catch (Exception e) {
 				throw new RuntimeException(
 						"No valid DependencyProvider method for "
-								+ cls.getName() + ".", e);
+								+ valType.getName() + ".", e);
 			}
 		}
 		return val;

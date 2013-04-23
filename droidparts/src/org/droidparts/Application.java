@@ -22,9 +22,8 @@ public class Application extends android.app.Application {
 	@Override
 	public void onCreate() {
 		super.onCreate();
-		Injector inj = Injector.get();
-		inj.setUp(this);
-		inj.inject(this, this);
+		Injector.setUp(this);
+		Injector.inject(this, this);
 		// http://code.google.com/p/android/issues/detail?id=20915
 		ReflectionUtils.classForName("android.os.AsyncTask");
 	}
@@ -32,7 +31,7 @@ public class Application extends android.app.Application {
 	@Override
 	public void onTerminate() {
 		// XXX doesn't get called
-		Injector.get().tearDown();
+		Injector.tearDown();
 	}
 
 }

@@ -39,7 +39,7 @@ public class ArrayAdapter<T> extends android.widget.ArrayAdapter<T> {
 	public ArrayAdapter(Context ctx, int rowResId, int textViewResId,
 			List<T> objects) {
 		super(ctx, rowResId, textViewResId, objects);
-		Injector.get().inject(ctx, this);
+		Injector.inject(ctx, this);
 	}
 
 	public void changeData(List<T> list) {

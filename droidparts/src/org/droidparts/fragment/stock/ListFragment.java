@@ -30,7 +30,7 @@ public class ListFragment extends android.app.ListFragment {
 	public final View onCreateView(LayoutInflater inflater,
 			ViewGroup container, Bundle savedInstanceState) {
 		View view = onCreateView(savedInstanceState, inflater, container);
-		Injector.get().inject(view, this);
+		Injector.inject(view, this);
 		injected = true;
 		return view;
 	}

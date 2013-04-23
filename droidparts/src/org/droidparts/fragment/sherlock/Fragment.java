@@ -30,7 +30,7 @@ public class Fragment extends com.actionbarsherlock.app.SherlockFragment {
 	public final View onCreateView(LayoutInflater inflater,
 			ViewGroup container, Bundle savedInstanceState) {
 		View view = onCreateView(savedInstanceState, inflater, container);
-		Injector.get().inject(view, this);
+		Injector.inject(view, this);
 		injected = true;
 		return view;
 	}

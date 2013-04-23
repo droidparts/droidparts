@@ -15,20 +15,28 @@
  */
 package org.droidparts.inner.reader;
 
-import org.droidparts.inner.ann.inject.InjectBundleExtraAnn;
-
+import android.app.Activity;
 import android.os.Bundle;
 
 public class BundleExtraReader {
 
-	public static Object getVal(InjectBundleExtraAnn ann, Bundle data)
+	static Object readVal(Object obj, String key, boolean optional)
 			throws Exception {
-		Object val = data.get(ann.key);
-		if (val == null && !ann.optional) {
-			throw new Exception("Bundle missing required key: " + ann.key);
+		Bundle data;
+		if (obj instanceof Activity) {
+			data = ((Activity) obj).getIntent().getExtras();
+		} else if (ValueReader.useSupport()) {
+			data = SupportFragmentReader.getFragmentArguments(obj);
+		} else if (ValueReader.nativeAvailable()) {
+			data = NativeFragmentReader.getFragmentArguments(obj);
+		} else {
+			throw new IllegalArgumentException();
+		}
+		Object val = data.get(key);
+		if (val == null && !optional) {
+			throw new Exception("Bundle missing required key: " + key);
 		} else {
 			return val;
 		}
 	}
-
 }

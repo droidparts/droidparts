@@ -32,7 +32,7 @@ public abstract class CursorAdapter extends android.widget.CursorAdapter {
 	public CursorAdapter(Context ctx, Cursor cursor) {
 		super(ctx, cursor);
 		this.ctx = ctx.getApplicationContext();
-		Injector.get().inject(ctx, this);
+		Injector.inject(ctx, this);
 	}
 
 	public Context getContext() {

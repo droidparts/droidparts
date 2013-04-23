@@ -55,19 +55,19 @@ public class ImageFetcher {
 	private final BitmapMemoryCache memoryCache;
 	private final BitmapDiskCache diskCache;
 
-	final ThreadPoolExecutor cacheExecutor;
-	final ThreadPoolExecutor fetchExecutor;
+	private final ThreadPoolExecutor cacheExecutor;
+	private final ThreadPoolExecutor fetchExecutor;
 
-	final LinkedHashMap<ImageView, String> todo = new LinkedHashMap<ImageView, String>();
-	final ConcurrentHashMap<ImageView, Long> wip = new ConcurrentHashMap<ImageView, Long>();
+	private final LinkedHashMap<ImageView, String> todo = new LinkedHashMap<ImageView, String>();
+	private final ConcurrentHashMap<ImageView, Long> wip = new ConcurrentHashMap<ImageView, Long>();
 	private Handler handler;
 
-	ImageFetchListener fetchListener;
-	ImageReshaper reshaper;
+	private ImageFetchListener fetchListener;
+	private ImageReshaper reshaper;
 
-	int crossFadeMillis = 0;
+	private int crossFadeMillis = 0;
 
-	volatile boolean paused;
+	private volatile boolean paused;
 
 	public ImageFetcher(Context ctx) {
 		this(ctx, new BackgroundExecutor(2), new RESTClient(ctx),
@@ -119,6 +119,7 @@ public class ImageFetcher {
 
 	public void attachImage(ImageView imageView, String imgUrl) {
 		if (paused) {
+			todo.remove(imageView);
 			todo.put(imageView, imgUrl);
 		} else {
 			if (fetchListener != null) {
@@ -166,7 +167,47 @@ public class ImageFetcher {
 
 	//
 
-	Pair<Bitmap, Pair<String, byte[]>> fetch(final ImageView imageView,
+	protected Bitmap getCachedReshaped(String imgUrl) {
+		String key = getCacheKey(imgUrl);
+		Bitmap bm = null;
+		if (reshaper != null) {
+			if (memoryCache != null) {
+				bm = memoryCache.get(key);
+			}
+			if (bm == null) {
+				if (diskCache != null) {
+					bm = diskCache.get(key, getWidthHint(), getHeighthHint());
+				}
+				if (bm != null) {
+					if (memoryCache != null) {
+						memoryCache.put(key, bm);
+					}
+				}
+			}
+		}
+		if (bm == null) {
+			if (memoryCache != null) {
+				bm = memoryCache.get(key);
+			}
+			if (bm == null) {
+				if (diskCache != null) {
+					bm = diskCache
+							.get(imgUrl, getWidthHint(), getHeighthHint());
+				}
+				if (bm != null) {
+					if (reshaper != null) {
+						bm = reshaper.reshape(bm);
+					}
+					if (memoryCache != null) {
+						memoryCache.put(key, bm);
+					}
+				}
+			}
+		}
+		return bm;
+	}
+
+	private Pair<Bitmap, Pair<String, byte[]>> fetch(final ImageView imageView,
 			final String imgUrl) {
 		Pair<Bitmap, Pair<String, byte[]>> bmData = null;
 		int bytesReadTotal = 0;
@@ -220,47 +261,7 @@ public class ImageFetcher {
 		return bmData;
 	}
 
-	protected Bitmap getCachedReshaped(String imgUrl) {
-		String key = getCacheKey(imgUrl);
-		Bitmap bm = null;
-		if (reshaper != null) {
-			if (memoryCache != null) {
-				bm = memoryCache.get(key);
-			}
-			if (bm == null) {
-				if (diskCache != null) {
-					bm = diskCache.get(key, getWidthHint(), getHeighthHint());
-				}
-				if (bm != null) {
-					if (memoryCache != null) {
-						memoryCache.put(key, bm);
-					}
-				}
-			}
-		}
-		if (bm == null) {
-			if (memoryCache != null) {
-				bm = memoryCache.get(key);
-			}
-			if (bm == null) {
-				if (diskCache != null) {
-					bm = diskCache
-							.get(imgUrl, getWidthHint(), getHeighthHint());
-				}
-				if (bm != null) {
-					if (reshaper != null) {
-						bm = reshaper.reshape(bm);
-					}
-					if (memoryCache != null) {
-						memoryCache.put(key, bm);
-					}
-				}
-			}
-		}
-		return bm;
-	}
-
-	Bitmap reshapeAndCache(String imgUrl,
+	private Bitmap reshapeAndCache(String imgUrl,
 			Pair<Bitmap, Pair<String, byte[]>> bmData) {
 		Bitmap bm = bmData.first;
 		if (diskCache != null) {
@@ -355,7 +356,7 @@ public class ImageFetcher {
 			} else {
 				imageFetcher.wip.remove(imageView);
 				SetBitmapRunnable r = new SetBitmapRunnable(imageFetcher,
-						imageView, bm, imageFetcher.crossFadeMillis);
+						imageView, bm);
 				imageFetcher.runOnUiThread(r);
 			}
 		}
@@ -379,9 +380,11 @@ public class ImageFetcher {
 				Long timestamp = imageFetcher.wip.get(imageView);
 				if (timestamp != null && timestamp == submitted) {
 					imageFetcher.wip.remove(imageView);
-					SetBitmapRunnable r = new SetBitmapRunnable(imageFetcher,
-							imageView, bm, imageFetcher.crossFadeMillis);
-					imageFetcher.runOnUiThread(r);
+					if (!imageFetcher.todo.containsKey(imageView)) {
+						SetBitmapRunnable r = new SetBitmapRunnable(
+								imageFetcher, imageView, bm);
+						imageFetcher.runOnUiThread(r);
+					}
 				}
 			}
 		}
@@ -396,13 +399,11 @@ public class ImageFetcher {
 	static class SetBitmapRunnable extends ImageViewRunnable {
 
 		private final Bitmap bitmap;
-		private final int crossFadeMillis;
 
 		public SetBitmapRunnable(ImageFetcher imageFetcher,
-				ImageView imageView, Bitmap bitmap, int crossFadeMillis) {
+				ImageView imageView, Bitmap bitmap) {
 			super(imageFetcher, imageView);
 			this.bitmap = bitmap;
-			this.crossFadeMillis = crossFadeMillis;
 		}
 
 		@Override
@@ -410,7 +411,7 @@ public class ImageFetcher {
 			if (imageFetcher.fetchListener != null) {
 				imageFetcher.fetchListener.onTaskCompleted(imageView);
 			}
-			if (crossFadeMillis > 0) {
+			if (imageFetcher.crossFadeMillis > 0) {
 				Drawable prevDrawable = imageView.getDrawable();
 				if (prevDrawable == null) {
 					prevDrawable = new ColorDrawable(TRANSPARENT);
@@ -420,7 +421,8 @@ public class ImageFetcher {
 				TransitionDrawable transitionDrawable = new TransitionDrawable(
 						new Drawable[] { prevDrawable, nextDrawable });
 				imageView.setImageDrawable(transitionDrawable);
-				transitionDrawable.startTransition(crossFadeMillis);
+				transitionDrawable
+						.startTransition(imageFetcher.crossFadeMillis);
 			} else {
 				imageView.setImageBitmap(bitmap);
 			}

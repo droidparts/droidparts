@@ -25,7 +25,7 @@ public abstract class SimpleAsyncTaskProgressListener implements
 	protected final Context ctx;
 
 	public SimpleAsyncTaskProgressListener(Context ctx) {
-		Injector.get().inject(ctx, this);
+		Injector.inject(ctx, this);
 		this.ctx = ctx;
 	}
 

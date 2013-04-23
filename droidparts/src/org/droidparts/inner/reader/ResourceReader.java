@@ -20,40 +20,34 @@ import static org.droidparts.inner.TypeHelper.isBoolean;
 import static org.droidparts.inner.TypeHelper.isDrawable;
 import static org.droidparts.inner.TypeHelper.isInteger;
 import static org.droidparts.inner.TypeHelper.isString;
-
-import java.lang.reflect.Field;
-
-import org.droidparts.inner.ann.inject.InjectResourceAnn;
-
 import android.content.Context;
 import android.content.res.Resources;
 
 public class ResourceReader {
 
-	public static Object getVal(Context ctx, InjectResourceAnn ann, Field field)
+	static Object readVal(Context ctx, int resId, Class<?> valType)
 			throws Exception {
 		Resources res = ctx.getResources();
-		Class<?> cls = field.getType();
 		Object val = null;
-		if (isBoolean(cls)) {
-			val = res.getBoolean(ann.id);
-		} else if (isInteger(cls)) {
-			val = res.getInteger(ann.id);
-		} else if (isString(cls)) {
-			val = res.getString(ann.id);
-		} else if (isDrawable(cls)) {
-			val = res.getDrawable(ann.id);
-		} else if (isArray(cls)) {
-			Class<?> type = cls.getComponentType();
+		if (isBoolean(valType)) {
+			val = res.getBoolean(resId);
+		} else if (isInteger(valType)) {
+			val = res.getInteger(resId);
+		} else if (isString(valType)) {
+			val = res.getString(resId);
+		} else if (isDrawable(valType)) {
+			val = res.getDrawable(resId);
+		} else if (isArray(valType)) {
+			Class<?> type = valType.getComponentType();
 			if (isInteger(type)) {
-				val = res.getIntArray(ann.id);
+				val = res.getIntArray(resId);
 			} else if (isString(type)) {
-				val = res.getStringArray(ann.id);
+				val = res.getStringArray(resId);
 			}
 		}
 		if (val == null) {
-			throw new Exception("Unsupported resource type '" + cls.getName()
-					+ "'.");
+			throw new Exception("Unsupported resource type '"
+					+ valType.getName() + "'.");
 		} else {
 			return val;
 		}

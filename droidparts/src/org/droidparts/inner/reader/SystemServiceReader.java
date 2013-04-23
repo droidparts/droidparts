@@ -17,21 +17,18 @@ package org.droidparts.inner.reader;
 
 import static org.droidparts.util.Strings.isEmpty;
 
-import java.lang.reflect.Field;
 import java.util.HashMap;
 
-import org.droidparts.inner.ann.inject.InjectSystemServiceAnn;
 import org.droidparts.util.L;
 
 import android.content.Context;
 
 public class SystemServiceReader {
 
-	public static Object getVal(Context ctx, InjectSystemServiceAnn ann,
-			Field field) throws Exception {
-		String serviceName = ann.name;
-		String name = isEmpty(serviceName) ? serviceRegistry.get(field
-				.getType()) : serviceName;
+	static Object readVal(Context ctx, String serviceName, Class<?> valType)
+			throws Exception {
+		String name = isEmpty(serviceName) ? serviceRegistry.get(valType)
+				: serviceName;
 		if (name == null) {
 			throw new Exception("Unknown service: " + name);
 		} else {
