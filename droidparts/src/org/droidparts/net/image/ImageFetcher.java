@@ -18,6 +18,7 @@ package org.droidparts.net.image;
 import static android.graphics.Color.TRANSPARENT;
 import static org.droidparts.contract.Constants.BUFFER_SIZE;
 import static org.droidparts.util.IOUtils.silentlyClose;
+import static org.droidparts.util.Strings.isNotEmpty;
 
 import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
@@ -128,7 +129,13 @@ public class ImageFetcher {
 					submitted);
 			cacheExecutor.remove(r);
 			fetchExecutor.remove(r);
-			cacheExecutor.execute(r);
+			if (isNotEmpty(imgUrl)) {
+				cacheExecutor.execute(r);
+			} else {
+				if (fetchListener != null) {
+					fetchListener.onTaskCompleted(imageView);
+				}
+			}
 		}
 	}
 
@@ -334,7 +341,7 @@ public class ImageFetcher {
 	static class ReadFromCacheRunnable extends ImageViewRunnable {
 
 		protected final String imgUrl;
-		protected final long submitted;
+		private final long submitted;
 
 		public ReadFromCacheRunnable(ImageFetcher imageFetcher,
 				ImageView imageView, String imgUrl, long submitted) {
