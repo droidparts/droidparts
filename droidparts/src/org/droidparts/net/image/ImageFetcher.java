@@ -87,17 +87,14 @@ public class ImageFetcher {
 	}
 
 	public void setFetchListener(ImageFetchListener fetchListener) {
-		wip.clear();
 		this.fetchListener = fetchListener;
 	}
 
 	public void setReshaper(ImageReshaper reshaper) {
-		wip.clear();
 		this.reshaper = reshaper;
 	}
 
 	public void setCrossFadeDuration(int millisec) {
-		wip.clear();
 		this.crossFadeMillis = millisec;
 	}
 
@@ -118,6 +115,8 @@ public class ImageFetcher {
 	//
 
 	public void attachImage(ImageView imageView, String imgUrl) {
+		long submitted = System.nanoTime();
+		wip.put(imageView, submitted);
 		if (paused) {
 			todo.remove(imageView);
 			todo.put(imageView, imgUrl);
@@ -125,8 +124,6 @@ public class ImageFetcher {
 			if (fetchListener != null) {
 				fetchListener.onTaskAdded(imageView);
 			}
-			long submitted = System.nanoTime();
-			wip.put(imageView, submitted);
 			Runnable r = new ReadFromCacheRunnable(this, imageView, imgUrl,
 					submitted);
 			cacheExecutor.remove(r);
@@ -380,11 +377,9 @@ public class ImageFetcher {
 				Long timestamp = imageFetcher.wip.get(imageView);
 				if (timestamp != null && timestamp == submitted) {
 					imageFetcher.wip.remove(imageView);
-					if (!imageFetcher.todo.containsKey(imageView)) {
-						SetBitmapRunnable r = new SetBitmapRunnable(
-								imageFetcher, imageView, bm);
-						imageFetcher.runOnUiThread(r);
-					}
+					SetBitmapRunnable r = new SetBitmapRunnable(imageFetcher,
+							imageView, bm);
+					imageFetcher.runOnUiThread(r);
 				}
 			}
 		}
