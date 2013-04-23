@@ -36,9 +36,9 @@ public abstract class AbstractDependencyProvider {
 
 	public abstract AbstractDBOpenHelper getDBOpenHelper();
 
-	protected final void addConverters(Converter<?>... converters) {
+	protected final void registerConverters(Converter<?>... converters) {
 		for (Converter<?> converter : converters) {
-			ConverterRegistry.addConverter(converter);
+			ConverterRegistry.registerConverter(converter);
 		}
 	}
 

@@ -72,25 +72,25 @@ public class ConverterRegistry {
 	@SuppressWarnings("unchecked")
 	public static <T> Converter<T> getConverter(Class<T> cls)
 			throws IllegalArgumentException {
-		Converter<?> handler = map.get(cls);
-		if (handler == null) {
+		Converter<?> converter = map.get(cls);
+		if (converter == null) {
 			for (Converter<?> h : converters) {
 				if (h.canHandle(cls)) {
-					handler = h;
-					map.put(cls, handler);
+					converter = h;
+					map.put(cls, converter);
 					break;
 				}
 			}
 		}
-		if (handler != null) {
-			return (Converter<T>) handler;
+		if (converter != null) {
+			return (Converter<T>) converter;
 		} else {
-			throw new IllegalArgumentException("No handler for '"
+			throw new IllegalArgumentException("No converter for '"
 					+ cls.getName() + "'.");
 		}
 	}
 
-	public static void addConverter(Converter<?> converter) {
+	public static void registerConverter(Converter<?> converter) {
 		converters.add(converter);
 	}
 

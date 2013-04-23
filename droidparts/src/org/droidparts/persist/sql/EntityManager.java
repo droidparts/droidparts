@@ -232,8 +232,8 @@ public class EntityManager<EntityType extends Entity> extends
 		if (value == null) {
 			cv.putNull(key);
 		} else {
-			Converter<T> handler = ConverterRegistry.getConverter(valueType);
-			handler.putToContentValues(valueType, componentType, cv, key,
+			Converter<T> converter = ConverterRegistry.getConverter(valueType);
+			converter.putToContentValues(valueType, componentType, cv, key,
 					(T) value);
 		}
 	}
@@ -244,8 +244,8 @@ public class EntityManager<EntityType extends Entity> extends
 		if (cursor.isNull(columnIndex)) {
 			return null;
 		} else {
-			Converter<T> handler = ConverterRegistry.getConverter(valType);
-			return handler.readFromCursor(valType, componentType, cursor,
+			Converter<T> converter = ConverterRegistry.getConverter(valType);
+			return converter.readFromCursor(valType, componentType, cursor,
 					columnIndex);
 		}
 	}

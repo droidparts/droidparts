@@ -102,8 +102,8 @@ public class JSONSerializer<ModelType extends Model> {
 		if (val == null) {
 			obj.put(key, NULL);
 		} else {
-			Converter<T> handler = ConverterRegistry.getConverter(valType);
-			handler.putToJSON(valType, componentType, obj, key, (T) val);
+			Converter<T> converter = ConverterRegistry.getConverter(valType);
+			converter.putToJSON(valType, componentType, obj, key, (T) val);
 		}
 	}
 
@@ -114,8 +114,8 @@ public class JSONSerializer<ModelType extends Model> {
 		if (NULL.equals(jsonVal)) {
 			return jsonVal;
 		} else {
-			Converter<T> handler = ConverterRegistry.getConverter(valType);
-			return handler.readFromJSON(valType, componentType, obj, key);
+			Converter<T> converter = ConverterRegistry.getConverter(valType);
+			return converter.readFromJSON(valType, componentType, obj, key);
 		}
 	}
 
