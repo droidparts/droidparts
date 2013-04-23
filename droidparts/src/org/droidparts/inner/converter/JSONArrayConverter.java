@@ -13,20 +13,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License. 
  */
-package org.droidparts.inner.handler;
+package org.droidparts.inner.converter;
 
 import org.droidparts.inner.TypeHelper;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.content.ContentValues;
 import android.database.Cursor;
 
-public class StringHandler extends TypeHandler<String> {
+public class JSONArrayConverter extends Converter<JSONArray> {
 
 	@Override
 	public boolean canHandle(Class<?> cls) {
-		return TypeHelper.isString(cls);
+		return TypeHelper.isJSONArray(cls);
 	}
 
 	@Override
@@ -35,28 +36,42 @@ public class StringHandler extends TypeHandler<String> {
 	}
 
 	@Override
-	public <V> String readFromJSON(Class<String> valType,
+	public <V> void putToJSON(Class<JSONArray> valType, Class<V> componentType,
+			JSONObject obj, String key, JSONArray val) throws JSONException {
+		obj.put(key, val.toString());
+	}
+
+	@Override
+	public <V> JSONArray readFromJSON(Class<JSONArray> valType,
 			Class<V> componentType, JSONObject obj, String key)
 			throws JSONException {
-		return obj.getString(key);
+		return parseFromString(valType, componentType, obj.getString(key));
 	}
 
 	@Override
-	protected <V> String parseFromString(Class<String> valType,
+	protected <V> JSONArray parseFromString(Class<JSONArray> valType,
 			Class<V> componentType, String str) {
-		return str;
+		try {
+			return new JSONArray(str);
+		} catch (JSONException e) {
+			throw new IllegalArgumentException(e);
+		}
 	}
 
 	@Override
-	public <V> void putToContentValues(Class<String> valueType,
-			Class<V> componentType, ContentValues cv, String key, String val) {
-		cv.put(key, val);
+	public <V> void putToContentValues(Class<JSONArray> valueType,
+			Class<V> componentType, ContentValues cv, String key, JSONArray val) {
+		cv.put(key, val.toString());
 	}
 
 	@Override
-	public <V> String readFromCursor(Class<String> valType,
+	public <V> JSONArray readFromCursor(Class<JSONArray> valType,
 			Class<V> componentType, Cursor cursor, int columnIndex) {
-		return cursor.getString(columnIndex);
+		try {
+			return new JSONArray(cursor.getString(columnIndex));
+		} catch (JSONException e) {
+			throw new IllegalArgumentException(e);
+		}
 	}
 
 }

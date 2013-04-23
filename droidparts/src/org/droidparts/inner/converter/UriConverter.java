@@ -13,9 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License. 
  */
-package org.droidparts.inner.handler;
-
-import static org.droidparts.inner.ReflectionUtils.newEnum;
+package org.droidparts.inner.converter;
 
 import org.droidparts.inner.TypeHelper;
 import org.json.JSONException;
@@ -23,12 +21,13 @@ import org.json.JSONObject;
 
 import android.content.ContentValues;
 import android.database.Cursor;
+import android.net.Uri;
 
-public class EnumHandler extends TypeHandler<Enum<?>> {
+public class UriConverter extends Converter<Uri> {
 
 	@Override
 	public boolean canHandle(Class<?> cls) {
-		return TypeHelper.isEnum(cls);
+		return TypeHelper.isUri(cls);
 	}
 
 	@Override
@@ -37,34 +36,33 @@ public class EnumHandler extends TypeHandler<Enum<?>> {
 	}
 
 	@Override
-	public <V> void putToJSON(Class<Enum<?>> valType, Class<V> componentType,
-			JSONObject obj, String key, Enum<?> val) throws JSONException {
+	public <V> void putToJSON(Class<Uri> valType, Class<V> componentType,
+			JSONObject obj, String key, Uri val) throws JSONException {
 		obj.put(key, val.toString());
 	}
 
 	@Override
-	public <V> Enum<?> readFromJSON(Class<Enum<?>> valType,
-			Class<V> componentType, JSONObject obj, String key)
-			throws JSONException {
+	public <V> Uri readFromJSON(Class<Uri> valType, Class<V> componentType,
+			JSONObject obj, String key) throws JSONException {
 		return parseFromString(valType, componentType, obj.getString(key));
 	}
 
 	@Override
-	protected <V> Enum<?> parseFromString(Class<Enum<?>> valType,
+	protected <V> Uri parseFromString(Class<Uri> valType,
 			Class<V> componentType, String str) {
-		return newEnum(valType, str);
+		return Uri.parse(str);
 	}
 
 	@Override
-	public <V> void putToContentValues(Class<Enum<?>> valueType,
-			Class<V> componentType, ContentValues cv, String key, Enum<?> val) {
+	public <V> void putToContentValues(Class<Uri> valueType,
+			Class<V> componentType, ContentValues cv, String key, Uri val) {
 		cv.put(key, val.toString());
 	}
 
 	@Override
-	public <V> Enum<?> readFromCursor(Class<Enum<?>> valType,
-			Class<V> componentType, Cursor cursor, int columnIndex) {
-		return newEnum(valType, cursor.getString(columnIndex));
+	public <V> Uri readFromCursor(Class<Uri> valType, Class<V> componentType,
+			Cursor cursor, int columnIndex) {
+		return Uri.parse(cursor.getString(columnIndex));
 	}
 
 }

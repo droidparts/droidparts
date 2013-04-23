@@ -13,7 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License. 
  */
-package org.droidparts.inner.handler;
+package org.droidparts.inner.converter;
+
+import java.util.UUID;
 
 import org.droidparts.inner.TypeHelper;
 import org.json.JSONException;
@@ -22,41 +24,46 @@ import org.json.JSONObject;
 import android.content.ContentValues;
 import android.database.Cursor;
 
-public class CharacterHandler extends TypeHandler<Character> {
+public class UUIDConverter extends Converter<UUID> {
 
 	@Override
 	public boolean canHandle(Class<?> cls) {
-		return TypeHelper.isCharacter(cls);
+		return TypeHelper.isUUID(cls);
 	}
 
 	@Override
 	public String getDBColumnType() {
-		return INTEGER;
+		return TEXT;
 	}
 
 	@Override
-	public <V> Character readFromJSON(Class<Character> valType,
-			Class<V> componentType, JSONObject obj, String key)
-			throws JSONException {
+	public <V> void putToJSON(Class<UUID> valType, Class<V> componentType,
+			JSONObject obj, String key, UUID val) throws JSONException {
+		obj.put(key, val.toString());
+	}
+
+	@Override
+	public <V> UUID readFromJSON(Class<UUID> valType, Class<V> componentType,
+			JSONObject obj, String key) throws JSONException {
 		return parseFromString(valType, componentType, obj.getString(key));
 	}
 
 	@Override
-	protected <V> Character parseFromString(Class<Character> valType,
+	protected <V> UUID parseFromString(Class<UUID> valType,
 			Class<V> componentType, String str) {
-		return Character.valueOf((str.length() == 0) ? ' ' : str.charAt(0));
+		return UUID.fromString(str);
 	}
 
 	@Override
-	public <V> void putToContentValues(Class<Character> valueType,
-			Class<V> componentType, ContentValues cv, String key, Character val) {
-		cv.put(key, String.valueOf(val));
+	public <V> void putToContentValues(Class<UUID> valueType,
+			Class<V> componentType, ContentValues cv, String key, UUID val) {
+		cv.put(key, val.toString());
 	}
 
 	@Override
-	public <V> Character readFromCursor(Class<Character> valType,
-			Class<V> componentType, Cursor cursor, int columnIndex) {
-		return parseFromString(valType, null, cursor.getString(columnIndex));
+	public <V> UUID readFromCursor(Class<UUID> valType, Class<V> componentType,
+			Cursor cursor, int columnIndex) {
+		return UUID.fromString(cursor.getString(columnIndex));
 	}
 
 }

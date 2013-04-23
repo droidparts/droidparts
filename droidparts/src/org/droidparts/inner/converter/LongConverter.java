@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License. 
  */
-package org.droidparts.inner.handler;
+package org.droidparts.inner.converter;
 
 import org.droidparts.inner.TypeHelper;
 import org.json.JSONException;
@@ -21,48 +21,41 @@ import org.json.JSONObject;
 
 import android.content.ContentValues;
 import android.database.Cursor;
-import android.net.Uri;
 
-public class UriHandler extends TypeHandler<Uri> {
+public class LongConverter extends Converter<Long> {
 
 	@Override
 	public boolean canHandle(Class<?> cls) {
-		return TypeHelper.isUri(cls);
+		return TypeHelper.isLong(cls);
 	}
 
 	@Override
 	public String getDBColumnType() {
-		return TEXT;
+		return INTEGER;
 	}
 
 	@Override
-	public <V> void putToJSON(Class<Uri> valType, Class<V> componentType,
-			JSONObject obj, String key, Uri val) throws JSONException {
-		obj.put(key, val.toString());
-	}
-
-	@Override
-	public <V> Uri readFromJSON(Class<Uri> valType, Class<V> componentType,
+	public <V> Long readFromJSON(Class<Long> valType, Class<V> componentType,
 			JSONObject obj, String key) throws JSONException {
-		return parseFromString(valType, componentType, obj.getString(key));
+		return obj.getLong(key);
 	}
 
 	@Override
-	protected <V> Uri parseFromString(Class<Uri> valType,
+	protected <V> Long parseFromString(Class<Long> valType,
 			Class<V> componentType, String str) {
-		return Uri.parse(str);
+		return Long.valueOf(str);
 	}
 
 	@Override
-	public <V> void putToContentValues(Class<Uri> valueType,
-			Class<V> componentType, ContentValues cv, String key, Uri val) {
-		cv.put(key, val.toString());
+	public <V> void putToContentValues(Class<Long> valueType,
+			Class<V> componentType, ContentValues cv, String key, Long val) {
+		cv.put(key, val);
 	}
 
 	@Override
-	public <V> Uri readFromCursor(Class<Uri> valType, Class<V> componentType,
+	public <V> Long readFromCursor(Class<Long> valType, Class<V> componentType,
 			Cursor cursor, int columnIndex) {
-		return Uri.parse(cursor.getString(columnIndex));
+		return cursor.getLong(columnIndex);
 	}
 
 }

@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License. 
  */
-package org.droidparts.inner.handler;
+package org.droidparts.inner.converter;
 
 import static org.droidparts.inner.ReflectionUtils.newInstance;
 import static org.droidparts.inner.TypeHelper.isArray;
@@ -25,7 +25,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
-import org.droidparts.inner.TypeHandlerRegistry;
+import org.droidparts.inner.ConverterRegistry;
 import org.droidparts.inner.TypeHelper;
 import org.droidparts.model.Model;
 import org.droidparts.persist.json.JSONSerializer;
@@ -38,7 +38,7 @@ import org.json.JSONObject;
 import android.content.ContentValues;
 import android.database.Cursor;
 
-public class ArrayCollectionHandler extends TypeHandler<Object> {
+public class ArrayCollectionConverter extends Converter<Object> {
 
 	// ASCII RS (record separator), '|' for readability
 	private static final String SEP = "|" + (char) 30;
@@ -63,7 +63,7 @@ public class ArrayCollectionHandler extends TypeHandler<Object> {
 	@Override
 	public <V> void putToJSON(Class<Object> valType, Class<V> componentType,
 			JSONObject obj, String key, Object val) throws JSONException {
-		TypeHandler<V> handler = TypeHandlerRegistry.getHandler(componentType);
+		Converter<V> handler = ConverterRegistry.getConverter(componentType);
 		ArrayList<V> list = arrOrCollToList(valType, componentType, val);
 		JSONArray vals = new JSONArray();
 		JSONObject tmpObj = new JSONObject();
@@ -127,8 +127,8 @@ public class ArrayCollectionHandler extends TypeHandler<Object> {
 				for (int i = 0; i < arr.length; i++) {
 					arr2[i] = arr[i].toString();
 				}
-				TypeHandler<V> handler = TypeHandlerRegistry
-						.getHandler(componentType);
+				Converter<V> handler = ConverterRegistry
+						.getConverter(componentType);
 				return parseTypeArr(handler, componentType, arr2);
 			}
 		} else {
@@ -140,7 +140,7 @@ public class ArrayCollectionHandler extends TypeHandler<Object> {
 	public <V> void putToContentValues(Class<Object> valueType,
 			Class<V> componentType, ContentValues cv, String key, Object val)
 			throws IllegalArgumentException {
-		TypeHandler<V> handler = TypeHandlerRegistry.getHandler(componentType);
+		Converter<V> handler = ConverterRegistry.getConverter(componentType);
 		ArrayList<V> list = arrOrCollToList(valueType, componentType, val);
 		ArrayList<Object> vals = new ArrayList<Object>();
 		ContentValues tmpCV = new ContentValues();
@@ -155,7 +155,7 @@ public class ArrayCollectionHandler extends TypeHandler<Object> {
 	@Override
 	public <V> Object readFromCursor(Class<Object> valType,
 			Class<V> componentType, Cursor cursor, int columnIndex) {
-		TypeHandler<V> handler = TypeHandlerRegistry.getHandler(componentType);
+		Converter<V> handler = ConverterRegistry.getConverter(componentType);
 		String str = cursor.getString(columnIndex);
 		String[] parts = (str.length() > 0) ? str.split("\\" + SEP)
 				: new String[0];
@@ -179,7 +179,7 @@ public class ArrayCollectionHandler extends TypeHandler<Object> {
 	}
 
 	// say hello to arrays of primitives
-	private final <T> Object parseTypeArr(TypeHandler<T> handler,
+	private final <T> Object parseTypeArr(Converter<T> handler,
 			Class<T> valType, String[] arr) {
 		Object objArr = Array.newInstance(valType, arr.length);
 		for (int i = 0; i < arr.length; i++) {
@@ -189,7 +189,7 @@ public class ArrayCollectionHandler extends TypeHandler<Object> {
 		return objArr;
 	}
 
-	private final <T> Collection<T> parseTypeColl(TypeHandler<T> handler,
+	private final <T> Collection<T> parseTypeColl(Converter<T> handler,
 			Class<Object> collType, Class<T> componentType, String[] arr) {
 		@SuppressWarnings("unchecked")
 		Collection<T> coll = (Collection<T>) newInstance(collType);

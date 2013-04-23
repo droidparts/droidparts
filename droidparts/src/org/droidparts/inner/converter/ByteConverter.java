@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License. 
  */
-package org.droidparts.inner.handler;
+package org.droidparts.inner.converter;
 
 import org.droidparts.inner.TypeHelper;
 import org.json.JSONException;
@@ -22,7 +22,7 @@ import org.json.JSONObject;
 import android.content.ContentValues;
 import android.database.Cursor;
 
-public class ByteHandler extends TypeHandler<Byte> {
+public class ByteConverter extends Converter<Byte> {
 
 	@Override
 	public boolean canHandle(Class<?> cls) {

@@ -13,9 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License. 
  */
-package org.droidparts.inner.handler;
-
-import java.util.Date;
+package org.droidparts.inner.converter;
 
 import org.droidparts.inner.TypeHelper;
 import org.json.JSONException;
@@ -24,11 +22,11 @@ import org.json.JSONObject;
 import android.content.ContentValues;
 import android.database.Cursor;
 
-public class DateHandler extends TypeHandler<Date> {
+public class ShortConverter extends Converter<Short> {
 
 	@Override
 	public boolean canHandle(Class<?> cls) {
-		return TypeHelper.isDate(cls);
+		return TypeHelper.isShort(cls);
 	}
 
 	@Override
@@ -37,37 +35,26 @@ public class DateHandler extends TypeHandler<Date> {
 	}
 
 	@Override
-	public <V> void putToJSON(Class<Date> valType, Class<V> componentType,
-			JSONObject obj, String key, Date val) throws JSONException {
-		obj.put(key, val.getTime());
-	}
-
-	@Override
-	public <V> Date readFromJSON(Class<Date> valType, Class<V> componentType,
+	public <V> Short readFromJSON(Class<Short> valType, Class<V> componentType,
 			JSONObject obj, String key) throws JSONException {
-		try {
-			return new Date(obj.getLong(key));
-		} catch (Exception e) {
-			return parseFromString(valType, componentType, obj.getString(key));
-		}
+		return parseFromString(valType, componentType, obj.getString(key));
 	}
 
 	@Override
-	protected <V> Date parseFromString(Class<Date> valType,
+	protected <V> Short parseFromString(Class<Short> valType,
 			Class<V> componentType, String str) {
-		return new Date(Long.valueOf(str));
+		return Short.valueOf(str);
 	}
 
 	@Override
-	public <V> void putToContentValues(Class<Date> valueType,
-			Class<V> componentType, ContentValues cv, String key, Date val) {
-		cv.put(key, val.getTime());
+	public <V> void putToContentValues(Class<Short> valueType,
+			Class<V> componentType, ContentValues cv, String key, Short val) {
+		cv.put(key, val);
 	}
 
 	@Override
-	public <V> Date readFromCursor(Class<Date> valType, Class<V> componentType,
-			Cursor cursor, int columnIndex) {
-		return new Date(cursor.getLong(columnIndex));
+	public <V> Short readFromCursor(Class<Short> valType,
+			Class<V> componentType, Cursor cursor, int columnIndex) {
+		return cursor.getShort(columnIndex);
 	}
-
 }

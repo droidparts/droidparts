@@ -29,11 +29,11 @@ import java.util.HashSet;
 
 import org.droidparts.Injector;
 import org.droidparts.annotation.inject.InjectDependency;
+import org.droidparts.inner.ConverterRegistry;
 import org.droidparts.inner.FieldSpecRegistry;
-import org.droidparts.inner.TypeHandlerRegistry;
 import org.droidparts.inner.ann.FieldSpec;
 import org.droidparts.inner.ann.sql.ColumnAnn;
-import org.droidparts.inner.handler.TypeHandler;
+import org.droidparts.inner.converter.Converter;
 import org.droidparts.model.Entity;
 
 import android.content.ContentValues;
@@ -232,7 +232,7 @@ public class EntityManager<EntityType extends Entity> extends
 		if (value == null) {
 			cv.putNull(key);
 		} else {
-			TypeHandler<T> handler = TypeHandlerRegistry.getHandler(valueType);
+			Converter<T> handler = ConverterRegistry.getConverter(valueType);
 			handler.putToContentValues(valueType, componentType, cv, key,
 					(T) value);
 		}
@@ -244,7 +244,7 @@ public class EntityManager<EntityType extends Entity> extends
 		if (cursor.isNull(columnIndex)) {
 			return null;
 		} else {
-			TypeHandler<T> handler = TypeHandlerRegistry.getHandler(valType);
+			Converter<T> handler = ConverterRegistry.getConverter(valType);
 			return handler.readFromCursor(valType, componentType, cursor,
 					columnIndex);
 		}

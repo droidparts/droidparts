@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License. 
  */
-package org.droidparts.inner.handler;
+package org.droidparts.inner.converter;
 
 import org.droidparts.inner.TypeHelper;
 import org.droidparts.model.Model;
@@ -24,7 +24,7 @@ import org.json.JSONObject;
 import android.content.ContentValues;
 import android.database.Cursor;
 
-public class ModelHandler extends TypeHandler<Model> {
+public class ModelConverter extends Converter<Model> {
 
 	@Override
 	public boolean canHandle(Class<?> cls) {

@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License. 
  */
-package org.droidparts.inner.handler;
+package org.droidparts.inner.converter;
 
 import static org.droidparts.inner.ReflectionUtils.newInstance;
 
@@ -24,7 +24,7 @@ import org.droidparts.model.Model;
 import android.content.ContentValues;
 import android.database.Cursor;
 
-public class EntityHandler extends ModelHandler {
+public class EntityConverter extends ModelConverter {
 
 	@Override
 	public boolean canHandle(Class<?> cls) {

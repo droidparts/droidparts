@@ -30,7 +30,7 @@ import org.droidparts.contract.DB.Column;
 import org.droidparts.contract.SQL;
 import org.droidparts.inner.ann.FieldSpec;
 import org.droidparts.inner.ann.sql.ColumnAnn;
-import org.droidparts.inner.handler.TypeHandler;
+import org.droidparts.inner.converter.Converter;
 import org.droidparts.model.Entity;
 import org.droidparts.persist.sql.AbstractEntityManager;
 import org.droidparts.util.L;
@@ -209,8 +209,8 @@ public final class PersistUtils implements SQL.DDL {
 		ArrayList<String> statements = new ArrayList<String>();
 		for (FieldSpec<ColumnAnn> spec : columns) {
 			Entity entity = ReflectionUtils.newInstance(cls);
-			TypeHandler<T> handler = (TypeHandler<T>) TypeHandlerRegistry
-					.getHandler(spec.field.getType());
+			Converter<T> handler = (Converter<T>) ConverterRegistry
+					.getConverter(spec.field.getType());
 			Object defaultVal = ReflectionUtils.getFieldVal(entity, spec.field);
 			//
 			ContentValues cv = new ContentValues();
@@ -276,7 +276,7 @@ public final class PersistUtils implements SQL.DDL {
 			}
 			sb.append(SEPARATOR);
 			sb.append(spec.ann.name);
-			TypeHandler<?> handler = TypeHandlerRegistry.getHandler(spec.field
+			Converter<?> handler = ConverterRegistry.getConverter(spec.field
 					.getType());
 			sb.append(handler.getDBColumnType());
 			if (!spec.ann.nullable) {

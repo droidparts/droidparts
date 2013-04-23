@@ -13,49 +13,56 @@
  * See the License for the specific language governing permissions and
  * limitations under the License. 
  */
-package org.droidparts.inner.handler;
+package org.droidparts.inner.converter;
+
+import java.io.ByteArrayOutputStream;
 
 import org.droidparts.inner.TypeHelper;
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.content.ContentValues;
 import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.Bitmap.CompressFormat;
+import android.graphics.BitmapFactory;
 
-public class FloatHandler extends TypeHandler<Float> {
+public class BitmapConverter extends Converter<Bitmap> {
 
 	@Override
 	public boolean canHandle(Class<?> cls) {
-		return TypeHelper.isFloat(cls);
+		return TypeHelper.isBitmap(cls);
 	}
 
 	@Override
 	public String getDBColumnType() {
-		return REAL;
+		return BLOB;
 	}
 
 	@Override
-	public <V> Float readFromJSON(Class<Float> valType, Class<V> componentType,
-			JSONObject obj, String key) throws JSONException {
-		return (float) obj.getDouble(key);
+	public <V> Bitmap readFromJSON(Class<Bitmap> valType,
+			Class<V> componentType, JSONObject obj, String key) {
+		throw new UnsupportedOperationException();
 	}
 
 	@Override
-	protected <V> Float parseFromString(Class<Float> valType,
+	protected <V> Bitmap parseFromString(Class<Bitmap> valType,
 			Class<V> componentType, String str) {
-		return Float.valueOf(str);
+		throw new UnsupportedOperationException();
 	}
 
 	@Override
-	public <V> void putToContentValues(Class<Float> valueType,
-			Class<V> componentType, ContentValues cv, String key, Float val) {
-		cv.put(key, val);
+	public <V> void putToContentValues(Class<Bitmap> valueType,
+			Class<V> componentType, ContentValues cv, String key, Bitmap val) {
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		val.compress(CompressFormat.PNG, 0, baos);
+		cv.put(key, baos.toByteArray());
 	}
 
 	@Override
-	public <V> Float readFromCursor(Class<Float> valType,
+	public <V> Bitmap readFromCursor(Class<Bitmap> valType,
 			Class<V> componentType, Cursor cursor, int columnIndex) {
-		return cursor.getFloat(columnIndex);
+		byte[] arr = cursor.getBlob(columnIndex);
+		return BitmapFactory.decodeByteArray(arr, 0, arr.length);
 	}
 
 }

@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License. 
  */
-package org.droidparts.inner.handler;
+package org.droidparts.inner.converter;
 
 import org.droidparts.contract.SQL;
 import org.json.JSONException;
@@ -22,7 +22,7 @@ import org.json.JSONObject;
 import android.content.ContentValues;
 import android.database.Cursor;
 
-public abstract class TypeHandler<T> implements SQL.DDL {
+public abstract class Converter<T> implements SQL.DDL {
 
 	public abstract boolean canHandle(Class<?> cls);
 

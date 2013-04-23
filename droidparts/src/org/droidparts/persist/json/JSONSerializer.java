@@ -24,12 +24,12 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 import org.droidparts.Injector;
+import org.droidparts.inner.ConverterRegistry;
 import org.droidparts.inner.FieldSpecRegistry;
 import org.droidparts.inner.PersistUtils;
-import org.droidparts.inner.TypeHandlerRegistry;
 import org.droidparts.inner.ann.FieldSpec;
 import org.droidparts.inner.ann.json.KeyAnn;
-import org.droidparts.inner.handler.TypeHandler;
+import org.droidparts.inner.converter.Converter;
 import org.droidparts.model.Model;
 import org.droidparts.util.L;
 import org.json.JSONArray;
@@ -102,7 +102,7 @@ public class JSONSerializer<ModelType extends Model> {
 		if (val == null) {
 			obj.put(key, NULL);
 		} else {
-			TypeHandler<T> handler = TypeHandlerRegistry.getHandler(valType);
+			Converter<T> handler = ConverterRegistry.getConverter(valType);
 			handler.putToJSON(valType, componentType, obj, key, (T) val);
 		}
 	}
@@ -114,7 +114,7 @@ public class JSONSerializer<ModelType extends Model> {
 		if (NULL.equals(jsonVal)) {
 			return jsonVal;
 		} else {
-			TypeHandler<T> handler = TypeHandlerRegistry.getHandler(valType);
+			Converter<T> handler = ConverterRegistry.getConverter(valType);
 			return handler.readFromJSON(valType, componentType, obj, key);
 		}
 	}
