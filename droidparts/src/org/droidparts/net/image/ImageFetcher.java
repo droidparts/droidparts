@@ -351,9 +351,16 @@ public class ImageFetcher {
 						imageFetcher, imageView, imgUrl, submitted);
 				imageFetcher.fetchExecutor.execute(r);
 			} else {
+				attachIfMostRecent(bm);
+			}
+		}
+
+		protected final void attachIfMostRecent(Bitmap bitmap) {
+			Long mostRecent = imageFetcher.wip.get(imageView);
+			if (mostRecent != null && submitted == mostRecent) {
 				imageFetcher.wip.remove(imageView);
 				SetBitmapRunnable r = new SetBitmapRunnable(imageFetcher,
-						imageView, bm);
+						imageView, bitmap);
 				imageFetcher.runOnUiThread(r);
 			}
 		}
@@ -373,14 +380,7 @@ public class ImageFetcher {
 			if (bmData != null) {
 				Bitmap bm = bmData.first;
 				bm = imageFetcher.reshapeAndCache(imgUrl, bmData);
-				//
-				Long timestamp = imageFetcher.wip.get(imageView);
-				if (timestamp != null && timestamp == submitted) {
-					imageFetcher.wip.remove(imageView);
-					SetBitmapRunnable r = new SetBitmapRunnable(imageFetcher,
-							imageView, bm);
-					imageFetcher.runOnUiThread(r);
-				}
+				attachIfMostRecent(bm);
 			}
 		}
 
