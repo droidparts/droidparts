@@ -13,48 +13,50 @@
  * See the License for the specific language governing permissions and
  * limitations under the License. 
  */
-package org.droidparts.inner.handler;
+package org.droidparts.inner.converter;
 
 import org.droidparts.inner.TypeHelper;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.content.ContentValues;
 import android.database.Cursor;
 
-public class ByteArrayHandler extends TypeHandler<byte[]> {
+public class CharacterConverter extends Converter<Character> {
 
 	@Override
 	public boolean canHandle(Class<?> cls) {
-		return TypeHelper.isByteArray(cls);
+		return TypeHelper.isCharacter(cls);
 	}
 
 	@Override
 	public String getDBColumnType() {
-		return BLOB;
+		return INTEGER;
 	}
 
 	@Override
-	public <V> byte[] readFromJSON(Class<byte[]> valType,
-			Class<V> componentType, JSONObject obj, String key) {
-		throw new UnsupportedOperationException();
+	public <V> Character readFromJSON(Class<Character> valType,
+			Class<V> componentType, JSONObject obj, String key)
+			throws JSONException {
+		return parseFromString(valType, componentType, obj.getString(key));
 	}
 
 	@Override
-	protected <V> byte[] parseFromString(Class<byte[]> valType,
+	protected <V> Character parseFromString(Class<Character> valType,
 			Class<V> componentType, String str) {
-		throw new UnsupportedOperationException();
+		return Character.valueOf((str.length() == 0) ? ' ' : str.charAt(0));
 	}
 
 	@Override
-	public <V> void putToContentValues(Class<byte[]> valueType,
-			Class<V> componentType, ContentValues cv, String key, byte[] val) {
-		cv.put(key, val);
+	public <V> void putToContentValues(Class<Character> valueType,
+			Class<V> componentType, ContentValues cv, String key, Character val) {
+		cv.put(key, String.valueOf(val));
 	}
 
 	@Override
-	public <V> byte[] readFromCursor(Class<byte[]> valType,
+	public <V> Character readFromCursor(Class<Character> valType,
 			Class<V> componentType, Cursor cursor, int columnIndex) {
-		return cursor.getBlob(columnIndex);
+		return parseFromString(valType, null, cursor.getString(columnIndex));
 	}
 
 }

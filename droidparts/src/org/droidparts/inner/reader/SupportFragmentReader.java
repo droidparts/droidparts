@@ -27,8 +27,7 @@ public class SupportFragmentReader {
 			String valName) {
 		FragmentActivity fragmentActivity = (FragmentActivity) fragmentActivityObj;
 		if (fragmentId == 0) {
-			fragmentId = ResourceUtils.getResourceId(fragmentActivity,
-					valName);
+			fragmentId = ResourceUtils.getResourceId(fragmentActivity, valName);
 		}
 		return fragmentActivity.getSupportFragmentManager().findFragmentById(
 				fragmentId);

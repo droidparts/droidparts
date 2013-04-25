@@ -18,6 +18,7 @@ package org.droidparts.net.image;
 import static android.graphics.Color.TRANSPARENT;
 import static org.droidparts.contract.Constants.BUFFER_SIZE;
 import static org.droidparts.util.IOUtils.silentlyClose;
+import static org.droidparts.util.Strings.isNotEmpty;
 
 import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
@@ -87,17 +88,14 @@ public class ImageFetcher {
 	}
 
 	public void setFetchListener(ImageFetchListener fetchListener) {
-		wip.clear();
 		this.fetchListener = fetchListener;
 	}
 
 	public void setReshaper(ImageReshaper reshaper) {
-		wip.clear();
 		this.reshaper = reshaper;
 	}
 
 	public void setCrossFadeDuration(int millisec) {
-		wip.clear();
 		this.crossFadeMillis = millisec;
 	}
 
@@ -118,20 +116,26 @@ public class ImageFetcher {
 	//
 
 	public void attachImage(ImageView imageView, String imgUrl) {
+		long submitted = System.nanoTime();
+		wip.put(imageView, submitted);
 		if (paused) {
 			todo.remove(imageView);
 			todo.put(imageView, imgUrl);
 		} else {
 			if (fetchListener != null) {
-				fetchListener.onTaskAdded(imageView);
+				fetchListener.onTaskAdded(imageView, imgUrl);
 			}
-			long submitted = System.nanoTime();
-			wip.put(imageView, submitted);
 			Runnable r = new ReadFromCacheRunnable(this, imageView, imgUrl,
 					submitted);
 			cacheExecutor.remove(r);
 			fetchExecutor.remove(r);
-			cacheExecutor.execute(r);
+			if (isNotEmpty(imgUrl)) {
+				cacheExecutor.execute(r);
+			} else {
+				if (fetchListener != null) {
+					fetchListener.onTaskCompleted(imageView, imgUrl);
+				}
+			}
 		}
 	}
 
@@ -229,7 +233,7 @@ public class ImageFetcher {
 						@Override
 						public void run() {
 							fetchListener.onDownloadProgressChanged(imageView,
-									kBTotal, kBReceived);
+									imgUrl, kBTotal, kBReceived);
 						}
 					});
 				}
@@ -251,7 +255,7 @@ public class ImageFetcher {
 
 					@Override
 					public void run() {
-						fetchListener.onDownloadFailed(imageView, e);
+						fetchListener.onDownloadFailed(imageView, imgUrl, e);
 					}
 				});
 			}
@@ -307,14 +311,29 @@ public class ImageFetcher {
 
 	//
 
-	static abstract class ImageViewRunnable implements Runnable {
+	static abstract class ImageFetcherRunnable implements Runnable {
 
 		protected final ImageFetcher imageFetcher;
 		protected final ImageView imageView;
+		protected final String imgUrl;
+		protected final long submitted;
 
-		public ImageViewRunnable(ImageFetcher imageFetcher, ImageView imageView) {
+		public ImageFetcherRunnable(ImageFetcher imageFetcher,
+				ImageView imageView, String imgUrl, long submitted) {
 			this.imageFetcher = imageFetcher;
 			this.imageView = imageView;
+			this.imgUrl = imgUrl;
+			this.submitted = submitted;
+		}
+
+		protected final void attachIfMostRecent(Bitmap bitmap) {
+			Long mostRecent = imageFetcher.wip.get(imageView);
+			if (mostRecent != null && submitted == mostRecent) {
+				imageFetcher.wip.remove(imageView);
+				SetBitmapRunnable r = new SetBitmapRunnable(imageFetcher,
+						imageView, imgUrl, submitted, bitmap);
+				imageFetcher.runOnUiThread(r);
+			}
 		}
 
 		@Override
@@ -322,8 +341,8 @@ public class ImageFetcher {
 			boolean eq = false;
 			if (this == o) {
 				eq = true;
-			} else if (o instanceof ImageViewRunnable) {
-				eq = imageView.equals(((ImageViewRunnable) o).imageView);
+			} else if (o instanceof ImageFetcherRunnable) {
+				eq = imageView.equals(((ImageFetcherRunnable) o).imageView);
 			}
 			return eq;
 		}
@@ -332,18 +351,18 @@ public class ImageFetcher {
 		public int hashCode() {
 			return imageView.hashCode();
 		}
+
+		@Override
+		public String toString() {
+			return getClass().getSimpleName() + ": " + imgUrl;
+		}
 	}
 
-	static class ReadFromCacheRunnable extends ImageViewRunnable {
-
-		protected final String imgUrl;
-		protected final long submitted;
+	static class ReadFromCacheRunnable extends ImageFetcherRunnable {
 
 		public ReadFromCacheRunnable(ImageFetcher imageFetcher,
 				ImageView imageView, String imgUrl, long submitted) {
-			super(imageFetcher, imageView);
-			this.imgUrl = imgUrl;
-			this.submitted = submitted;
+			super(imageFetcher, imageView, imgUrl, submitted);
 		}
 
 		@Override
@@ -354,15 +373,13 @@ public class ImageFetcher {
 						imageFetcher, imageView, imgUrl, submitted);
 				imageFetcher.fetchExecutor.execute(r);
 			} else {
-				imageFetcher.wip.remove(imageView);
-				SetBitmapRunnable r = new SetBitmapRunnable(imageFetcher,
-						imageView, bm);
-				imageFetcher.runOnUiThread(r);
+				attachIfMostRecent(bm);
 			}
 		}
+
 	}
 
-	static class FetchAndCacheRunnable extends ReadFromCacheRunnable {
+	static class FetchAndCacheRunnable extends ImageFetcherRunnable {
 
 		public FetchAndCacheRunnable(ImageFetcher imageFetcher,
 				ImageView imageView, String imgUrl, long submitted) {
@@ -376,40 +393,27 @@ public class ImageFetcher {
 			if (bmData != null) {
 				Bitmap bm = bmData.first;
 				bm = imageFetcher.reshapeAndCache(imgUrl, bmData);
-				//
-				Long timestamp = imageFetcher.wip.get(imageView);
-				if (timestamp != null && timestamp == submitted) {
-					imageFetcher.wip.remove(imageView);
-					if (!imageFetcher.todo.containsKey(imageView)) {
-						SetBitmapRunnable r = new SetBitmapRunnable(
-								imageFetcher, imageView, bm);
-						imageFetcher.runOnUiThread(r);
-					}
-				}
+				attachIfMostRecent(bm);
 			}
-		}
-
-		@Override
-		public String toString() {
-			return getClass().getSimpleName() + ": " + imgUrl;
 		}
 
 	}
 
-	static class SetBitmapRunnable extends ImageViewRunnable {
+	static class SetBitmapRunnable extends ImageFetcherRunnable {
 
 		private final Bitmap bitmap;
 
 		public SetBitmapRunnable(ImageFetcher imageFetcher,
-				ImageView imageView, Bitmap bitmap) {
-			super(imageFetcher, imageView);
+				ImageView imageView, String imgUrl, long submitted,
+				Bitmap bitmap) {
+			super(imageFetcher, imageView, imgUrl, submitted);
 			this.bitmap = bitmap;
 		}
 
 		@Override
 		public void run() {
 			if (imageFetcher.fetchListener != null) {
-				imageFetcher.fetchListener.onTaskCompleted(imageView);
+				imageFetcher.fetchListener.onTaskCompleted(imageView, imgUrl);
 			}
 			if (imageFetcher.crossFadeMillis > 0) {
 				Drawable prevDrawable = imageView.getDrawable();

@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License. 
  */
-package org.droidparts.inner.handler;
+package org.droidparts.inner.converter;
 
 import org.droidparts.inner.TypeHelper;
 import org.json.JSONException;
@@ -22,11 +22,11 @@ import org.json.JSONObject;
 import android.content.ContentValues;
 import android.database.Cursor;
 
-public class ShortHandler extends TypeHandler<Short> {
+public class BooleanConverter extends Converter<Boolean> {
 
 	@Override
 	public boolean canHandle(Class<?> cls) {
-		return TypeHelper.isShort(cls);
+		return TypeHelper.isBoolean(cls);
 	}
 
 	@Override
@@ -35,26 +35,35 @@ public class ShortHandler extends TypeHandler<Short> {
 	}
 
 	@Override
-	public <V> Short readFromJSON(Class<Short> valType, Class<V> componentType,
-			JSONObject obj, String key) throws JSONException {
-		return parseFromString(valType, componentType, obj.getString(key));
+	public <V> Boolean readFromJSON(Class<Boolean> valType,
+			Class<V> componentType, JSONObject obj, String key)
+			throws JSONException {
+		try {
+			return obj.getBoolean(key);
+		} catch (JSONException e) {
+			return parseFromString(valType, componentType, obj.getString(key));
+		}
 	}
 
 	@Override
-	protected <V> Short parseFromString(Class<Short> valType,
+	protected <V> Boolean parseFromString(Class<Boolean> valType,
 			Class<V> componentType, String str) {
-		return Short.valueOf(str);
+		if ("1".equals(str)) {
+			str = "true";
+		}
+		return Boolean.valueOf(str);
 	}
 
 	@Override
-	public <V> void putToContentValues(Class<Short> valueType,
-			Class<V> componentType, ContentValues cv, String key, Short val) {
+	public <V> void putToContentValues(Class<Boolean> valueType,
+			Class<V> componentType, ContentValues cv, String key, Boolean val) {
 		cv.put(key, val);
 	}
 
 	@Override
-	public <V> Short readFromCursor(Class<Short> valType,
+	public <V> Boolean readFromCursor(Class<Boolean> valType,
 			Class<V> componentType, Cursor cursor, int columnIndex) {
-		return cursor.getShort(columnIndex);
+		return (cursor.getInt(columnIndex) == 1);
 	}
+
 }

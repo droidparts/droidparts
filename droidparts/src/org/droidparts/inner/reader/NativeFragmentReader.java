@@ -27,8 +27,7 @@ public class NativeFragmentReader {
 			String valName) {
 		Activity fragmentActivity = (Activity) fragmentActivityObj;
 		if (fragmentId == 0) {
-			fragmentId = ResourceUtils.getResourceId(fragmentActivity,
-					valName);
+			fragmentId = ResourceUtils.getResourceId(fragmentActivity, valName);
 		}
 		return fragmentActivity.getFragmentManager().findFragmentById(
 				fragmentId);

@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License. 
  */
-package org.droidparts.inner.handler;
+package org.droidparts.inner.converter;
 
 import org.droidparts.inner.TypeHelper;
 import org.json.JSONException;
@@ -22,40 +22,41 @@ import org.json.JSONObject;
 import android.content.ContentValues;
 import android.database.Cursor;
 
-public class LongHandler extends TypeHandler<Long> {
+public class DoubleConverter extends Converter<Double> {
 
 	@Override
 	public boolean canHandle(Class<?> cls) {
-		return TypeHelper.isLong(cls);
+		return TypeHelper.isDouble(cls);
 	}
 
 	@Override
 	public String getDBColumnType() {
-		return INTEGER;
+		return REAL;
 	}
 
 	@Override
-	public <V> Long readFromJSON(Class<Long> valType, Class<V> componentType,
-			JSONObject obj, String key) throws JSONException {
-		return obj.getLong(key);
+	public <V> Double readFromJSON(Class<Double> valType,
+			Class<V> componentType, JSONObject obj, String key)
+			throws JSONException {
+		return obj.getDouble(key);
 	}
 
 	@Override
-	protected <V> Long parseFromString(Class<Long> valType,
+	protected <V> Double parseFromString(Class<Double> valType,
 			Class<V> componentType, String str) {
-		return Long.valueOf(str);
+		return Double.valueOf(str);
 	}
 
 	@Override
-	public <V> void putToContentValues(Class<Long> valueType,
-			Class<V> componentType, ContentValues cv, String key, Long val) {
+	public <V> void putToContentValues(Class<Double> valueType,
+			Class<V> componentType, ContentValues cv, String key, Double val) {
 		cv.put(key, val);
 	}
 
 	@Override
-	public <V> Long readFromCursor(Class<Long> valType, Class<V> componentType,
-			Cursor cursor, int columnIndex) {
-		return cursor.getLong(columnIndex);
+	public <V> Double readFromCursor(Class<Double> valType,
+			Class<V> componentType, Cursor cursor, int columnIndex) {
+		return cursor.getDouble(columnIndex);
 	}
 
 }

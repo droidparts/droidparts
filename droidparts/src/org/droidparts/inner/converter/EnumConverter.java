@@ -13,7 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License. 
  */
-package org.droidparts.inner.handler;
+package org.droidparts.inner.converter;
+
+import static org.droidparts.inner.ReflectionUtils.newEnum;
 
 import org.droidparts.inner.TypeHelper;
 import org.json.JSONException;
@@ -22,48 +24,47 @@ import org.json.JSONObject;
 import android.content.ContentValues;
 import android.database.Cursor;
 
-public class BooleanHandler extends TypeHandler<Boolean> {
+public class EnumConverter extends Converter<Enum<?>> {
 
 	@Override
 	public boolean canHandle(Class<?> cls) {
-		return TypeHelper.isBoolean(cls);
+		return TypeHelper.isEnum(cls);
 	}
 
 	@Override
 	public String getDBColumnType() {
-		return INTEGER;
+		return TEXT;
 	}
 
 	@Override
-	public <V> Boolean readFromJSON(Class<Boolean> valType,
+	public <V> void putToJSON(Class<Enum<?>> valType, Class<V> componentType,
+			JSONObject obj, String key, Enum<?> val) throws JSONException {
+		obj.put(key, val.toString());
+	}
+
+	@Override
+	public <V> Enum<?> readFromJSON(Class<Enum<?>> valType,
 			Class<V> componentType, JSONObject obj, String key)
 			throws JSONException {
-		try {
-			return obj.getBoolean(key);
-		} catch (JSONException e) {
-			return parseFromString(valType, componentType, obj.getString(key));
-		}
+		return parseFromString(valType, componentType, obj.getString(key));
 	}
 
 	@Override
-	protected <V> Boolean parseFromString(Class<Boolean> valType,
+	protected <V> Enum<?> parseFromString(Class<Enum<?>> valType,
 			Class<V> componentType, String str) {
-		if ("1".equals(str)) {
-			str = "true";
-		}
-		return Boolean.valueOf(str);
+		return newEnum(valType, str);
 	}
 
 	@Override
-	public <V> void putToContentValues(Class<Boolean> valueType,
-			Class<V> componentType, ContentValues cv, String key, Boolean val) {
-		cv.put(key, val);
+	public <V> void putToContentValues(Class<Enum<?>> valueType,
+			Class<V> componentType, ContentValues cv, String key, Enum<?> val) {
+		cv.put(key, val.toString());
 	}
 
 	@Override
-	public <V> Boolean readFromCursor(Class<Boolean> valType,
+	public <V> Enum<?> readFromCursor(Class<Enum<?>> valType,
 			Class<V> componentType, Cursor cursor, int columnIndex) {
-		return (cursor.getInt(columnIndex) == 1);
+		return newEnum(valType, cursor.getString(columnIndex));
 	}
 
 }

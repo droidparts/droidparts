@@ -15,8 +15,8 @@
  */
 package org.droidparts;
 
-import org.droidparts.inner.TypeHandlerRegistry;
-import org.droidparts.inner.handler.TypeHandler;
+import org.droidparts.inner.ConverterRegistry;
+import org.droidparts.inner.converter.Converter;
 import org.droidparts.persist.sql.AbstractDBOpenHelper;
 
 import android.content.Context;
@@ -36,9 +36,9 @@ public abstract class AbstractDependencyProvider {
 
 	public abstract AbstractDBOpenHelper getDBOpenHelper();
 
-	protected final void addTypeHandlers(TypeHandler<?>... handlers) {
-		for (TypeHandler<?> handler : handlers) {
-			TypeHandlerRegistry.addTypeHandler(handler);
+	protected final void registerConverters(Converter<?>... converters) {
+		for (Converter<?> converter : converters) {
+			ConverterRegistry.registerConverter(converter);
 		}
 	}
 

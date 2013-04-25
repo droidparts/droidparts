@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License. 
  */
-package org.droidparts.inner.handler;
+package org.droidparts.inner.converter;
 
 import org.droidparts.inner.TypeHelper;
 import org.json.JSONException;
@@ -22,11 +22,11 @@ import org.json.JSONObject;
 import android.content.ContentValues;
 import android.database.Cursor;
 
-public class DoubleHandler extends TypeHandler<Double> {
+public class FloatConverter extends Converter<Float> {
 
 	@Override
 	public boolean canHandle(Class<?> cls) {
-		return TypeHelper.isDouble(cls);
+		return TypeHelper.isFloat(cls);
 	}
 
 	@Override
@@ -35,28 +35,27 @@ public class DoubleHandler extends TypeHandler<Double> {
 	}
 
 	@Override
-	public <V> Double readFromJSON(Class<Double> valType,
-			Class<V> componentType, JSONObject obj, String key)
-			throws JSONException {
-		return obj.getDouble(key);
+	public <V> Float readFromJSON(Class<Float> valType, Class<V> componentType,
+			JSONObject obj, String key) throws JSONException {
+		return (float) obj.getDouble(key);
 	}
 
 	@Override
-	protected <V> Double parseFromString(Class<Double> valType,
+	protected <V> Float parseFromString(Class<Float> valType,
 			Class<V> componentType, String str) {
-		return Double.valueOf(str);
+		return Float.valueOf(str);
 	}
 
 	@Override
-	public <V> void putToContentValues(Class<Double> valueType,
-			Class<V> componentType, ContentValues cv, String key, Double val) {
+	public <V> void putToContentValues(Class<Float> valueType,
+			Class<V> componentType, ContentValues cv, String key, Float val) {
 		cv.put(key, val);
 	}
 
 	@Override
-	public <V> Double readFromCursor(Class<Double> valType,
+	public <V> Float readFromCursor(Class<Float> valType,
 			Class<V> componentType, Cursor cursor, int columnIndex) {
-		return cursor.getDouble(columnIndex);
+		return cursor.getFloat(columnIndex);
 	}
 
 }

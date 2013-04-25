@@ -13,9 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License. 
  */
-package org.droidparts.inner.handler;
+package org.droidparts.inner.converter;
 
-import java.util.UUID;
+import java.util.Date;
 
 import org.droidparts.inner.TypeHelper;
 import org.json.JSONException;
@@ -24,46 +24,50 @@ import org.json.JSONObject;
 import android.content.ContentValues;
 import android.database.Cursor;
 
-public class UUIDHandler extends TypeHandler<UUID> {
+public class DateConverter extends Converter<Date> {
 
 	@Override
 	public boolean canHandle(Class<?> cls) {
-		return TypeHelper.isUUID(cls);
+		return TypeHelper.isDate(cls);
 	}
 
 	@Override
 	public String getDBColumnType() {
-		return TEXT;
+		return INTEGER;
 	}
 
 	@Override
-	public <V> void putToJSON(Class<UUID> valType, Class<V> componentType,
-			JSONObject obj, String key, UUID val) throws JSONException {
-		obj.put(key, val.toString());
+	public <V> void putToJSON(Class<Date> valType, Class<V> componentType,
+			JSONObject obj, String key, Date val) throws JSONException {
+		obj.put(key, val.getTime());
 	}
 
 	@Override
-	public <V> UUID readFromJSON(Class<UUID> valType, Class<V> componentType,
+	public <V> Date readFromJSON(Class<Date> valType, Class<V> componentType,
 			JSONObject obj, String key) throws JSONException {
-		return parseFromString(valType, componentType, obj.getString(key));
+		try {
+			return new Date(obj.getLong(key));
+		} catch (Exception e) {
+			return parseFromString(valType, componentType, obj.getString(key));
+		}
 	}
 
 	@Override
-	protected <V> UUID parseFromString(Class<UUID> valType,
+	protected <V> Date parseFromString(Class<Date> valType,
 			Class<V> componentType, String str) {
-		return UUID.fromString(str);
+		return new Date(Long.valueOf(str));
 	}
 
 	@Override
-	public <V> void putToContentValues(Class<UUID> valueType,
-			Class<V> componentType, ContentValues cv, String key, UUID val) {
-		cv.put(key, val.toString());
+	public <V> void putToContentValues(Class<Date> valueType,
+			Class<V> componentType, ContentValues cv, String key, Date val) {
+		cv.put(key, val.getTime());
 	}
 
 	@Override
-	public <V> UUID readFromCursor(Class<UUID> valType, Class<V> componentType,
+	public <V> Date readFromCursor(Class<Date> valType, Class<V> componentType,
 			Cursor cursor, int columnIndex) {
-		return UUID.fromString(cursor.getString(columnIndex));
+		return new Date(cursor.getLong(columnIndex));
 	}
 
 }

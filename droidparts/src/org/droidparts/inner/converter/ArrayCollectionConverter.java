@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License. 
  */
-package org.droidparts.inner.handler;
+package org.droidparts.inner.converter;
 
 import static org.droidparts.inner.ReflectionUtils.newInstance;
 import static org.droidparts.inner.TypeHelper.isArray;
@@ -25,7 +25,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
-import org.droidparts.inner.TypeHandlerRegistry;
+import org.droidparts.inner.ConverterRegistry;
 import org.droidparts.inner.TypeHelper;
 import org.droidparts.model.Model;
 import org.droidparts.persist.json.JSONSerializer;
@@ -38,7 +38,7 @@ import org.json.JSONObject;
 import android.content.ContentValues;
 import android.database.Cursor;
 
-public class ArrayCollectionHandler extends TypeHandler<Object> {
+public class ArrayCollectionConverter extends Converter<Object> {
 
 	// ASCII RS (record separator), '|' for readability
 	private static final String SEP = "|" + (char) 30;
@@ -63,12 +63,12 @@ public class ArrayCollectionHandler extends TypeHandler<Object> {
 	@Override
 	public <V> void putToJSON(Class<Object> valType, Class<V> componentType,
 			JSONObject obj, String key, Object val) throws JSONException {
-		TypeHandler<V> handler = TypeHandlerRegistry.getHandler(componentType);
+		Converter<V> converter = ConverterRegistry.getConverter(componentType);
 		ArrayList<V> list = arrOrCollToList(valType, componentType, val);
 		JSONArray vals = new JSONArray();
 		JSONObject tmpObj = new JSONObject();
 		for (V value : list) {
-			handler.putToJSON(componentType, null, tmpObj, "key", value);
+			converter.putToJSON(componentType, null, tmpObj, "key", value);
 			vals.put(tmpObj.get("key"));
 		}
 		obj.put(key, vals);
@@ -127,9 +127,9 @@ public class ArrayCollectionHandler extends TypeHandler<Object> {
 				for (int i = 0; i < arr.length; i++) {
 					arr2[i] = arr[i].toString();
 				}
-				TypeHandler<V> handler = TypeHandlerRegistry
-						.getHandler(componentType);
-				return parseTypeArr(handler, componentType, arr2);
+				Converter<V> converter = ConverterRegistry
+						.getConverter(componentType);
+				return parseTypeArr(converter, componentType, arr2);
 			}
 		} else {
 			return coll;
@@ -140,12 +140,12 @@ public class ArrayCollectionHandler extends TypeHandler<Object> {
 	public <V> void putToContentValues(Class<Object> valueType,
 			Class<V> componentType, ContentValues cv, String key, Object val)
 			throws IllegalArgumentException {
-		TypeHandler<V> handler = TypeHandlerRegistry.getHandler(componentType);
+		Converter<V> converter = ConverterRegistry.getConverter(componentType);
 		ArrayList<V> list = arrOrCollToList(valueType, componentType, val);
 		ArrayList<Object> vals = new ArrayList<Object>();
 		ContentValues tmpCV = new ContentValues();
 		for (V obj : list) {
-			handler.putToContentValues(componentType, null, tmpCV, "key", obj);
+			converter.putToContentValues(componentType, null, tmpCV, "key", obj);
 			vals.add(tmpCV.get("key"));
 		}
 		String strVal = Strings.join(vals, SEP, null);
@@ -155,14 +155,14 @@ public class ArrayCollectionHandler extends TypeHandler<Object> {
 	@Override
 	public <V> Object readFromCursor(Class<Object> valType,
 			Class<V> componentType, Cursor cursor, int columnIndex) {
-		TypeHandler<V> handler = TypeHandlerRegistry.getHandler(componentType);
+		Converter<V> converter = ConverterRegistry.getConverter(componentType);
 		String str = cursor.getString(columnIndex);
 		String[] parts = (str.length() > 0) ? str.split("\\" + SEP)
 				: new String[0];
 		if (isArray(valType)) {
-			return parseTypeArr(handler, componentType, parts);
+			return parseTypeArr(converter, componentType, parts);
 		} else {
-			return parseTypeColl(handler, valType, componentType, parts);
+			return parseTypeColl(converter, valType, componentType, parts);
 		}
 	}
 
@@ -179,22 +179,22 @@ public class ArrayCollectionHandler extends TypeHandler<Object> {
 	}
 
 	// say hello to arrays of primitives
-	private final <T> Object parseTypeArr(TypeHandler<T> handler,
+	private final <T> Object parseTypeArr(Converter<T> converter,
 			Class<T> valType, String[] arr) {
 		Object objArr = Array.newInstance(valType, arr.length);
 		for (int i = 0; i < arr.length; i++) {
-			T item = handler.parseFromString(valType, null, arr[i]);
+			T item = converter.parseFromString(valType, null, arr[i]);
 			Array.set(objArr, i, item);
 		}
 		return objArr;
 	}
 
-	private final <T> Collection<T> parseTypeColl(TypeHandler<T> handler,
+	private final <T> Collection<T> parseTypeColl(Converter<T> converter,
 			Class<Object> collType, Class<T> componentType, String[] arr) {
 		@SuppressWarnings("unchecked")
 		Collection<T> coll = (Collection<T>) newInstance(collType);
 		for (int i = 0; i < arr.length; i++) {
-			T item = handler.parseFromString(componentType, null, arr[i]);
+			T item = converter.parseFromString(componentType, null, arr[i]);
 			coll.add(item);
 		}
 		return coll;

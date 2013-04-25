@@ -13,56 +13,48 @@
  * See the License for the specific language governing permissions and
  * limitations under the License. 
  */
-package org.droidparts.inner.handler;
+package org.droidparts.inner.converter;
 
 import org.droidparts.inner.TypeHelper;
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.content.ContentValues;
 import android.database.Cursor;
 
-public class IntegerHandler extends TypeHandler<Integer> {
+public class ByteArrayConverter extends Converter<byte[]> {
 
 	@Override
 	public boolean canHandle(Class<?> cls) {
-		return TypeHelper.isInteger(cls);
+		return TypeHelper.isByteArray(cls);
 	}
 
 	@Override
 	public String getDBColumnType() {
-		return INTEGER;
+		return BLOB;
 	}
 
 	@Override
-	public <V> Integer readFromJSON(Class<Integer> valType,
-			Class<V> componentType, JSONObject obj, String key)
-			throws JSONException {
-		return obj.getInt(key);
+	public <V> byte[] readFromJSON(Class<byte[]> valType,
+			Class<V> componentType, JSONObject obj, String key) {
+		throw new UnsupportedOperationException();
 	}
 
 	@Override
-	protected <V> Integer parseFromString(Class<Integer> valType,
+	protected <V> byte[] parseFromString(Class<byte[]> valType,
 			Class<V> componentType, String str) {
-		return Integer.valueOf(str);
+		throw new UnsupportedOperationException();
 	}
 
 	@Override
-	public <V> void putToContentValues(Class<Integer> valueType,
-			Class<V> componentType, ContentValues cv, String key, Integer val) {
+	public <V> void putToContentValues(Class<byte[]> valueType,
+			Class<V> componentType, ContentValues cv, String key, byte[] val) {
 		cv.put(key, val);
 	}
 
 	@Override
-	public <V> Integer readFromCursor(Class<Integer> valType,
+	public <V> byte[] readFromCursor(Class<byte[]> valType,
 			Class<V> componentType, Cursor cursor, int columnIndex) {
-		return cursor.getInt(columnIndex);
+		return cursor.getBlob(columnIndex);
 	}
-
-	// @Override
-	// public Object parseTypeArr(Class<Integer> valType, String[] arr) {
-	// Integer[] tArr = (Integer[]) super.parseTypeArr(valType, arr);
-	// return (valType == int.class) ? toPrimitive(tArr) : tArr;
-	// }
 
 }

@@ -13,56 +13,56 @@
  * See the License for the specific language governing permissions and
  * limitations under the License. 
  */
-package org.droidparts.inner.handler;
-
-import java.io.ByteArrayOutputStream;
+package org.droidparts.inner.converter;
 
 import org.droidparts.inner.TypeHelper;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.content.ContentValues;
 import android.database.Cursor;
-import android.graphics.Bitmap;
-import android.graphics.Bitmap.CompressFormat;
-import android.graphics.BitmapFactory;
 
-public class BitmapHandler extends TypeHandler<Bitmap> {
+public class IntegerConverter extends Converter<Integer> {
 
 	@Override
 	public boolean canHandle(Class<?> cls) {
-		return TypeHelper.isBitmap(cls);
+		return TypeHelper.isInteger(cls);
 	}
 
 	@Override
 	public String getDBColumnType() {
-		return BLOB;
+		return INTEGER;
 	}
 
 	@Override
-	public <V> Bitmap readFromJSON(Class<Bitmap> valType,
-			Class<V> componentType, JSONObject obj, String key) {
-		throw new UnsupportedOperationException();
+	public <V> Integer readFromJSON(Class<Integer> valType,
+			Class<V> componentType, JSONObject obj, String key)
+			throws JSONException {
+		return obj.getInt(key);
 	}
 
 	@Override
-	protected <V> Bitmap parseFromString(Class<Bitmap> valType,
+	protected <V> Integer parseFromString(Class<Integer> valType,
 			Class<V> componentType, String str) {
-		throw new UnsupportedOperationException();
+		return Integer.valueOf(str);
 	}
 
 	@Override
-	public <V> void putToContentValues(Class<Bitmap> valueType,
-			Class<V> componentType, ContentValues cv, String key, Bitmap val) {
-		ByteArrayOutputStream baos = new ByteArrayOutputStream();
-		val.compress(CompressFormat.PNG, 0, baos);
-		cv.put(key, baos.toByteArray());
+	public <V> void putToContentValues(Class<Integer> valueType,
+			Class<V> componentType, ContentValues cv, String key, Integer val) {
+		cv.put(key, val);
 	}
 
 	@Override
-	public <V> Bitmap readFromCursor(Class<Bitmap> valType,
+	public <V> Integer readFromCursor(Class<Integer> valType,
 			Class<V> componentType, Cursor cursor, int columnIndex) {
-		byte[] arr = cursor.getBlob(columnIndex);
-		return BitmapFactory.decodeByteArray(arr, 0, arr.length);
+		return cursor.getInt(columnIndex);
 	}
+
+	// @Override
+	// public Object parseTypeArr(Class<Integer> valType, String[] arr) {
+	// Integer[] tArr = (Integer[]) super.parseTypeArr(valType, arr);
+	// return (valType == int.class) ? toPrimitive(tArr) : tArr;
+	// }
 
 }
