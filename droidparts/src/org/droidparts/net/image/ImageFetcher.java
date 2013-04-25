@@ -180,7 +180,7 @@ public class ImageFetcher {
 			}
 			if (bm == null) {
 				if (diskCache != null) {
-					bm = diskCache.get(key, getWidthHint(), getHeighthHint());
+					bm = diskCache.get(key, getWidthHint(), getHeightHint());
 				}
 				if (bm != null) {
 					if (memoryCache != null) {
@@ -196,7 +196,7 @@ public class ImageFetcher {
 			if (bm == null) {
 				if (diskCache != null) {
 					bm = diskCache
-							.get(imgUrl, getWidthHint(), getHeighthHint());
+							.get(imgUrl, getWidthHint(), getHeightHint());
 				}
 				if (bm != null) {
 					if (reshaper != null) {
@@ -241,7 +241,7 @@ public class ImageFetcher {
 			byte[] data = baos.toByteArray();
 			Bitmap bm = BitmapUtils.decodeScaled(
 					new ByteArrayInputStream(data), getWidthHint(),
-					getHeighthHint());
+					getHeightHint());
 			if (bm != null) {
 				String contentType = resp.getHeaderString(Header.CONTENT_TYPE);
 				bmData = Pair.create(bm, Pair.create(contentType, data));
@@ -296,7 +296,7 @@ public class ImageFetcher {
 		return (reshaper != null) ? reshaper.getWidthHint() : 0;
 	}
 
-	private int getHeighthHint() {
+	private int getHeightHint() {
 		return (reshaper != null) ? reshaper.getHeightHint() : 0;
 	}
 
