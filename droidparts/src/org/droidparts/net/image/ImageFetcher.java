@@ -275,7 +275,7 @@ public class ImageFetcher {
 		if (memoryCache != null) {
 			memoryCache.put(key, bm);
 		}
-		if (diskCache != null) {
+		if (diskCache != null && reshaper != null) {
 			Pair<CompressFormat, Integer> cacheFormat = reshaper
 					.getCacheFormat(bmData.second.outMimeType);
 			if (cacheFormat != null) {
