@@ -17,6 +17,7 @@ package org.droidparts.net.image;
 
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.CompressFormat;
+import android.graphics.Bitmap.Config;
 import android.util.Pair;
 
 public abstract class AbstractImageReshaper implements ImageReshaper {
@@ -29,12 +30,17 @@ public abstract class AbstractImageReshaper implements ImageReshaper {
 			CompressFormat.JPEG, 80);
 
 	@Override
-	public Pair<CompressFormat, Integer> getCacheFormat(String contentType) {
-		if ("image/png".equals(contentType)) {
+	public Pair<CompressFormat, Integer> getCacheFormat(String mimeType) {
+		if ("image/png".equals(mimeType)) {
 			return PNG;
 		} else {
 			return JPEG;
 		}
+	}
+
+	@Override
+	public Config getConfigHint() {
+		return null;
 	}
 
 	@Override

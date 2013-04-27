@@ -25,13 +25,14 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 
+import org.droidparts.inner.BitmapFactoryUtil;
 import org.droidparts.util.HashCalc;
 import org.droidparts.util.L;
-import org.droidparts.util.ui.BitmapUtils;
 
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.CompressFormat;
+import android.graphics.BitmapFactory;
 import android.util.Pair;
 
 public class BitmapDiskCache {
@@ -89,15 +90,17 @@ public class BitmapDiskCache {
 		}
 	}
 
-	public Bitmap get(String key, int reqWidth, int reqHeight) {
-		Bitmap bm = null;
+	public Pair<Bitmap, BitmapFactory.Options> get(String key,
+			Bitmap.Config config, int reqWidth, int reqHeight) {
+		Pair<Bitmap, BitmapFactory.Options> bmData = null;
 		File file = getCachedFile(key);
 		if (file.exists()) {
 			FileInputStream fis = null;
 			try {
 				fis = new FileInputStream(file);
-				bm = BitmapUtils.decodeScaled(fis, reqWidth, reqHeight);
-				if (bm != null) {
+				bmData = BitmapFactoryUtil.decodeScaled(fis, config, reqWidth,
+						reqHeight);
+				if (bmData != null) {
 					file.setLastModified(System.currentTimeMillis());
 				}
 			} catch (Exception e) {
@@ -106,10 +109,10 @@ public class BitmapDiskCache {
 				silentlyClose(fis);
 			}
 		}
-		if (bm == null) {
+		if (bmData == null) {
 			L.i("Cache miss for '%s'.", key);
 		}
-		return bm;
+		return bmData;
 	}
 
 	public void purgeFilesAccessedBefore(long timestamp) {
