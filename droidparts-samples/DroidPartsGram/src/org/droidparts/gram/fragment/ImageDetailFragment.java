@@ -25,9 +25,7 @@ import org.droidparts.fragment.sherlock.DialogFragment;
 import org.droidparts.gram.R;
 import org.droidparts.gram.model.Image;
 import org.droidparts.gram.persist.PrefsManager;
-import org.droidparts.net.image.DefaultFetchOptions;
 import org.droidparts.net.image.ImageFetchListener;
-import org.droidparts.net.image.ImageFetchOptions;
 import org.droidparts.net.image.ImageFetcher;
 
 import android.graphics.Bitmap;
@@ -85,16 +83,8 @@ public class ImageDetailFragment extends DialogFragment implements
 			tagsView.setText(join(img.tags, ", ", null));
 		}
 		ImageFetcher imageFetcher = new ImageFetcher(getActivity());
-		imageFetcher.attachImage(imgView, img.imageUrl, opts, this);
+		imageFetcher.attachImage(imgView, img.imageUrl, 0, null, this);
 	}
-
-	private final ImageFetchOptions opts = new DefaultFetchOptions() {
-
-		@Override
-		public int getCrossFadeMillis() {
-			return 400;
-		}
-	};
 
 	@Override
 	public void onTaskAdded(ImageView imageView, String imgUrl) {

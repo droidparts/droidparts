@@ -53,36 +53,51 @@ public class BitmapFactoryUtil {
 	}
 
 	public static Pair<Bitmap, BitmapFactory.Options> decodeScaled(
-			InputStream is, Bitmap.Config config, int reqWidth, int reqHeight) {
-		BitmapFactory.Options opts = null;
-		if (reqWidth > 0 || reqHeight > 0) {
-			opts = new BitmapFactory.Options();
-			opts.inPreferredConfig = config;
-			opts.inJustDecodeBounds = true;
-			BitmapFactory.decodeStream(is, null, opts);
-			opts.inSampleSize = calculateInSampleSize(opts, reqWidth, reqHeight);
-			opts.inJustDecodeBounds = false;
-			if (is.markSupported()) {
-				try {
-					is.reset();
-				} catch (IOException e) {
-					L.d(e);
+			InputStream is, int reqWidth, int reqHeight, Bitmap.Config config)
+			throws IOException {
+		BitmapFactory.Options opts = new BitmapFactory.Options();
+		boolean gotSizeHint = (reqWidth > 0) || (reqHeight > 0);
+		boolean gotConfig = (config != null);
+		if (gotSizeHint || gotConfig) {
+			if (gotConfig) {
+				opts.inPreferredConfig = config;
+			}
+			if (gotSizeHint) {
+				opts.inJustDecodeBounds = true;
+				BitmapFactory.decodeStream(is, null, opts);
+				opts.inSampleSize = calcInSampleSize(opts, reqWidth, reqHeight);
+				opts.inJustDecodeBounds = false;
+				if (is.markSupported()) {
+					try {
+						is.reset();
+					} catch (IOException e) {
+						L.d(e);
+					}
 				}
 			}
 		}
-		Bitmap bm = BitmapFactory.decodeStream(is, null, opts);
-		return (bm != null) ? Pair.create(bm, opts) : null;
+		Bitmap bm = null;
+		try {
+			bm = BitmapFactory.decodeStream(is, null, opts);
+		} catch (Throwable t) {
+			throw new IOException(t);
+		}
+		if (bm == null) {
+			throw new IOException("BitmapFactory returned null.");
+		}
+		return Pair.create(bm, opts);
 	}
 
-	private static int calculateInSampleSize(BitmapFactory.Options options,
+	private static int calcInSampleSize(BitmapFactory.Options opts,
 			int reqWidth, int reqHeight) {
-		int height = options.outHeight;
-		int width = options.outWidth;
+		int height = opts.outHeight;
+		int width = opts.outWidth;
 		int inSampleSize = 1;
 		if (height > reqHeight || width > reqWidth) {
 			int heightRatio = Math.round((float) height / (float) reqHeight);
 			int widthRatio = Math.round((float) width / (float) reqWidth);
-			inSampleSize = heightRatio < widthRatio ? heightRatio : widthRatio;
+			inSampleSize = (heightRatio < widthRatio) ? heightRatio
+					: widthRatio;
 		}
 		return inSampleSize;
 	}

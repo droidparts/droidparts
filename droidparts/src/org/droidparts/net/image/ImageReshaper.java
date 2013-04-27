@@ -19,20 +19,18 @@ import android.graphics.Bitmap;
 import android.graphics.Bitmap.CompressFormat;
 import android.util.Pair;
 
-public interface ImageFetchOptions {
+public interface ImageReshaper {
 
 	String getCacheId();
 
 	Pair<CompressFormat, Integer> getCacheFormat(String mimeType);
 
-	Bitmap.Config getConfigHint();
+	Bitmap.Config getBitmapConfig();
 
-	int getWidthHint();
+	int getBitmapWidthHint();
 
-	int getHeightHint();
+	int getBitmapHeightHint();
 
 	Bitmap reshape(Bitmap bm);
-
-	int getCrossFadeMillis();
 
 }

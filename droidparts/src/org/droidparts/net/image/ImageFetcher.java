@@ -61,7 +61,7 @@ public class ImageFetcher {
 	private final ThreadPoolExecutor cacheExecutor;
 	final ThreadPoolExecutor fetchExecutor;
 
-	private final LinkedHashMap<ImageView, Bean> todo = new LinkedHashMap<ImageView, Bean>();
+	private final LinkedHashMap<ImageView, Spec> todo = new LinkedHashMap<ImageView, Spec>();
 	private final ConcurrentHashMap<ImageView, Long> wip = new ConcurrentHashMap<ImageView, Long>();
 	private Handler handler;
 
@@ -92,8 +92,9 @@ public class ImageFetcher {
 		paused = false;
 		if (executePendingTasks) {
 			for (ImageView iv : todo.keySet()) {
-				Bean ib = todo.get(iv);
-				attachImage(iv, ib.imgUrl, ib.options, ib.listener);
+				Spec ib = todo.get(iv);
+				attachImage(iv, ib.imgUrl, ib.crossFadeMillis, ib.reshaper,
+						ib.listener);
 			}
 		}
 		todo.clear();
@@ -101,28 +102,31 @@ public class ImageFetcher {
 
 	//
 
-	public void attachImage(ImageView imageView, String imgUrl) {
-		attachImage(imageView, imgUrl, null);
+	public void attachImage(ImageView imageView, String imgUrl,
+			int crossFadeMillis) {
+		attachImage(imageView, imgUrl, crossFadeMillis, null);
 	}
 
 	public void attachImage(ImageView imageView, String imgUrl,
-			ImageFetchOptions options) {
-		attachImage(imageView, imgUrl, options, null);
+			int crossFadeMillis, ImageReshaper reshaper) {
+		attachImage(imageView, imgUrl, crossFadeMillis, reshaper, null);
 	}
 
 	public void attachImage(ImageView imageView, String imgUrl,
-			ImageFetchOptions options, ImageFetchListener listener) {
+			int crossFadeMillis, ImageReshaper reshaper,
+			ImageFetchListener listener) {
 		long submitted = System.nanoTime();
 		wip.put(imageView, submitted);
-		Bean bean = new Bean(imageView, imgUrl, options, listener);
+		Spec spec = new Spec(imageView, imgUrl, crossFadeMillis, reshaper,
+				listener);
 		if (paused) {
 			todo.remove(imageView);
-			todo.put(imageView, bean);
+			todo.put(imageView, spec);
 		} else {
 			if (listener != null) {
 				listener.onTaskAdded(imageView, imgUrl);
 			}
-			Runnable r = new ReadFromCacheRunnable(this, bean, submitted);
+			Runnable r = new ReadFromCacheRunnable(this, spec, submitted);
 			cacheExecutor.remove(r);
 			fetchExecutor.remove(r);
 			if (isNotEmpty(imgUrl)) {
@@ -136,14 +140,14 @@ public class ImageFetcher {
 	}
 
 	public Bitmap getImage(ImageView imageView, String imgUrl,
-			ImageFetchOptions options, ImageFetchListener listener) {
-		Bean bean = new Bean(imageView, imgUrl, options, listener);
-		Bitmap bm = readCached(bean);
+			ImageReshaper config, ImageFetchListener listener) {
+		Spec spec = new Spec(imageView, imgUrl, 0, config, listener);
+		Bitmap bm = readCached(spec);
 		if (bm == null) {
-			Pair<byte[], Pair<Bitmap, BitmapFactory.Options>> bmData = fetchAndDecode(bean);
+			Pair<byte[], Pair<Bitmap, BitmapFactory.Options>> bmData = fetchAndDecode(spec);
 			if (bmData != null) {
 				cacheRawImage(imgUrl, bmData.first);
-				bm = reshapeAndCache(bean, bmData.second);
+				bm = reshapeAndCache(spec, bmData.second);
 			}
 		}
 		return bm;
@@ -171,52 +175,50 @@ public class ImageFetcher {
 	//
 
 	protected Pair<byte[], Pair<Bitmap, BitmapFactory.Options>> fetchAndDecode(
-			final Bean bean) {
+			final Spec spec) {
 		Pair<byte[], Pair<Bitmap, BitmapFactory.Options>> bmData = null;
 		int bytesReadTotal = 0;
 		byte[] buffer = new byte[BUFFER_SIZE];
 		BufferedInputStream bis = null;
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		try {
-			HTTPResponse resp = restClient.getInputStream(bean.imgUrl);
+			HTTPResponse resp = restClient.getInputStream(spec.imgUrl);
 			final int kBTotal = resp.getHeaderInt(Header.CONTENT_LENGTH) / 1024;
 			bis = resp.inputStream;
 			int bytesRead;
 			while ((bytesRead = bis.read(buffer)) != -1) {
 				baos.write(buffer, 0, bytesRead);
 				bytesReadTotal += bytesRead;
-				if (bean.listener != null) {
+				if (spec.listener != null) {
 					final int kBReceived = bytesReadTotal / 1024;
 					runOnUiThread(new Runnable() {
 
 						@Override
 						public void run() {
-							bean.listener.onDownloadProgressChanged(
-									bean.imgView, bean.imgUrl, kBTotal,
+							spec.listener.onDownloadProgressChanged(
+									spec.imgView, spec.imgUrl, kBTotal,
 									kBReceived);
 						}
 					});
 				}
 			}
 			byte[] data = baos.toByteArray();
-			Point p = bean.getSizeHint();
+			Point p = spec.getSizeHint();
 			Pair<Bitmap, BitmapFactory.Options> bm = BitmapFactoryUtil
-					.decodeScaled(new ByteArrayInputStream(data),
-							bean.getConfigHint(), p.x, p.y);
-			if (bm != null) {
-				bmData = Pair.create(data, bm);
-			}
+					.decodeScaled(new ByteArrayInputStream(data), p.x, p.y,
+							spec.getConfigHint());
+			bmData = Pair.create(data, bm);
 		} catch (final Exception e) {
 			HTTPWorker.throwIfNetworkOnMainThreadException(e);
-			L.w("Failed to fetch %s.", bean.imgUrl);
+			L.w("Failed to fetch %s.", spec.imgUrl);
 			L.d(e);
-			if (bean.listener != null) {
+			if (spec.listener != null) {
 				runOnUiThread(new Runnable() {
 
 					@Override
 					public void run() {
-						bean.listener.onDownloadFailed(bean.imgView,
-								bean.imgUrl, e);
+						spec.listener.onDownloadFailed(spec.imgView,
+								spec.imgUrl, e);
 					}
 				});
 			}
@@ -226,26 +228,26 @@ public class ImageFetcher {
 		return bmData;
 	}
 
-	protected Bitmap readCached(Bean bean) {
+	protected Bitmap readCached(Spec spec) {
 		Bitmap bm = null;
-		Point p = bean.getSizeHint();
-		String key = bean.getCacheKey();
+		Point p = spec.getSizeHint();
+		String key = spec.getCacheKey();
 		if (memoryCache != null) {
 			bm = memoryCache.get(key);
 		}
 		if (bm == null) {
 			Pair<Bitmap, BitmapFactory.Options> bmData = diskCache.get(key,
-					bean.getConfigHint(), p.x, p.y);
+					p.x, p.y, spec.getConfigHint());
 			if (bmData != null) {
 				bm = bmData.first;
 				if (memoryCache != null) {
 					memoryCache.put(key, bm);
 				}
 			} else {
-				bmData = diskCache.get(bean.imgUrl, bean.getConfigHint(), p.x,
-						p.y);
+				bmData = diskCache.get(spec.imgUrl, p.x, p.y,
+						spec.getConfigHint());
 				if (bmData != null) {
-					bm = reshapeAndCache(bean, bmData);
+					bm = reshapeAndCache(spec, bmData);
 				}
 			}
 		}
@@ -258,21 +260,21 @@ public class ImageFetcher {
 		}
 	}
 
-	Bitmap reshapeAndCache(Bean bean, Pair<Bitmap, BitmapFactory.Options> bmData) {
+	Bitmap reshapeAndCache(Spec spec, Pair<Bitmap, BitmapFactory.Options> bmData) {
 		Bitmap bm = bmData.first;
-		if (bean.options != null && bean.options.getCacheId() != null) {
-			Bitmap reshapedBm = bean.options.reshape(bm);
+		if (spec.reshaper != null) {
+			Bitmap reshapedBm = spec.reshaper.reshape(bm);
 			if (bm != reshapedBm) {
 				bm.recycle();
 			}
 			bm = reshapedBm;
 		}
-		String key = bean.getCacheKey();
+		String key = spec.getCacheKey();
 		if (memoryCache != null) {
 			memoryCache.put(key, bm);
 		}
-		if (diskCache != null && bean.options != null) {
-			Pair<CompressFormat, Integer> cacheFormat = bean.options
+		if (diskCache != null && spec.reshaper != null) {
+			Pair<CompressFormat, Integer> cacheFormat = spec.reshaper
 					.getCacheFormat(bmData.second.outMimeType);
 			if (cacheFormat != null) {
 				diskCache.put(key, bm, cacheFormat);
@@ -292,18 +294,20 @@ public class ImageFetcher {
 
 	//
 
-	static class Bean {
+	static class Spec {
 
 		public final ImageView imgView;
 		public final String imgUrl;
-		public final ImageFetchOptions options;
+		public final int crossFadeMillis;
+		public final ImageReshaper reshaper;
 		public final ImageFetchListener listener;
 
-		public Bean(ImageView imgView, String imgUrl,
-				ImageFetchOptions options, ImageFetchListener listener) {
+		public Spec(ImageView imgView, String imgUrl, int crossFadeMillis,
+				ImageReshaper reshaper, ImageFetchListener listener) {
 			this.imgView = imgView;
 			this.imgUrl = imgUrl;
-			this.options = options;
+			this.crossFadeMillis = crossFadeMillis;
+			this.reshaper = reshaper;
 			this.listener = listener;
 		}
 
@@ -319,8 +323,8 @@ public class ImageFetcher {
 				sb.append(p.x);
 				sb.append(p.y);
 			}
-			if (options != null) {
-				String cacheId = options.getCacheId();
+			if (reshaper != null) {
+				String cacheId = reshaper.getCacheId();
 				if (cacheId != null) {
 					sb.append(cacheId);
 				}
@@ -329,14 +333,14 @@ public class ImageFetcher {
 		}
 
 		public Bitmap.Config getConfigHint() {
-			return (options != null) ? options.getConfigHint() : null;
+			return (reshaper != null) ? reshaper.getBitmapConfig() : null;
 		}
 
 		public Point getSizeHint() {
 			Point p = new Point();
-			if (options != null) {
-				p.x = options.getWidthHint();
-				p.y = options.getHeightHint();
+			if (reshaper != null) {
+				p.x = reshaper.getBitmapWidthHint();
+				p.y = reshaper.getBitmapHeightHint();
 			}
 			if (p.x <= 0 && p.y <= 0) {
 				p = BitmapFactoryUtil.calcDecodeSizeHint(imgView);
@@ -348,24 +352,22 @@ public class ImageFetcher {
 	abstract static class ImageFetcherRunnable implements Runnable {
 
 		protected final ImageFetcher imageFetcher;
-		protected final Bean bean;
+		protected final Spec spec;
 		protected final long submitted;
-		protected final ImageView imageView;
 
-		public ImageFetcherRunnable(ImageFetcher imageFetcher, Bean bean,
+		public ImageFetcherRunnable(ImageFetcher imageFetcher, Spec spec,
 				long submitted) {
 			this.imageFetcher = imageFetcher;
-			this.bean = bean;
+			this.spec = spec;
 			this.submitted = submitted;
-			imageView = bean.imgView;
 		}
 
 		protected final void attachIfMostRecent(Bitmap bitmap) {
 
-			Long mostRecent = imageFetcher.wip.get(imageView);
+			Long mostRecent = imageFetcher.wip.get(spec.imgView);
 			if (mostRecent != null && submitted == mostRecent) {
-				imageFetcher.wip.remove(imageView);
-				SetBitmapRunnable r = new SetBitmapRunnable(imageFetcher, bean,
+				imageFetcher.wip.remove(spec.imgView);
+				SetBitmapRunnable r = new SetBitmapRunnable(imageFetcher, spec,
 						submitted, bitmap);
 				imageFetcher.runOnUiThread(r);
 			}
@@ -377,35 +379,36 @@ public class ImageFetcher {
 			if (this == o) {
 				eq = true;
 			} else if (o instanceof ImageFetcherRunnable) {
-				eq = imageView.equals(((ImageFetcherRunnable) o).imageView);
+				eq = spec.imgView
+						.equals(((ImageFetcherRunnable) o).spec.imgView);
 			}
 			return eq;
 		}
 
 		@Override
 		public int hashCode() {
-			return imageView.hashCode();
+			return spec.imgView.hashCode();
 		}
 
 		@Override
 		public String toString() {
-			return getClass().getSimpleName() + ": " + bean.imgUrl;
+			return getClass().getSimpleName() + ": " + spec.imgUrl;
 		}
 	}
 
 	static class ReadFromCacheRunnable extends ImageFetcherRunnable {
 
-		public ReadFromCacheRunnable(ImageFetcher imageFetcher, Bean bean,
+		public ReadFromCacheRunnable(ImageFetcher imageFetcher, Spec spec,
 				long submitted) {
-			super(imageFetcher, bean, submitted);
+			super(imageFetcher, spec, submitted);
 		}
 
 		@Override
 		public void run() {
-			Bitmap bm = imageFetcher.readCached(bean);
+			Bitmap bm = imageFetcher.readCached(spec);
 			if (bm == null) {
 				FetchAndCacheRunnable r = new FetchAndCacheRunnable(
-						imageFetcher, bean, submitted);
+						imageFetcher, spec, submitted);
 				imageFetcher.fetchExecutor.execute(r);
 			} else {
 				attachIfMostRecent(bm);
@@ -416,18 +419,18 @@ public class ImageFetcher {
 
 	static class FetchAndCacheRunnable extends ImageFetcherRunnable {
 
-		public FetchAndCacheRunnable(ImageFetcher imageFetcher, Bean bean,
+		public FetchAndCacheRunnable(ImageFetcher imageFetcher, Spec spec,
 				long submitted) {
-			super(imageFetcher, bean, submitted);
+			super(imageFetcher, spec, submitted);
 		}
 
 		@Override
 		public void run() {
 			Pair<byte[], Pair<Bitmap, BitmapFactory.Options>> bmData = imageFetcher
-					.fetchAndDecode(bean);
+					.fetchAndDecode(spec);
 			if (bmData != null) {
-				imageFetcher.cacheRawImage(bean.imgUrl, bmData.first);
-				Bitmap bm = imageFetcher.reshapeAndCache(bean, bmData.second);
+				imageFetcher.cacheRawImage(spec.imgUrl, bmData.first);
+				Bitmap bm = imageFetcher.reshapeAndCache(spec, bmData.second);
 				attachIfMostRecent(bm);
 			}
 		}
@@ -438,32 +441,31 @@ public class ImageFetcher {
 
 		private final Bitmap bitmap;
 
-		public SetBitmapRunnable(ImageFetcher imageFetcher, Bean bean,
+		public SetBitmapRunnable(ImageFetcher imageFetcher, Spec spec,
 				long submitted, Bitmap bitmap) {
-			super(imageFetcher, bean, submitted);
+			super(imageFetcher, spec, submitted);
 			this.bitmap = bitmap;
 		}
 
 		@Override
 		public void run() {
-			int crossFadeMillis = (bean.options != null) ? bean.options
-					.getCrossFadeMillis() : 0;
-			if (crossFadeMillis > 0) {
-				Drawable prevDrawable = imageView.getDrawable();
+			if (spec.crossFadeMillis > 0) {
+				Drawable prevDrawable = spec.imgView.getDrawable();
 				if (prevDrawable == null) {
 					prevDrawable = new ColorDrawable(TRANSPARENT);
 				}
 				Drawable nextDrawable = new BitmapDrawable(
-						imageView.getResources(), bitmap);
+						spec.imgView.getResources(), bitmap);
 				TransitionDrawable transitionDrawable = new TransitionDrawable(
 						new Drawable[] { prevDrawable, nextDrawable });
-				imageView.setImageDrawable(transitionDrawable);
-				transitionDrawable.startTransition(crossFadeMillis);
+				spec.imgView.setImageDrawable(transitionDrawable);
+				transitionDrawable.startTransition(spec.crossFadeMillis);
 			} else {
-				imageView.setImageBitmap(bitmap);
+				spec.imgView.setImageBitmap(bitmap);
 			}
-			if (bean.listener != null) {
-				bean.listener.onTaskCompleted(imageView, bean.imgUrl, bitmap);
+			if (spec.listener != null) {
+				spec.listener
+						.onTaskCompleted(spec.imgView, spec.imgUrl, bitmap);
 			}
 		}
 

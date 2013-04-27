@@ -90,19 +90,17 @@ public class BitmapDiskCache {
 		}
 	}
 
-	public Pair<Bitmap, BitmapFactory.Options> get(String key,
-			Bitmap.Config config, int reqWidth, int reqHeight) {
+	public Pair<Bitmap, BitmapFactory.Options> get(String key, int reqWidth,
+			int reqHeight, Bitmap.Config config) {
 		Pair<Bitmap, BitmapFactory.Options> bmData = null;
 		File file = getCachedFile(key);
 		if (file.exists()) {
 			FileInputStream fis = null;
 			try {
 				fis = new FileInputStream(file);
-				bmData = BitmapFactoryUtil.decodeScaled(fis, config, reqWidth,
-						reqHeight);
-				if (bmData != null) {
-					file.setLastModified(System.currentTimeMillis());
-				}
+				bmData = BitmapFactoryUtil.decodeScaled(fis, reqWidth,
+						reqHeight, config);
+				file.setLastModified(System.currentTimeMillis());
 			} catch (Exception e) {
 				L.w(e);
 			} finally {

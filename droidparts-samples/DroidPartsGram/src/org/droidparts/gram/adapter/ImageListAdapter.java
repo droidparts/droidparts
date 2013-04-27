@@ -65,7 +65,7 @@ public class ImageListAdapter extends EntityCursorAdapter<Image> implements
 		tag.text1.setText(item.captionText);
 		tag.text2.setText(buildDescription(item));
 		tag.icon.setImageDrawable(placeholderDrawable);
-		imageFetcher.attachImage(tag.icon, item.thumbnailUrl);
+		imageFetcher.attachImage(tag.icon, item.thumbnailUrl, 400);
 	}
 
 	private Spanned buildDescription(Image img) {
