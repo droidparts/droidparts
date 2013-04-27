@@ -58,7 +58,6 @@ public class DependencyProvider extends AbstractDependencyProvider {
 	public ImageFetcher getImageFetcher(Context ctx) {
 		if (imageFetcher == null) {
 			imageFetcher = new ImageFetcher(ctx);
-			imageFetcher.setCrossFadeDuration(400);
 			imageFetcher.clearCacheOlderThan(48);
 		}
 		return imageFetcher;

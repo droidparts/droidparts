@@ -20,7 +20,7 @@ import android.graphics.Bitmap.CompressFormat;
 import android.graphics.Bitmap.Config;
 import android.util.Pair;
 
-public abstract class AbstractImageReshaper implements ImageReshaper {
+public abstract class DefaultFetchOptions implements ImageFetchOptions {
 
 	// slow, supports transparency
 	public static final Pair<CompressFormat, Integer> PNG = Pair.create(
@@ -28,6 +28,11 @@ public abstract class AbstractImageReshaper implements ImageReshaper {
 	// fast
 	public static final Pair<CompressFormat, Integer> JPEG = Pair.create(
 			CompressFormat.JPEG, 80);
+
+	@Override
+	public String getCacheId() {
+		return null;
+	}
 
 	@Override
 	public Pair<CompressFormat, Integer> getCacheFormat(String mimeType) {

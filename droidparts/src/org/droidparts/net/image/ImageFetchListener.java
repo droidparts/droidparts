@@ -15,6 +15,7 @@
  */
 package org.droidparts.net.image;
 
+import android.graphics.Bitmap;
 import android.widget.ImageView;
 
 public interface ImageFetchListener {
@@ -26,6 +27,6 @@ public interface ImageFetchListener {
 
 	void onDownloadFailed(ImageView imageView, String imgUrl, Exception e);
 
-	void onTaskCompleted(ImageView imageView, String imgUrl);
+	void onTaskCompleted(ImageView imageView, String imgUrl, Bitmap bm);
 
 }

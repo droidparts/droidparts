@@ -19,7 +19,7 @@ import android.graphics.Bitmap;
 import android.graphics.Bitmap.CompressFormat;
 import android.util.Pair;
 
-public interface ImageReshaper {
+public interface ImageFetchOptions {
 
 	String getCacheId();
 
@@ -32,5 +32,7 @@ public interface ImageReshaper {
 	int getHeightHint();
 
 	Bitmap reshape(Bitmap bm);
+
+	int getCrossFadeMillis();
 
 }
