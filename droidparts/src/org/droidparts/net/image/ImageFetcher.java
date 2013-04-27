@@ -102,6 +102,10 @@ public class ImageFetcher {
 
 	//
 
+	public void attachImage(ImageView imageView, String imgUrl) {
+		attachImage(imageView, imgUrl, 0);
+	}
+
 	public void attachImage(ImageView imageView, String imgUrl,
 			int crossFadeMillis) {
 		attachImage(imageView, imgUrl, crossFadeMillis, null);
