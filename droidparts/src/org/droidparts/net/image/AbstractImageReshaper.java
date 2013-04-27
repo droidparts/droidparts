@@ -17,7 +17,6 @@ package org.droidparts.net.image;
 
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.CompressFormat;
-import android.graphics.Bitmap.Config;
 import android.util.Pair;
 
 public abstract class AbstractImageReshaper implements ImageReshaper {
@@ -39,8 +38,8 @@ public abstract class AbstractImageReshaper implements ImageReshaper {
 	}
 
 	@Override
-	public Config getBitmapConfig() {
-		return null;
+	public Bitmap.Config getBitmapConfig() {
+		return Bitmap.Config.ARGB_8888;
 	}
 
 	@Override
