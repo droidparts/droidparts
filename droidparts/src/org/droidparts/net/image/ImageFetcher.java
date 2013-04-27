@@ -23,6 +23,7 @@ import static org.droidparts.util.Strings.isNotEmpty;
 import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.util.LinkedHashMap;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -143,16 +144,14 @@ public class ImageFetcher {
 		}
 	}
 
-	public Bitmap getImage(ImageView imageView, String imgUrl,
-			ImageReshaper config, ImageFetchListener listener) {
-		Spec spec = new Spec(imageView, imgUrl, 0, config, listener);
+	public Bitmap getImage(String imgUrl, ImageReshaper reshaper,
+			ImageView imageViewHint) throws IOException {
+		Spec spec = new Spec(imageViewHint, imgUrl, 0, reshaper, null);
 		Bitmap bm = readCached(spec);
 		if (bm == null) {
 			Pair<byte[], Pair<Bitmap, BitmapFactory.Options>> bmData = fetchAndDecode(spec);
-			if (bmData != null) {
-				cacheRawImage(imgUrl, bmData.first);
-				bm = reshapeAndCache(spec, bmData.second);
-			}
+			cacheRawImage(imgUrl, bmData.first);
+			bm = reshapeAndCache(spec, bmData.second);
 		}
 		return bm;
 	}
@@ -179,8 +178,7 @@ public class ImageFetcher {
 	//
 
 	protected Pair<byte[], Pair<Bitmap, BitmapFactory.Options>> fetchAndDecode(
-			final Spec spec) {
-		Pair<byte[], Pair<Bitmap, BitmapFactory.Options>> bmData = null;
+			final Spec spec) throws IOException {
 		int bytesReadTotal = 0;
 		byte[] buffer = new byte[BUFFER_SIZE];
 		BufferedInputStream bis = null;
@@ -211,25 +209,10 @@ public class ImageFetcher {
 			Pair<Bitmap, BitmapFactory.Options> bm = BitmapUtils.decodeScaled(
 					new ByteArrayInputStream(data), p.x, p.y,
 					spec.getConfigHint());
-			bmData = Pair.create(data, bm);
-		} catch (final Exception e) {
-			HTTPWorker.throwIfNetworkOnMainThreadException(e);
-			L.w("Failed to fetch %s.", spec.imgUrl);
-			L.d(e);
-			if (spec.listener != null) {
-				runOnUiThread(new Runnable() {
-
-					@Override
-					public void run() {
-						spec.listener.onDownloadFailed(spec.imgView,
-								spec.imgUrl, e);
-					}
-				});
-			}
+			return Pair.create(data, bm);
 		} finally {
 			silentlyClose(bis, baos);
 		}
-		return bmData;
 	}
 
 	protected Bitmap readCached(Spec spec) {
@@ -430,12 +413,26 @@ public class ImageFetcher {
 
 		@Override
 		public void run() {
-			Pair<byte[], Pair<Bitmap, BitmapFactory.Options>> bmData = imageFetcher
-					.fetchAndDecode(spec);
-			if (bmData != null) {
+			try {
+				Pair<byte[], Pair<Bitmap, BitmapFactory.Options>> bmData = imageFetcher
+						.fetchAndDecode(spec);
 				imageFetcher.cacheRawImage(spec.imgUrl, bmData.first);
 				Bitmap bm = imageFetcher.reshapeAndCache(spec, bmData.second);
 				attachIfMostRecent(bm);
+			} catch (final Exception e) {
+				HTTPWorker.throwIfNetworkOnMainThreadException(e);
+				L.w("Failed to fetch %s.", spec.imgUrl);
+				L.d(e);
+				if (spec.listener != null) {
+					imageFetcher.runOnUiThread(new Runnable() {
+
+						@Override
+						public void run() {
+							spec.listener.onDownloadFailed(spec.imgView,
+									spec.imgUrl, e);
+						}
+					});
+				}
 			}
 		}
 
