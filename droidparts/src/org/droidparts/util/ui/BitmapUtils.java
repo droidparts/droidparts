@@ -86,19 +86,15 @@ public final class BitmapUtils {
 	public static Point calcDecodeSizeHint(ImageView imageView) {
 		Point p = new Point();
 		LayoutParams params = imageView.getLayoutParams();
-		if (params.width != LayoutParams.WRAP_CONTENT) {
-			p.x = imageView.getWidth();
-		}
-		if (params.height != LayoutParams.WRAP_CONTENT) {
-			p.y = imageView.getHeight();
-		}
-		if (p.x == 0 || p.y == 0) {
+		p.x = params.width;
+		p.y = params.height;
+		if (p.x <= 0 || p.y <= 0) {
 			DisplayMetrics metrics = imageView.getContext().getResources()
 					.getDisplayMetrics();
-			if (p.x == 0) {
+			if (p.x <= 0) {
 				p.x = metrics.widthPixels;
 			}
-			if (p.y == 0) {
+			if (p.y <= 0) {
 				p.y = metrics.heightPixels;
 			}
 		}
@@ -109,7 +105,7 @@ public final class BitmapUtils {
 			InputStream is, int reqWidth, int reqHeight, Bitmap.Config config)
 			throws IOException {
 		BitmapFactory.Options opts = new BitmapFactory.Options();
-		boolean gotSizeHint = (reqWidth > 0) || (reqHeight > 0);
+		boolean gotSizeHint = (reqWidth > 0) && (reqHeight > 0);
 		boolean gotConfig = (config != null);
 		if (gotSizeHint || gotConfig) {
 			if (gotConfig) {
