@@ -129,7 +129,7 @@ public class ImageFetcher {
 			todo.put(imageView, spec);
 		} else {
 			if (listener != null) {
-				listener.onTaskAdded(imageView, imgUrl);
+				listener.onFetchAdded(imageView, imgUrl);
 			}
 			Runnable r = new ReadFromCacheRunnable(spec, submitted);
 			cacheExecutor.remove(r);
@@ -138,7 +138,7 @@ public class ImageFetcher {
 				cacheExecutor.execute(r);
 			} else {
 				if (listener != null) {
-					listener.onTaskCompleted(imageView, imgUrl, null);
+					listener.onFetchCompleted(imageView, imgUrl, null);
 				}
 			}
 		}
@@ -196,7 +196,7 @@ public class ImageFetcher {
 
 						@Override
 						public void run() {
-							spec.listener.onDownloadProgressChanged(
+							spec.listener.onFetchProgressChanged(
 									spec.imgView, spec.imgUrl, kBTotal,
 									kBReceived);
 						}
@@ -420,7 +420,7 @@ public class ImageFetcher {
 
 						@Override
 						public void run() {
-							spec.listener.onDownloadFailed(spec.imgView,
+							spec.listener.onFetchFailed(spec.imgView,
 									spec.imgUrl, e);
 						}
 					});
@@ -457,7 +457,7 @@ public class ImageFetcher {
 			}
 			if (spec.listener != null) {
 				spec.listener
-						.onTaskCompleted(spec.imgView, spec.imgUrl, bitmap);
+						.onFetchCompleted(spec.imgView, spec.imgUrl, bitmap);
 			}
 		}
 

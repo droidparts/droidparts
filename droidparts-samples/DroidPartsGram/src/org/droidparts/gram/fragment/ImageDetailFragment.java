@@ -87,25 +87,25 @@ public class ImageDetailFragment extends DialogFragment implements
 	}
 
 	@Override
-	public void onTaskAdded(ImageView imageView, String imgUrl) {
+	public void onFetchAdded(ImageView imageView, String imgUrl) {
 		progressBarView.setProgress(0);
 		setGone(false, progressBarView);
 	}
 
 	@Override
-	public void onDownloadProgressChanged(ImageView imageView, String imgUrl,
+	public void onFetchProgressChanged(ImageView imageView, String imgUrl,
 			int kBTotal, int kBReceived) {
 		int progress = (int) ((float) kBReceived / kBTotal * 100);
 		progressBarView.setProgress(progress);
 	}
 
 	@Override
-	public void onDownloadFailed(ImageView imageView, String imgUrl, Exception e) {
+	public void onFetchFailed(ImageView imageView, String imgUrl, Exception e) {
 		setGone(true, progressBarView);
 	}
 
 	@Override
-	public void onTaskCompleted(ImageView imageView, String imgUrl, Bitmap bm) {
+	public void onFetchCompleted(ImageView imageView, String imgUrl, Bitmap bm) {
 		setGone(true, progressBarView);
 	}
 }
