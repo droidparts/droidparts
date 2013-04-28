@@ -63,7 +63,7 @@ public class ImageFetcher {
 	final ThreadPoolExecutor fetchExecutor;
 
 	private final LinkedHashMap<ImageView, Spec> todo = new LinkedHashMap<ImageView, Spec>();
-	private final ConcurrentHashMap<ImageView, Long> wip = new ConcurrentHashMap<ImageView, Long>();
+	private final ConcurrentHashMap<Spec, Long> wip = new ConcurrentHashMap<Spec, Long>();
 	private Handler handler;
 
 	private volatile boolean paused;
@@ -120,10 +120,10 @@ public class ImageFetcher {
 	public void attachImage(ImageView imageView, String imgUrl,
 			int crossFadeMillis, ImageReshaper reshaper,
 			ImageFetchListener listener) {
-		long submitted = System.nanoTime();
-		wip.put(imageView, submitted);
 		Spec spec = new Spec(imageView, imgUrl, crossFadeMillis, reshaper,
 				listener);
+		long submitted = System.nanoTime();
+		wip.put(spec, submitted);
 		if (paused) {
 			todo.remove(imageView);
 			todo.put(imageView, spec);
@@ -131,7 +131,7 @@ public class ImageFetcher {
 			if (listener != null) {
 				listener.onTaskAdded(imageView, imgUrl);
 			}
-			Runnable r = new ReadFromCacheRunnable(this, spec, submitted);
+			Runnable r = new ReadFromCacheRunnable(spec, submitted);
 			cacheExecutor.remove(r);
 			fetchExecutor.remove(r);
 			if (isNotEmpty(imgUrl)) {
@@ -264,6 +264,15 @@ public class ImageFetcher {
 		return bm;
 	}
 
+	void attachIfMostRecent(Spec spec, long submitted, Bitmap bitmap) {
+		Long mostRecent = wip.get(spec);
+		if (mostRecent != null && submitted == mostRecent) {
+			wip.remove(spec);
+			SetBitmapRunnable r = new SetBitmapRunnable(spec, bitmap);
+			runOnUiThread(r);
+		}
+	}
+
 	void runOnUiThread(Runnable r) {
 		boolean success = handler.post(r);
 		// a hack
@@ -337,28 +346,14 @@ public class ImageFetcher {
 		}
 	}
 
-	static abstract class ImageFetcherRunnable implements Runnable {
+	abstract class SpecRunnable implements Runnable {
 
-		final ImageFetcher imageFetcher;
 		final Spec spec;
 		final long submitted;
 
-		public ImageFetcherRunnable(ImageFetcher imageFetcher, Spec spec,
-				long submitted) {
-			this.imageFetcher = imageFetcher;
+		public SpecRunnable(Spec spec, long submitted) {
 			this.spec = spec;
 			this.submitted = submitted;
-		}
-
-		protected final void attachIfMostRecent(Bitmap bitmap) {
-
-			Long mostRecent = imageFetcher.wip.get(spec.imgView);
-			if (mostRecent != null && submitted == mostRecent) {
-				imageFetcher.wip.remove(spec.imgView);
-				SetBitmapRunnable r = new SetBitmapRunnable(imageFetcher, spec,
-						submitted, bitmap);
-				imageFetcher.runOnUiThread(r);
-			}
 		}
 
 		@Override
@@ -366,9 +361,8 @@ public class ImageFetcher {
 			boolean eq = false;
 			if (this == o) {
 				eq = true;
-			} else if (o instanceof ImageFetcherRunnable) {
-				eq = spec.imgView
-						.equals(((ImageFetcherRunnable) o).spec.imgView);
+			} else if (o instanceof SpecRunnable) {
+				eq = spec.imgView.equals(((SpecRunnable) o).spec.imgView);
 			}
 			return eq;
 		}
@@ -384,48 +378,45 @@ public class ImageFetcher {
 		}
 	}
 
-	static class ReadFromCacheRunnable extends ImageFetcherRunnable {
+	class ReadFromCacheRunnable extends SpecRunnable {
 
-		public ReadFromCacheRunnable(ImageFetcher imageFetcher, Spec spec,
-				long submitted) {
-			super(imageFetcher, spec, submitted);
+		public ReadFromCacheRunnable(Spec spec, long submitted) {
+			super(spec, submitted);
 		}
 
 		@Override
 		public void run() {
-			Bitmap bm = imageFetcher.readCached(spec);
+			Bitmap bm = readCached(spec);
 			if (bm == null) {
-				FetchAndCacheRunnable r = new FetchAndCacheRunnable(
-						imageFetcher, spec, submitted);
-				imageFetcher.fetchExecutor.execute(r);
+				FetchAndCacheRunnable r = new FetchAndCacheRunnable(spec,
+						submitted);
+				fetchExecutor.execute(r);
 			} else {
-				attachIfMostRecent(bm);
+				attachIfMostRecent(spec, submitted, bm);
 			}
 		}
 
 	}
 
-	static class FetchAndCacheRunnable extends ImageFetcherRunnable {
+	class FetchAndCacheRunnable extends SpecRunnable {
 
-		public FetchAndCacheRunnable(ImageFetcher imageFetcher, Spec spec,
-				long submitted) {
-			super(imageFetcher, spec, submitted);
+		public FetchAndCacheRunnable(Spec spec, long submitted) {
+			super(spec, submitted);
 		}
 
 		@Override
 		public void run() {
 			try {
-				Pair<byte[], Pair<Bitmap, BitmapFactory.Options>> bmData = imageFetcher
-						.fetchAndDecode(spec);
-				imageFetcher.cacheRawImage(spec.imgUrl, bmData.first);
-				Bitmap bm = imageFetcher.reshapeAndCache(spec, bmData.second);
-				attachIfMostRecent(bm);
+				Pair<byte[], Pair<Bitmap, BitmapFactory.Options>> bmData = fetchAndDecode(spec);
+				cacheRawImage(spec.imgUrl, bmData.first);
+				Bitmap bm = reshapeAndCache(spec, bmData.second);
+				attachIfMostRecent(spec, submitted, bm);
 			} catch (final Exception e) {
 				HTTPWorker.throwIfNetworkOnMainThreadException(e);
 				L.w("Failed to fetch %s.", spec.imgUrl);
 				L.d(e);
 				if (spec.listener != null) {
-					imageFetcher.runOnUiThread(new Runnable() {
+					runOnUiThread(new Runnable() {
 
 						@Override
 						public void run() {
@@ -439,13 +430,12 @@ public class ImageFetcher {
 
 	}
 
-	static class SetBitmapRunnable extends ImageFetcherRunnable {
+	class SetBitmapRunnable extends SpecRunnable {
 
 		final Bitmap bitmap;
 
-		public SetBitmapRunnable(ImageFetcher imageFetcher, Spec spec,
-				long submitted, Bitmap bitmap) {
-			super(imageFetcher, spec, submitted);
+		public SetBitmapRunnable(Spec spec, Bitmap bitmap) {
+			super(spec, -1);
 			this.bitmap = bitmap;
 		}
 
