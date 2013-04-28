@@ -41,19 +41,4 @@ public abstract class AbstractImageReshaper implements ImageReshaper {
 		return Bitmap.Config.ARGB_8888;
 	}
 
-	@Override
-	public int getBitmapWidthHint() {
-		return 0;
-	}
-
-	@Override
-	public int getBitmapHeightHint() {
-		return 0;
-	}
-
-	@Override
-	public Bitmap reshape(Bitmap bm) {
-		return bm;
-	}
-
 }

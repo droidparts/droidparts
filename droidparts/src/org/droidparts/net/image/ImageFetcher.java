@@ -93,9 +93,9 @@ public class ImageFetcher {
 		paused = false;
 		if (executePendingTasks) {
 			for (ImageView iv : todo.keySet()) {
-				Spec ib = todo.get(iv);
-				attachImage(iv, ib.imgUrl, ib.crossFadeMillis, ib.reshaper,
-						ib.listener);
+				Spec spec = todo.get(iv);
+				attachImage(iv, spec.imgUrl, spec.crossFadeMillis, spec.reshaper,
+						spec.listener);
 			}
 		}
 		todo.clear();
@@ -145,8 +145,8 @@ public class ImageFetcher {
 	}
 
 	public Bitmap getImage(String imgUrl, ImageReshaper reshaper,
-			ImageView imageViewHint) throws IOException {
-		Spec spec = new Spec(imageViewHint, imgUrl, 0, reshaper, null);
+			ImageView hintImageView) throws IOException {
+		Spec spec = new Spec(hintImageView, imgUrl, 0, reshaper, null);
 		Bitmap bm = readCached(spec);
 		if (bm == null) {
 			Pair<byte[], Pair<Bitmap, BitmapFactory.Options>> bmData = fetchAndDecode(spec);
@@ -323,8 +323,8 @@ public class ImageFetcher {
 		public Point getSizeHint() {
 			Point p = new Point();
 			if (reshaper != null) {
-				p.x = reshaper.getBitmapWidthHint();
-				p.y = reshaper.getBitmapHeightHint();
+				p.x = reshaper.getImageWidthHint();
+				p.y = reshaper.getImageHeightHint();
 			}
 			if (p.x <= 0 && p.y <= 0) {
 				p = BitmapUtils.calcDecodeSizeHint(imgView);

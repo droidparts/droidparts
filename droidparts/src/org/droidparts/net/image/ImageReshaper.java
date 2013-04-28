@@ -27,9 +27,9 @@ public interface ImageReshaper {
 
 	Bitmap.Config getBitmapConfig();
 
-	int getBitmapWidthHint();
+	int getImageWidthHint();
 
-	int getBitmapHeightHint();
+	int getImageHeightHint();
 
 	Bitmap reshape(Bitmap bm);
 
