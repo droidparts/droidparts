@@ -105,7 +105,7 @@ public final class BitmapUtils {
 			InputStream is, int reqWidth, int reqHeight, Bitmap.Config config)
 			throws IOException {
 		BitmapFactory.Options opts = new BitmapFactory.Options();
-		boolean gotSizeHint = (reqWidth > 0) && (reqHeight > 0);
+		boolean gotSizeHint = (reqWidth > 0) || (reqHeight > 0);
 		boolean gotConfig = (config != null);
 		if (gotSizeHint || gotConfig) {
 			if (gotConfig) {
@@ -144,8 +144,14 @@ public final class BitmapUtils {
 		int width = opts.outWidth;
 		int inSampleSize = 1;
 		if (height > reqHeight || width > reqWidth) {
-			int heightRatio = Math.round((float) height / (float) reqHeight);
-			int widthRatio = Math.round((float) width / (float) reqWidth);
+			int heightRatio = 1;
+			if (reqHeight > 0) {
+				heightRatio = Math.round((float) height / (float) reqHeight);
+			}
+			int widthRatio = 1;
+			if (reqWidth > 0) {
+				widthRatio = Math.round((float) width / (float) reqWidth);
+			}
 			inSampleSize = (heightRatio < widthRatio) ? heightRatio
 					: widthRatio;
 		}

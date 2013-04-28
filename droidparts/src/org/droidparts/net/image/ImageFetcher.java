@@ -299,22 +299,19 @@ public class ImageFetcher {
 		}
 
 		public String getCacheKey() {
-			Point p = getSizeHint();
 			StringBuilder sb = new StringBuilder(5);
 			sb.append(imgUrl);
 			Bitmap.Config configHint = getConfigHint();
 			if (configHint != null) {
 				sb.append(configHint);
 			}
+			Point p = getSizeHint();
 			if (p.x > 0 || p.y > 0) {
 				sb.append(p.x);
 				sb.append(p.y);
 			}
 			if (reshaper != null) {
-				String cacheId = reshaper.getCacheId();
-				if (cacheId != null) {
-					sb.append(cacheId);
-				}
+				sb.append(reshaper.getCacheId());
 			}
 			return sb.toString();
 		}
