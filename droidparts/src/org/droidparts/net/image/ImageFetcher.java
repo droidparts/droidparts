@@ -21,7 +21,6 @@ import static org.droidparts.util.IOUtils.silentlyClose;
 import static org.droidparts.util.Strings.isNotEmpty;
 
 import java.io.BufferedInputStream;
-import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.LinkedHashMap;
@@ -196,17 +195,15 @@ public class ImageFetcher {
 
 						@Override
 						public void run() {
-							spec.listener.onFetchProgressChanged(
-									spec.imgView, spec.imgUrl, kBTotal,
-									kBReceived);
+							spec.listener.onFetchProgressChanged(spec.imgView,
+									spec.imgUrl, kBTotal, kBReceived);
 						}
 					});
 				}
 			}
 			byte[] data = baos.toByteArray();
 			Pair<Bitmap, BitmapFactory.Options> bm = BitmapUtils.decodeScaled(
-					new ByteArrayInputStream(data), spec.widthHint,
-					spec.heightHint, spec.configHint);
+					data, spec.widthHint, spec.heightHint, spec.configHint);
 			return Pair.create(data, bm);
 		} finally {
 			silentlyClose(bis, baos);
@@ -456,8 +453,8 @@ public class ImageFetcher {
 				spec.imgView.setImageBitmap(bitmap);
 			}
 			if (spec.listener != null) {
-				spec.listener
-						.onFetchCompleted(spec.imgView, spec.imgUrl, bitmap);
+				spec.listener.onFetchCompleted(spec.imgView, spec.imgUrl,
+						bitmap);
 			}
 		}
 

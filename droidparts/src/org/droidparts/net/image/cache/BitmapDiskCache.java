@@ -17,6 +17,7 @@ package org.droidparts.net.image.cache;
 
 import static org.droidparts.contract.Constants.BUFFER_SIZE;
 import static org.droidparts.util.IOUtils.getFileList;
+import static org.droidparts.util.IOUtils.readToByteArray;
 import static org.droidparts.util.IOUtils.silentlyClose;
 
 import java.io.BufferedOutputStream;
@@ -97,7 +98,8 @@ public class BitmapDiskCache {
 			FileInputStream fis = null;
 			try {
 				fis = new FileInputStream(file);
-				bmData = BitmapUtils.decodeScaled(fis, reqWidth, reqHeight,
+				byte[] data = readToByteArray(fis);
+				bmData = BitmapUtils.decodeScaled(data, reqWidth, reqHeight,
 						config);
 				file.setLastModified(System.currentTimeMillis());
 			} catch (Exception e) {
@@ -107,7 +109,9 @@ public class BitmapDiskCache {
 			}
 		}
 		if (bmData == null) {
-			L.i("Cache miss for '%s'.", key);
+			L.v("DiskCache miss for '%s'.", key);
+		} else {
+			L.v("DiskCache hit for '%s'.", key);
 		}
 		return bmData;
 	}

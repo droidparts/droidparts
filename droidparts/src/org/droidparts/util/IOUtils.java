@@ -18,14 +18,13 @@ package org.droidparts.util;
 import static org.droidparts.contract.Constants.BUFFER_SIZE;
 import static org.droidparts.contract.Constants.UTF8;
 
-import java.io.BufferedReader;
+import java.io.ByteArrayOutputStream;
 import java.io.Closeable;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
@@ -62,22 +61,19 @@ public class IOUtils {
 		}
 	}
 
-	public static String readAndCloseInputStream(InputStream is)
-			throws IOException {
-		StringBuilder sb = new StringBuilder();
-		BufferedReader br = null;
-		try {
-			br = new BufferedReader(new InputStreamReader(is, UTF8),
-					BUFFER_SIZE);
-			String line;
-			while ((line = br.readLine()) != null) {
-				sb.append(line);
-				sb.append('\n');
-			}
-			return sb.toString();
-		} finally {
-			silentlyClose(br);
+	public static String readToString(InputStream is) throws IOException {
+		byte[] data = readToByteArray(is);
+		return new String(data, UTF8);
+	}
+
+	public static byte[] readToByteArray(InputStream is) throws IOException {
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		byte[] buffer = new byte[BUFFER_SIZE];
+		int len;
+		while ((len = is.read(buffer)) != -1) {
+			baos.write(buffer, 0, len);
 		}
+		return baos.toByteArray();
 	}
 
 	public static ArrayList<File> getFileList(File dir,

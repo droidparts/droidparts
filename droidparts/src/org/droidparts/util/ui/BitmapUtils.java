@@ -16,9 +16,6 @@
 package org.droidparts.util.ui;
 
 import java.io.IOException;
-import java.io.InputStream;
-
-import org.droidparts.util.L;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -101,8 +98,8 @@ public final class BitmapUtils {
 		return p;
 	}
 
-	public static Pair<Bitmap, BitmapFactory.Options> decodeScaled(
-			InputStream is, int reqWidth, int reqHeight, Bitmap.Config config)
+	public static Pair<Bitmap, BitmapFactory.Options> decodeScaled(byte[] data,
+			int reqWidth, int reqHeight, Bitmap.Config config)
 			throws IOException {
 		BitmapFactory.Options opts = new BitmapFactory.Options();
 		boolean gotSizeHint = (reqWidth > 0) || (reqHeight > 0);
@@ -113,21 +110,14 @@ public final class BitmapUtils {
 			}
 			if (gotSizeHint) {
 				opts.inJustDecodeBounds = true;
-				BitmapFactory.decodeStream(is, null, opts);
+				BitmapFactory.decodeByteArray(data, 0, data.length, opts);
 				opts.inSampleSize = calcInSampleSize(opts, reqWidth, reqHeight);
 				opts.inJustDecodeBounds = false;
-				if (is.markSupported()) {
-					try {
-						is.reset();
-					} catch (IOException e) {
-						L.d(e);
-					}
-				}
 			}
 		}
 		Bitmap bm = null;
 		try {
-			bm = BitmapFactory.decodeStream(is, null, opts);
+			bm = BitmapFactory.decodeByteArray(data, 0, data.length, opts);
 		} catch (Throwable t) {
 			System.gc();
 			throw new IOException(t);

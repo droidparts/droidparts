@@ -84,6 +84,11 @@ public class BitmapMemoryCache {
 		if (isAvailable()) {
 			bm = cache.get(key);
 		}
+		if (bm == null) {
+			L.v("MemoryCache miss for '%s'.", key);
+		} else {
+			L.v("MemoryCache hit for '%s'.", key);
+		}
 		return bm;
 	}
 
