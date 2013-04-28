@@ -25,7 +25,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 
-import org.droidparts.util.HashCalc;
 import org.droidparts.util.L;
 import org.droidparts.util.ui.BitmapUtils;
 
@@ -122,7 +121,7 @@ public class BitmapDiskCache {
 	}
 
 	private File getCachedFile(String key) {
-		return new File(cacheDir, HashCalc.getMD5(key));
+		return new File(cacheDir, String.valueOf(key.hashCode()));
 	}
 
 }
