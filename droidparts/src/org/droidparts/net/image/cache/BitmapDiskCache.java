@@ -108,11 +108,8 @@ public class BitmapDiskCache {
 				silentlyClose(fis);
 			}
 		}
-		if (bmData == null) {
-			L.v("DiskCache miss for '%s'.", key);
-		} else {
-			L.v("DiskCache hit for '%s'.", key);
-		}
+		L.v("DiskCache " + ((bmData == null) ? "miss" : "hit") + " for '%s'.",
+				key);
 		return bmData;
 	}
 
