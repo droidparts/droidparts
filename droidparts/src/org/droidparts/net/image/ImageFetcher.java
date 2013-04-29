@@ -313,17 +313,16 @@ public class ImageFetcher {
 		private String getCacheKey() {
 			StringBuilder sb = new StringBuilder();
 			sb.append(imgUrl);
-			Bitmap.Config configHint = getConfigHint();
-			if (configHint != null) {
-				sb.append(configHint);
+			if (reshaper != null) {
+				sb.append("-");
+				sb.append(reshaper.getCacheId());
 			}
 			Point p = getSizeHint();
 			if (p.x > 0 || p.y > 0) {
+				sb.append("-");
 				sb.append(p.x);
+				sb.append("x");
 				sb.append(p.y);
-			}
-			if (reshaper != null) {
-				sb.append(reshaper.getCacheId());
 			}
 			return sb.toString();
 		}
