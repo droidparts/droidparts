@@ -62,7 +62,7 @@ public class ImageFetcher {
 	final ThreadPoolExecutor fetchExecutor;
 
 	private final LinkedHashMap<ImageView, Spec> todo = new LinkedHashMap<ImageView, Spec>();
-	private final ConcurrentHashMap<Spec, Long> wip = new ConcurrentHashMap<Spec, Long>();
+	private final ConcurrentHashMap<ImageView, Long> wip = new ConcurrentHashMap<ImageView, Long>();
 	private Handler handler;
 
 	private volatile boolean paused;
@@ -119,10 +119,10 @@ public class ImageFetcher {
 	public void attachImage(ImageView imageView, String imgUrl,
 			int crossFadeMillis, ImageReshaper reshaper,
 			ImageFetchListener listener) {
+		long submitted = System.nanoTime();
+		wip.put(imageView, submitted);
 		Spec spec = new Spec(imageView, imgUrl, crossFadeMillis, reshaper,
 				listener);
-		long submitted = System.nanoTime();
-		wip.put(spec, submitted);
 		if (paused) {
 			todo.remove(imageView);
 			todo.put(imageView, spec);
@@ -262,9 +262,9 @@ public class ImageFetcher {
 	}
 
 	void attachIfMostRecent(Spec spec, long submitted, Bitmap bitmap) {
-		Long mostRecent = wip.get(spec);
+		Long mostRecent = wip.get(spec.imgView);
 		if (mostRecent != null && submitted == mostRecent) {
-			wip.remove(spec);
+			wip.remove(spec.imgView);
 			if (!paused || !todo.containsKey(spec.imgView)) {
 				SetBitmapRunnable r = new SetBitmapRunnable(spec, bitmap);
 				runOnUiThread(r);
