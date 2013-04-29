@@ -265,8 +265,10 @@ public class ImageFetcher {
 		Long mostRecent = wip.get(spec);
 		if (mostRecent != null && submitted == mostRecent) {
 			wip.remove(spec);
-			SetBitmapRunnable r = new SetBitmapRunnable(spec, bitmap);
-			runOnUiThread(r);
+			if (!paused || !todo.containsKey(spec.imgView)) {
+				SetBitmapRunnable r = new SetBitmapRunnable(spec, bitmap);
+				runOnUiThread(r);
+			}
 		}
 	}
 
