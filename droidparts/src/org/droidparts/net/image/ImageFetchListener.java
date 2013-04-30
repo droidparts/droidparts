@@ -15,17 +15,18 @@
  */
 package org.droidparts.net.image;
 
+import android.graphics.Bitmap;
 import android.widget.ImageView;
 
 public interface ImageFetchListener {
 
-	void onTaskAdded(ImageView imageView, String imgUrl);
+	void onFetchAdded(ImageView imageView, String imgUrl);
 
-	void onDownloadProgressChanged(ImageView imageView, String imgUrl,
+	void onFetchProgressChanged(ImageView imageView, String imgUrl,
 			int kBTotal, int kBReceived);
 
-	void onDownloadFailed(ImageView imageView, String imgUrl, Exception e);
+	void onFetchFailed(ImageView imageView, String imgUrl, Exception e);
 
-	void onTaskCompleted(ImageView imageView, String imgUrl);
+	void onFetchCompleted(ImageView imageView, String imgUrl, Bitmap bm);
 
 }

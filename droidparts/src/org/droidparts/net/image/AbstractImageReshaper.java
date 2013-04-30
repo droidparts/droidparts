@@ -16,21 +16,20 @@
 package org.droidparts.net.image;
 
 import android.graphics.Bitmap;
-import android.graphics.Bitmap.CompressFormat;
 import android.util.Pair;
 
 public abstract class AbstractImageReshaper implements ImageReshaper {
 
 	// slow, supports transparency
-	public static final Pair<CompressFormat, Integer> PNG = Pair.create(
-			CompressFormat.PNG, 100);
+	public static final Pair<Bitmap.CompressFormat, Integer> PNG = Pair.create(
+			Bitmap.CompressFormat.PNG, 100);
 	// fast
-	public static final Pair<CompressFormat, Integer> JPEG = Pair.create(
-			CompressFormat.JPEG, 80);
+	public static final Pair<Bitmap.CompressFormat, Integer> JPEG = Pair
+			.create(Bitmap.CompressFormat.JPEG, 80);
 
 	@Override
-	public Pair<CompressFormat, Integer> getCacheFormat(String contentType) {
-		if ("image/png".equals(contentType)) {
+	public Pair<Bitmap.CompressFormat, Integer> getCacheFormat(String mimeType) {
+		if ("image/png".equals(mimeType)) {
 			return PNG;
 		} else {
 			return JPEG;
@@ -38,18 +37,8 @@ public abstract class AbstractImageReshaper implements ImageReshaper {
 	}
 
 	@Override
-	public int getWidthHint() {
-		return 0;
-	}
-
-	@Override
-	public int getHeightHint() {
-		return 0;
-	}
-
-	@Override
-	public Bitmap reshape(Bitmap bm) {
-		return bm;
+	public Bitmap.Config getBitmapConfig() {
+		return Bitmap.Config.ARGB_8888;
 	}
 
 }

@@ -12,7 +12,7 @@
 	<artifactId>droidparts-parent</artifactId>
 	<packaging>pom</packaging>
 
-	<version>1.3.6</version>
+	<version>1.3.7</version>
 
 	<name>DroidParts - Parent</name>
 	<description>A carefully crafted Android framework.</description>
@@ -74,7 +74,7 @@
 			<dependency>
 				<groupId>com.actionbarsherlock</groupId>
 				<artifactId>actionbarsherlock</artifactId>
-				<version>4.2.0</version>
+				<version>4.3.0</version>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>

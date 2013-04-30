@@ -16,6 +16,8 @@
 package org.droidparts.net.http.worker;
 
 import static org.droidparts.contract.Constants.BUFFER_SIZE;
+import static org.droidparts.util.IOUtils.readToString;
+import static org.droidparts.util.IOUtils.silentlyClose;
 import static org.droidparts.util.Strings.isNotEmpty;
 
 import java.io.BufferedInputStream;
@@ -29,7 +31,6 @@ import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.droidparts.net.http.HTTPException;
-import org.droidparts.util.IOUtils;
 import org.droidparts.util.L;
 
 public class HTTPInputStream extends BufferedInputStream {
@@ -85,9 +86,11 @@ public class HTTPInputStream extends BufferedInputStream {
 
 	public String readAndClose() throws HTTPException {
 		try {
-			return IOUtils.readAndCloseInputStream(this);
+			return readToString(this);
 		} catch (Exception e) {
 			throw new HTTPException(e);
+		} finally {
+			silentlyClose(this);
 		}
 	}
 

@@ -17,6 +17,7 @@ package org.droidparts.net.image.cache;
 
 import static org.droidparts.contract.Constants.BUFFER_SIZE;
 import static org.droidparts.util.IOUtils.getFileList;
+import static org.droidparts.util.IOUtils.readToByteArray;
 import static org.droidparts.util.IOUtils.silentlyClose;
 
 import java.io.BufferedOutputStream;
@@ -25,13 +26,13 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 
-import org.droidparts.util.HashCalc;
 import org.droidparts.util.L;
 import org.droidparts.util.ui.BitmapUtils;
 
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.CompressFormat;
+import android.graphics.BitmapFactory;
 import android.util.Pair;
 
 public class BitmapDiskCache {
@@ -89,27 +90,27 @@ public class BitmapDiskCache {
 		}
 	}
 
-	public Bitmap get(String key, int reqWidth, int reqHeight) {
-		Bitmap bm = null;
+	public Pair<Bitmap, BitmapFactory.Options> get(String key, int reqWidth,
+			int reqHeight, Bitmap.Config config) {
+		Pair<Bitmap, BitmapFactory.Options> bmData = null;
 		File file = getCachedFile(key);
 		if (file.exists()) {
 			FileInputStream fis = null;
 			try {
 				fis = new FileInputStream(file);
-				bm = BitmapUtils.decodeScaled(fis, reqWidth, reqHeight);
-				if (bm != null) {
-					file.setLastModified(System.currentTimeMillis());
-				}
+				byte[] data = readToByteArray(fis);
+				bmData = BitmapUtils.decodeScaled(data, reqWidth, reqHeight,
+						config);
+				file.setLastModified(System.currentTimeMillis());
 			} catch (Exception e) {
 				L.w(e);
 			} finally {
 				silentlyClose(fis);
 			}
 		}
-		if (bm == null) {
-			L.i("Cache miss for '%s'.", key);
-		}
-		return bm;
+		L.v("DiskCache " + ((bmData == null) ? "miss" : "hit") + " for '%s'.",
+				key);
+		return bmData;
 	}
 
 	public void purgeFilesAccessedBefore(long timestamp) {
@@ -121,7 +122,7 @@ public class BitmapDiskCache {
 	}
 
 	private File getCachedFile(String key) {
-		return new File(cacheDir, HashCalc.getMD5(key));
+		return new File(cacheDir, String.valueOf(key.hashCode()));
 	}
 
 }

@@ -23,11 +23,13 @@ public interface ImageReshaper {
 
 	String getCacheId();
 
-	Pair<CompressFormat, Integer> getCacheFormat(String contentType);
+	Pair<CompressFormat, Integer> getCacheFormat(String mimeType);
 
-	public int getWidthHint();
+	Bitmap.Config getBitmapConfig();
 
-	public int getHeightHint();
+	int getImageWidthHint();
+
+	int getImageHeightHint();
 
 	Bitmap reshape(Bitmap bm);
 

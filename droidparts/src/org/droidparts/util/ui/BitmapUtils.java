@@ -16,18 +16,20 @@
 package org.droidparts.util.ui;
 
 import java.io.IOException;
-import java.io.InputStream;
-
-import org.droidparts.util.L;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Paint;
+import android.graphics.Point;
 import android.graphics.PorterDuff.Mode;
 import android.graphics.PorterDuffXfermode;
 import android.graphics.Rect;
 import android.graphics.RectF;
+import android.util.DisplayMetrics;
+import android.util.Pair;
+import android.view.ViewGroup.LayoutParams;
+import android.widget.ImageView;
 
 public final class BitmapUtils {
 
@@ -76,35 +78,72 @@ public final class BitmapUtils {
 		return bmOut;
 	}
 
-	public static Bitmap decodeScaled(InputStream is, int reqWidth,
-			int reqHeight) {
-		BitmapFactory.Options opts = null;
-		if (reqWidth > 0 || reqHeight > 0) {
-			opts = new BitmapFactory.Options();
-			opts.inJustDecodeBounds = true;
-			BitmapFactory.decodeStream(is, null, opts);
-			opts.inSampleSize = calculateInSampleSize(opts, reqWidth, reqHeight);
-			opts.inJustDecodeBounds = false;
-			if (is.markSupported()) {
-				try {
-					is.reset();
-				} catch (IOException e) {
-					L.d(e);
-				}
+	//
+
+	public static Point calcDecodeSizeHint(ImageView imageView) {
+		Point p = new Point();
+		LayoutParams params = imageView.getLayoutParams();
+		p.x = params.width;
+		p.y = params.height;
+		if (p.x <= 0 || p.y <= 0) {
+			DisplayMetrics metrics = imageView.getContext().getResources()
+					.getDisplayMetrics();
+			if (p.x <= 0) {
+				p.x = metrics.widthPixels;
+			}
+			if (p.y <= 0) {
+				p.y = metrics.heightPixels;
 			}
 		}
-		return BitmapFactory.decodeStream(is, null, opts);
+		return p;
 	}
 
-	private static int calculateInSampleSize(BitmapFactory.Options options,
+	public static Pair<Bitmap, BitmapFactory.Options> decodeScaled(byte[] data,
+			int reqWidth, int reqHeight, Bitmap.Config config)
+			throws IOException {
+		BitmapFactory.Options opts = new BitmapFactory.Options();
+		boolean gotSizeHint = (reqWidth > 0) || (reqHeight > 0);
+		boolean gotConfig = (config != null);
+		if (gotSizeHint || gotConfig) {
+			if (gotConfig) {
+				opts.inPreferredConfig = config;
+			}
+			if (gotSizeHint) {
+				opts.inJustDecodeBounds = true;
+				BitmapFactory.decodeByteArray(data, 0, data.length, opts);
+				opts.inSampleSize = calcInSampleSize(opts, reqWidth, reqHeight);
+				opts.inJustDecodeBounds = false;
+			}
+		}
+		Bitmap bm = null;
+		try {
+			bm = BitmapFactory.decodeByteArray(data, 0, data.length, opts);
+		} catch (Throwable t) {
+			System.gc();
+			throw new IOException(t);
+		}
+		if (bm == null) {
+			throw new IOException("BitmapFactory returned null.");
+		}
+		return Pair.create(bm, opts);
+	}
+
+	private static int calcInSampleSize(BitmapFactory.Options opts,
 			int reqWidth, int reqHeight) {
-		int height = options.outHeight;
-		int width = options.outWidth;
+		int height = opts.outHeight;
+		int width = opts.outWidth;
 		int inSampleSize = 1;
 		if (height > reqHeight || width > reqWidth) {
-			int heightRatio = Math.round((float) height / (float) reqHeight);
-			int widthRatio = Math.round((float) width / (float) reqWidth);
-			inSampleSize = heightRatio < widthRatio ? heightRatio : widthRatio;
+			int heightRatio = 1;
+			if (reqHeight > 0) {
+				heightRatio = Math.round((float) height / (float) reqHeight);
+			}
+			int widthRatio = 1;
+			if (reqWidth > 0) {
+				widthRatio = Math.round((float) width / (float) reqWidth);
+			}
+			inSampleSize = (heightRatio < widthRatio) ? heightRatio
+					: widthRatio;
 		}
 		return inSampleSize;
 	}

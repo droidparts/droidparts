@@ -21,8 +21,8 @@ import static org.droidparts.util.IOUtils.silentlyClose;
 import static org.droidparts.util.Strings.isNotEmpty;
 
 import java.io.BufferedInputStream;
-import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.util.LinkedHashMap;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -40,6 +40,8 @@ import org.droidparts.util.ui.BitmapUtils;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.CompressFormat;
+import android.graphics.BitmapFactory;
+import android.graphics.Point;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
@@ -57,16 +59,11 @@ public class ImageFetcher {
 	private final BitmapDiskCache diskCache;
 
 	private final ThreadPoolExecutor cacheExecutor;
-	private final ThreadPoolExecutor fetchExecutor;
+	final ThreadPoolExecutor fetchExecutor;
 
-	private final LinkedHashMap<ImageView, String> todo = new LinkedHashMap<ImageView, String>();
+	private final LinkedHashMap<ImageView, Spec> todo = new LinkedHashMap<ImageView, Spec>();
 	private final ConcurrentHashMap<ImageView, Long> wip = new ConcurrentHashMap<ImageView, Long>();
 	private Handler handler;
-
-	private ImageFetchListener fetchListener;
-	private ImageReshaper reshaper;
-
-	private int crossFadeMillis = 0;
 
 	private volatile boolean paused;
 
@@ -87,18 +84,6 @@ public class ImageFetcher {
 		cacheExecutor = new BackgroundExecutor(1);
 	}
 
-	public void setFetchListener(ImageFetchListener fetchListener) {
-		this.fetchListener = fetchListener;
-	}
-
-	public void setReshaper(ImageReshaper reshaper) {
-		this.reshaper = reshaper;
-	}
-
-	public void setCrossFadeDuration(int millisec) {
-		this.crossFadeMillis = millisec;
-	}
-
 	public void pause() {
 		paused = true;
 	}
@@ -107,7 +92,9 @@ public class ImageFetcher {
 		paused = false;
 		if (executePendingTasks) {
 			for (ImageView iv : todo.keySet()) {
-				attachImage(iv, todo.get(iv));
+				Spec spec = todo.get(iv);
+				attachImage(iv, spec.imgUrl, spec.crossFadeMillis,
+						spec.reshaper, spec.listener);
 			}
 		}
 		todo.clear();
@@ -116,36 +103,54 @@ public class ImageFetcher {
 	//
 
 	public void attachImage(ImageView imageView, String imgUrl) {
+		attachImage(imageView, imgUrl, 0);
+	}
+
+	public void attachImage(ImageView imageView, String imgUrl,
+			int crossFadeMillis) {
+		attachImage(imageView, imgUrl, crossFadeMillis, null);
+	}
+
+	public void attachImage(ImageView imageView, String imgUrl,
+			int crossFadeMillis, ImageReshaper reshaper) {
+		attachImage(imageView, imgUrl, crossFadeMillis, reshaper, null);
+	}
+
+	public void attachImage(ImageView imageView, String imgUrl,
+			int crossFadeMillis, ImageReshaper reshaper,
+			ImageFetchListener listener) {
 		long submitted = System.nanoTime();
 		wip.put(imageView, submitted);
+		Spec spec = new Spec(imageView, imgUrl, crossFadeMillis, reshaper,
+				listener);
 		if (paused) {
 			todo.remove(imageView);
-			todo.put(imageView, imgUrl);
+			todo.put(imageView, spec);
 		} else {
-			if (fetchListener != null) {
-				fetchListener.onTaskAdded(imageView, imgUrl);
+			if (listener != null) {
+				listener.onFetchAdded(imageView, imgUrl);
 			}
-			Runnable r = new ReadFromCacheRunnable(this, imageView, imgUrl,
-					submitted);
+			Runnable r = new ReadFromCacheRunnable(spec, submitted);
 			cacheExecutor.remove(r);
 			fetchExecutor.remove(r);
 			if (isNotEmpty(imgUrl)) {
 				cacheExecutor.execute(r);
 			} else {
-				if (fetchListener != null) {
-					fetchListener.onTaskCompleted(imageView, imgUrl);
+				if (listener != null) {
+					listener.onFetchCompleted(imageView, imgUrl, null);
 				}
 			}
 		}
 	}
 
-	public Bitmap getImage(String imgUrl) {
-		Bitmap bm = getCachedReshaped(imgUrl);
+	public Bitmap getImage(String imgUrl, ImageReshaper reshaper,
+			ImageView hintImageView) throws IOException {
+		Spec spec = new Spec(hintImageView, imgUrl, 0, reshaper, null);
+		Bitmap bm = readCached(spec);
 		if (bm == null) {
-			Pair<Bitmap, Pair<String, byte[]>> bmData = fetch(null, imgUrl);
-			if (bmData != null) {
-				bm = reshapeAndCache(imgUrl, bmData);
-			}
+			Pair<byte[], Pair<Bitmap, BitmapFactory.Options>> bmData = fetchAndDecode(spec);
+			cacheRawImage(imgUrl, bmData.first);
+			bm = reshapeAndCache(spec, bmData.second);
 		}
 		return bm;
 	}
@@ -153,154 +158,121 @@ public class ImageFetcher {
 	//
 
 	public void clearCacheOlderThan(int hours) {
-		if (diskCache != null && diskCache instanceof BitmapDiskCache) {
+		if (diskCache != null) {
 			final long timestamp = System.currentTimeMillis() - hours * 60 * 60
 					* 1000;
 			cacheExecutor.execute(new Runnable() {
 
 				@Override
 				public void run() {
-					((BitmapDiskCache) diskCache)
-							.purgeFilesAccessedBefore(timestamp);
+					diskCache.purgeFilesAccessedBefore(timestamp);
 				}
 			});
 		} else {
-			L.w("Failed to clear null or incompatible disk cache.");
+			L.w("Disk cache not set.");
 		}
 	}
 
 	//
 
-	protected Bitmap getCachedReshaped(String imgUrl) {
-		String key = getCacheKey(imgUrl);
-		Bitmap bm = null;
-		if (reshaper != null) {
-			if (memoryCache != null) {
-				bm = memoryCache.get(key);
-			}
-			if (bm == null) {
-				if (diskCache != null) {
-					bm = diskCache.get(key, getWidthHint(), getHeightHint());
-				}
-				if (bm != null) {
-					if (memoryCache != null) {
-						memoryCache.put(key, bm);
-					}
-				}
-			}
-		}
-		if (bm == null) {
-			if (memoryCache != null) {
-				bm = memoryCache.get(key);
-			}
-			if (bm == null) {
-				if (diskCache != null) {
-					bm = diskCache
-							.get(imgUrl, getWidthHint(), getHeightHint());
-				}
-				if (bm != null) {
-					if (reshaper != null) {
-						bm = reshaper.reshape(bm);
-					}
-					if (memoryCache != null) {
-						memoryCache.put(key, bm);
-					}
-				}
-			}
-		}
-		return bm;
-	}
-
-	private Pair<Bitmap, Pair<String, byte[]>> fetch(final ImageView imageView,
-			final String imgUrl) {
-		Pair<Bitmap, Pair<String, byte[]>> bmData = null;
+	Pair<byte[], Pair<Bitmap, BitmapFactory.Options>> fetchAndDecode(
+			final Spec spec) throws IOException {
 		int bytesReadTotal = 0;
 		byte[] buffer = new byte[BUFFER_SIZE];
 		BufferedInputStream bis = null;
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		try {
-			HTTPResponse resp = restClient.getInputStream(imgUrl);
+			HTTPResponse resp = restClient.getInputStream(spec.imgUrl);
 			final int kBTotal = resp.getHeaderInt(Header.CONTENT_LENGTH) / 1024;
 			bis = resp.inputStream;
 			int bytesRead;
 			while ((bytesRead = bis.read(buffer)) != -1) {
 				baos.write(buffer, 0, bytesRead);
 				bytesReadTotal += bytesRead;
-				if (fetchListener != null) {
+				if (spec.listener != null) {
 					final int kBReceived = bytesReadTotal / 1024;
 					runOnUiThread(new Runnable() {
 
 						@Override
 						public void run() {
-							fetchListener.onDownloadProgressChanged(imageView,
-									imgUrl, kBTotal, kBReceived);
+							spec.listener.onFetchProgressChanged(spec.imgView,
+									spec.imgUrl, kBTotal, kBReceived);
 						}
 					});
 				}
 			}
 			byte[] data = baos.toByteArray();
-			Bitmap bm = BitmapUtils.decodeScaled(
-					new ByteArrayInputStream(data), getWidthHint(),
-					getHeightHint());
-			if (bm != null) {
-				String contentType = resp.getHeaderString(Header.CONTENT_TYPE);
-				bmData = Pair.create(bm, Pair.create(contentType, data));
-			}
-		} catch (final Exception e) {
-			HTTPWorker.throwIfNetworkOnMainThreadException(e);
-			L.w("Failed to fetch %s.", imgUrl);
-			L.d(e);
-			if (fetchListener != null) {
-				runOnUiThread(new Runnable() {
-
-					@Override
-					public void run() {
-						fetchListener.onDownloadFailed(imageView, imgUrl, e);
-					}
-				});
-			}
+			Pair<Bitmap, BitmapFactory.Options> bm = BitmapUtils.decodeScaled(
+					data, spec.widthHint, spec.heightHint, spec.configHint);
+			return Pair.create(data, bm);
 		} finally {
 			silentlyClose(bis, baos);
 		}
-		return bmData;
 	}
 
-	private Bitmap reshapeAndCache(String imgUrl,
-			Pair<Bitmap, Pair<String, byte[]>> bmData) {
-		Bitmap bm = bmData.first;
-		if (diskCache != null) {
-			diskCache.put(imgUrl, bmData.second.second);
-		}
-		if (reshaper != null) {
-			bm = reshaper.reshape(bm);
-		}
-		String key = getCacheKey(imgUrl);
+	Bitmap readCached(Spec spec) {
+		Bitmap bm = null;
 		if (memoryCache != null) {
-			memoryCache.put(key, bm);
+			bm = memoryCache.get(spec.cacheKey);
 		}
-		if (diskCache != null && reshaper != null) {
-			Pair<CompressFormat, Integer> cacheFormat = reshaper
-					.getCacheFormat(bmData.second.first);
-			if (cacheFormat != null) {
-				diskCache.put(key, bm, cacheFormat);
+		if (bm == null && diskCache != null) {
+			Pair<Bitmap, BitmapFactory.Options> bmData = diskCache.get(
+					spec.cacheKey, spec.widthHint, spec.heightHint,
+					spec.configHint);
+			if (bmData != null) {
+				bm = bmData.first;
+				if (memoryCache != null) {
+					memoryCache.put(spec.cacheKey, bm);
+				}
+			} else {
+				bmData = diskCache.get(spec.imgUrl, spec.widthHint,
+						spec.heightHint, spec.configHint);
+				if (bmData != null) {
+					bm = reshapeAndCache(spec, bmData);
+				}
 			}
 		}
 		return bm;
 	}
 
-	private String getCacheKey(String imgUrl) {
-		return (reshaper == null) ? imgUrl : (imgUrl + reshaper.getCacheId());
+	void cacheRawImage(String imgUrl, byte[] data) {
+		if (diskCache != null) {
+			diskCache.put(imgUrl, data);
+		}
 	}
 
-	private int getWidthHint() {
-		return (reshaper != null) ? reshaper.getWidthHint() : 0;
+	Bitmap reshapeAndCache(Spec spec, Pair<Bitmap, BitmapFactory.Options> bmData) {
+		Bitmap bm = bmData.first;
+		if (spec.reshaper != null) {
+			Bitmap reshapedBm = spec.reshaper.reshape(bm);
+			if (bm != reshapedBm) {
+				bm.recycle();
+			}
+			bm = reshapedBm;
+		}
+		if (memoryCache != null) {
+			memoryCache.put(spec.cacheKey, bm);
+		}
+		if (diskCache != null && spec.reshaper != null) {
+			Pair<CompressFormat, Integer> cacheFormat = spec.reshaper
+					.getCacheFormat(bmData.second.outMimeType);
+			diskCache.put(spec.cacheKey, bm, cacheFormat);
+		}
+		return bm;
 	}
 
-	private int getHeightHint() {
-		return (reshaper != null) ? reshaper.getHeightHint() : 0;
+	void attachIfMostRecent(Spec spec, long submitted, Bitmap bitmap) {
+		Long mostRecent = wip.get(spec.imgView);
+		if (mostRecent != null && submitted == mostRecent) {
+			wip.remove(spec.imgView);
+			if (!paused || !todo.containsKey(spec.imgView)) {
+				SetBitmapRunnable r = new SetBitmapRunnable(spec, bitmap);
+				runOnUiThread(r);
+			}
+		}
 	}
 
-	private void runOnUiThread(Runnable r) {
+	void runOnUiThread(Runnable r) {
 		boolean success = handler.post(r);
 		// a hack
 		while (!success) {
@@ -311,29 +283,75 @@ public class ImageFetcher {
 
 	//
 
-	static abstract class ImageFetcherRunnable implements Runnable {
+	static class Spec {
 
-		protected final ImageFetcher imageFetcher;
-		protected final ImageView imageView;
-		protected final String imgUrl;
-		protected final long submitted;
+		final ImageView imgView;
+		final String imgUrl;
+		final int crossFadeMillis;
+		final ImageReshaper reshaper;
+		final ImageFetchListener listener;
 
-		public ImageFetcherRunnable(ImageFetcher imageFetcher,
-				ImageView imageView, String imgUrl, long submitted) {
-			this.imageFetcher = imageFetcher;
-			this.imageView = imageView;
+		final String cacheKey;
+		final Bitmap.Config configHint;
+		final int widthHint;
+		final int heightHint;
+
+		public Spec(ImageView imgView, String imgUrl, int crossFadeMillis,
+				ImageReshaper reshaper, ImageFetchListener listener) {
+			this.imgView = imgView;
 			this.imgUrl = imgUrl;
-			this.submitted = submitted;
+			this.crossFadeMillis = crossFadeMillis;
+			this.reshaper = reshaper;
+			this.listener = listener;
+			cacheKey = getCacheKey();
+			configHint = getConfigHint();
+			Point p = getSizeHint();
+			widthHint = p.x;
+			heightHint = p.y;
 		}
 
-		protected final void attachIfMostRecent(Bitmap bitmap) {
-			Long mostRecent = imageFetcher.wip.get(imageView);
-			if (mostRecent != null && submitted == mostRecent) {
-				imageFetcher.wip.remove(imageView);
-				SetBitmapRunnable r = new SetBitmapRunnable(imageFetcher,
-						imageView, imgUrl, submitted, bitmap);
-				imageFetcher.runOnUiThread(r);
+		private String getCacheKey() {
+			StringBuilder sb = new StringBuilder();
+			sb.append(imgUrl);
+			if (reshaper != null) {
+				sb.append("-");
+				sb.append(reshaper.getCacheId());
 			}
+			Point p = getSizeHint();
+			if (p.x > 0 || p.y > 0) {
+				sb.append("-");
+				sb.append(p.x);
+				sb.append("x");
+				sb.append(p.y);
+			}
+			return sb.toString();
+		}
+
+		private Bitmap.Config getConfigHint() {
+			return (reshaper != null) ? reshaper.getBitmapConfig() : null;
+		}
+
+		private Point getSizeHint() {
+			Point p = new Point();
+			if (reshaper != null) {
+				p.x = reshaper.getImageWidthHint();
+				p.y = reshaper.getImageHeightHint();
+			}
+			if (p.x <= 0 && p.y <= 0) {
+				p = BitmapUtils.calcDecodeSizeHint(imgView);
+			}
+			return p;
+		}
+	}
+
+	abstract class SpecRunnable implements Runnable {
+
+		final Spec spec;
+		final long submitted;
+
+		public SpecRunnable(Spec spec, long submitted) {
+			this.spec = spec;
+			this.submitted = submitted;
 		}
 
 		@Override
@@ -341,94 +359,103 @@ public class ImageFetcher {
 			boolean eq = false;
 			if (this == o) {
 				eq = true;
-			} else if (o instanceof ImageFetcherRunnable) {
-				eq = imageView.equals(((ImageFetcherRunnable) o).imageView);
+			} else if (o instanceof SpecRunnable) {
+				eq = spec.imgView.equals(((SpecRunnable) o).spec.imgView);
 			}
 			return eq;
 		}
 
 		@Override
 		public int hashCode() {
-			return imageView.hashCode();
+			return spec.imgView.hashCode();
 		}
 
 		@Override
 		public String toString() {
-			return getClass().getSimpleName() + ": " + imgUrl;
+			return getClass().getSimpleName() + ": " + spec.imgUrl;
 		}
 	}
 
-	static class ReadFromCacheRunnable extends ImageFetcherRunnable {
+	class ReadFromCacheRunnable extends SpecRunnable {
 
-		public ReadFromCacheRunnable(ImageFetcher imageFetcher,
-				ImageView imageView, String imgUrl, long submitted) {
-			super(imageFetcher, imageView, imgUrl, submitted);
+		public ReadFromCacheRunnable(Spec spec, long submitted) {
+			super(spec, submitted);
 		}
 
 		@Override
 		public void run() {
-			Bitmap bm = imageFetcher.getCachedReshaped(imgUrl);
+			Bitmap bm = readCached(spec);
 			if (bm == null) {
-				FetchAndCacheRunnable r = new FetchAndCacheRunnable(
-						imageFetcher, imageView, imgUrl, submitted);
-				imageFetcher.fetchExecutor.execute(r);
+				FetchAndCacheRunnable r = new FetchAndCacheRunnable(spec,
+						submitted);
+				fetchExecutor.execute(r);
 			} else {
-				attachIfMostRecent(bm);
+				attachIfMostRecent(spec, submitted, bm);
 			}
 		}
 
 	}
 
-	static class FetchAndCacheRunnable extends ImageFetcherRunnable {
+	class FetchAndCacheRunnable extends SpecRunnable {
 
-		public FetchAndCacheRunnable(ImageFetcher imageFetcher,
-				ImageView imageView, String imgUrl, long submitted) {
-			super(imageFetcher, imageView, imgUrl, submitted);
+		public FetchAndCacheRunnable(Spec spec, long submitted) {
+			super(spec, submitted);
 		}
 
 		@Override
 		public void run() {
-			Pair<Bitmap, Pair<String, byte[]>> bmData = imageFetcher.fetch(
-					imageView, imgUrl);
-			if (bmData != null) {
-				Bitmap bm = bmData.first;
-				bm = imageFetcher.reshapeAndCache(imgUrl, bmData);
-				attachIfMostRecent(bm);
+			try {
+				Pair<byte[], Pair<Bitmap, BitmapFactory.Options>> bmData = fetchAndDecode(spec);
+				cacheRawImage(spec.imgUrl, bmData.first);
+				Bitmap bm = reshapeAndCache(spec, bmData.second);
+				attachIfMostRecent(spec, submitted, bm);
+			} catch (final Exception e) {
+				HTTPWorker.throwIfNetworkOnMainThreadException(e);
+				L.w("Failed to fetch %s.", spec.imgUrl);
+				L.d(e);
+				if (spec.listener != null) {
+					runOnUiThread(new Runnable() {
+
+						@Override
+						public void run() {
+							spec.listener.onFetchFailed(spec.imgView,
+									spec.imgUrl, e);
+						}
+					});
+				}
 			}
 		}
 
 	}
 
-	static class SetBitmapRunnable extends ImageFetcherRunnable {
+	class SetBitmapRunnable extends SpecRunnable {
 
-		private final Bitmap bitmap;
+		final Bitmap bitmap;
 
-		public SetBitmapRunnable(ImageFetcher imageFetcher,
-				ImageView imageView, String imgUrl, long submitted,
-				Bitmap bitmap) {
-			super(imageFetcher, imageView, imgUrl, submitted);
+		public SetBitmapRunnable(Spec spec, Bitmap bitmap) {
+			super(spec, -1);
 			this.bitmap = bitmap;
 		}
 
 		@Override
 		public void run() {
-			if (imageFetcher.fetchListener != null) {
-				imageFetcher.fetchListener.onTaskCompleted(imageView, imgUrl);
-			}
-			if (imageFetcher.crossFadeMillis > 0) {
-				Drawable prevDrawable = imageView.getDrawable();
+			if (spec.crossFadeMillis > 0) {
+				Drawable prevDrawable = spec.imgView.getDrawable();
 				if (prevDrawable == null) {
 					prevDrawable = new ColorDrawable(TRANSPARENT);
 				}
 				Drawable nextDrawable = new BitmapDrawable(
-						imageView.getResources(), bitmap);
+						spec.imgView.getResources(), bitmap);
 				TransitionDrawable transitionDrawable = new TransitionDrawable(
 						new Drawable[] { prevDrawable, nextDrawable });
-				imageView.setImageDrawable(transitionDrawable);
-				transitionDrawable
-						.startTransition(imageFetcher.crossFadeMillis);
+				spec.imgView.setImageDrawable(transitionDrawable);
+				transitionDrawable.startTransition(spec.crossFadeMillis);
 			} else {
-				imageView.setImageBitmap(bitmap);
+				spec.imgView.setImageBitmap(bitmap);
+			}
+			if (spec.listener != null) {
+				spec.listener.onFetchCompleted(spec.imgView, spec.imgUrl,
+						bitmap);
 			}
 		}
 
