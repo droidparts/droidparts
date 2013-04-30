@@ -83,8 +83,8 @@ public final class BitmapUtils {
 	public static Point calcDecodeSizeHint(ImageView imageView) {
 		Point p = new Point();
 		LayoutParams params = imageView.getLayoutParams();
-		p.x = params.width;
-		p.y = params.height;
+		p.x = (params != null) ? params.width : imageView.getWidth();
+		p.y = (params != null) ? params.height : imageView.getHeight();
 		if (p.x <= 0 || p.y <= 0) {
 			DisplayMetrics metrics = imageView.getContext().getResources()
 					.getDisplayMetrics();
