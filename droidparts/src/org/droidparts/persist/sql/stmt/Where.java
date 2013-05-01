@@ -21,21 +21,22 @@ public class Where {
 
 	// TODO
 
-	Where and(Where where) {
+	public Where(String columnName, Is operator, Object... columnValue) {
+	}
+
+	public Where and(Where where) {
 		return this;
 	}
 
-	Where or(Where where) {
+	public Where or(Where where) {
 		return this;
 	}
 
-	protected Where andWhere(String columnName, Is operator,
-			Object... columnValue) {
+	public Where and(String columnName, Is operator, Object... columnValue) {
 		return this;
 	}
 
-	protected Where orWhere(String columnName, Is operator,
-			Object... columnValue) {
+	public Where or(String columnName, Is operator, Object... columnValue) {
 		return this;
 	}
 
