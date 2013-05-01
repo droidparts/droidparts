@@ -63,7 +63,7 @@ public abstract class Statement<EntityType extends Entity> implements SQL {
 	}
 
 	protected Statement<EntityType> where(Where where) {
-		Pair<String, Object[]> p = where.build();
+		Pair<String, String[]> p = where.build();
 		return where(p.first, p.second);
 	}
 
