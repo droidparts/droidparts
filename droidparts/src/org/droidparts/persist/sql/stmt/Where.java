@@ -135,16 +135,17 @@ public class Where implements SQL {
 	}
 
 	//
-	boolean and;
+
+	private boolean and;
 
 	private final ArrayList<Object> whereSpecs = new ArrayList<Object>();
 
 	private static class WhereSpec {
-		boolean and;
+		final boolean and;
 
-		String columnName;
-		Is operator;
-		Object[] columnValue;
+		final String columnName;
+		final Is operator;
+		final Object[] columnValue;
 
 		WhereSpec(boolean and, String columnName, Is operator,
 				Object... columnValue) {
