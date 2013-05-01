@@ -112,6 +112,23 @@ public class Select<EntityType extends Entity> extends Statement<EntityType>
 				selection.second, groupByStr, having, orderByStr, limitStr);
 	}
 
+	public Select<EntityType> copy() {
+		Select<EntityType> copy = new Select<EntityType>(db, tableName);
+		copy(copy);
+		if (columns != null) {
+			copy.columns = Arrays.copyOf(columns, columns.length);
+		}
+		copy.distinct = distinct;
+		if (groupBy != null) {
+			copy.groupBy = Arrays.copyOf(groupBy, groupBy.length);
+		}
+		copy.having = having;
+		copy.offset = offset;
+		copy.limit = limit;
+		copy.orderBy.putAll(orderBy);
+		return copy;
+	}
+
 	private Pair<String, String[]> selection;
 	private String groupByStr;
 	private String orderByStr;

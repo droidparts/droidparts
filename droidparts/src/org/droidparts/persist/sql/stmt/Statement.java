@@ -76,6 +76,15 @@ public abstract class Statement<EntityType extends Entity> implements SQL {
 		return Pair.create(selection, selectionArgs);
 	}
 
+	protected final void copy(Statement<EntityType> to) {
+		to.selection = selection;
+		if (selectionArgs != null) {
+			to.selectionArgs = Arrays.copyOf(selectionArgs,
+					selectionArgs.length);
+		}
+		to.whereList.addAll(whereList);
+	}
+
 	private void buildSelection() {
 		StringBuilder selectionBuilder = new StringBuilder();
 		ArrayList<String> selectionArgsBuilder = new ArrayList<String>();
