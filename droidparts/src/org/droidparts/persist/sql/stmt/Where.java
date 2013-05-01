@@ -15,16 +15,19 @@
  */
 package org.droidparts.persist.sql.stmt;
 
+import static java.util.Arrays.asList;
+import static org.droidparts.inner.PersistUtils.buildPlaceholders;
+import static org.droidparts.inner.PersistUtils.toWhereArgs;
+import static org.droidparts.inner.ReflectionUtils.varArgsHack;
+
 import java.util.ArrayList;
-import java.util.Arrays;
 
 import org.droidparts.contract.SQL;
+import org.droidparts.util.L;
 
 import android.util.Pair;
 
 public class Where implements SQL {
-
-	// TODO
 
 	public Where(String columnName, Is operator, Object... columnValue) {
 		whereSpecs.add(new WhereSpec(true, columnName, operator, columnValue));
@@ -52,18 +55,21 @@ public class Where implements SQL {
 		return this;
 	}
 
-	Pair<String, String[]> build() {
-		return build(this);
+	Pair<String, Object[]> build() {
+		Pair<String, ArrayList<String>> p = build(this);
+		return Pair.create(p.first, p.second.toArray());
 	}
 
-	private static Pair<String, String[]> build(Where where) {
-		StringBuilder selection = new StringBuilder();
-		ArrayList<String> selectionArgs = new ArrayList<String>();
+	private static Pair<String, ArrayList<String>> build(Where where) {
+		StringBuilder selectionBuilder = new StringBuilder();
+		ArrayList<String> selectionArgsBuilder = new ArrayList<String>();
 		for (int i = 0; i < where.whereSpecs.size(); i++) {
 			Object obj = where.whereSpecs.get(i);
 			boolean and;
-			Pair<String, String[]> sel;
+			boolean braces = false;
+			Pair<String, ArrayList<String>> sel;
 			if (obj instanceof Where) {
+				braces = true;
 				Where where2 = (Where) obj;
 				and = where2.and;
 				sel = build(where2);
@@ -73,17 +79,59 @@ public class Where implements SQL {
 				sel = build(spec);
 			}
 			if (i > 0) {
-				selection.append(and ? AND : OR);
+				selectionBuilder.append(and ? AND : OR);
 			}
-			selection.append(sel.first);
-			selectionArgs.addAll(Arrays.asList(sel.second));
+			if (braces) {
+				selectionBuilder.append("(").append(sel.first).append(")");
+			} else {
+				selectionBuilder.append(sel.first);
+			}
+			selectionArgsBuilder.addAll(sel.second);
 		}
-		return Pair.create(selection.toString(),
-				selectionArgs.toArray(new String[selectionArgs.size()]));
+		return Pair.create(selectionBuilder.toString(), selectionArgsBuilder);
 	}
 
-	private static Pair<String, String[]> build(WhereSpec spec) {
-		return null;
+	private static Pair<String, ArrayList<String>> build(WhereSpec spec) {
+		StringBuilder selectionBuilder = new StringBuilder();
+		ArrayList<String> selectionArgsBuilder = new ArrayList<String>();
+		String[] whereArgs = toWhereArgs(spec.columnValue);
+		int argNum = whereArgs.length;
+		//
+		selectionBuilder.append(spec.columnName).append(spec.operator.str);
+		switch (spec.operator) {
+		case NULL:
+		case NOT_NULL:
+			if (argNum != 0) {
+				errArgs(spec.operator, argNum);
+			}
+			break;
+		case BETWEEN:
+		case NOT_BETWEEN:
+			if (argNum != 2) {
+				errArgs(spec.operator, argNum);
+			}
+			break;
+		case IN:
+		case NOT_IN:
+			if (argNum < 1) {
+				errArgs(spec.operator, argNum);
+			}
+			selectionBuilder.append("(");
+			selectionBuilder.append(buildPlaceholders(whereArgs.length));
+			selectionBuilder.append(")");
+			break;
+		default:
+			if (argNum != 1) {
+				errArgs(spec.operator, argNum);
+			}
+			break;
+		}
+		selectionArgsBuilder.addAll(asList(whereArgs));
+		return Pair.create(selectionBuilder.toString(), selectionArgsBuilder);
+	}
+
+	private static void errArgs(Is operator, int num) {
+		L.e("Invalid number of agruments for '%s': %d.", operator, num);
 	}
 
 	//
@@ -103,7 +151,8 @@ public class Where implements SQL {
 			this.and = and;
 			this.columnName = columnName;
 			this.operator = operator;
-			this.columnValue = columnValue;
+			this.columnValue = varArgsHack(columnValue);
+			;
 		}
 	}
 }
