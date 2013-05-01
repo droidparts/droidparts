@@ -153,7 +153,6 @@ public class Where implements SQL {
 			this.columnName = columnName;
 			this.operator = operator;
 			this.columnValue = varArgsHack(columnValue);
-			;
 		}
 	}
 }
