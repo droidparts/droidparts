@@ -62,6 +62,11 @@ public abstract class Statement<EntityType extends Entity> implements SQL {
 		return this;
 	}
 
+	protected Statement<EntityType> where(Where where) {
+		Pair<String, Object[]> p = where.build();
+		return where(p.first, p.second);
+	}
+
 	protected Statement<EntityType> where(String selection,
 			Object... selectionArgs) {
 		this.selection = selection;

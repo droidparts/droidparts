@@ -57,6 +57,11 @@ public class Select<EntityType extends Entity> extends Statement<EntityType>
 	}
 
 	@Override
+	protected Select<EntityType> where(Where where) {
+		return (Select<EntityType>) super.where(where);
+	}
+
+	@Override
 	public Select<EntityType> where(String selection, Object... selectionArgs) {
 		return (Select<EntityType>) super.where(selection, selectionArgs);
 	}
