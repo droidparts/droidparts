@@ -51,18 +51,16 @@ public abstract class Statement<EntityType extends Entity> implements SQL {
 
 	protected Statement<EntityType> where(String columnName, Is operator,
 			Object... columnValue) {
-		selection = null;
-		if (where == null) {
-			where = new Where(columnName, operator, columnValue);
-		} else {
-			where.and(columnName, operator, columnValue);
-		}
-		return this;
+		return where(new Where(columnName, operator, columnValue));
 	}
 
 	protected Statement<EntityType> where(Where where) {
 		selection = null;
-		this.where = where;
+		if (this.where == null) {
+			this.where = where;
+		} else {
+			this.where.and(where);
+		}
 		return this;
 	}
 
