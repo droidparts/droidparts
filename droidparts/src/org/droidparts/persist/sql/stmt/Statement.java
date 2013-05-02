@@ -15,18 +15,13 @@
  */
 package org.droidparts.persist.sql.stmt;
 
-import static java.util.Arrays.asList;
-import static org.droidparts.inner.PersistUtils.buildPlaceholders;
 import static org.droidparts.inner.PersistUtils.toWhereArgs;
-import static org.droidparts.inner.ReflectionUtils.varArgsHack;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 
 import org.droidparts.contract.DB;
 import org.droidparts.contract.SQL;
 import org.droidparts.model.Entity;
-import org.droidparts.util.L;
 
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Pair;
@@ -36,9 +31,10 @@ public abstract class Statement<EntityType extends Entity> implements SQL {
 	protected final SQLiteDatabase db;
 	protected final String tableName;
 
+	private Where where;
+
 	private String selection;
 	private String[] selectionArgs;
-	private final ArrayList<Pair<String, Pair<Is, Object[]>>> whereList = new ArrayList<Pair<String, Pair<Is, Object[]>>>();
 
 	public Statement(SQLiteDatabase db, String tableName) {
 		this.db = db;
@@ -55,78 +51,34 @@ public abstract class Statement<EntityType extends Entity> implements SQL {
 
 	protected Statement<EntityType> where(String columnName, Is operator,
 			Object... columnValue) {
+		return where(new Where(columnName, operator, columnValue));
+	}
+
+	protected Statement<EntityType> where(Where where) {
 		selection = null;
-		columnValue = varArgsHack(columnValue);
-		whereList.add(Pair.create(columnName,
-				Pair.create(operator, columnValue)));
+		if (this.where == null) {
+			this.where = where;
+		} else {
+			this.where.and(where);
+		}
 		return this;
 	}
 
 	protected Statement<EntityType> where(String selection,
 			Object... selectionArgs) {
+		where = null;
 		this.selection = selection;
 		this.selectionArgs = toWhereArgs(selectionArgs);
 		return this;
 	}
 
 	protected Pair<String, String[]> getSelection() {
-		if (selection == null) {
-			buildSelection();
+		if (selection == null && where != null) {
+			Pair<String, Object[]> p = where.build();
+			selection = p.first;
+			selectionArgs = toWhereArgs(p.second);
 		}
 		return Pair.create(selection, selectionArgs);
-	}
-
-	private void buildSelection() {
-		StringBuilder selectionBuilder = new StringBuilder();
-		ArrayList<String> selectionArgsBuilder = new ArrayList<String>();
-		for (int i = 0; i < whereList.size(); i++) {
-			Pair<String, Pair<Is, Object[]>> p = whereList.get(i);
-			String columnName = p.first;
-			Is operator = p.second.first;
-			String[] whereArgs = toWhereArgs(p.second.second);
-			int argNum = whereArgs.length;
-			//
-			if (i > 0) {
-				selectionBuilder.append(AND);
-			}
-			selectionBuilder.append(columnName).append(operator.str);
-			switch (operator) {
-			case NULL:
-			case NOT_NULL:
-				if (argNum != 0) {
-					errArgs(operator, argNum);
-				}
-				break;
-			case BETWEEN:
-			case NOT_BETWEEN:
-				if (argNum != 2) {
-					errArgs(operator, argNum);
-				}
-				break;
-			case IN:
-			case NOT_IN:
-				if (argNum < 1) {
-					errArgs(operator, argNum);
-				}
-				selectionBuilder.append("(");
-				selectionBuilder.append(buildPlaceholders(whereArgs.length));
-				selectionBuilder.append(")");
-				break;
-			default:
-				if (argNum != 1) {
-					errArgs(operator, argNum);
-				}
-				break;
-			}
-			selectionArgsBuilder.addAll(asList(whereArgs));
-		}
-		selection = selectionBuilder.toString();
-		selectionArgs = selectionArgsBuilder
-				.toArray(new String[selectionArgsBuilder.size()]);
-	}
-
-	private void errArgs(Is operator, int num) {
-		L.e("Invalid number of agruments for '%s': %d.", operator, num);
 	}
 
 	@Override

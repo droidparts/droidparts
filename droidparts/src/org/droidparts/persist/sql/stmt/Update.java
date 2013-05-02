@@ -44,6 +44,11 @@ public class Update<EntityType extends Entity> extends Statement<EntityType> {
 	}
 
 	@Override
+	protected Update<EntityType> where(Where where) {
+		return (Update<EntityType>) super.where(where);
+	}
+
+	@Override
 	public Update<EntityType> where(String selection, Object... selectionArgs) {
 		return (Update<EntityType>) super.where(selection, selectionArgs);
 	}
