@@ -21,10 +21,12 @@ import static android.view.View.INVISIBLE;
 import static android.view.View.VISIBLE;
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.TypedValue;
 import android.view.View;
+import android.view.View.MeasureSpec;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 
@@ -87,6 +89,17 @@ public class ViewUtils {
 		} else {
 			imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
 		}
+	}
+
+	public static Bitmap getViewBitmap(View view) {
+		view.setDrawingCacheEnabled(true);
+		view.measure(MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED),
+				MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED));
+		view.layout(0, 0, view.getMeasuredWidth(), view.getMeasuredHeight());
+		view.buildDrawingCache(true);
+		Bitmap bm = Bitmap.createBitmap(view.getDrawingCache());
+		view.setDrawingCacheEnabled(false);
+		return bm;
 	}
 
 }
