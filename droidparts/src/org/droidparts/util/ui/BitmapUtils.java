@@ -124,6 +124,9 @@ public final class BitmapUtils {
 		}
 		if (bm == null) {
 			throw new IOException("BitmapFactory returned null.");
+		} else if (bm.getWidth() <= 0 || bm.getHeight() <= 0) {
+			throw new IOException(String.format("Invalid Bitmap: w:%d, h:%d.",
+					bm.getWidth(), bm.getHeight()));
 		}
 		return Pair.create(bm, opts);
 	}
