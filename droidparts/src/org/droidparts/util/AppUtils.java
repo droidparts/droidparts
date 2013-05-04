@@ -16,6 +16,10 @@
 package org.droidparts.util;
 
 import static android.content.pm.ApplicationInfo.FLAG_DEBUGGABLE;
+import static android.content.pm.PackageManager.COMPONENT_ENABLED_STATE_DISABLED;
+import static android.content.pm.PackageManager.COMPONENT_ENABLED_STATE_ENABLED;
+import static android.content.pm.PackageManager.DONT_KILL_APP;
+import static android.content.pm.PackageManager.GET_META_DATA;
 import static android.content.pm.PackageManager.GET_SIGNATURES;
 import static android.content.pm.PackageManager.SIGNATURE_MATCH;
 import static android.provider.Settings.Secure.ANDROID_ID;
@@ -24,9 +28,11 @@ import java.io.IOException;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.provider.Settings.Secure;
 
@@ -53,6 +59,26 @@ public class AppUtils {
 			L.w(e);
 		}
 		return verName;
+	}
+
+	//
+
+	public boolean isInstalled(String pkgName) {
+		try {
+			ctx.getPackageManager().getApplicationInfo(pkgName, GET_META_DATA);
+			return true;
+		} catch (NameNotFoundException e) {
+			return false;
+		}
+	}
+
+	public void setComponentEnabled(Class<? extends Context> component,
+			boolean enabled) {
+		PackageManager pm = ctx.getPackageManager();
+		ComponentName componentName = new ComponentName(ctx, component);
+		int state = enabled ? COMPONENT_ENABLED_STATE_ENABLED
+				: COMPONENT_ENABLED_STATE_DISABLED;
+		pm.setComponentEnabledSetting(componentName, state, DONT_KILL_APP);
 	}
 
 	//
