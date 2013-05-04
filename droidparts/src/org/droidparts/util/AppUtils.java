@@ -15,23 +15,18 @@
  */
 package org.droidparts.util;
 
-import static android.content.pm.PackageManager.COMPONENT_ENABLED_STATE_DISABLED;
-import static android.content.pm.PackageManager.COMPONENT_ENABLED_STATE_ENABLED;
-import static android.content.pm.PackageManager.DONT_KILL_APP;
-import static android.content.pm.PackageManager.GET_META_DATA;
+import static android.content.pm.ApplicationInfo.FLAG_DEBUGGABLE;
+import static android.content.pm.PackageManager.GET_SIGNATURES;
+import static android.content.pm.PackageManager.SIGNATURE_MATCH;
 import static android.provider.Settings.Secure.ANDROID_ID;
-import static org.droidparts.contract.Constants.BUFFER_SIZE;
-import static org.droidparts.util.IOUtils.silentlyClose;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
 
-import android.content.ComponentName;
 import android.content.Context;
-import android.content.Intent;
-import android.content.pm.PackageManager;
+import android.content.pm.ApplicationInfo;
+import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.provider.Settings.Secure;
 
@@ -43,8 +38,10 @@ public class AppUtils {
 		this.ctx = ctx;
 	}
 
-	public String getDeviceId() {
-		return Secure.getString(ctx.getContentResolver(), ANDROID_ID);
+	public boolean isDebuggable() {
+		ApplicationInfo appInfo = ctx.getApplicationInfo();
+		boolean debug = (appInfo.flags & FLAG_DEBUGGABLE) != 0;
+		return debug;
 	}
 
 	public String getVersionName() {
@@ -58,43 +55,49 @@ public class AppUtils {
 		return verName;
 	}
 
-	public boolean gotActivityForIntent(Intent intent) {
-		return ctx.getPackageManager().resolveActivity(intent, 0) != null;
+	//
+
+	public String getDeviceId() {
+		return Secure.getString(ctx.getContentResolver(), ANDROID_ID);
 	}
 
-	public boolean isInstalled(String pkgName) {
+	public String getSignature(String pkgName) throws NameNotFoundException {
+		PackageInfo pi = ctx.getPackageManager().getPackageInfo(pkgName,
+				GET_SIGNATURES);
+		String signature = pi.signatures[0].toCharsString();
+		return signature;
+	}
+
+	public boolean doSignaturesMatch(String pkg1, String pkg2) {
+		boolean match = ctx.getPackageManager().checkSignatures(pkg1, pkg2) == SIGNATURE_MATCH;
+		return match;
+	}
+
+	public boolean canInstallNonMarketApps() {
+		return Secure.getInt(ctx.getContentResolver(),
+				Secure.INSTALL_NON_MARKET_APPS, 0) != 0;
+	}
+
+	public boolean isInstalledFromMarket(String pkgName)
+			throws NameNotFoundException {
+		String installerPkg = ctx.getPackageManager().getInstallerPackageName(
+				pkgName);
+		boolean installedFromMarket = "com.google.android.feedback"
+				.equals(installerPkg);
+		return installedFromMarket;
+	}
+
+	public long getClassesDexCrc() {
+		ZipFile zf;
 		try {
-			ctx.getPackageManager().getApplicationInfo(pkgName, GET_META_DATA);
-			return true;
-		} catch (NameNotFoundException e) {
-			return false;
+			zf = new ZipFile(ctx.getPackageCodePath());
+		} catch (IOException e) {
+			L.e(e);
+			return -1;
 		}
-	}
-
-	public void setComponentEnabled(Class<? extends Context> component,
-			boolean visible) {
-		PackageManager pm = ctx.getPackageManager();
-		ComponentName componentName = new ComponentName(ctx, component);
-		int state = visible ? COMPONENT_ENABLED_STATE_ENABLED
-				: COMPONENT_ENABLED_STATE_DISABLED;
-		pm.setComponentEnabledSetting(componentName, state, DONT_KILL_APP);
-	}
-
-	public String readStringResource(int resId) throws IOException {
-		InputStream is = null;
-		BufferedReader reader = null;
-		try {
-			is = ctx.getResources().openRawResource(resId);
-			reader = new BufferedReader(new InputStreamReader(is), BUFFER_SIZE);
-			StringBuilder sb = new StringBuilder();
-			String line;
-			while ((line = reader.readLine()) != null) {
-				sb.append(line);
-			}
-			return sb.toString();
-		} finally {
-			silentlyClose(reader, is);
-		}
+		ZipEntry ze = zf.getEntry("classes.dex");
+		long crc = ze.getCrc();
+		return crc;
 	}
 
 }

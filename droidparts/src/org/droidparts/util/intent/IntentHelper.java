@@ -15,6 +15,11 @@
  */
 package org.droidparts.util.intent;
 
+import static android.content.pm.PackageManager.COMPONENT_ENABLED_STATE_DISABLED;
+import static android.content.pm.PackageManager.COMPONENT_ENABLED_STATE_ENABLED;
+import static android.content.pm.PackageManager.DONT_KILL_APP;
+import static android.content.pm.PackageManager.GET_META_DATA;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -22,9 +27,12 @@ import org.droidparts.util.L;
 import org.droidparts.util.ui.AbstractDialogFactory;
 
 import android.content.ActivityNotFoundException;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
+import android.content.pm.PackageManager;
+import android.content.pm.PackageManager.NameNotFoundException;
 import android.content.pm.ResolveInfo;
 
 public class IntentHelper {
@@ -63,6 +71,28 @@ public class IntentHelper {
 			}
 		}
 		return activities.toArray(new ActivityInfo[activities.size()]);
+	}
+
+	public boolean gotHandlerForIntent(Intent intent) {
+		return ctx.getPackageManager().resolveActivity(intent, 0) != null;
+	}
+
+	public boolean isInstalled(String pkgName) {
+		try {
+			ctx.getPackageManager().getApplicationInfo(pkgName, GET_META_DATA);
+			return true;
+		} catch (NameNotFoundException e) {
+			return false;
+		}
+	}
+
+	public void setComponentEnabled(Class<? extends Context> component,
+			boolean enabled) {
+		PackageManager pm = ctx.getPackageManager();
+		ComponentName componentName = new ComponentName(ctx, component);
+		int state = enabled ? COMPONENT_ENABLED_STATE_ENABLED
+				: COMPONENT_ENABLED_STATE_DISABLED;
+		pm.setComponentEnabledSetting(componentName, state, DONT_KILL_APP);
 	}
 
 }

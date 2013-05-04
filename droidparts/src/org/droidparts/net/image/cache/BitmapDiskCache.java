@@ -26,8 +26,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 
+import org.droidparts.inner.BitmapFactoryUtils;
 import org.droidparts.util.L;
-import org.droidparts.util.ui.BitmapUtils;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -99,8 +99,8 @@ public class BitmapDiskCache {
 			try {
 				fis = new FileInputStream(file);
 				byte[] data = readToByteArray(fis);
-				bmData = BitmapUtils.decodeScaled(data, reqWidth, reqHeight,
-						config);
+				bmData = BitmapFactoryUtils.decodeScaled(data, reqWidth,
+						reqHeight, config);
 				file.setLastModified(System.currentTimeMillis());
 			} catch (Exception e) {
 				L.w(e);
