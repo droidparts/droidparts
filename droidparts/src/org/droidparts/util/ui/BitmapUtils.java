@@ -22,6 +22,8 @@ import android.graphics.PorterDuff.Mode;
 import android.graphics.PorterDuffXfermode;
 import android.graphics.Rect;
 import android.graphics.RectF;
+import android.view.View;
+import android.view.View.MeasureSpec;
 
 public final class BitmapUtils {
 
@@ -68,6 +70,17 @@ public final class BitmapUtils {
 		canvas.drawBitmap(bm, rect, rect, paint);
 
 		return bmOut;
+	}
+
+	public static Bitmap getViewBitmap(View view) {
+		view.setDrawingCacheEnabled(true);
+		view.measure(MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED),
+				MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED));
+		view.layout(0, 0, view.getMeasuredWidth(), view.getMeasuredHeight());
+		view.buildDrawingCache(true);
+		Bitmap bm = Bitmap.createBitmap(view.getDrawingCache());
+		view.setDrawingCacheEnabled(false);
+		return bm;
 	}
 
 }

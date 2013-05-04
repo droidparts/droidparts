@@ -17,6 +17,7 @@ package org.droidparts.util;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Arrays;
 import java.util.Iterator;
 
@@ -25,6 +26,7 @@ import org.json.JSONObject;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
+import android.util.TypedValue;
 
 public final class ResourceUtils {
 
@@ -61,12 +63,28 @@ public final class ResourceUtils {
 		return (idx != -1) ? valuesArr[idx] : null;
 	}
 
+	public static int dpToPx(Context ctx, int val) {
+		return (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,
+				val, ctx.getResources().getDisplayMetrics());
+	}
+
+	public static String readStringResource(Context ctx, int resId)
+			throws IOException {
+		InputStream is = null;
+		try {
+			is = ctx.getResources().openRawResource(resId);
+			return IOUtils.readToString(is);
+		} finally {
+			IOUtils.silentlyClose(is);
+		}
+	}
+
 	public static int getResourceId(Context ctx, String resourceName) {
-		return ResourceUtils.getId(ctx, "id", resourceName);
+		return getId(ctx, "id", resourceName);
 	}
 
 	public static int getStringId(Context ctx, String stringName) {
-		return ResourceUtils.getId(ctx, "string", stringName);
+		return getId(ctx, "string", stringName);
 	}
 
 	private static int getId(Context ctx, String type, String name) {
