@@ -22,17 +22,29 @@ import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
+import org.droidparts.util.L;
+
 public class HashCalc {
 
 	public static final String SHA1 = "SHA-1";
 	public static final String MD5 = "MD5";
 
-	public static String getMD5(String str) throws Exception {
-		return getHash(str, MD5);
+	public static String getMD5(String str) {
+		try {
+			return getHash(str, MD5);
+		} catch (Exception e) {
+			L.w(e);
+			return null;
+		}
 	}
 
-	public static String getSHA1(String str) throws Exception {
-		return getHash(str, SHA1);
+	public static String getSHA1(String str) {
+		try {
+			return getHash(str, SHA1);
+		} catch (Exception e) {
+			L.w(e);
+			return null;
+		}
 	}
 
 	public static String getHash(String str, String algorithm)
