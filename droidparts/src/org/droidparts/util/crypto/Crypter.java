@@ -22,8 +22,6 @@ import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 
-import org.droidparts.util.L;
-
 public class Crypter {
 
 	private final byte[] seed;
@@ -32,27 +30,17 @@ public class Crypter {
 		this.seed = seed.getBytes();
 	}
 
-	public String encrypt(String cleartext) {
-		try {
-			byte[] rawKey = getRawKey(seed);
-			byte[] result = encrypt(rawKey, cleartext.getBytes());
-			return toHex(result);
-		} catch (Exception e) {
-			L.e(e);
-			return null;
-		}
+	public String encrypt(String cleartext) throws Exception {
+		byte[] rawKey = getRawKey(seed);
+		byte[] result = encrypt(rawKey, cleartext.getBytes());
+		return toHex(result);
 	}
 
-	public String decrypt(String encrypted) {
-		try {
-			byte[] rawKey = getRawKey(seed);
-			byte[] enc = toByte(encrypted);
-			byte[] result = decrypt(rawKey, enc);
-			return new String(result);
-		} catch (Exception e) {
-			L.e(e);
-			return null;
-		}
+	public String decrypt(String encrypted) throws Exception {
+		byte[] rawKey = getRawKey(seed);
+		byte[] enc = toByte(encrypted);
+		byte[] result = decrypt(rawKey, enc);
+		return new String(result);
 	}
 
 	private static byte[] getRawKey(byte[] seed) throws Exception {
