@@ -26,12 +26,28 @@ import static org.droidparts.util.Strings.isNotEmpty;
 import java.io.File;
 import java.util.ArrayList;
 
+import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 
 public class IntentFactory {
 
-	public static Intent getShare(String subject, CharSequence body) {
+	public static Intent getMarketAppIntent(Context ctx, String pkgName) {
+		String uri = "market://details?id=" + pkgName;
+		return new Intent(ACTION_VIEW, Uri.parse(uri));
+	}
+
+	public static Intent getMarketPublisherIntent(Context ctx, String pubName) {
+		String uri = "market://search?q=pub:" + pubName;
+		return new Intent(ACTION_VIEW, Uri.parse(uri));
+	}
+
+	public static Intent getMarketSearchIntent(Context ctx, String query) {
+		String uri = "market://search?q=" + query;
+		return new Intent(ACTION_VIEW, Uri.parse(uri));
+	}
+
+	public static Intent getShareIntent(String subject, CharSequence body) {
 		Intent intent = new Intent(ACTION_SEND);
 		intent.setType("text/plain");
 		intent.putExtra(EXTRA_SUBJECT, subject);
@@ -39,7 +55,7 @@ public class IntentFactory {
 		return intent;
 	}
 
-	public static Intent getSendEmail(String mailTo, String mailCC,
+	public static Intent getSendEmailIntent(String mailTo, String mailCC,
 			String subject, CharSequence body, File... attachments) {
 		Intent intent = new Intent(ACTION_SENDTO);
 		// intent.setType("text/plain");
@@ -67,19 +83,19 @@ public class IntentFactory {
 		return intent;
 	}
 
-	public static Intent getSendSMS(String msg) {
+	public static Intent getSendSMSIntent(String msg) {
 		Intent intent = new Intent(ACTION_VIEW);
 		intent.setType("vnd.android-dir/mms-sms");
 		intent.putExtra("sms_body", msg);
 		return intent;
 	}
 
-	public static Intent getOpenUrl(String webAddress) {
+	public static Intent getOpenUrlIntent(String webAddress) {
 		Intent intent = new Intent(ACTION_VIEW, Uri.parse(webAddress));
 		return intent;
 	}
 
-	public static Intent getDial(String phoneNumber) {
+	public static Intent getDialIntent(String phoneNumber) {
 		Intent intent = new Intent(ACTION_DIAL);
 		intent.setData(Uri.parse("tel:" + phoneNumber));
 		return intent;

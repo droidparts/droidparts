@@ -40,12 +40,21 @@ public class IntentHelper {
 	}
 
 	public static void startOrWarn(Context ctx, Intent intent) {
+		startOrWarn(ctx, intent, AbstractDialogFactory.ERROR);
+	}
+
+	public static void startOrWarn(Context ctx, Intent intent,
+			String errorMessage) {
 		try {
 			ctx.startActivity(intent);
 		} catch (ActivityNotFoundException e) {
 			L.w(e);
-			new AbstractDialogFactory(ctx).showErrorToast();
+			new AbstractDialogFactory(ctx).showToast(errorMessage);
 		}
+	}
+
+	public static boolean gotHandlerForIntent(Context ctx, Intent intent) {
+		return ctx.getPackageManager().resolveActivity(intent, 0) != null;
 	}
 
 	public static ActivityInfo[] getIntentHandlers(Context ctx, Intent intent) {
@@ -58,10 +67,6 @@ public class IntentHelper {
 			}
 		}
 		return activities.toArray(new ActivityInfo[activities.size()]);
-	}
-
-	public static boolean gotHandlerForIntent(Context ctx, Intent intent) {
-		return ctx.getPackageManager().resolveActivity(intent, 0) != null;
 	}
 
 }
