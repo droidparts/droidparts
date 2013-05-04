@@ -36,14 +36,14 @@ public class IntentHelper {
 	public static void startChooserOrWarn(Context ctx, Intent intent,
 			String title) {
 		Intent choooserIntent = Intent.createChooser(intent, title);
-		startOrWarn(ctx, choooserIntent);
+		startActivityOrWarn(ctx, choooserIntent);
 	}
 
-	public static void startOrWarn(Context ctx, Intent intent) {
-		startOrWarn(ctx, intent, AbstractDialogFactory.ERROR);
+	public static void startActivityOrWarn(Context ctx, Intent intent) {
+		startActivityOrWarn(ctx, intent, AbstractDialogFactory.ERROR);
 	}
 
-	public static void startOrWarn(Context ctx, Intent intent,
+	public static void startActivityOrWarn(Context ctx, Intent intent,
 			String errorMessage) {
 		try {
 			ctx.startActivity(intent);

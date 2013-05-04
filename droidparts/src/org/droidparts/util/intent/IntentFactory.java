@@ -32,12 +32,12 @@ import android.net.Uri;
 
 public class IntentFactory {
 
-	public static Intent getMarketAppIntent(Context ctx, String pkgName) {
+	public static Intent getMarketAppPageIntent(Context ctx, String pkgName) {
 		String uri = "market://details?id=" + pkgName;
 		return new Intent(ACTION_VIEW, Uri.parse(uri));
 	}
 
-	public static Intent getMarketPublisherIntent(Context ctx, String pubName) {
+	public static Intent getMarketSearchPublisherIntent(Context ctx, String pubName) {
 		String uri = "market://search?q=pub:" + pubName;
 		return new Intent(ACTION_VIEW, Uri.parse(uri));
 	}
