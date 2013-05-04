@@ -116,7 +116,4 @@ public class Arrays2 {
 		return arr2;
 	}
 
-	protected Arrays2() {
-	}
-
 }

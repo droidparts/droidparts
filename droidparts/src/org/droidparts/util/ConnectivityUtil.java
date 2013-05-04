@@ -21,11 +21,11 @@ import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 
-public class ConnectivityUtils {
+public class ConnectivityUtil {
 
-	private ConnectivityManager connectivityManager;
+	private final ConnectivityManager connectivityManager;
 
-	public ConnectivityUtils(Context ctx) {
+	public ConnectivityUtil(Context ctx) {
 		connectivityManager = (ConnectivityManager) ctx
 				.getSystemService(CONNECTIVITY_SERVICE);
 	}

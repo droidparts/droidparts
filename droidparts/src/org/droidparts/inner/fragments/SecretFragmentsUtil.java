@@ -15,7 +15,7 @@
  */
 package org.droidparts.inner.fragments;
 
-import static org.droidparts.util.ui.ViewUtils.dpToPx;
+import static org.droidparts.util.ResourceUtils.dpToPx;
 import android.app.Activity;
 import android.content.Context;
 import android.content.res.Configuration;

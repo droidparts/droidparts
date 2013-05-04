@@ -15,39 +15,36 @@
  */
 package org.droidparts.util;
 
+import static android.content.pm.ApplicationInfo.FLAG_DEBUGGABLE;
 import static android.content.pm.PackageManager.COMPONENT_ENABLED_STATE_DISABLED;
 import static android.content.pm.PackageManager.COMPONENT_ENABLED_STATE_ENABLED;
 import static android.content.pm.PackageManager.DONT_KILL_APP;
 import static android.content.pm.PackageManager.GET_META_DATA;
+import static android.content.pm.PackageManager.GET_SIGNATURES;
+import static android.content.pm.PackageManager.SIGNATURE_MATCH;
 import static android.provider.Settings.Secure.ANDROID_ID;
-import static org.droidparts.contract.Constants.BUFFER_SIZE;
-import static org.droidparts.util.IOUtils.silentlyClose;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
 
 import android.content.ComponentName;
 import android.content.Context;
-import android.content.Intent;
+import android.content.pm.ApplicationInfo;
+import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.provider.Settings.Secure;
 
 public class AppUtils {
 
-	protected final Context ctx;
-
-	public AppUtils(Context ctx) {
-		this.ctx = ctx;
+	public static boolean isDebuggable(Context ctx) {
+		ApplicationInfo appInfo = ctx.getApplicationInfo();
+		boolean debug = (appInfo.flags & FLAG_DEBUGGABLE) != 0;
+		return debug;
 	}
 
-	public String getDeviceId() {
-		return Secure.getString(ctx.getContentResolver(), ANDROID_ID);
-	}
-
-	public String getVersionName() {
+	public static String getVersionName(Context ctx) {
 		String verName = "?";
 		try {
 			verName = ctx.getPackageManager().getPackageInfo(
@@ -58,11 +55,9 @@ public class AppUtils {
 		return verName;
 	}
 
-	public boolean gotActivityForIntent(Intent intent) {
-		return ctx.getPackageManager().resolveActivity(intent, 0) != null;
-	}
+	//
 
-	public boolean isInstalled(String pkgName) {
+	public static boolean isInstalled(Context ctx, String pkgName) {
 		try {
 			ctx.getPackageManager().getApplicationInfo(pkgName, GET_META_DATA);
 			return true;
@@ -71,30 +66,60 @@ public class AppUtils {
 		}
 	}
 
-	public void setComponentEnabled(Class<? extends Context> component,
-			boolean visible) {
+	public static void setComponentEnabled(Context ctx,
+			Class<? extends Context> component, boolean enabled) {
 		PackageManager pm = ctx.getPackageManager();
 		ComponentName componentName = new ComponentName(ctx, component);
-		int state = visible ? COMPONENT_ENABLED_STATE_ENABLED
+		int state = enabled ? COMPONENT_ENABLED_STATE_ENABLED
 				: COMPONENT_ENABLED_STATE_DISABLED;
 		pm.setComponentEnabledSetting(componentName, state, DONT_KILL_APP);
 	}
 
-	public String readStringResource(int resId) throws IOException {
-		InputStream is = null;
-		BufferedReader reader = null;
+	//
+
+	public static String getDeviceId(Context ctx) {
+		return Secure.getString(ctx.getContentResolver(), ANDROID_ID);
+	}
+
+	public static String getSignature(Context ctx, String pkgName)
+			throws NameNotFoundException {
+		PackageInfo pi = ctx.getPackageManager().getPackageInfo(pkgName,
+				GET_SIGNATURES);
+		String signature = pi.signatures[0].toCharsString();
+		return signature;
+	}
+
+	public static boolean doSignaturesMatch(Context ctx, String pkg1,
+			String pkg2) {
+		boolean match = ctx.getPackageManager().checkSignatures(pkg1, pkg2) == SIGNATURE_MATCH;
+		return match;
+	}
+
+	public static boolean canInstallNonMarketApps(Context ctx) {
+		return Secure.getInt(ctx.getContentResolver(),
+				Secure.INSTALL_NON_MARKET_APPS, 0) != 0;
+	}
+
+	public static boolean isInstalledFromMarket(Context ctx, String pkgName)
+			throws NameNotFoundException {
+		String installerPkg = ctx.getPackageManager().getInstallerPackageName(
+				pkgName);
+		boolean installedFromMarket = "com.google.android.feedback"
+				.equals(installerPkg);
+		return installedFromMarket;
+	}
+
+	public static long getClassesDexCrc(Context ctx) {
+		ZipFile zf;
 		try {
-			is = ctx.getResources().openRawResource(resId);
-			reader = new BufferedReader(new InputStreamReader(is), BUFFER_SIZE);
-			StringBuilder sb = new StringBuilder();
-			String line;
-			while ((line = reader.readLine()) != null) {
-				sb.append(line);
-			}
-			return sb.toString();
-		} finally {
-			silentlyClose(reader, is);
+			zf = new ZipFile(ctx.getPackageCodePath());
+		} catch (IOException e) {
+			L.e(e);
+			return -1;
 		}
+		ZipEntry ze = zf.getEntry("classes.dex");
+		long crc = ze.getCrc();
+		return crc;
 	}
 
 }

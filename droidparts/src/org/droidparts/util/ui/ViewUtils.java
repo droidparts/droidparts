@@ -20,10 +20,8 @@ import static android.view.View.GONE;
 import static android.view.View.INVISIBLE;
 import static android.view.View.VISIBLE;
 import android.app.Activity;
-import android.content.Context;
 import android.os.Handler;
 import android.os.Looper;
-import android.util.TypedValue;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
@@ -58,11 +56,6 @@ public class ViewUtils {
 		for (View view : views) {
 			view.setEnabled(enabled);
 		}
-	}
-
-	public static int dpToPx(Context ctx, int val) {
-		return (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,
-				val, ctx.getResources().getDisplayMetrics());
 	}
 
 	public static void putCursorAfterLastSymbol(EditText editText) {

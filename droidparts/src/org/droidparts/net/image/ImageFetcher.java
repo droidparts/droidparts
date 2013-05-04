@@ -28,6 +28,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ThreadPoolExecutor;
 
 import org.droidparts.contract.HTTP.Header;
+import org.droidparts.inner.BitmapFactoryUtils;
 import org.droidparts.net.concurrent.BackgroundExecutor;
 import org.droidparts.net.http.HTTPResponse;
 import org.droidparts.net.http.RESTClient;
@@ -35,7 +36,6 @@ import org.droidparts.net.http.worker.HTTPWorker;
 import org.droidparts.net.image.cache.BitmapDiskCache;
 import org.droidparts.net.image.cache.BitmapMemoryCache;
 import org.droidparts.util.L;
-import org.droidparts.util.ui.BitmapUtils;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -202,8 +202,9 @@ public class ImageFetcher {
 				}
 			}
 			byte[] data = baos.toByteArray();
-			Pair<Bitmap, BitmapFactory.Options> bm = BitmapUtils.decodeScaled(
-					data, spec.widthHint, spec.heightHint, spec.configHint);
+			Pair<Bitmap, BitmapFactory.Options> bm = BitmapFactoryUtils
+					.decodeScaled(data, spec.widthHint, spec.heightHint,
+							spec.configHint);
 			return Pair.create(data, bm);
 		} finally {
 			silentlyClose(bis, baos);
@@ -338,7 +339,7 @@ public class ImageFetcher {
 				p.y = reshaper.getImageHeightHint();
 			}
 			if (p.x <= 0 && p.y <= 0) {
-				p = BitmapUtils.calcDecodeSizeHint(imgView);
+				p = BitmapFactoryUtils.calcDecodeSizeHint(imgView);
 			}
 			return p;
 		}

@@ -22,6 +22,8 @@ import android.widget.Toast;
 
 public class AbstractDialogFactory {
 
+	public static final String ERROR = "Error";
+
 	protected final Context ctx;
 	protected final LayoutInflater layoutInflater;
 
@@ -31,7 +33,7 @@ public class AbstractDialogFactory {
 	}
 
 	public void showErrorToast() {
-		showToast("Error");
+		showToast(ERROR);
 	}
 
 	public void showToast(int msgResId, Object... formatArgs) {
