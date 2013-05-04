@@ -46,7 +46,4 @@ public class Strings {
 		return sb.toString();
 	}
 
-	protected Strings() {
-	}
-
 }

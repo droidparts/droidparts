@@ -52,7 +52,4 @@ public class HashCalc {
 		}
 	}
 
-	private HashCalc() {
-	}
-
 }

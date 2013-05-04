@@ -30,7 +30,7 @@ public class AndroidMarketHelper {
 	private final Context ctx;
 
 	public AndroidMarketHelper(Context ctx) {
-		this.ctx = ctx;
+		this.ctx = ctx.getApplicationContext();
 	}
 
 	public void showDetail(String pkgName) {

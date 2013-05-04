@@ -23,7 +23,7 @@ import android.net.NetworkInfo;
 
 public class ConnectivityUtils {
 
-	private ConnectivityManager connectivityManager;
+	private final ConnectivityManager connectivityManager;
 
 	public ConnectivityUtils(Context ctx) {
 		connectivityManager = (ConnectivityManager) ctx

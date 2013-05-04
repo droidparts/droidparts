@@ -29,10 +29,10 @@ import android.content.pm.ResolveInfo;
 
 public class IntentHelper {
 
-	private Context ctx;
+	private final Context ctx;
 
 	public IntentHelper(Context ctx) {
-		this.ctx = ctx;
+		this.ctx = ctx.getApplicationContext();
 	}
 
 	public void startChooserOrWarn(Intent intent) {

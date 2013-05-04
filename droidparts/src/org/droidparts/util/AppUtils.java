@@ -41,7 +41,7 @@ public class AppUtils {
 	protected final Context ctx;
 
 	public AppUtils(Context ctx) {
-		this.ctx = ctx;
+		this.ctx = ctx.getApplicationContext();
 	}
 
 	public boolean isDebuggable() {
