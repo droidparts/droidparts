@@ -27,25 +27,19 @@ import android.net.Uri;
 
 public class AndroidMarketHelper {
 
-	private final Context ctx;
-
-	public AndroidMarketHelper(Context ctx) {
-		this.ctx = ctx.getApplicationContext();
+	public static void showDetail(Context ctx, String pkgName) {
+		launchMarket(ctx, "market://details?id=" + pkgName);
 	}
 
-	public void showDetail(String pkgName) {
-		launchMarket("market://details?id=" + pkgName);
+	public static void searchPublisher(Context ctx, String pubName) {
+		launchMarket(ctx, "market://search?q=pub:" + pubName);
 	}
 
-	public void searchPublisher(String pubName) {
-		launchMarket("market://search?q=pub:" + pubName);
+	public static void search(Context ctx, String query) {
+		launchMarket(ctx, "market://search?q=" + query);
 	}
 
-	public void search(String query) {
-		launchMarket("market://search?q=" + query);
-	}
-
-	private void launchMarket(String query) {
+	private static void launchMarket(Context ctx, String query) {
 		try {
 			Intent intent = new Intent(ACTION_VIEW, Uri.parse(query));
 			ctx.startActivity(intent);

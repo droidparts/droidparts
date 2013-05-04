@@ -38,19 +38,13 @@ import android.provider.Settings.Secure;
 
 public class AppUtils {
 
-	protected final Context ctx;
-
-	public AppUtils(Context ctx) {
-		this.ctx = ctx.getApplicationContext();
-	}
-
-	public boolean isDebuggable() {
+	public static boolean isDebuggable(Context ctx) {
 		ApplicationInfo appInfo = ctx.getApplicationInfo();
 		boolean debug = (appInfo.flags & FLAG_DEBUGGABLE) != 0;
 		return debug;
 	}
 
-	public String getVersionName() {
+	public static String getVersionName(Context ctx) {
 		String verName = "?";
 		try {
 			verName = ctx.getPackageManager().getPackageInfo(
@@ -63,7 +57,7 @@ public class AppUtils {
 
 	//
 
-	public boolean isInstalled(String pkgName) {
+	public static boolean isInstalled(Context ctx, String pkgName) {
 		try {
 			ctx.getPackageManager().getApplicationInfo(pkgName, GET_META_DATA);
 			return true;
@@ -72,8 +66,8 @@ public class AppUtils {
 		}
 	}
 
-	public void setComponentEnabled(Class<? extends Context> component,
-			boolean enabled) {
+	public static void setComponentEnabled(Context ctx,
+			Class<? extends Context> component, boolean enabled) {
 		PackageManager pm = ctx.getPackageManager();
 		ComponentName componentName = new ComponentName(ctx, component);
 		int state = enabled ? COMPONENT_ENABLED_STATE_ENABLED
@@ -83,28 +77,30 @@ public class AppUtils {
 
 	//
 
-	public String getDeviceId() {
+	public static String getDeviceId(Context ctx) {
 		return Secure.getString(ctx.getContentResolver(), ANDROID_ID);
 	}
 
-	public String getSignature(String pkgName) throws NameNotFoundException {
+	public static String getSignature(Context ctx, String pkgName)
+			throws NameNotFoundException {
 		PackageInfo pi = ctx.getPackageManager().getPackageInfo(pkgName,
 				GET_SIGNATURES);
 		String signature = pi.signatures[0].toCharsString();
 		return signature;
 	}
 
-	public boolean doSignaturesMatch(String pkg1, String pkg2) {
+	public static boolean doSignaturesMatch(Context ctx, String pkg1,
+			String pkg2) {
 		boolean match = ctx.getPackageManager().checkSignatures(pkg1, pkg2) == SIGNATURE_MATCH;
 		return match;
 	}
 
-	public boolean canInstallNonMarketApps() {
+	public static boolean canInstallNonMarketApps(Context ctx) {
 		return Secure.getInt(ctx.getContentResolver(),
 				Secure.INSTALL_NON_MARKET_APPS, 0) != 0;
 	}
 
-	public boolean isInstalledFromMarket(String pkgName)
+	public static boolean isInstalledFromMarket(Context ctx, String pkgName)
 			throws NameNotFoundException {
 		String installerPkg = ctx.getPackageManager().getInstallerPackageName(
 				pkgName);
@@ -113,7 +109,7 @@ public class AppUtils {
 		return installedFromMarket;
 	}
 
-	public long getClassesDexCrc() {
+	public static long getClassesDexCrc(Context ctx) {
 		ZipFile zf;
 		try {
 			zf = new ZipFile(ctx.getPackageCodePath());

@@ -29,22 +29,17 @@ import android.content.pm.ResolveInfo;
 
 public class IntentHelper {
 
-	private final Context ctx;
-
-	public IntentHelper(Context ctx) {
-		this.ctx = ctx.getApplicationContext();
+	public static void startChooserOrWarn(Context ctx, Intent intent) {
+		startChooserOrWarn(ctx, intent, null);
 	}
 
-	public void startChooserOrWarn(Intent intent) {
-		startChooserOrWarn(intent, null);
-	}
-
-	public void startChooserOrWarn(Intent intent, String title) {
+	public static void startChooserOrWarn(Context ctx, Intent intent,
+			String title) {
 		Intent choooserIntent = Intent.createChooser(intent, title);
-		startOrWarn(choooserIntent);
+		startOrWarn(ctx, choooserIntent);
 	}
 
-	public void startOrWarn(Intent intent) {
+	public static void startOrWarn(Context ctx, Intent intent) {
 		try {
 			ctx.startActivity(intent);
 		} catch (ActivityNotFoundException e) {
@@ -53,7 +48,7 @@ public class IntentHelper {
 		}
 	}
 
-	public ActivityInfo[] getIntentHandlers(Intent intent) {
+	public static ActivityInfo[] getIntentHandlers(Context ctx, Intent intent) {
 		List<ResolveInfo> list = ctx.getPackageManager().queryIntentActivities(
 				intent, 0);
 		ArrayList<ActivityInfo> activities = new ArrayList<ActivityInfo>();
@@ -65,7 +60,7 @@ public class IntentHelper {
 		return activities.toArray(new ActivityInfo[activities.size()]);
 	}
 
-	public boolean gotHandlerForIntent(Intent intent) {
+	public static boolean gotHandlerForIntent(Context ctx, Intent intent) {
 		return ctx.getPackageManager().resolveActivity(intent, 0) != null;
 	}
 
