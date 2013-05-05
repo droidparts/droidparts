@@ -32,19 +32,23 @@ import android.net.Uri;
 
 public class IntentFactory {
 
-	public static Intent getMarketAppPageIntent(Context ctx, String pkgName) {
-		String uri = "market://details?id=" + pkgName;
-		return new Intent(ACTION_VIEW, Uri.parse(uri));
-	}
+	public static class PlayStore {
 
-	public static Intent getMarketSearchPublisherIntent(Context ctx, String pubName) {
-		String uri = "market://search?q=pub:" + pubName;
-		return new Intent(ACTION_VIEW, Uri.parse(uri));
-	}
+		public static Intent getAppIntent(Context ctx, String pkgName) {
+			String uri = "market://details?id=" + pkgName;
+			return new Intent(ACTION_VIEW, Uri.parse(uri));
+		}
 
-	public static Intent getMarketSearchIntent(Context ctx, String query) {
-		String uri = "market://search?q=" + query;
-		return new Intent(ACTION_VIEW, Uri.parse(uri));
+		public static Intent getPublisherIntent(Context ctx, String pubName) {
+			String uri = "market://search?q=pub:" + pubName;
+			return new Intent(ACTION_VIEW, Uri.parse(uri));
+		}
+
+		public static Intent getSearchIntent(Context ctx, String query) {
+			String uri = "market://search?q=" + query;
+			return new Intent(ACTION_VIEW, Uri.parse(uri));
+		}
+
 	}
 
 	public static Intent getShareIntent(String subject, CharSequence body) {
