@@ -13,19 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License. 
  */
-package org.droidparts.adapter.tag;
+package org.droidparts.adapter.holder;
 
 import org.droidparts.annotation.inject.InjectView;
 
 import android.view.View;
 import android.widget.ImageView;
 
-public class IconText2Tag extends Text2Tag {
+public class IconText2Holder extends Text2Holder {
 
 	@InjectView(id = android.R.id.icon)
 	public ImageView icon;
 
-	public IconText2Tag(View view) {
+	public IconText2Holder(View view) {
 		super(view);
 	}
 
