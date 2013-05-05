@@ -145,7 +145,8 @@ public class ArrayCollectionConverter extends Converter<Object> {
 		ArrayList<Object> vals = new ArrayList<Object>();
 		ContentValues tmpCV = new ContentValues();
 		for (V obj : list) {
-			converter.putToContentValues(componentType, null, tmpCV, "key", obj);
+			converter
+					.putToContentValues(componentType, null, tmpCV, "key", obj);
 			vals.add(tmpCV.get("key"));
 		}
 		String strVal = Strings.join(vals, SEP, null);
