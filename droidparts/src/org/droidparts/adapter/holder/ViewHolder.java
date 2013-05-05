@@ -13,20 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License. 
  */
-package org.droidparts.adapter.tag;
+package org.droidparts.adapter.holder;
 
-import org.droidparts.annotation.inject.InjectView;
+import org.droidparts.Injector;
 
 import android.view.View;
-import android.widget.TextView;
 
-public class Text1Tag extends AdapterTag {
+public abstract class ViewHolder {
 
-	@InjectView(id = android.R.id.text1)
-	public TextView text1;
-
-	public Text1Tag(View view) {
-		super(view);
+	public ViewHolder(View view) {
+		Injector.inject(view, this);
 	}
 
 }

@@ -1,4 +1,4 @@
-package org.droidparts.adapter.ui;
+package org.droidparts.adapter.widget;
 
 import android.text.Editable;
 import android.text.TextWatcher;

@@ -17,8 +17,8 @@ package org.droidparts.widget;
 
 import static org.droidparts.util.Strings.isNotEmpty;
 
-import org.droidparts.adapter.ui.TextWatcherAdapter;
-import org.droidparts.adapter.ui.TextWatcherAdapter.TextWatcherListener;
+import org.droidparts.adapter.widget.TextWatcherAdapter;
+import org.droidparts.adapter.widget.TextWatcherAdapter.TextWatcherListener;
 
 import android.content.Context;
 import android.graphics.drawable.Drawable;

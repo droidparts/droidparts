@@ -18,7 +18,7 @@ package org.droidparts.gram.adapter;
 import static org.droidparts.util.Strings.join;
 
 import org.droidparts.adapter.cursor.EntityCursorAdapter;
-import org.droidparts.adapter.tag.IconText2Tag;
+import org.droidparts.adapter.holder.IconText2Holder;
 import org.droidparts.annotation.inject.InjectDependency;
 import org.droidparts.gram.R;
 import org.droidparts.gram.model.Image;
@@ -50,10 +50,10 @@ public class ImageListAdapter extends EntityCursorAdapter<Image> implements
 	@Override
 	public final View newView(Context ctx, Cursor cursor, ViewGroup parent) {
 		View view = layoutInflater.inflate(R.layout.list_row_image, null);
-		IconText2Tag tag = new IconText2Tag(view);
-		view.setTag(tag);
+		IconText2Holder holder = new IconText2Holder(view);
+		view.setTag(holder);
 		if (placeholderDrawable == null) {
-			placeholderDrawable = tag.icon.getDrawable();
+			placeholderDrawable = holder.icon.getDrawable();
 		}
 		return view;
 	}
@@ -61,11 +61,11 @@ public class ImageListAdapter extends EntityCursorAdapter<Image> implements
 	@Override
 	public void bindView(Context ctx, View view, Image item) {
 		entityManager.fillForeignKeys(item);
-		IconText2Tag tag = (IconText2Tag) view.getTag();
-		tag.text1.setText(item.captionText);
-		tag.text2.setText(buildDescription(item));
-		tag.icon.setImageDrawable(placeholderDrawable);
-		imageFetcher.attachImage(tag.icon, item.thumbnailUrl, 400);
+		IconText2Holder holder = (IconText2Holder) view.getTag();
+		holder.text1.setText(item.captionText);
+		holder.text2.setText(buildDescription(item));
+		holder.icon.setImageDrawable(placeholderDrawable);
+		imageFetcher.attachImage(holder.icon, item.thumbnailUrl, 400);
 	}
 
 	private Spanned buildDescription(Image img) {
