@@ -23,6 +23,7 @@ import static org.droidparts.util.Strings.isNotEmpty;
 import java.io.BufferedInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.lang.ref.WeakReference;
 import java.util.LinkedHashMap;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -93,7 +94,7 @@ public class ImageFetcher {
 		if (executePendingTasks) {
 			for (ImageView iv : todo.keySet()) {
 				Spec spec = todo.get(iv);
-				attachImage(iv, spec.imgUrl, spec.inBitmap,
+				attachImage(iv, spec.imgUrl, spec.inBitmapRef.get(),
 						spec.crossFadeMillis, spec.reshaper, spec.listener);
 			}
 		}
@@ -204,7 +205,7 @@ public class ImageFetcher {
 			byte[] data = baos.toByteArray();
 			Pair<Bitmap, BitmapFactory.Options> bm = BitmapFactoryUtils
 					.decodeScaled(data, spec.widthHint, spec.heightHint,
-							spec.configHint, spec.inBitmap);
+							spec.configHint, spec.inBitmapRef.get());
 			return Pair.create(data, bm);
 		} finally {
 			silentlyClose(bis, baos);
@@ -219,7 +220,7 @@ public class ImageFetcher {
 		if (bm == null && diskCache != null) {
 			Pair<Bitmap, BitmapFactory.Options> bmData = diskCache.get(
 					spec.cacheKey, spec.widthHint, spec.heightHint,
-					spec.configHint, spec.inBitmap);
+					spec.configHint, spec.inBitmapRef.get());
 			if (bmData != null) {
 				bm = bmData.first;
 				if (memoryCache != null) {
@@ -227,7 +228,8 @@ public class ImageFetcher {
 				}
 			} else {
 				bmData = diskCache.get(spec.imgUrl, spec.widthHint,
-						spec.heightHint, spec.configHint, spec.inBitmap);
+						spec.heightHint, spec.configHint,
+						spec.inBitmapRef.get());
 				if (bmData != null) {
 					bm = reshapeAndCache(spec, bmData);
 				}
@@ -288,7 +290,7 @@ public class ImageFetcher {
 
 		final ImageView imgView;
 		final String imgUrl;
-		final Bitmap inBitmap;
+		final WeakReference<Bitmap> inBitmapRef;
 		final int crossFadeMillis;
 		final ImageReshaper reshaper;
 		final ImageFetchListener listener;
@@ -303,7 +305,7 @@ public class ImageFetcher {
 				ImageFetchListener listener) {
 			this.imgView = imgView;
 			this.imgUrl = imgUrl;
-			this.inBitmap = inBitmap;
+			inBitmapRef = new WeakReference<Bitmap>(inBitmap);
 			this.crossFadeMillis = crossFadeMillis;
 			this.reshaper = reshaper;
 			this.listener = listener;
