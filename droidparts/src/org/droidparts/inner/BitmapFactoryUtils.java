@@ -46,7 +46,7 @@ public class BitmapFactoryUtils {
 	}
 
 	public static Pair<Bitmap, BitmapFactory.Options> decodeScaled(byte[] data,
-			int reqWidth, int reqHeight, Bitmap.Config config)
+			int reqWidth, int reqHeight, Bitmap.Config config, Bitmap inBitmap)
 			throws IOException {
 		BitmapFactory.Options opts = new BitmapFactory.Options();
 		boolean gotSizeHint = (reqWidth > 0) || (reqHeight > 0);
@@ -61,13 +61,25 @@ public class BitmapFactoryUtils {
 				opts.inSampleSize = calcInSampleSize(opts, reqWidth, reqHeight);
 				opts.inJustDecodeBounds = false;
 			}
+			opts.inBitmap = inBitmap;
 		}
 		Bitmap bm = null;
 		try {
 			bm = BitmapFactory.decodeByteArray(data, 0, data.length, opts);
 		} catch (Throwable t) {
 			System.gc();
-			throw new IOException(t);
+			if (inBitmap != null) {
+				opts.inBitmap = null;
+				try {
+					bm = BitmapFactory.decodeByteArray(data, 0, data.length,
+							opts);
+				} catch (Throwable th) {
+					System.gc();
+					throw new IOException(th);
+				}
+			} else {
+				throw new IOException(t);
+			}
 		}
 		if (bm == null) {
 			throw new IOException("BitmapFactory returned null.");
