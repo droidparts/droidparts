@@ -22,7 +22,6 @@ import static org.droidparts.util.Strings.isNotEmpty;
 
 import java.io.BufferedInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.lang.ref.WeakReference;
 import java.util.LinkedHashMap;
 import java.util.concurrent.ConcurrentHashMap;
@@ -145,7 +144,7 @@ public class ImageFetcher {
 	}
 
 	public Bitmap getImage(String imgUrl, ImageReshaper reshaper,
-			ImageView hintImageView) throws IOException {
+			ImageView hintImageView) throws Exception {
 		Spec spec = new Spec(hintImageView, imgUrl, null, 0, reshaper, null);
 		Bitmap bm = readCached(spec);
 		if (bm == null) {
@@ -177,7 +176,7 @@ public class ImageFetcher {
 	//
 
 	Pair<byte[], Pair<Bitmap, BitmapFactory.Options>> fetchAndDecode(
-			final Spec spec) throws IOException {
+			final Spec spec) throws Exception {
 		int bytesReadTotal = 0;
 		byte[] buffer = new byte[BUFFER_SIZE];
 		BufferedInputStream bis = null;
