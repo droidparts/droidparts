@@ -83,7 +83,7 @@ public class ImageDetailFragment extends DialogFragment implements
 			tagsView.setText(join(img.tags, ", ", null));
 		}
 		ImageFetcher imageFetcher = new ImageFetcher(getActivity());
-		imageFetcher.attachImage(imgView, img.imageUrl, null, 0, null, this);
+		imageFetcher.attachImage(imgView, img.imageUrl, 0, null, this);
 	}
 
 	@Override

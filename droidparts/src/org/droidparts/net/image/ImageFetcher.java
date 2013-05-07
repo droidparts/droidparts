@@ -93,8 +93,8 @@ public class ImageFetcher {
 		if (executePendingTasks) {
 			for (ImageView iv : todo.keySet()) {
 				Spec spec = todo.get(iv);
-				attachImage(iv, spec.imgUrl, spec.inBitmapRef.get(),
-						spec.crossFadeMillis, spec.reshaper, spec.listener);
+				attachImage(iv, spec.imgUrl, spec.crossFadeMillis,
+						spec.reshaper, spec.listener, spec.inBitmapRef.get());
 			}
 		}
 		todo.clear();
@@ -113,12 +113,19 @@ public class ImageFetcher {
 
 	public void attachImage(ImageView imageView, String imgUrl,
 			int crossFadeMillis, ImageReshaper reshaper) {
-		attachImage(imageView, imgUrl, null, crossFadeMillis, reshaper, null);
+		attachImage(imageView, imgUrl, crossFadeMillis, reshaper, null);
 	}
 
 	public void attachImage(ImageView imageView, String imgUrl,
-			Bitmap inBitmap, int crossFadeMillis, ImageReshaper reshaper,
+			int crossFadeMillis, ImageReshaper reshaper,
 			ImageFetchListener listener) {
+		attachImage(imageView, imgUrl, crossFadeMillis, reshaper, listener,
+				null);
+	}
+
+	public void attachImage(ImageView imageView, String imgUrl,
+			int crossFadeMillis, ImageReshaper reshaper,
+			ImageFetchListener listener, Bitmap inBitmap) {
 		long submitted = System.nanoTime();
 		wip.put(imageView, submitted);
 		Spec spec = new Spec(imageView, imgUrl, inBitmap, crossFadeMillis,
