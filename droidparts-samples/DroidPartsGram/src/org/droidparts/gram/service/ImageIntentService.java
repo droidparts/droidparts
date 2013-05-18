@@ -18,12 +18,12 @@ package org.droidparts.gram.service;
 import java.util.ArrayList;
 
 import org.droidparts.annotation.inject.InjectDependency;
+import org.droidparts.executor.SimpleIntentService;
 import org.droidparts.gram.contract.Instagram;
 import org.droidparts.gram.model.Image;
 import org.droidparts.gram.persist.ImageEntityManager;
 import org.droidparts.gram.persist.ImageSerializer;
 import org.droidparts.net.http.RESTClient2;
-import org.droidparts.service.SimpleIntentService;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -67,7 +67,7 @@ public class ImageIntentService extends SimpleIntentService {
 	}
 
 	@Override
-	protected Bundle execute(String action, Bundle data) throws Exception {
+	protected Bundle onExecute(String action, Bundle data) throws Exception {
 		if (ACTION_REFRESH.equals(action)) {
 			JSONObject obj = restClient.getJSONObject(refreshUri.toString());
 			JSONArray arr = obj.getJSONArray("data");
@@ -76,7 +76,7 @@ public class ImageIntentService extends SimpleIntentService {
 			imageEntityManager.create(list);
 			return data;
 		} else {
-			throw new IllegalArgumentException("Unsupported action: " + action);
+			throw new UnsupportedOperationException(action);
 		}
 	}
 }

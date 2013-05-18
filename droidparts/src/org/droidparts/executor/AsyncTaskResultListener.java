@@ -13,19 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License. 
  */
-package org.droidparts.service;
+package org.droidparts.executor;
 
-import org.droidparts.Injector;
+public interface AsyncTaskResultListener<Result> {
 
-public abstract class IntentService extends android.app.IntentService {
+	void onAsyncTaskSuccess(Result result);
 
-	public IntentService(String name) {
-		super(name);
-	}
+	void onAsyncTaskFailure(Exception e);
 
-	@Override
-	public void onCreate() {
-		super.onCreate();
-		Injector.inject(this);
-	}
 }

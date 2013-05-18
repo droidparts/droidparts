@@ -13,32 +13,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License. 
  */
-package org.droidparts.task;
+package org.droidparts.executor;
 
 import org.droidparts.Injector;
-import org.droidparts.task.listener.AsyncTaskProgressListener;
-import org.droidparts.task.listener.AsyncTaskResultListener;
 import org.droidparts.util.L;
 
 import android.content.Context;
 import android.util.Pair;
 
 public abstract class AsyncTask<Params, Progress, Result> extends
-		android.os.AsyncTask<Params, Progress, Pair<Exception, Result>> {
+		android.os.AsyncTask<Params, Progress, Pair<Result, Exception>> {
 
 	private final Context ctx;
-	private final AsyncTaskProgressListener progressListener;
 	private final AsyncTaskResultListener<Result> resultListener;
 
 	public AsyncTask(Context ctx) {
-		this(ctx, null, null);
+		this(ctx, null);
 	}
 
-	public AsyncTask(Context ctx, AsyncTaskProgressListener progressListener,
-			AsyncTaskResultListener<Result> resultListener) {
+	public AsyncTask(Context ctx, AsyncTaskResultListener<Result> resultListener) {
 		Injector.inject(ctx, this);
 		this.ctx = ctx.getApplicationContext();
-		this.progressListener = progressListener;
 		this.resultListener = resultListener;
 	}
 
@@ -46,51 +41,30 @@ public abstract class AsyncTask<Params, Progress, Result> extends
 		return ctx;
 	}
 
-	public AsyncTaskProgressListener getProgressListener() {
-		return progressListener;
-	}
-
 	@Override
-	protected void onPreExecute() {
-		if (progressListener != null) {
-			progressListener.show();
-		}
-	}
-
-	@Override
-	protected void onCancelled() {
-		if (progressListener != null) {
-			progressListener.dismiss();
-		}
-	}
-
-	@Override
-	protected final Pair<Exception, Result> doInBackground(Params... params) {
+	protected final Pair<Result, Exception> doInBackground(Params... params) {
 		Result res = null;
 		Exception ex = null;
 		try {
 			long start = System.currentTimeMillis();
-			res = executeInBackground(params);
+			res = onExecute(params);
 			L.i("Executed %s in %d ms.", getClass().getSimpleName(),
 					(System.currentTimeMillis() - start));
 		} catch (Exception e) {
 			L.w(e);
 			ex = e;
 		}
-		return new Pair<Exception, Result>(ex, res);
+		return new Pair<Result, Exception>(res, ex);
 	}
 
 	@Override
-	protected final void onPostExecute(Pair<Exception, Result> result) {
+	protected final void onPostExecute(Pair<Result, Exception> result) {
 		// try-catch to avoid lifecycle-related crashes
 		try {
-			if (progressListener != null) {
-				progressListener.dismiss();
-			}
-			if (result.first != null) {
-				onFailurePostExecute(result.first);
+			if (result.first == null) {
+				onPostExecuteSuccess(result.first);
 			} else {
-				onSuccessPostExecute(result.second);
+				onPostExecuteFailure(result.second);
 			}
 		} catch (Throwable t) {
 			L.w(t.getMessage());
@@ -98,16 +72,15 @@ public abstract class AsyncTask<Params, Progress, Result> extends
 		}
 	}
 
-	public abstract Result executeInBackground(Params... params)
-			throws Exception;
+	public abstract Result onExecute(Params... params) throws Exception;
 
-	protected void onSuccessPostExecute(Result result) {
+	protected void onPostExecuteSuccess(Result result) {
 		if (resultListener != null) {
 			resultListener.onAsyncTaskSuccess(result);
 		}
 	}
 
-	protected void onFailurePostExecute(Exception exception) {
+	protected void onPostExecuteFailure(Exception exception) {
 		if (resultListener != null) {
 			resultListener.onAsyncTaskFailure(exception);
 		}

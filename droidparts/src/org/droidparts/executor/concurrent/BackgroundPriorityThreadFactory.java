@@ -13,25 +13,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License. 
  */
-package org.droidparts.task;
+package org.droidparts.executor.concurrent;
 
-import org.droidparts.task.listener.AsyncTaskResultListener;
+import java.util.concurrent.ThreadFactory;
 
-import android.content.Context;
+import android.os.Process;
 
-public abstract class SimpleAsyncTask<Result> extends
-		AsyncTask<Void, Void, Result> {
-
-	public SimpleAsyncTask(Context ctx,
-			AsyncTaskResultListener<Result> resultListener) {
-		super(ctx, null, resultListener);
-	}
+public class BackgroundPriorityThreadFactory implements ThreadFactory {
 
 	@Override
-	public final Result executeInBackground(Void... params) throws Exception {
-		return executeInBackground();
+	public Thread newThread(Runnable r) {
+		return new Thread(r) {
+			@Override
+			public void run() {
+				Process.setThreadPriority(Process.THREAD_PRIORITY_BACKGROUND);
+				super.run();
+			}
+		};
 	}
-
-	protected abstract Result executeInBackground() throws Exception;
 
 }

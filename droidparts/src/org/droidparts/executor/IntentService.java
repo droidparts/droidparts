@@ -13,16 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License. 
  */
-package org.droidparts.service;
+package org.droidparts.executor;
 
-import android.os.Handler;
-import android.os.Looper;
-import android.os.ResultReceiver;
+import org.droidparts.Injector;
 
-public class MainThreadResultReceiver extends ResultReceiver {
+public abstract class IntentService extends android.app.IntentService {
 
-	public MainThreadResultReceiver() {
-		super(new Handler(Looper.getMainLooper()));
+	public IntentService(String name) {
+		super(name);
 	}
 
+	@Override
+	public void onCreate() {
+		super.onCreate();
+		Injector.inject(this);
+	}
 }

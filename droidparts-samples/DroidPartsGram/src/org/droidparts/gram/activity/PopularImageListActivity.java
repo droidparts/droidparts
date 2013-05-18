@@ -24,10 +24,12 @@ import org.droidparts.gram.fragment.ImageListFragment;
 import org.droidparts.gram.model.Image;
 import org.droidparts.gram.persist.ImageEntityManager;
 import org.droidparts.gram.service.ImageIntentService;
-import org.droidparts.service.MainThreadResultReceiver;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
+import android.os.ResultReceiver;
 
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
@@ -89,7 +91,8 @@ public class PopularImageListActivity extends
 		getFragment().setContent(adapter);
 	}
 
-	private MainThreadResultReceiver refreshResultReceiver = new MainThreadResultReceiver() {
+	private ResultReceiver refreshResultReceiver = new ResultReceiver(
+			new Handler(Looper.getMainLooper())) {
 
 		protected void onReceiveResult(int resultCode, Bundle resultData) {
 			setActionBarLoadingIndicatorVisible(false);

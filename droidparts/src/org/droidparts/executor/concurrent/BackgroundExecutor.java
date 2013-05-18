@@ -13,16 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License. 
  */
-package org.droidparts.service;
+package org.droidparts.executor.concurrent;
 
-import org.droidparts.Injector;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
-public abstract class Service extends android.app.Service {
+public class BackgroundExecutor extends ThreadPoolExecutor {
 
-	@Override
-	public void onCreate() {
-		super.onCreate();
-		Injector.inject(this);
+	public BackgroundExecutor(int nThreads) {
+		super(nThreads, nThreads, 0L, TimeUnit.MILLISECONDS,
+				new LinkedBlockingQueue<Runnable>(),
+				new BackgroundPriorityThreadFactory());
 	}
 
 }
