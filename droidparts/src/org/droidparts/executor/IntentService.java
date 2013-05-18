@@ -15,9 +15,40 @@
  */
 package org.droidparts.executor;
 
+import static android.app.Activity.RESULT_CANCELED;
+import static android.app.Activity.RESULT_OK;
+
 import org.droidparts.Injector;
+import org.droidparts.util.L;
+
+import android.content.Context;
+import android.content.Intent;
+import android.os.Bundle;
+import android.os.ResultReceiver;
 
 public abstract class IntentService extends android.app.IntentService {
+
+	// in
+	private static final String EXTRA_RESULT_RECEIVER = "_result_receiver";
+
+	// out
+	public static final String EXTRA_ACTION = "_action";
+	public static final String EXTRA_EXCEPTION = "_exception";
+
+	public static final Intent getIntent(Context ctx,
+			Class<? extends IntentService> cls, String action) {
+		Intent intent = new Intent(ctx, cls);
+		intent.setAction(action);
+		return intent;
+	}
+
+	public static final Intent getIntent(Context ctx,
+			Class<? extends IntentService> cls, String action,
+			ResultReceiver resultReceiver) {
+		Intent intent = getIntent(ctx, cls, action);
+		intent.putExtra(EXTRA_RESULT_RECEIVER, resultReceiver);
+		return intent;
+	}
 
 	public IntentService(String name) {
 		super(name);
@@ -28,4 +59,32 @@ public abstract class IntentService extends android.app.IntentService {
 		super.onCreate();
 		Injector.inject(this);
 	}
+
+	@Override
+	protected final void onHandleIntent(Intent intent) {
+		String action = intent.getAction();
+		Bundle data = intent.getExtras();
+		if (data == null) {
+			data = new Bundle();
+		}
+		ResultReceiver resultReceiver = data
+				.getParcelable(EXTRA_RESULT_RECEIVER);
+		data.putString(EXTRA_ACTION, action);
+		try {
+			data = onExecute(action, data);
+			if (resultReceiver != null) {
+				resultReceiver.send(RESULT_OK, data);
+			}
+		} catch (Exception e) {
+			L.w(e);
+			if (resultReceiver != null) {
+				data.putSerializable(EXTRA_EXCEPTION, e);
+				resultReceiver.send(RESULT_CANCELED, data);
+			}
+		}
+	}
+
+	protected abstract Bundle onExecute(String action, Bundle data)
+			throws Exception;
+
 }

@@ -18,7 +18,7 @@ package org.droidparts.gram.service;
 import java.util.ArrayList;
 
 import org.droidparts.annotation.inject.InjectDependency;
-import org.droidparts.executor.SimpleIntentService;
+import org.droidparts.executor.IntentService;
 import org.droidparts.gram.contract.Instagram;
 import org.droidparts.gram.model.Image;
 import org.droidparts.gram.persist.ImageEntityManager;
@@ -33,7 +33,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.ResultReceiver;
 
-public class ImageIntentService extends SimpleIntentService {
+public class ImageIntentService extends IntentService {
 
 	private static final String ACTION_REFRESH = "refresh";
 
