@@ -16,15 +16,13 @@
 package org.droidparts.gram.fragment;
 
 import org.droidparts.annotation.inject.InjectParentActivity;
-import org.droidparts.contract.AlterableContent;
 import org.droidparts.fragment.sherlock.ListFragment;
 import org.droidparts.gram.adapter.ImageListAdapter;
 
 import android.view.View;
 import android.widget.ListView;
 
-public class ImageListFragment extends ListFragment implements
-		AlterableContent<ImageListAdapter> {
+public class ImageListFragment extends ListFragment {
 
 	public static interface Listener {
 
@@ -36,14 +34,13 @@ public class ImageListFragment extends ListFragment implements
 	private Listener listener;
 
 	@Override
+	public void onListItemClick(ListView l, View v, int position, long id) {
+		listener.doShowImageDetail(position);
+	}
+
 	public void setContent(ImageListAdapter adapter) {
 		setListAdapter(adapter);
 		getListView().setOnScrollListener(adapter);
-	}
-
-	@Override
-	public void onListItemClick(ListView l, View v, int position, long id) {
-		listener.doShowImageDetail(position);
 	}
 
 }
