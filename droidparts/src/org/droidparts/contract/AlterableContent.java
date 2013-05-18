@@ -13,26 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License. 
  */
-package org.droidparts.adapter.array;
+package org.droidparts.contract;
 
-import java.util.Arrays;
-import java.util.List;
+public interface AlterableContent<T> {
 
-import android.widget.Spinner;
-
-public class StringSpinnerAdapter extends SpinnerAdapter<String> {
-
-	public StringSpinnerAdapter(Spinner spinner, int stringArrResId) {
-		this(spinner, spinner.getContext().getResources()
-				.getStringArray(stringArrResId));
-	}
-
-	public StringSpinnerAdapter(Spinner spinner, String[] arr) {
-		this(spinner, Arrays.asList(arr));
-	}
-
-	public StringSpinnerAdapter(Spinner spinner, List<String> list) {
-		super(spinner, list);
-	}
+	public void setContent(T content);
 
 }

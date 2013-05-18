@@ -19,11 +19,13 @@ import java.util.List;
 
 import org.droidparts.Injector;
 import org.droidparts.annotation.inject.InjectSystemService;
+import org.droidparts.contract.AlterableContent;
 
 import android.content.Context;
 import android.view.LayoutInflater;
 
-public class ArrayAdapter<T> extends android.widget.ArrayAdapter<T> {
+public class ArrayAdapter<T> extends android.widget.ArrayAdapter<T> implements
+		AlterableContent<List<T>> {
 
 	@InjectSystemService
 	protected LayoutInflater layoutInflater;
@@ -42,7 +44,8 @@ public class ArrayAdapter<T> extends android.widget.ArrayAdapter<T> {
 		Injector.inject(ctx, this);
 	}
 
-	public void changeData(List<T> list) {
+	@Override
+	public void setContent(List<T> list) {
 		clear();
 		for (T item : list) {
 			add(item);

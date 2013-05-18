@@ -141,7 +141,7 @@ public class ImagePicker {
 			if (deleteAvailable) {
 				options.add(loc.delete);
 			}
-			changeData(options);
+			setContent(options);
 		}
 
 		@Override
