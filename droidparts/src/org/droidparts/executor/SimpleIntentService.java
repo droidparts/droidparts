@@ -18,14 +18,11 @@ package org.droidparts.executor;
 import static android.app.Activity.RESULT_CANCELED;
 import static android.app.Activity.RESULT_OK;
 
-import java.lang.reflect.Field;
-
 import org.droidparts.util.L;
 
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
 import android.os.ResultReceiver;
 
 public abstract class SimpleIntentService extends IntentService {
@@ -52,24 +49,8 @@ public abstract class SimpleIntentService extends IntentService {
 		return intent;
 	}
 
-	private Handler mServiceHandler;
-
 	public SimpleIntentService(String name) {
 		super(name);
-		try {
-			Field f = android.app.IntentService.class
-					.getDeclaredField("mServiceHandler");
-			f.setAccessible(true);
-			mServiceHandler = (Handler) f.get(this);
-		} catch (Exception e) {
-			L.w(e);
-		}
-	}
-
-	public void removePendingIntents() {
-		if (mServiceHandler != null) {
-			mServiceHandler.removeMessages(0);
-		}
 	}
 
 	@Override
