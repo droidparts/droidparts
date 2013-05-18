@@ -15,9 +15,11 @@
  */
 package org.droidparts;
 
+import org.droidparts.inner.ConverterRegistry;
 import org.droidparts.inner.ReflectionUtils;
+import org.droidparts.inner.converter.Converter;
 
-public class Application extends android.app.Application {
+public abstract class AbstractApplication extends android.app.Application {
 
 	@Override
 	public void onCreate() {
@@ -32,6 +34,12 @@ public class Application extends android.app.Application {
 	public void onTerminate() {
 		// XXX doesn't get called
 		Injector.tearDown();
+	}
+
+	public final void registerConverters(Converter<?>... converters) {
+		for (Converter<?> converter : converters) {
+			ConverterRegistry.registerConverter(converter);
+		}
 	}
 
 }
