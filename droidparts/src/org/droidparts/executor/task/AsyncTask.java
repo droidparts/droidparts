@@ -61,7 +61,7 @@ public abstract class AsyncTask<Params, Progress, Result> extends
 	protected final void onPostExecute(Pair<Result, Exception> result) {
 		// try-catch to avoid lifecycle-related crashes
 		try {
-			if (result.first == null) {
+			if (result.first != null) {
 				onPostExecuteSuccess(result.first);
 			} else {
 				onPostExecuteFailure(result.second);
