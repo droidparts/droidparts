@@ -18,7 +18,7 @@ package org.droidparts.gram.service;
 import java.util.ArrayList;
 
 import org.droidparts.annotation.inject.InjectDependency;
-import org.droidparts.executor.IntentService;
+import org.droidparts.executor.service.IntentService;
 import org.droidparts.gram.contract.Instagram;
 import org.droidparts.gram.model.Image;
 import org.droidparts.gram.persist.ImageEntityManager;

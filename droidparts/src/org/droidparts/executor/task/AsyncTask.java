@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License. 
  */
-package org.droidparts.executor;
+package org.droidparts.executor.task;
 
 import org.droidparts.Injector;
 import org.droidparts.util.L;
@@ -72,7 +72,7 @@ public abstract class AsyncTask<Params, Progress, Result> extends
 		}
 	}
 
-	public abstract Result onExecute(Params... params) throws Exception;
+	protected abstract Result onExecute(Params... params) throws Exception;
 
 	protected void onPostExecuteSuccess(Result result) {
 		if (resultListener != null) {
