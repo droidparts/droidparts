@@ -19,21 +19,7 @@ import java.util.regex.Pattern;
 
 import android.widget.EditText;
 
-public abstract class EditTextValidator {
-
-	public static class ValidationException extends Exception {
-		private static final long serialVersionUID = 1L;
-
-		public final EditText editText;
-		public final String errorMessage;
-
-		public ValidationException(EditText et, String errMsg) {
-			super(errMsg);
-			this.editText = et;
-			this.errorMessage = errMsg;
-		}
-
-	}
+public class EditTextValidator {
 
 	// Typical handling:
 	// editText.setError(errMsg);
@@ -78,6 +64,20 @@ public abstract class EditTextValidator {
 
 	public static String getTrimmedText(EditText et) {
 		return et.getText().toString().trim();
+	}
+
+	public static class ValidationException extends Exception {
+		private static final long serialVersionUID = 1L;
+
+		public final EditText editText;
+		public final String errorMessage;
+
+		public ValidationException(EditText et, String errMsg) {
+			super(errMsg);
+			this.editText = et;
+			this.errorMessage = errMsg;
+		}
+
 	}
 
 }
