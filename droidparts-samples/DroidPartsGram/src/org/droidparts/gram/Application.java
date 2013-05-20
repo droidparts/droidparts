@@ -15,6 +15,8 @@
  */
 package org.droidparts.gram;
 
-public class Application extends org.droidparts.Application {
+import org.droidparts.AbstractApplication;
+
+public class Application extends AbstractApplication {
 
 }

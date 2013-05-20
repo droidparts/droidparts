@@ -13,25 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License. 
  */
-package org.droidparts.adapter.array;
+package org.droidparts.executor.concurrent;
 
-import java.util.Arrays;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
-import android.widget.Spinner;
+public class BackgroundExecutor extends ThreadPoolExecutor {
 
-public class StringSpinnerAdapter extends SpinnerAdapter<String> {
-
-	public StringSpinnerAdapter(Spinner spinner, int stringArrResId) {
-		this(spinner, getArr(spinner, stringArrResId));
-	}
-
-	public StringSpinnerAdapter(Spinner spinner, String[] arr) {
-		super(spinner, Arrays.asList(arr));
-	}
-
-	private static String[] getArr(Spinner spinner, int stringArrResId) {
-		return spinner.getContext().getResources()
-				.getStringArray(stringArrResId);
+	public BackgroundExecutor(int nThreads) {
+		super(nThreads, nThreads, 0L, TimeUnit.MILLISECONDS,
+				new LinkedBlockingQueue<Runnable>(),
+				new BackgroundPriorityThreadFactory());
 	}
 
 }

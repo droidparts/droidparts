@@ -22,14 +22,14 @@ import static org.droidparts.util.Strings.isNotEmpty;
 
 import java.io.BufferedInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.IOException;
+import java.lang.ref.WeakReference;
 import java.util.LinkedHashMap;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ThreadPoolExecutor;
 
 import org.droidparts.contract.HTTP.Header;
+import org.droidparts.executor.concurrent.BackgroundExecutor;
 import org.droidparts.inner.BitmapFactoryUtils;
-import org.droidparts.net.concurrent.BackgroundExecutor;
 import org.droidparts.net.http.HTTPResponse;
 import org.droidparts.net.http.RESTClient;
 import org.droidparts.net.http.worker.HTTPWorker;
@@ -94,7 +94,7 @@ public class ImageFetcher {
 			for (ImageView iv : todo.keySet()) {
 				Spec spec = todo.get(iv);
 				attachImage(iv, spec.imgUrl, spec.crossFadeMillis,
-						spec.reshaper, spec.listener);
+						spec.reshaper, spec.listener, spec.inBitmapRef.get());
 			}
 		}
 		todo.clear();
@@ -119,10 +119,17 @@ public class ImageFetcher {
 	public void attachImage(ImageView imageView, String imgUrl,
 			int crossFadeMillis, ImageReshaper reshaper,
 			ImageFetchListener listener) {
+		attachImage(imageView, imgUrl, crossFadeMillis, reshaper, listener,
+				null);
+	}
+
+	public void attachImage(ImageView imageView, String imgUrl,
+			int crossFadeMillis, ImageReshaper reshaper,
+			ImageFetchListener listener, Bitmap inBitmap) {
 		long submitted = System.nanoTime();
 		wip.put(imageView, submitted);
-		Spec spec = new Spec(imageView, imgUrl, crossFadeMillis, reshaper,
-				listener);
+		Spec spec = new Spec(imageView, imgUrl, inBitmap, crossFadeMillis,
+				reshaper, listener);
 		if (paused) {
 			todo.remove(imageView);
 			todo.put(imageView, spec);
@@ -144,8 +151,8 @@ public class ImageFetcher {
 	}
 
 	public Bitmap getImage(String imgUrl, ImageReshaper reshaper,
-			ImageView hintImageView) throws IOException {
-		Spec spec = new Spec(hintImageView, imgUrl, 0, reshaper, null);
+			ImageView hintImageView) throws Exception {
+		Spec spec = new Spec(hintImageView, imgUrl, null, 0, reshaper, null);
 		Bitmap bm = readCached(spec);
 		if (bm == null) {
 			Pair<byte[], Pair<Bitmap, BitmapFactory.Options>> bmData = fetchAndDecode(spec);
@@ -176,7 +183,7 @@ public class ImageFetcher {
 	//
 
 	Pair<byte[], Pair<Bitmap, BitmapFactory.Options>> fetchAndDecode(
-			final Spec spec) throws IOException {
+			final Spec spec) throws Exception {
 		int bytesReadTotal = 0;
 		byte[] buffer = new byte[BUFFER_SIZE];
 		BufferedInputStream bis = null;
@@ -204,7 +211,7 @@ public class ImageFetcher {
 			byte[] data = baos.toByteArray();
 			Pair<Bitmap, BitmapFactory.Options> bm = BitmapFactoryUtils
 					.decodeScaled(data, spec.widthHint, spec.heightHint,
-							spec.configHint);
+							spec.configHint, spec.inBitmapRef.get());
 			return Pair.create(data, bm);
 		} finally {
 			silentlyClose(bis, baos);
@@ -219,7 +226,7 @@ public class ImageFetcher {
 		if (bm == null && diskCache != null) {
 			Pair<Bitmap, BitmapFactory.Options> bmData = diskCache.get(
 					spec.cacheKey, spec.widthHint, spec.heightHint,
-					spec.configHint);
+					spec.configHint, spec.inBitmapRef.get());
 			if (bmData != null) {
 				bm = bmData.first;
 				if (memoryCache != null) {
@@ -227,7 +234,8 @@ public class ImageFetcher {
 				}
 			} else {
 				bmData = diskCache.get(spec.imgUrl, spec.widthHint,
-						spec.heightHint, spec.configHint);
+						spec.heightHint, spec.configHint,
+						spec.inBitmapRef.get());
 				if (bmData != null) {
 					bm = reshapeAndCache(spec, bmData);
 				}
@@ -288,6 +296,7 @@ public class ImageFetcher {
 
 		final ImageView imgView;
 		final String imgUrl;
+		final WeakReference<Bitmap> inBitmapRef;
 		final int crossFadeMillis;
 		final ImageReshaper reshaper;
 		final ImageFetchListener listener;
@@ -297,10 +306,12 @@ public class ImageFetcher {
 		final int widthHint;
 		final int heightHint;
 
-		public Spec(ImageView imgView, String imgUrl, int crossFadeMillis,
-				ImageReshaper reshaper, ImageFetchListener listener) {
+		public Spec(ImageView imgView, String imgUrl, Bitmap inBitmap,
+				int crossFadeMillis, ImageReshaper reshaper,
+				ImageFetchListener listener) {
 			this.imgView = imgView;
 			this.imgUrl = imgUrl;
+			inBitmapRef = new WeakReference<Bitmap>(inBitmap);
 			this.crossFadeMillis = crossFadeMillis;
 			this.reshaper = reshaper;
 			this.listener = listener;

@@ -23,7 +23,7 @@ import static android.provider.MediaStore.ACTION_IMAGE_CAPTURE;
 import java.io.File;
 import java.util.ArrayList;
 
-import org.droidparts.adapter.array.ArrayAdapter;
+import org.droidparts.adapter.widget.ArrayAdapter;
 import org.droidparts.util.L;
 
 import android.app.Activity;
@@ -141,7 +141,7 @@ public class ImagePicker {
 			if (deleteAvailable) {
 				options.add(loc.delete);
 			}
-			changeData(options);
+			setContent(options);
 		}
 
 		@Override

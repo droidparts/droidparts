@@ -17,6 +17,7 @@ package org.droidparts.gram.activity;
 
 import org.droidparts.activity.sherlock.SingleFragmentActivity;
 import org.droidparts.annotation.inject.InjectDependency;
+import org.droidparts.executor.service.MainThreadResultReceiver;
 import org.droidparts.gram.R;
 import org.droidparts.gram.adapter.ImageListAdapter;
 import org.droidparts.gram.fragment.ImageDetailFragment;
@@ -24,7 +25,6 @@ import org.droidparts.gram.fragment.ImageListFragment;
 import org.droidparts.gram.model.Image;
 import org.droidparts.gram.persist.ImageEntityManager;
 import org.droidparts.gram.service.ImageIntentService;
-import org.droidparts.service.MainThreadResultReceiver;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -89,8 +89,9 @@ public class PopularImageListActivity extends
 		getFragment().setContent(adapter);
 	}
 
-	private MainThreadResultReceiver refreshResultReceiver = new MainThreadResultReceiver() {
+	private final MainThreadResultReceiver refreshResultReceiver = new MainThreadResultReceiver() {
 
+		@Override
 		protected void onReceiveResult(int resultCode, Bundle resultData) {
 			setActionBarLoadingIndicatorVisible(false);
 			setAdapter();

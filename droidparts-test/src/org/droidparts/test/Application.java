@@ -1,5 +1,7 @@
 package org.droidparts.test;
 
-public class Application extends org.droidparts.Application {
+import org.droidparts.AbstractApplication;
+
+public class Application extends AbstractApplication {
 
 }

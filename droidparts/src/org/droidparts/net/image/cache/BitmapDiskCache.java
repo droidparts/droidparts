@@ -91,7 +91,7 @@ public class BitmapDiskCache {
 	}
 
 	public Pair<Bitmap, BitmapFactory.Options> get(String key, int reqWidth,
-			int reqHeight, Bitmap.Config config) {
+			int reqHeight, Bitmap.Config config, Bitmap inBitmap) {
 		Pair<Bitmap, BitmapFactory.Options> bmData = null;
 		File file = getCachedFile(key);
 		if (file.exists()) {
@@ -100,7 +100,7 @@ public class BitmapDiskCache {
 				fis = new FileInputStream(file);
 				byte[] data = readToByteArray(fis);
 				bmData = BitmapFactoryUtils.decodeScaled(data, reqWidth,
-						reqHeight, config);
+						reqHeight, config, inBitmap);
 				file.setLastModified(System.currentTimeMillis());
 			} catch (Exception e) {
 				L.w(e);

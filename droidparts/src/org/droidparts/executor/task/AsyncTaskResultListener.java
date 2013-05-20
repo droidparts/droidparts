@@ -13,16 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License. 
  */
-package org.droidparts.service;
+package org.droidparts.executor.task;
 
-import android.os.Handler;
-import android.os.Looper;
-import android.os.ResultReceiver;
+public interface AsyncTaskResultListener<Result> {
 
-public class MainThreadResultReceiver extends ResultReceiver {
+	void onAsyncTaskSuccess(Result result);
 
-	public MainThreadResultReceiver() {
-		super(new Handler(Looper.getMainLooper()));
-	}
+	void onAsyncTaskFailure(Exception e);
 
 }

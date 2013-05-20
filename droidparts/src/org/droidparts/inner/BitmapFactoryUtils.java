@@ -17,9 +17,12 @@ package org.droidparts.inner;
 
 import java.io.IOException;
 
+import org.droidparts.util.L;
+
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Point;
+import android.os.Build;
 import android.util.DisplayMetrics;
 import android.util.Pair;
 import android.view.ViewGroup.LayoutParams;
@@ -46,8 +49,8 @@ public class BitmapFactoryUtils {
 	}
 
 	public static Pair<Bitmap, BitmapFactory.Options> decodeScaled(byte[] data,
-			int reqWidth, int reqHeight, Bitmap.Config config)
-			throws IOException {
+			int reqWidth, int reqHeight, Bitmap.Config config, Bitmap inBitmap)
+			throws Exception {
 		BitmapFactory.Options opts = new BitmapFactory.Options();
 		boolean gotSizeHint = (reqWidth > 0) || (reqHeight > 0);
 		boolean gotConfig = (config != null);
@@ -61,13 +64,28 @@ public class BitmapFactoryUtils {
 				opts.inSampleSize = calcInSampleSize(opts, reqWidth, reqHeight);
 				opts.inJustDecodeBounds = false;
 			}
+			if (inBitmapSupported()) {
+				opts.inBitmap = inBitmap;
+			}
 		}
 		Bitmap bm = null;
 		try {
 			bm = BitmapFactory.decodeByteArray(data, 0, data.length, opts);
 		} catch (Throwable t) {
 			System.gc();
-			throw new IOException(t);
+			if (inBitmapSupported() && inBitmap != null) {
+				opts.inBitmap = null;
+				try {
+					bm = BitmapFactory.decodeByteArray(data, 0, data.length,
+							opts);
+					L.w(t);
+				} catch (Throwable th) {
+					System.gc();
+					throw new Exception(th);
+				}
+			} else {
+				throw new Exception(t);
+			}
 		}
 		if (bm == null) {
 			throw new IOException("BitmapFactory returned null.");
@@ -76,6 +94,10 @@ public class BitmapFactoryUtils {
 					bm.getWidth(), bm.getHeight()));
 		}
 		return Pair.create(bm, opts);
+	}
+
+	private static boolean inBitmapSupported() {
+		return Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB;
 	}
 
 	private static int calcInSampleSize(BitmapFactory.Options opts,

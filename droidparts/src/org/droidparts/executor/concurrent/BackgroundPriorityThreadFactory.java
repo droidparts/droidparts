@@ -13,19 +13,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License. 
  */
-package org.droidparts.service;
+package org.droidparts.executor.concurrent;
 
-import org.droidparts.Injector;
+import java.util.concurrent.ThreadFactory;
 
-public abstract class IntentService extends android.app.IntentService {
+import android.os.Process;
 
-	public IntentService(String name) {
-		super(name);
-	}
+public class BackgroundPriorityThreadFactory implements ThreadFactory {
 
 	@Override
-	public void onCreate() {
-		super.onCreate();
-		Injector.inject(this);
+	public Thread newThread(Runnable r) {
+		return new Thread(r) {
+			@Override
+			public void run() {
+				Process.setThreadPriority(Process.THREAD_PRIORITY_BACKGROUND);
+				super.run();
+			}
+		};
 	}
+
 }

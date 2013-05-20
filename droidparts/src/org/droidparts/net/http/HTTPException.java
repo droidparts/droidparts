@@ -16,11 +16,9 @@
 
 package org.droidparts.net.http;
 
-import java.io.IOException;
-
 import org.droidparts.contract.HTTP.ResponseCode;
 
-public class HTTPException extends IOException {
+public class HTTPException extends Exception {
 
 	private static final long serialVersionUID = 1L;
 

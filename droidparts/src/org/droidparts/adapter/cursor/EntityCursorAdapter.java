@@ -15,6 +15,7 @@
  */
 package org.droidparts.adapter.cursor;
 
+import org.droidparts.contract.AlterableContent;
 import org.droidparts.model.Entity;
 import org.droidparts.persist.sql.EntityManager;
 import org.droidparts.persist.sql.stmt.AbstractSelect;
@@ -24,7 +25,7 @@ import android.database.Cursor;
 import android.view.View;
 
 public abstract class EntityCursorAdapter<EntityType extends Entity> extends
-		CursorAdapter {
+		CursorAdapter implements AlterableContent<AbstractSelect<EntityType>> {
 
 	protected final EntityManager<EntityType> entityManager;
 
@@ -38,7 +39,8 @@ public abstract class EntityCursorAdapter<EntityType extends Entity> extends
 		this.entityManager = new EntityManager<EntityType>(entityCls, ctx);
 	}
 
-	public void changeData(AbstractSelect<EntityType> select) {
+	@Override
+	public void setContent(AbstractSelect<EntityType> select) {
 		changeCursor((select != null) ? select.execute() : null);
 	}
 

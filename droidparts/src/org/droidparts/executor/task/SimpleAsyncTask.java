@@ -13,25 +13,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License. 
  */
-package org.droidparts;
+package org.droidparts.executor.task;
 
-import org.droidparts.inner.ReflectionUtils;
+import android.content.Context;
 
-public class Application extends android.app.Application {
+public abstract class SimpleAsyncTask<Result> extends
+		AsyncTask<Void, Void, Result> {
 
-	@Override
-	public void onCreate() {
-		super.onCreate();
-		Injector.setUp(this);
-		Injector.inject(this, this);
-		// http://code.google.com/p/android/issues/detail?id=20915
-		ReflectionUtils.classForName("android.os.AsyncTask");
+	public SimpleAsyncTask(Context ctx,
+			AsyncTaskResultListener<Result> resultListener) {
+		super(ctx, resultListener);
 	}
 
 	@Override
-	public void onTerminate() {
-		// XXX doesn't get called
-		Injector.tearDown();
+	protected final Result onExecute(Void... params) throws Exception {
+		return onExecute();
 	}
+
+	protected abstract Result onExecute() throws Exception;
 
 }
