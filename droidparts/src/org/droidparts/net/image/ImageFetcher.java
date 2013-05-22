@@ -61,8 +61,8 @@ public class ImageFetcher {
 	private final ThreadPoolExecutor cacheExecutor;
 	final ThreadPoolExecutor fetchExecutor;
 
-	private final LinkedHashMap<ImageView, Spec> todo = new LinkedHashMap<ImageView, Spec>();
-	private final ConcurrentHashMap<ImageView, Long> wip = new ConcurrentHashMap<ImageView, Long>();
+	private final LinkedHashMap<ImageView, Spec> pending = new LinkedHashMap<ImageView, Spec>();
+	private final ConcurrentHashMap<Integer, Long> wip = new ConcurrentHashMap<Integer, Long>();
 	private Handler handler;
 
 	private volatile boolean paused;
@@ -91,13 +91,13 @@ public class ImageFetcher {
 	public void resume(boolean executePendingTasks) {
 		paused = false;
 		if (executePendingTasks) {
-			for (ImageView iv : todo.keySet()) {
-				Spec spec = todo.get(iv);
+			for (ImageView iv : pending.keySet()) {
+				Spec spec = pending.get(iv);
 				attachImage(iv, spec.imgUrl, spec.crossFadeMillis,
 						spec.reshaper, spec.listener, spec.inBitmapRef.get());
 			}
 		}
-		todo.clear();
+		pending.clear();
 	}
 
 	//
@@ -126,13 +126,13 @@ public class ImageFetcher {
 	public void attachImage(ImageView imageView, String imgUrl,
 			int crossFadeMillis, ImageReshaper reshaper,
 			ImageFetchListener listener, Bitmap inBitmap) {
-		long submitted = System.nanoTime();
-		wip.put(imageView, submitted);
 		Spec spec = new Spec(imageView, imgUrl, inBitmap, crossFadeMillis,
 				reshaper, listener);
+		long submitted = System.nanoTime();
+		wip.put(spec.key, submitted);
 		if (paused) {
-			todo.remove(imageView);
-			todo.put(imageView, spec);
+			pending.remove(imageView);
+			pending.put(imageView, spec);
 		} else {
 			if (listener != null) {
 				listener.onFetchAdded(imageView, imgUrl);
@@ -271,10 +271,10 @@ public class ImageFetcher {
 	}
 
 	void attachIfMostRecent(Spec spec, long submitted, Bitmap bitmap) {
-		Long mostRecent = wip.get(spec.imgView);
+		Long mostRecent = wip.get(spec.key);
 		if (mostRecent != null && submitted == mostRecent) {
-			wip.remove(spec.imgView);
-			if (!paused || !todo.containsKey(spec.imgView)) {
+			wip.remove(spec.key);
+			if (!paused || !pending.containsKey(spec.imgView)) {
 				SetBitmapRunnable r = new SetBitmapRunnable(spec, bitmap);
 				runOnUiThread(r);
 			}
@@ -294,6 +294,8 @@ public class ImageFetcher {
 
 	static class Spec {
 
+		final int key;
+
 		final ImageView imgView;
 		final String imgUrl;
 		final WeakReference<Bitmap> inBitmapRef;
@@ -309,6 +311,7 @@ public class ImageFetcher {
 		public Spec(ImageView imgView, String imgUrl, Bitmap inBitmap,
 				int crossFadeMillis, ImageReshaper reshaper,
 				ImageFetchListener listener) {
+			key = imgView.hashCode();
 			this.imgView = imgView;
 			this.imgUrl = imgUrl;
 			inBitmapRef = new WeakReference<Bitmap>(inBitmap);
