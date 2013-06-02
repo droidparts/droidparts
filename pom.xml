@@ -97,6 +97,9 @@
 					<extensions>true</extensions>
 					<configuration>
 						<undeployBeforeDeploy>true</undeployBeforeDeploy>
+						<sdk>
+						    <platform>14</platform>
+						</sdk> 
 					</configuration>
 				</plugin>
 				<plugin>
