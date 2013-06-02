@@ -18,12 +18,15 @@ package org.droidparts.executor.service;
 import static android.app.Activity.RESULT_CANCELED;
 import static android.app.Activity.RESULT_OK;
 
+import java.lang.reflect.Field;
+
 import org.droidparts.Injector;
 import org.droidparts.util.L;
 
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.ResultReceiver;
 
 public abstract class IntentService extends android.app.IntentService {
@@ -84,7 +87,33 @@ public abstract class IntentService extends android.app.IntentService {
 		}
 	}
 
+	public void removePendingIntents() {
+		Handler handler = getHandler();
+		if (handler != null) {
+			handler.removeMessages(0);
+		}
+	}
+
 	protected abstract Bundle onExecute(String action, Bundle data)
 			throws Exception;
+
+	//
+
+	private Handler getHandler() {
+		Handler handler = null;
+		try {
+			if (mServiceHandlerField == null) {
+				mServiceHandlerField = android.app.IntentService.class
+						.getDeclaredField("mServiceHandler");
+				mServiceHandlerField.setAccessible(true);
+			}
+			handler = (Handler) mServiceHandlerField.get(this);
+		} catch (Exception e) {
+			L.w(e);
+		}
+		return handler;
+	}
+
+	private static Field mServiceHandlerField;
 
 }

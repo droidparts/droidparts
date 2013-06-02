@@ -32,98 +32,98 @@ import android.util.Log;
 public class L {
 
 	public static void v(Object obj) {
-		if (shouldLog(VERBOSE)) {
+		if (isLoggable(VERBOSE)) {
 			log(VERBOSE, obj);
 		}
 	}
 
 	public static void v(String format, Object... args) {
-		if (shouldLog(VERBOSE)) {
+		if (isLoggable(VERBOSE)) {
 			log(VERBOSE, format, args);
 		}
 	}
 
 	public static void d(Object obj) {
-		if (shouldLog(DEBUG)) {
+		if (isLoggable(DEBUG)) {
 			log(DEBUG, obj);
 		}
 	}
 
 	public static void d(String format, Object... args) {
-		if (shouldLog(DEBUG)) {
+		if (isLoggable(DEBUG)) {
 			log(DEBUG, format, args);
 		}
 	}
 
 	public static void i(Object obj) {
-		if (shouldLog(INFO)) {
+		if (isLoggable(INFO)) {
 			log(INFO, obj);
 		}
 	}
 
 	public static void i(String format, Object... args) {
-		if (shouldLog(INFO)) {
+		if (isLoggable(INFO)) {
 			log(INFO, format, args);
 		}
 	}
 
 	public static void w(Object obj) {
-		if (shouldLog(WARN)) {
+		if (isLoggable(WARN)) {
 			log(WARN, obj);
 		}
 	}
 
 	public static void w(String format, Object... args) {
-		if (shouldLog(WARN)) {
+		if (isLoggable(WARN)) {
 			log(WARN, format, args);
 		}
 	}
 
 	public static void e(Object obj) {
-		if (shouldLog(ERROR)) {
+		if (isLoggable(ERROR)) {
 			log(ERROR, obj);
 		}
 	}
 
 	public static void e(String format, Object... args) {
-		if (shouldLog(ERROR)) {
+		if (isLoggable(ERROR)) {
 			log(ERROR, format, args);
 		}
 	}
 
 	public static void wtf(Object obj) {
-		if (shouldLog(ASSERT)) {
+		if (isLoggable(ASSERT)) {
 			log(ASSERT, obj);
 		}
 	}
 
 	public static void wtf(String format, Object... args) {
-		if (shouldLog(ASSERT)) {
+		if (isLoggable(ASSERT)) {
 			log(ASSERT, format, args);
 		}
 	}
 
 	public static void wtf() {
-		if (shouldLog(ASSERT)) {
+		if (isLoggable(ASSERT)) {
 			log(ASSERT, "WTF");
 		}
 	}
 
-	private static final String TAG = "DroidParts";
-
-	private static final int VERBOSE = Log.VERBOSE;
-	private static final int DEBUG = Log.DEBUG;
-	private static final int INFO = Log.INFO;
-	private static final int WARN = Log.WARN;
-	private static final int ERROR = Log.ERROR;
-	private static final int ASSERT = Log.ASSERT;
-	private static final int DISABLE = 1024;
-
-	private static boolean shouldLog(int priority) {
+	public static boolean isLoggable(int level) {
 		boolean debug = isDebug();
-		boolean log = debug || (!debug && priority >= getLogLevel());
+		boolean log = debug || (!debug && level >= getLogLevel());
 		return log;
 	}
+
+	public static final int VERBOSE = Log.VERBOSE;
+	public static final int DEBUG = Log.DEBUG;
+	public static final int INFO = Log.INFO;
+	public static final int WARN = Log.WARN;
+	public static final int ERROR = Log.ERROR;
+	public static final int ASSERT = Log.ASSERT;
+	private static final int DISABLE = 1024;
+
+	private static final String TAG = "DroidParts";
 
 	private static void log(int priority, Object obj) {
 		String msg;

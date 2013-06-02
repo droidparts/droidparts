@@ -1,3 +1,8 @@
+1.4.1 /2013-06-03/:
+    * ImageFetcher: don't retain ImageView references.
+    * IntentService: added removePendingIntents().
+    * L: added isLoggable(int level).
+
 1.4.0 /2013-05-20/:
     * ImageFetcher: added inBitmap support.
     * Application => AbstractApplication.

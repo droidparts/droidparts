@@ -12,7 +12,7 @@
 	<artifactId>droidparts-parent</artifactId>
 	<packaging>pom</packaging>
 
-	<version>1.4.0</version>
+	<version>1.4.1</version>
 
 	<name>DroidParts - Parent</name>
 	<description>A carefully crafted Android framework.</description>
@@ -97,6 +97,9 @@
 					<extensions>true</extensions>
 					<configuration>
 						<undeployBeforeDeploy>true</undeployBeforeDeploy>
+						<sdk>
+						    <platform>14</platform>
+						</sdk> 
 					</configuration>
 				</plugin>
 				<plugin>
