@@ -26,7 +26,7 @@ import android.widget.ListView;
 public class ImageListFragment extends ListFragment implements
 		AlterableContent<ImageListAdapter> {
 
-	public static interface Listener {
+	public interface Listener {
 
 		void doShowImageDetail(int position);
 
