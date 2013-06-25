@@ -26,7 +26,6 @@ import org.droidparts.inner.ann.inject.InjectSystemServiceAnn;
 import org.droidparts.inner.ann.inject.InjectViewAnn;
 
 import android.content.Context;
-import android.os.Build;
 import android.view.View;
 
 public class ValueReader {
@@ -55,31 +54,27 @@ public class ValueReader {
 					ann2.click, target, fieldType, fieldName);
 		} else if (annType == InjectFragmentAnn.class) {
 			InjectFragmentAnn ann2 = (InjectFragmentAnn) spec.ann;
-			if (supportAvaliable()
+			if (isSupportAvaliable()
 					&& SupportFragmentsReader.isSupportObject(target)) {
 				val = SupportFragmentsReader.getFragment(target, ann2.id,
 						fieldName);
-			} else if (nativeAvailable()) {
+			} else {
 				val = NativeFragmentsReader.getFragment(target, ann2.id,
 						fieldName);
 			}
 		} else if (annType == InjectParentActivityAnn.class) {
-			if (supportAvaliable()
+			if (isSupportAvaliable()
 					&& SupportFragmentsReader.isSupportObject(target)) {
 				val = SupportFragmentsReader.getParentActivity(target);
-			} else if (nativeAvailable()) {
+			} else {
 				val = NativeFragmentsReader.getParentActivity(target);
 			}
 		}
 		return val;
 	}
 
-	static boolean supportAvaliable() {
+	static boolean isSupportAvaliable() {
 		return supportAvailable;
-	}
-
-	static boolean nativeAvailable() {
-		return (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB);
 	}
 
 	static {
