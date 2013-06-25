@@ -13,7 +13,6 @@ import org.droidparts.test.model.Primitives;
 import org.droidparts.test.persist.json.AlbumSerializer;
 import org.droidparts.util.ResourceUtils;
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.test.AndroidTestCase;
@@ -60,18 +59,18 @@ public class JSONTestCase extends AndroidTestCase {
 	}
 
 	//
-	private JSONObject getPrimitives() throws JSONException {
+	private JSONObject getPrimitives() throws Exception {
 		String str = ResourceUtils.readRawResource(getContext(),
 				R.raw.primitives);
 		return new JSONObject(str);
 	}
 
-	private JSONObject getNested() throws JSONException {
+	private JSONObject getNested() throws Exception {
 		String str = ResourceUtils.readRawResource(getContext(), R.raw.nested);
 		return new JSONObject(str);
 	}
 
-	private JSONArray getAlbums() throws JSONException {
+	private JSONArray getAlbums() throws Exception {
 		String str = ResourceUtils.readRawResource(getContext(), R.raw.albums);
 		return new JSONArray(str);
 	}

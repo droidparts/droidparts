@@ -55,16 +55,20 @@ public class ValueReader {
 					ann2.click, target, fieldType, fieldName);
 		} else if (annType == InjectFragmentAnn.class) {
 			InjectFragmentAnn ann2 = (InjectFragmentAnn) spec.ann;
-			if (supportAvaliable() && SupportReader.isSupportObject(target)) {
-				val = SupportReader.getFragment(target, ann2.id, fieldName);
+			if (supportAvaliable()
+					&& SupportFragmentsReader.isSupportObject(target)) {
+				val = SupportFragmentsReader.getFragment(target, ann2.id,
+						fieldName);
 			} else if (nativeAvailable()) {
-				val = NativeReader.getFragment(target, ann2.id, fieldName);
+				val = NativeFragmentsReader.getFragment(target, ann2.id,
+						fieldName);
 			}
 		} else if (annType == InjectParentActivityAnn.class) {
-			if (supportAvaliable() && SupportReader.isSupportObject(target)) {
-				val = SupportReader.getParentActivity(target);
+			if (supportAvaliable()
+					&& SupportFragmentsReader.isSupportObject(target)) {
+				val = SupportFragmentsReader.getParentActivity(target);
 			} else if (nativeAvailable()) {
-				val = NativeReader.getParentActivity(target);
+				val = NativeFragmentsReader.getParentActivity(target);
 			}
 		}
 		return val;

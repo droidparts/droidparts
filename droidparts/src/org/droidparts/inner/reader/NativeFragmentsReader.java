@@ -18,15 +18,10 @@ package org.droidparts.inner.reader;
 import org.droidparts.util.ResourceUtils;
 
 import android.app.Activity;
+import android.app.Fragment;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
 
-public class SupportReader {
-
-	static boolean isSupportObject(Object obj) {
-		return (obj instanceof FragmentActivity) || (obj instanceof Fragment);
-	}
+public class NativeFragmentsReader {
 
 	static Activity getParentActivity(Object fragmentObj) {
 		Fragment fragment = (Fragment) fragmentObj;
@@ -35,11 +30,11 @@ public class SupportReader {
 
 	static Fragment getFragment(Object fragmentActivityObj, int fragmentId,
 			String valName) {
-		FragmentActivity fragmentActivity = (FragmentActivity) fragmentActivityObj;
+		Activity fragmentActivity = (Activity) fragmentActivityObj;
 		if (fragmentId == 0) {
 			fragmentId = ResourceUtils.getResourceId(fragmentActivity, valName);
 		}
-		return fragmentActivity.getSupportFragmentManager().findFragmentById(
+		return fragmentActivity.getFragmentManager().findFragmentById(
 				fragmentId);
 	}
 
