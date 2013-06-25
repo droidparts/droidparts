@@ -18,18 +18,28 @@ package org.droidparts.inner.reader;
 import org.droidparts.util.ResourceUtils;
 
 import android.app.Activity;
-import android.app.Fragment;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
 
-public class NativeFragmentReader {
+public class SupportReader {
 
-	static Object readVal(Object fragmentActivityObj, int fragmentId,
+	static boolean isSupportObject(Object obj) {
+		return (obj instanceof FragmentActivity) || (obj instanceof Fragment);
+	}
+
+	static Activity getParentActivity(Object fragmentObj) {
+		Fragment fragment = (Fragment) fragmentObj;
+		return fragment.getActivity();
+	}
+
+	static Fragment getFragment(Object fragmentActivityObj, int fragmentId,
 			String valName) {
-		Activity fragmentActivity = (Activity) fragmentActivityObj;
+		FragmentActivity fragmentActivity = (FragmentActivity) fragmentActivityObj;
 		if (fragmentId == 0) {
 			fragmentId = ResourceUtils.getResourceId(fragmentActivity, valName);
 		}
-		return fragmentActivity.getFragmentManager().findFragmentById(
+		return fragmentActivity.getSupportFragmentManager().findFragmentById(
 				fragmentId);
 	}
 

@@ -15,13 +15,31 @@
  */
 package org.droidparts.inner.reader;
 
+import org.droidparts.util.ResourceUtils;
+
+import android.app.Activity;
 import android.app.Fragment;
+import android.os.Bundle;
 
-public class NativeParentActivityReader {
+public class NativeReader {
 
-	static Object readVal(Object fragmentObj) {
+	static Activity getParentActivity(Object fragmentObj) {
 		Fragment fragment = (Fragment) fragmentObj;
 		return fragment.getActivity();
+	}
+
+	static Fragment getFragment(Object fragmentActivityObj, int fragmentId,
+			String valName) {
+		Activity fragmentActivity = (Activity) fragmentActivityObj;
+		if (fragmentId == 0) {
+			fragmentId = ResourceUtils.getResourceId(fragmentActivity, valName);
+		}
+		return fragmentActivity.getFragmentManager().findFragmentById(
+				fragmentId);
+	}
+
+	static Bundle getFragmentArguments(Object fragmentObj) {
+		return ((Fragment) fragmentObj).getArguments();
 	}
 
 }

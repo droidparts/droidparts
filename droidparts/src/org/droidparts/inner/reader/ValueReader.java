@@ -55,37 +55,38 @@ public class ValueReader {
 					ann2.click, target, fieldType, fieldName);
 		} else if (annType == InjectFragmentAnn.class) {
 			InjectFragmentAnn ann2 = (InjectFragmentAnn) spec.ann;
-			if (useSupport()) {
-				val = SupportFragmentReader.readVal(target, ann2.id, fieldName);
+			if (supportAvaliable() && SupportReader.isSupportObject(target)) {
+				val = SupportReader.getFragment(target, ann2.id, fieldName);
 			} else if (nativeAvailable()) {
-				val = NativeFragmentReader.readVal(target, ann2.id, fieldName);
+				val = NativeReader.getFragment(target, ann2.id, fieldName);
 			}
 		} else if (annType == InjectParentActivityAnn.class) {
-			if (useSupport()) {
-				val = SupportParentActivityReader.readVal(target);
+			if (supportAvaliable() && SupportReader.isSupportObject(target)) {
+				val = SupportReader.getParentActivity(target);
 			} else if (nativeAvailable()) {
-				val = NativeParentActivityReader.readVal(target);
+				val = NativeReader.getParentActivity(target);
 			}
 		}
 		return val;
 	}
 
-	static boolean useSupport() {
-		if (_useSupport == null) {
-			try {
-				Class.forName("android.support.v4.app.Fragment");
-				_useSupport = true;
-			} catch (Exception e) {
-				_useSupport = false;
-			}
-		}
-		return _useSupport;
+	static boolean supportAvaliable() {
+		return supportAvailable;
 	}
 
 	static boolean nativeAvailable() {
-		return Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB;
+		return (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB);
 	}
 
-	private static Boolean _useSupport;
+	static {
+		try {
+			Class.forName("android.support.v4.app.Fragment");
+			supportAvailable = true;
+		} catch (Exception e) {
+			supportAvailable = false;
+		}
+	}
+
+	private static boolean supportAvailable;
 
 }
