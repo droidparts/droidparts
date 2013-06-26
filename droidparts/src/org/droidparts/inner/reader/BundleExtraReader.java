@@ -25,12 +25,11 @@ public class BundleExtraReader {
 		Bundle data;
 		if (obj instanceof Activity) {
 			data = ((Activity) obj).getIntent().getExtras();
-		} else if (ValueReader.useSupport()) {
-			data = SupportFragmentReader.getFragmentArguments(obj);
-		} else if (ValueReader.nativeAvailable()) {
-			data = NativeFragmentReader.getFragmentArguments(obj);
+		} else if (ValueReader.isSupportAvaliable()
+				&& SupportFragmentsReader.isSupportObject(obj)) {
+			data = SupportFragmentsReader.getFragmentArguments(obj);
 		} else {
-			throw new IllegalArgumentException();
+			data = NativeFragmentsReader.getFragmentArguments(obj);
 		}
 		Object val = data.get(key);
 		if (val == null && !optional) {

@@ -21,9 +21,14 @@ import android.app.Activity;
 import android.app.Fragment;
 import android.os.Bundle;
 
-public class NativeFragmentReader {
+public class NativeFragmentsReader {
 
-	static Object readVal(Object fragmentActivityObj, int fragmentId,
+	static Activity getParentActivity(Object fragmentObj) {
+		Fragment fragment = (Fragment) fragmentObj;
+		return fragment.getActivity();
+	}
+
+	static Fragment getFragment(Object fragmentActivityObj, int fragmentId,
 			String valName) {
 		Activity fragmentActivity = (Activity) fragmentActivityObj;
 		if (fragmentId == 0) {

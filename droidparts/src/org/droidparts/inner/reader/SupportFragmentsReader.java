@@ -17,13 +17,23 @@ package org.droidparts.inner.reader;
 
 import org.droidparts.util.ResourceUtils;
 
+import android.app.Activity;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 
-public class SupportFragmentReader {
+public class SupportFragmentsReader {
 
-	static Object readVal(Object fragmentActivityObj, int fragmentId,
+	static boolean isSupportObject(Object obj) {
+		return (obj instanceof FragmentActivity) || (obj instanceof Fragment);
+	}
+
+	static Activity getParentActivity(Object fragmentObj) {
+		Fragment fragment = (Fragment) fragmentObj;
+		return fragment.getActivity();
+	}
+
+	static Fragment getFragment(Object fragmentActivityObj, int fragmentId,
 			String valName) {
 		FragmentActivity fragmentActivity = (FragmentActivity) fragmentActivityObj;
 		if (fragmentId == 0) {

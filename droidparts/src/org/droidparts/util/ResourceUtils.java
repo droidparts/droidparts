@@ -68,12 +68,14 @@ public final class ResourceUtils {
 				val, ctx.getResources().getDisplayMetrics());
 	}
 
-	public static String readStringResource(Context ctx, int resId)
-			throws IOException {
+	public static String readRawResource(Context ctx, int resId)
+			throws IllegalArgumentException {
 		InputStream is = null;
 		try {
 			is = ctx.getResources().openRawResource(resId);
 			return IOUtils.readToString(is);
+		} catch (IOException e) {
+			throw new IllegalArgumentException(e);
 		} finally {
 			IOUtils.silentlyClose(is);
 		}

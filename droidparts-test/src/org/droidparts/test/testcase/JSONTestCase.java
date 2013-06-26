@@ -60,20 +60,18 @@ public class JSONTestCase extends AndroidTestCase {
 
 	//
 	private JSONObject getPrimitives() throws Exception {
-		String str = ResourceUtils.readStringResource(getContext(),
+		String str = ResourceUtils.readRawResource(getContext(),
 				R.raw.primitives);
 		return new JSONObject(str);
 	}
 
 	private JSONObject getNested() throws Exception {
-		String str = ResourceUtils.readStringResource(getContext(),
-				R.raw.nested);
+		String str = ResourceUtils.readRawResource(getContext(), R.raw.nested);
 		return new JSONObject(str);
 	}
 
 	private JSONArray getAlbums() throws Exception {
-		String str = ResourceUtils.readStringResource(getContext(),
-				R.raw.albums);
+		String str = ResourceUtils.readRawResource(getContext(), R.raw.albums);
 		return new JSONArray(str);
 	}
 

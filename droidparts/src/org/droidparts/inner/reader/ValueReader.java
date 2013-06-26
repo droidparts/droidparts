@@ -26,7 +26,6 @@ import org.droidparts.inner.ann.inject.InjectSystemServiceAnn;
 import org.droidparts.inner.ann.inject.InjectViewAnn;
 
 import android.content.Context;
-import android.os.Build;
 import android.view.View;
 
 public class ValueReader {
@@ -55,37 +54,38 @@ public class ValueReader {
 					ann2.click, target, fieldType, fieldName);
 		} else if (annType == InjectFragmentAnn.class) {
 			InjectFragmentAnn ann2 = (InjectFragmentAnn) spec.ann;
-			if (useSupport()) {
-				val = SupportFragmentReader.readVal(target, ann2.id, fieldName);
-			} else if (nativeAvailable()) {
-				val = NativeFragmentReader.readVal(target, ann2.id, fieldName);
+			if (isSupportAvaliable()
+					&& SupportFragmentsReader.isSupportObject(target)) {
+				val = SupportFragmentsReader.getFragment(target, ann2.id,
+						fieldName);
+			} else {
+				val = NativeFragmentsReader.getFragment(target, ann2.id,
+						fieldName);
 			}
 		} else if (annType == InjectParentActivityAnn.class) {
-			if (useSupport()) {
-				val = SupportParentActivityReader.readVal(target);
-			} else if (nativeAvailable()) {
-				val = NativeParentActivityReader.readVal(target);
+			if (isSupportAvaliable()
+					&& SupportFragmentsReader.isSupportObject(target)) {
+				val = SupportFragmentsReader.getParentActivity(target);
+			} else {
+				val = NativeFragmentsReader.getParentActivity(target);
 			}
 		}
 		return val;
 	}
 
-	static boolean useSupport() {
-		if (_useSupport == null) {
-			try {
-				Class.forName("android.support.v4.app.Fragment");
-				_useSupport = true;
-			} catch (Exception e) {
-				_useSupport = false;
-			}
+	static boolean isSupportAvaliable() {
+		return supportAvailable;
+	}
+
+	static {
+		try {
+			Class.forName("android.support.v4.app.Fragment");
+			supportAvailable = true;
+		} catch (Exception e) {
+			supportAvailable = false;
 		}
-		return _useSupport;
 	}
 
-	static boolean nativeAvailable() {
-		return Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB;
-	}
-
-	private static Boolean _useSupport;
+	private static boolean supportAvailable;
 
 }

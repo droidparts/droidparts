@@ -126,7 +126,9 @@ public class ClearableEditText extends EditText implements OnTouchListener,
 
 	@Override
 	public void onTextChanged(EditText view, String text) {
-		setClearIconVisible(isNotEmpty(text));
+		if (isFocused()) {
+			setClearIconVisible(isNotEmpty(text));
+		}
 	}
 
 	protected void setClearIconVisible(boolean visible) {
