@@ -1,3 +1,8 @@
+1.4.2 /2013-06-26/:
+    * ResourceUtils: readStringResource() => readRawResource.
+    * ClearableEditText: fixed clear icon shown for preset text.
+    * Fixed 'native' injection with support lib in classpath.
+
 1.4.1 /2013-06-03/:
     * ImageFetcher: don't retain ImageView references.
     * IntentService: added removePendingIntents().
