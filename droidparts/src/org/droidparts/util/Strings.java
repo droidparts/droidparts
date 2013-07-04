@@ -27,6 +27,14 @@ public class Strings {
 		return str == null || str.length() == 0;
 	}
 
+	public static <T> String join(Collection<T> coll, String separator) {
+		return join(coll, separator, null);
+	}
+
+	public static String join(Object[] arr, String separator) {
+		return join(arr, separator, null);
+	}
+
 	public static <T> String join(Collection<T> coll, String separator,
 			String terminator) {
 		return join(coll.toArray(new Object[coll.size()]), separator,
