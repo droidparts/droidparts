@@ -79,21 +79,24 @@ public class IOUtils {
 	public static ArrayList<File> getFileList(File dir,
 			String... fileExtensions) {
 		final ArrayList<File> files = new ArrayList<File>();
-		for (File file : dir.listFiles()) {
-			if (file.isFile()) {
-				if (fileExtensions.length == 0) {
-					files.add(file);
-				} else {
-					String fileName = file.getName().toLowerCase();
-					for (String ext : fileExtensions) {
-						if (fileName.endsWith(ext)) {
-							files.add(file);
-							break;
+		final File[] fileList = dir.listFiles();
+		if (fileList != null) {
+			for (File file : fileList) {
+				if (file.isFile()) {
+					if (fileExtensions.length == 0) {
+						files.add(file);
+					} else {
+						String fileName = file.getName().toLowerCase();
+						for (String ext : fileExtensions) {
+							if (fileName.endsWith(ext)) {
+								files.add(file);
+								break;
+							}
 						}
 					}
+				} else {
+					files.addAll(getFileList(file, fileExtensions));
 				}
-			} else {
-				files.addAll(getFileList(file, fileExtensions));
 			}
 		}
 		return files;
