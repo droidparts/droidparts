@@ -72,7 +72,7 @@ public class ImageListAdapter extends EntityCursorAdapter<Image> implements
 		StringBuilder sb = new StringBuilder();
 		sb.append("<b>").append(img.filter.name).append("</b>");
 		sb.append(" ");
-		sb.append(join(img.tags, ", ", null));
+		sb.append(join(img.tags, ", "));
 		return Html.fromHtml(sb.toString());
 	}
 
