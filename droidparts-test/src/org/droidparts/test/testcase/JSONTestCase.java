@@ -49,7 +49,7 @@ public class JSONTestCase extends AndroidTestCase {
 	}
 
 	public void testNestedKeys() throws Exception {
-		assertEquals("obj->key", join(new String[] { "obj", "key" }, __, null));
+		assertEquals("obj->key", join(new String[] { "obj", "key" }, __));
 		JSONSerializer<Nested> serializer = new JSONSerializer<Nested>(
 				Nested.class, getContext());
 		Nested model = serializer.deserialize(getNested());

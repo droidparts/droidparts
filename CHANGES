@@ -1,3 +1,6 @@
+1.4.3 /2013-07-17/:
+    * Bugfixes & minor stuff.
+
 1.4.2 /2013-06-26/:
     * ResourceUtils: readStringResource() => readRawResource.
     * ClearableEditText: fixed clear icon shown for preset text.

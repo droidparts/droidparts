@@ -245,10 +245,10 @@ public final class PersistUtils implements SQL.DDL {
 		columns.addAll(asList(otherColumns));
 		StringBuilder sb = new StringBuilder();
 		sb.append(unique ? CREATE_UNIQUE_INDEX : CREATE_INDEX);
-		sb.append("idx_" + table + "_" + join(columns, "_", null));
+		sb.append("idx_" + table + "_" + join(columns, "_"));
 		sb.append(ON + table);
 		sb.append(OPENING_BRACE);
-		sb.append(join(columns, SEPARATOR, null));
+		sb.append(join(columns, SEPARATOR));
 		sb.append(CLOSING_BRACE);
 		return sb.toString();
 	}

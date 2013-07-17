@@ -149,7 +149,7 @@ public class ArrayCollectionConverter extends Converter<Object> {
 					.putToContentValues(componentType, null, tmpCV, "key", obj);
 			vals.add(tmpCV.get("key"));
 		}
-		String strVal = Strings.join(vals, SEP, null);
+		String strVal = Strings.join(vals, SEP);
 		cv.put(key, strVal);
 	}
 

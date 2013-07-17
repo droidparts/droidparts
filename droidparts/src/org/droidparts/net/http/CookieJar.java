@@ -78,7 +78,7 @@ public class CookieJar extends CookieHandler implements CookieStore {
 		for (Cookie cookie : getCookies(uri)) {
 			cookies.add(cookie.getName() + "=" + cookie.getValue());
 		}
-		return singletonMap(SM.COOKIE, singletonList(join(cookies, SEP, null)));
+		return singletonMap(SM.COOKIE, singletonList(join(cookies, SEP)));
 	}
 
 	@Override

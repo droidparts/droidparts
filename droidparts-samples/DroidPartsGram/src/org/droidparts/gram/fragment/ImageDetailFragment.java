@@ -80,7 +80,7 @@ public class ImageDetailFragment extends DialogFragment implements
 			filterView.setText(img.filter.name);
 		}
 		if (prefsManager.isShowDetailTags()) {
-			tagsView.setText(join(img.tags, ", ", null));
+			tagsView.setText(join(img.tags, ", "));
 		}
 		ImageFetcher imageFetcher = new ImageFetcher(getActivity());
 		imageFetcher.attachImage(imgView, img.imageUrl, 0, null, this);

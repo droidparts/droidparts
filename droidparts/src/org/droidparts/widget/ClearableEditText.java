@@ -94,16 +94,16 @@ public class ClearableEditText extends EditText implements OnTouchListener,
 	@Override
 	public boolean onTouch(View v, MotionEvent event) {
 		if (getCompoundDrawables()[2] != null) {
-			if (event.getAction() == MotionEvent.ACTION_UP) {
-				boolean tappedX = event.getX() > (getWidth()
-						- getPaddingRight() - xD.getIntrinsicWidth());
-				if (tappedX) {
+			boolean tappedX = event.getX() > (getWidth() - getPaddingRight() - xD
+					.getIntrinsicWidth());
+			if (tappedX) {
+				if (event.getAction() == MotionEvent.ACTION_UP) {
 					setText("");
 					if (listener != null) {
 						listener.didClearText();
 					}
-					return true;
 				}
+				return true;
 			}
 		}
 		if (l != null) {
