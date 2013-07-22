@@ -15,6 +15,8 @@
  */
 package org.droidparts.adapter.widget;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import org.droidparts.Injector;
@@ -25,10 +27,14 @@ import android.content.Context;
 import android.view.LayoutInflater;
 
 public class ArrayAdapter<T> extends android.widget.ArrayAdapter<T> implements
-		AlterableContent<List<T>> {
+		AlterableContent<Collection<T>> {
 
 	@InjectSystemService
 	protected LayoutInflater layoutInflater;
+
+	public ArrayAdapter(Context ctx) {
+		this(ctx, new ArrayList<T>());
+	}
 
 	public ArrayAdapter(Context ctx, List<T> objects) {
 		this(ctx, android.R.layout.simple_list_item_1, objects);
@@ -45,9 +51,9 @@ public class ArrayAdapter<T> extends android.widget.ArrayAdapter<T> implements
 	}
 
 	@Override
-	public void setContent(List<T> list) {
+	public void setContent(Collection<T> coll) {
 		clear();
-		for (T item : list) {
+		for (T item : coll) {
 			add(item);
 		}
 	}
