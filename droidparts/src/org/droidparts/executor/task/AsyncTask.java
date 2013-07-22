@@ -62,8 +62,14 @@ public abstract class AsyncTask<Params, Progress, Result> extends
 		// try-catch to avoid lifecycle-related crashes
 		try {
 			if (result.first != null) {
+				if (resultListener != null) {
+					resultListener.onAsyncTaskSuccess(result.first);
+				}
 				onPostExecuteSuccess(result.first);
 			} else {
+				if (resultListener != null) {
+					resultListener.onAsyncTaskFailure(result.second);
+				}
 				onPostExecuteFailure(result.second);
 			}
 		} catch (Throwable t) {
@@ -75,15 +81,9 @@ public abstract class AsyncTask<Params, Progress, Result> extends
 	protected abstract Result onExecute(Params... params) throws Exception;
 
 	protected void onPostExecuteSuccess(Result result) {
-		if (resultListener != null) {
-			resultListener.onAsyncTaskSuccess(result);
-		}
 	}
 
 	protected void onPostExecuteFailure(Exception exception) {
-		if (resultListener != null) {
-			resultListener.onAsyncTaskFailure(exception);
-		}
 	}
 
 }
