@@ -24,7 +24,6 @@ import static android.content.Intent.EXTRA_TEXT;
 import static org.droidparts.util.Strings.isNotEmpty;
 
 import java.io.File;
-import java.util.ArrayList;
 
 import android.content.Context;
 import android.content.Intent;
@@ -60,7 +59,7 @@ public class IntentFactory {
 	}
 
 	public static Intent getSendEmailIntent(String mailTo, String mailCC,
-			String subject, CharSequence body, File... attachments) {
+			String subject, CharSequence body, File attachment) {
 		Intent intent = new Intent(ACTION_SENDTO);
 		// intent.setType("text/plain");
 		intent.setType("message/rfc822");
@@ -77,12 +76,8 @@ public class IntentFactory {
 		if (isNotEmpty(body)) {
 			intent.putExtra(EXTRA_TEXT, body);
 		}
-		if (attachments.length > 0) {
-			ArrayList<Uri> uris = new ArrayList<Uri>();
-			for (File att : attachments) {
-				uris.add(Uri.fromFile(att));
-			}
-			intent.putParcelableArrayListExtra(Intent.EXTRA_STREAM, uris);
+		if (attachment != null) {
+			intent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(attachment));
 		}
 		return intent;
 	}
