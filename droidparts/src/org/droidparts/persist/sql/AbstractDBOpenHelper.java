@@ -15,8 +15,8 @@
  */
 package org.droidparts.persist.sql;
 
-import static org.droidparts.inner.FieldSpecRegistry.getTableColumnSpecs;
-import static org.droidparts.inner.FieldSpecRegistry.getTableName;
+import static org.droidparts.inner.ClassSpecRegistry.getTableColumnSpecs;
+import static org.droidparts.inner.ClassSpecRegistry.getTableName;
 
 import java.util.ArrayList;
 

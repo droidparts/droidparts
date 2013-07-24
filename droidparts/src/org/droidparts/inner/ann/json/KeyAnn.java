@@ -21,16 +21,12 @@ import org.droidparts.inner.ann.Ann;
 public final class KeyAnn extends Ann<Key> {
 
 	public String name;
-	public boolean optional;
+	public final boolean optional;
 
 	public KeyAnn(Key annotation) {
-		this();
+		super(Key.class);
 		name = annotation.name();
 		optional = annotation.optional();
-	}
-
-	public KeyAnn() {
-		super(Key.class);
 	}
 
 	@Override

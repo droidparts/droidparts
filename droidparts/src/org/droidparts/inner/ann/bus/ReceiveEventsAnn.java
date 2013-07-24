@@ -13,29 +13,32 @@
  * See the License for the specific language governing permissions and
  * limitations under the License. 
  */
-package org.droidparts.inner.ann.sql;
+package org.droidparts.inner.ann.bus;
 
-import org.droidparts.annotation.sql.Column;
+import static org.droidparts.util.Strings.isEmpty;
+
+import java.util.Arrays;
+
+import org.droidparts.annotation.bus.ReceiveEvents;
 import org.droidparts.inner.ann.Ann;
 
-public final class ColumnAnn extends Ann<Column> {
+public final class ReceiveEventsAnn extends Ann<ReceiveEvents> {
 
-	public String name;
-	public boolean nullable;
-	public final boolean unique;
-	public boolean eager;
+	public final String[] names;
 
-	public ColumnAnn(Column annotation) {
-		super(Column.class);
-		name = annotation.name();
-		nullable = annotation.nullable();
-		unique = annotation.unique();
-		eager = annotation.eager();
+	public ReceiveEventsAnn(ReceiveEvents annotation) {
+		super(ReceiveEvents.class);
+		String[] names = annotation.name();
+		boolean none = (names.length == 1) && isEmpty(names[0]);
+		if (none) {
+			this.names = new String[0];
+		} else {
+			this.names = names;
+		}
 	}
 
 	@Override
 	public String toString() {
-		return super.toString() + ", name: " + name + ", nullable: " + nullable
-				+ ", unique: " + unique + ", eager: " + eager;
+		return super.toString() + ", names: " + Arrays.toString(names);
 	}
 }

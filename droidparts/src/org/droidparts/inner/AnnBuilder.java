@@ -17,8 +17,11 @@ package org.droidparts.inner;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.HashMap;
 
+import org.droidparts.annotation.bus.ReceiveEvents;
 import org.droidparts.annotation.inject.InjectBundleExtra;
 import org.droidparts.annotation.inject.InjectDependency;
 import org.droidparts.annotation.inject.InjectFragment;
@@ -30,6 +33,7 @@ import org.droidparts.annotation.json.Key;
 import org.droidparts.annotation.sql.Column;
 import org.droidparts.annotation.sql.Table;
 import org.droidparts.inner.ann.Ann;
+import org.droidparts.inner.ann.bus.ReceiveEventsAnn;
 import org.droidparts.inner.ann.inject.InjectBundleExtraAnn;
 import org.droidparts.inner.ann.inject.InjectDependencyAnn;
 import org.droidparts.inner.ann.inject.InjectFragmentAnn;
@@ -43,83 +47,53 @@ import org.droidparts.inner.ann.sql.TableAnn;
 
 public final class AnnBuilder {
 
-	@SuppressWarnings("unchecked")
-	static <T extends Annotation> Ann<T> getClassAnn(
-			Class<? extends Ann<T>> annCls, Class<?> cls) {
-		return pickAnn(annCls, (Ann<T>[]) getClassAnns(cls));
+	static <T extends Annotation> Ann<T>[] getClassAnns(Class<?> c) {
+		return toAnns(c.getAnnotations());
 	}
 
-	@SuppressWarnings("unchecked")
-	static <T extends Annotation> Ann<T> getFieldAnn(
-			Class<? extends Ann<T>> annCls, Class<?> cls, Field f) {
-		return pickAnn(annCls, (Ann<T>[]) getFieldAnns(cls, f));
-	}
-
-	private static <T extends Annotation> Ann<T> pickAnn(
-			Class<? extends Ann<T>> annCls, Ann<T>[] anns) {
-		for (Ann<?> ann : anns) {
-			if (ann.getClass().isAssignableFrom(annCls)) {
-				@SuppressWarnings("unchecked")
-				Ann<T> typedAnn = (Ann<T>) ann;
-				return typedAnn;
-			}
-		}
-		return null;
-	}
-
-	static <T extends Annotation> Ann<T>[] getClassAnns(Class<?> cls) {
-		return toAnns(cls.getAnnotations());
-	}
-
-	static <T extends Annotation> Ann<T>[] getFieldAnns(Class<?> cls, Field f) {
+	static <T extends Annotation> Ann<T>[] getFieldAnns(Field f) {
 		return toAnns(f.getAnnotations());
 	}
 
-	//
+	static <T extends Annotation> Ann<T>[] getMethodAnns(Method m) {
+		return toAnns(m.getAnnotations());
+	}
 
 	@SuppressWarnings("unchecked")
 	private static <T extends Annotation> Ann<T>[] toAnns(
 			Annotation[] annotations) {
 		ArrayList<Ann<?>> anns = new ArrayList<Ann<?>>();
 		for (Annotation annotation : annotations) {
-			Ann<?> ann = toAnn(annotation);
-			if (ann != null) {
-				anns.add(ann);
+			Class<? extends Annotation> annotationType = annotation
+					.annotationType();
+			Class<? extends Ann<?>> cls = map.get(annotationType);
+			if (cls != null) {
+				try {
+					Ann<?> ann = cls.getConstructor(annotationType)
+							.newInstance(annotation);
+					anns.add(ann);
+				} catch (Exception e) {
+					throw new AssertionError(e);
+				}
 			}
 		}
 		return anns.toArray(new Ann[anns.size()]);
 	}
 
-	private static Ann<?> toAnn(Annotation annotation) {
-		Class<?> annotationType = annotation.annotationType();
-		Ann<?> ann = null;
-		// class
-		if (Table.class == annotationType) {
-			ann = new TableAnn((Table) annotation);
-		}
-		// field
-		else if (Column.class == annotationType) {
-			ann = new ColumnAnn((Column) annotation);
-		} else if (Key.class == annotationType) {
-			ann = new KeyAnn((Key) annotation);
-		}
-		// inject
-		else if (InjectBundleExtra.class == annotationType) {
-			ann = new InjectBundleExtraAnn((InjectBundleExtra) annotation);
-		} else if (InjectDependency.class == annotationType) {
-			ann = new InjectDependencyAnn((InjectDependency) annotation);
-		} else if (InjectResource.class == annotationType) {
-			ann = new InjectResourceAnn((InjectResource) annotation);
-		} else if (InjectSystemService.class == annotationType) {
-			ann = new InjectSystemServiceAnn((InjectSystemService) annotation);
-		} else if (InjectView.class == annotationType) {
-			ann = new InjectViewAnn((InjectView) annotation);
-		} else if (InjectFragment.class == annotationType) {
-			ann = new InjectFragmentAnn((InjectFragment) annotation);
-		} else if (InjectParentActivity.class == annotationType) {
-			ann = new InjectParentActivityAnn((InjectParentActivity) annotation);
-		}
-		return ann;
+	private static final HashMap<Class<? extends Annotation>, Class<? extends Ann<?>>> map = new HashMap<Class<? extends Annotation>, Class<? extends Ann<?>>>();
+
+	static {
+		map.put(InjectBundleExtra.class, InjectBundleExtraAnn.class);
+		map.put(InjectDependency.class, InjectDependencyAnn.class);
+		map.put(InjectResource.class, InjectResourceAnn.class);
+		map.put(InjectSystemService.class, InjectSystemServiceAnn.class);
+		map.put(InjectView.class, InjectViewAnn.class);
+		map.put(InjectFragment.class, InjectFragmentAnn.class);
+		map.put(InjectParentActivity.class, InjectParentActivityAnn.class);
+		map.put(Table.class, TableAnn.class);
+		map.put(Column.class, ColumnAnn.class);
+		map.put(Key.class, KeyAnn.class);
+		map.put(ReceiveEvents.class, ReceiveEventsAnn.class);
 	}
 
 }

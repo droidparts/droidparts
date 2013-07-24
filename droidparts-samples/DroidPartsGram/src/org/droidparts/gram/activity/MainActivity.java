@@ -15,6 +15,31 @@
  */
 package org.droidparts.gram.activity;
 
+import java.util.ArrayList;
+
+import org.droidparts.annotation.bus.ReceiveEvents;
+import org.droidparts.bus.EventBus;
+import org.droidparts.gram.model.Image;
+import org.droidparts.util.L;
+
 public class MainActivity extends PopularImageListActivity {
+
+	@Override
+	protected void onResume() {
+		super.onResume();
+		EventBus.registerAnnotatedReceiver(this);
+	}
+
+	@Override
+	protected void onPause() {
+		super.onPause();
+		EventBus.unregisterAnnotatedReceiver(this);
+	}
+
+	@ReceiveEvents
+	public void onEvent(String name, ArrayList<Image> data) {
+		L.wtf(name);
+		L.wtf(data);
+	}
 
 }

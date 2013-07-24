@@ -15,9 +15,9 @@
  */
 package org.droidparts.inner;
 
-import static org.droidparts.inner.AnnBuilder.getClassAnn;
-import static org.droidparts.inner.AnnBuilder.getFieldAnn;
+import static org.droidparts.inner.AnnBuilder.getClassAnns;
 import static org.droidparts.inner.AnnBuilder.getFieldAnns;
+import static org.droidparts.inner.AnnBuilder.getMethodAnns;
 import static org.droidparts.inner.ReflectionUtils.getArrayComponentType;
 import static org.droidparts.inner.ReflectionUtils.getFieldGenericArgs;
 import static org.droidparts.inner.ReflectionUtils.listAnnotatedFields;
@@ -35,12 +35,15 @@ import static org.droidparts.inner.TypeHelper.isShort;
 import static org.droidparts.util.Strings.isEmpty;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.droidparts.inner.ann.Ann;
 import org.droidparts.inner.ann.FieldSpec;
+import org.droidparts.inner.ann.MethodSpec;
+import org.droidparts.inner.ann.bus.ReceiveEventsAnn;
 import org.droidparts.inner.ann.inject.InjectAnn;
 import org.droidparts.inner.ann.json.KeyAnn;
 import org.droidparts.inner.ann.sql.ColumnAnn;
@@ -49,18 +52,18 @@ import org.droidparts.model.Entity;
 import org.droidparts.model.Model;
 import org.droidparts.util.L;
 
-public final class FieldSpecRegistry {
+public final class ClassSpecRegistry {
 
 	// Inject
 
 	@SuppressWarnings("unchecked")
 	public static FieldSpec<InjectAnn<?>>[] getInjectSpecs(Class<?> cls) {
-		FieldSpec<InjectAnn<?>>[] specs = injectSpecCache.get(cls);
+		FieldSpec<InjectAnn<?>>[] specs = INJECT_SPECS.get(cls);
 		if (specs == null) {
 			ArrayList<FieldSpec<InjectAnn<?>>> list = new ArrayList<FieldSpec<InjectAnn<?>>>();
 			List<Field> fields = ReflectionUtils.listAnnotatedFields(cls);
 			for (Field field : fields) {
-				for (Ann<?> ann : getFieldAnns(cls, field)) {
+				for (Ann<?> ann : getFieldAnns(field)) {
 					if (ann instanceof InjectAnn) {
 						list.add(new FieldSpec<InjectAnn<?>>(field, null,
 								(InjectAnn<?>) ann));
@@ -69,7 +72,31 @@ public final class FieldSpecRegistry {
 				}
 			}
 			specs = list.toArray(new FieldSpec[list.size()]);
-			injectSpecCache.put(cls, specs);
+			INJECT_SPECS.put(cls, specs);
+		}
+		return specs;
+	}
+
+	// Bus
+
+	@SuppressWarnings("unchecked")
+	public static MethodSpec<ReceiveEventsAnn>[] getReceiveEventsSpecs(
+			Class<?> cls) {
+		MethodSpec<ReceiveEventsAnn>[] specs = RECEIVE_EVENTS_SPECS.get(cls);
+		if (specs == null) {
+			ArrayList<MethodSpec<ReceiveEventsAnn>> list = new ArrayList<MethodSpec<ReceiveEventsAnn>>();
+			List<Method> methods = ReflectionUtils.listAnnotatedMethods(cls);
+			for (Method method : methods) {
+				for (Ann<?> ann : getMethodAnns(method)) {
+					if (ann instanceof ReceiveEventsAnn) {
+						list.add(new MethodSpec<ReceiveEventsAnn>(method,
+								(ReceiveEventsAnn) ann));
+						break;
+					}
+				}
+			}
+			specs = list.toArray(new MethodSpec[list.size()]);
+			RECEIVE_EVENTS_SPECS.put(cls, specs);
 		}
 		return specs;
 	}
@@ -77,16 +104,18 @@ public final class FieldSpecRegistry {
 	// SQL
 
 	public static String getTableName(Class<? extends Entity> cls) {
-		String name = tableNameCache.get(cls);
+		String name = TABLE_NAMES.get(cls);
 		if (name == null) {
-			TableAnn ann = (TableAnn) getClassAnn(TableAnn.class, cls);
-			if (ann != null) {
-				name = ann.name;
+			for (Ann<?> ann : getClassAnns(cls)) {
+				if (ann instanceof TableAnn) {
+					name = ((TableAnn) ann).name;
+					break;
+				}
 			}
 			if (isEmpty(name)) {
 				name = cls.getSimpleName();
 			}
-			tableNameCache.put(cls, name);
+			TABLE_NAMES.put(cls, name);
 		}
 		return name;
 	}
@@ -94,25 +123,25 @@ public final class FieldSpecRegistry {
 	@SuppressWarnings("unchecked")
 	public static FieldSpec<ColumnAnn>[] getTableColumnSpecs(
 			Class<? extends Entity> cls) {
-		FieldSpec<ColumnAnn>[] specs = columnSpecCache.get(cls);
+		FieldSpec<ColumnAnn>[] specs = COLUMN_SPECS.get(cls);
 		if (specs == null) {
 			ArrayList<FieldSpec<ColumnAnn>> list = new ArrayList<FieldSpec<ColumnAnn>>();
-			for (Field field : listAnnotatedFields(cls)) {
-				ColumnAnn columnAnn = (ColumnAnn) getFieldAnn(ColumnAnn.class,
-						cls, field);
-				if (columnAnn != null) {
-					Class<?> componentType = getComponentType(field);
-					ColumnAnn ann = new ColumnAnn();
-					ann.name = getColumnName(columnAnn, field);
-					ann.nullable = columnAnn.nullable;
-					ann.unique = columnAnn.unique;
-					ann.eager = columnAnn.eager;
-					list.add(new FieldSpec<ColumnAnn>(field, componentType, ann));
+			List<Field> fields = listAnnotatedFields(cls);
+			for (Field field : fields) {
+				for (Ann<?> ann : getFieldAnns(field)) {
+					if (ann instanceof ColumnAnn) {
+						ColumnAnn columnAnn = (ColumnAnn) ann;
+						Class<?> componentType = getComponentType(field);
+						columnAnn.name = getColumnName(columnAnn, field);
+						list.add(new FieldSpec<ColumnAnn>(field, componentType,
+								columnAnn));
+						break;
+					}
 				}
 			}
 			sanitizeSpecs(list);
 			specs = list.toArray(new FieldSpec[list.size()]);
-			columnSpecCache.put(cls, specs);
+			COLUMN_SPECS.put(cls, specs);
 		}
 		return specs;
 	}
@@ -120,34 +149,36 @@ public final class FieldSpecRegistry {
 	// JSON
 	@SuppressWarnings("unchecked")
 	public static FieldSpec<KeyAnn>[] getJsonKeySpecs(Class<? extends Model> cls) {
-		FieldSpec<KeyAnn>[] specs = keySpecCache.get(cls);
+		FieldSpec<KeyAnn>[] specs = KEY_SPECS.get(cls);
 		if (specs == null) {
 			ArrayList<FieldSpec<KeyAnn>> list = new ArrayList<FieldSpec<KeyAnn>>();
 			for (Field field : listAnnotatedFields(cls)) {
-				KeyAnn keyAnn = (KeyAnn) getFieldAnn(KeyAnn.class, cls, field);
-				if (keyAnn != null) {
-					Class<?> componentType = getComponentType(field);
-					KeyAnn ann = new KeyAnn();
-					ann.name = getKeyName(keyAnn, field);
-					ann.optional = keyAnn.optional;
-					list.add(new FieldSpec<KeyAnn>(field, componentType,
-							(KeyAnn) ann));
+				for (Ann<?> ann : getFieldAnns(field)) {
+					if (ann instanceof KeyAnn) {
+						KeyAnn keyAnn = (KeyAnn) ann;
+						Class<?> componentType = getComponentType(field);
+						keyAnn.name = getKeyName(keyAnn, field);
+						list.add(new FieldSpec<KeyAnn>(field, componentType,
+								keyAnn));
+						break;
+					}
 				}
 			}
 			specs = list.toArray(new FieldSpec[list.size()]);
-			keySpecCache.put(cls, specs);
+			KEY_SPECS.put(cls, specs);
 		}
 		return specs;
 	}
 
 	// caches
 
-	private static final ConcurrentHashMap<Class<?>, FieldSpec<InjectAnn<?>>[]> injectSpecCache = new ConcurrentHashMap<Class<?>, FieldSpec<InjectAnn<?>>[]>();
+	private static final ConcurrentHashMap<Class<?>, FieldSpec<InjectAnn<?>>[]> INJECT_SPECS = new ConcurrentHashMap<Class<?>, FieldSpec<InjectAnn<?>>[]>();
+	private static final ConcurrentHashMap<Class<?>, MethodSpec<ReceiveEventsAnn>[]> RECEIVE_EVENTS_SPECS = new ConcurrentHashMap<Class<?>, MethodSpec<ReceiveEventsAnn>[]>();
 
-	private static final ConcurrentHashMap<Class<? extends Entity>, String> tableNameCache = new ConcurrentHashMap<Class<? extends Entity>, String>();
-	private static final ConcurrentHashMap<Class<? extends Entity>, FieldSpec<ColumnAnn>[]> columnSpecCache = new ConcurrentHashMap<Class<? extends Entity>, FieldSpec<ColumnAnn>[]>();
+	private static final ConcurrentHashMap<Class<? extends Entity>, String> TABLE_NAMES = new ConcurrentHashMap<Class<? extends Entity>, String>();
+	private static final ConcurrentHashMap<Class<? extends Entity>, FieldSpec<ColumnAnn>[]> COLUMN_SPECS = new ConcurrentHashMap<Class<? extends Entity>, FieldSpec<ColumnAnn>[]>();
 
-	private static final ConcurrentHashMap<Class<? extends Model>, FieldSpec<KeyAnn>[]> keySpecCache = new ConcurrentHashMap<Class<? extends Model>, FieldSpec<KeyAnn>[]>();
+	private static final ConcurrentHashMap<Class<? extends Model>, FieldSpec<KeyAnn>[]> KEY_SPECS = new ConcurrentHashMap<Class<? extends Model>, FieldSpec<KeyAnn>[]>();
 
 	// Utils
 

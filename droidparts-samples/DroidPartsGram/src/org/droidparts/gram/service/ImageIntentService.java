@@ -18,6 +18,7 @@ package org.droidparts.gram.service;
 import java.util.ArrayList;
 
 import org.droidparts.annotation.inject.InjectDependency;
+import org.droidparts.bus.EventBus;
 import org.droidparts.executor.service.IntentService;
 import org.droidparts.gram.contract.Instagram;
 import org.droidparts.gram.model.Image;
@@ -74,6 +75,7 @@ public class ImageIntentService extends IntentService {
 			ArrayList<Image> list = imageSerializer.deserialize(arr);
 			imageEntityManager.delete().execute();
 			imageEntityManager.create(list);
+			EventBus.sendEvent("REFRESH_COMPLETE", list);
 			return data;
 		} else {
 			throw new UnsupportedOperationException(action);

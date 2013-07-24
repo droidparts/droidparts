@@ -13,18 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License. 
  */
-package org.droidparts.inner.ann.sql;
+package org.droidparts.bus;
 
-import org.droidparts.annotation.sql.Table;
-import org.droidparts.inner.ann.Ann;
+public interface EventReceiver<T> {
 
-public final class TableAnn extends Ann<Table> {
-
-	public final String name;
-
-	public TableAnn(Table annotation) {
-		super(Table.class);
-		name = annotation.name();
-	}
+	void onEvent(String name, T data);
 
 }
