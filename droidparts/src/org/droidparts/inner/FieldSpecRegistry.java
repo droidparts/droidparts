@@ -180,14 +180,14 @@ public final class FieldSpecRegistry {
 		String name = ann.name;
 		if (isEmpty(name)) {
 			name = field.getName();
-			if (isEntity(field.getType()) && !name.endsWith(ID_SUFFIX)) {
-				name += ID_SUFFIX;
+			if (isEntity(field.getType()) && !name.endsWith(ID_AFFIX)) {
+				name += ID_AFFIX;
 			}
 		}
 		return name;
 	}
 
-	private static final String ID_SUFFIX = "_id";
+	private static final String ID_AFFIX = "_id";
 
 	private static void sanitizeSpecs(
 			ArrayList<FieldSpec<ColumnAnn>> columnSpecs) {
