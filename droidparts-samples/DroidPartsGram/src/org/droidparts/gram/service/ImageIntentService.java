@@ -75,7 +75,7 @@ public class ImageIntentService extends IntentService {
 			ArrayList<Image> list = imageSerializer.deserialize(arr);
 			imageEntityManager.delete().execute();
 			imageEntityManager.create(list);
-			EventBus.sendEvent("REFRESH_COMPLETE", list);
+			EventBus.postEvent("REFRESH_COMPLETE", list);
 			return data;
 		} else {
 			throw new UnsupportedOperationException(action);

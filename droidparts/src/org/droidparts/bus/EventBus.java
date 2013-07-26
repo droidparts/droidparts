@@ -20,6 +20,7 @@ import static org.droidparts.inner.ClassSpecRegistry.getReceiveEventsSpecs;
 import java.lang.ref.WeakReference;
 import java.lang.reflect.Method;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.droidparts.inner.ann.MethodSpec;
@@ -33,7 +34,6 @@ public class EventBus {
 
 	private static final String ALL = "_all_";
 
-	// TODO weak references, remove GCed receivers
 	private static final ConcurrentHashMap<String, HashSet<EventReceiver<Object>>> actionToReceivers = new ConcurrentHashMap<String, HashSet<EventReceiver<Object>>>();
 
 	public static void registerAnnotatedReceiver(Object obj) {
@@ -48,11 +48,12 @@ public class EventBus {
 
 	public static void unregisterAnnotatedReceiver(Object obj) {
 		for (HashSet<EventReceiver<Object>> set : actionToReceivers.values()) {
-			for (EventReceiver<Object> rec : set) {
+			Iterator<EventReceiver<Object>> it = set.iterator();
+			while (it.hasNext()) {
+				EventReceiver<Object> rec = it.next();
 				if (rec instanceof ReflectiveReceiver) {
 					if (obj == ((ReflectiveReceiver) rec).objectRef.get()) {
-						// FIXME concurrent set modificatoin
-						unregisterReceiver(rec);
+						it.remove();
 					}
 				}
 			}
@@ -74,16 +75,19 @@ public class EventBus {
 
 	public static void unregisterReceiver(EventReceiver<?> receiver) {
 		receiversForEventName(ALL).remove(receiver);
-		for (String action : actionToReceivers.keySet()) {
+		Iterator<String> it = actionToReceivers.keySet().iterator();
+		while (it.hasNext()) {
+			String action = it.next();
 			HashSet<EventReceiver<Object>> set = actionToReceivers.get(action);
 			set.remove(receiver);
 			if (set.isEmpty()) {
-				actionToReceivers.remove(action);
+				it.remove();
 			}
 		}
+
 	}
 
-	public static <T> void sendEvent(final String name, final Object data) {
+	public static <T> void postEvent(final String name, final Object data) {
 		Runnable r = new Runnable() {
 
 			@Override
@@ -111,8 +115,8 @@ public class EventBus {
 			try {
 				rec.onEvent(event, data);
 			} catch (Exception e) {
-				// TODO unregister receiver?
 				L.w(e);
+				unregisterReceiver(rec);
 			}
 		}
 
@@ -130,23 +134,20 @@ public class EventBus {
 	private static class ReflectiveReceiver implements EventReceiver<Object> {
 
 		final WeakReference<Object> objectRef;
-		final WeakReference<Method> methodRef;
+		final Method method;
 
 		ReflectiveReceiver(Object object, Method method) {
 			objectRef = new WeakReference<Object>(object);
-			methodRef = new WeakReference<Method>(method);
+			this.method = method;
 		}
 
 		@Override
 		public void onEvent(String name, Object data) {
 			try {
 				Object obj = objectRef.get();
-				Method method = methodRef.get();
-				if (obj != null && methodRef != null) {
-					method.invoke(obj, name, data);
-				}
+				method.invoke(obj, name, data);
 			} catch (Exception e) {
-				L.wtf(e);
+				throw new IllegalStateException(e);
 			}
 		}
 
