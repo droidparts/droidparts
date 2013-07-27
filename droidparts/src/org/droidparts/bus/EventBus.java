@@ -88,7 +88,7 @@ public class EventBus {
 
 	}
 
-	public static <T> void postEvent(final String name, final Object data) {
+	public static <T> void postEvent(final String name, final Object... data) {
 		Runnable r = new Runnable() {
 
 			@Override
@@ -111,10 +111,17 @@ public class EventBus {
 	}
 
 	private static void notifyReceivers(
-			HashSet<EventReceiver<Object>> receivers, String event, Object data) {
+			HashSet<EventReceiver<Object>> receivers, String event,
+			Object[] data) {
+		Object realData = data;
+		if (data.length == 0) {
+			realData = null;
+		} else if (data.length == 1) {
+			realData = data[0];
+		}
 		for (EventReceiver<Object> rec : receivers) {
 			try {
-				rec.onEvent(event, data);
+				rec.onEvent(event, realData);
 			} catch (IllegalArgumentException e) {
 				L.w(format("Failed to deliver event %s to %s: %s.", event, rec
 						.getClass().getName(), e.getMessage()));
@@ -150,7 +157,12 @@ public class EventBus {
 		public void onEvent(String name, Object data) {
 			try {
 				Object obj = objectRef.get();
-				method.invoke(obj, name, data);
+				int argCount = method.getParameterTypes().length;
+				if (argCount == 1) {
+					method.invoke(obj, name);
+				} else {
+					method.invoke(obj, name, data);
+				}
 			} catch (IllegalArgumentException e) {
 				throw e;
 			} catch (Exception e) {
