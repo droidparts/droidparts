@@ -61,7 +61,7 @@ public class ImageFetcher {
 	protected final ThreadPoolExecutor cacheExecutor;
 	protected final ThreadPoolExecutor fetchExecutor;
 
-	private final LinkedHashMap<ImageView, Spec> pending = new LinkedHashMap<ImageView, Spec>();
+	private final LinkedHashMap<Integer, Spec> pending = new LinkedHashMap<Integer, Spec>();
 	private final ConcurrentHashMap<Integer, Long> wip = new ConcurrentHashMap<Integer, Long>();
 	private Handler handler;
 
@@ -91,9 +91,9 @@ public class ImageFetcher {
 	public void resume(boolean executePendingTasks) {
 		paused = false;
 		if (executePendingTasks) {
-			for (ImageView iv : pending.keySet()) {
-				Spec spec = pending.get(iv);
-				attachImage(iv, spec.imgUrl, spec.crossFadeMillis,
+			for (Integer hash : pending.keySet()) {
+				Spec spec = pending.get(hash);
+				attachImage(spec.imgView, spec.imgUrl, spec.crossFadeMillis,
 						spec.reshaper, spec.listener, spec.inBitmapRef.get());
 			}
 		}
@@ -129,10 +129,10 @@ public class ImageFetcher {
 		Spec spec = new Spec(imageView, imgUrl, inBitmap, crossFadeMillis,
 				reshaper, listener);
 		long submitted = System.nanoTime();
-		wip.put(spec.hash, submitted);
+		wip.put(spec.imgViewHash, submitted);
 		if (paused) {
-			pending.remove(imageView);
-			pending.put(imageView, spec);
+			pending.remove(spec.imgViewHash);
+			pending.put(spec.imgViewHash, spec);
 		} else {
 			if (listener != null) {
 				listener.onFetchAdded(imageView, imgUrl);
@@ -271,10 +271,10 @@ public class ImageFetcher {
 	}
 
 	void attachIfMostRecent(Spec spec, long submitted, Bitmap bitmap) {
-		Long mostRecent = wip.get(spec.hash);
+		Long mostRecent = wip.get(spec.imgViewHash);
 		if (mostRecent != null && submitted == mostRecent) {
-			wip.remove(spec.hash);
-			if (!paused || !pending.containsKey(spec.imgView)) {
+			wip.remove(spec.imgViewHash);
+			if (!paused || !pending.containsKey(spec.imgViewHash)) {
 				SetBitmapRunnable r = new SetBitmapRunnable(spec, bitmap);
 				runOnUiThread(r);
 			}
@@ -294,7 +294,7 @@ public class ImageFetcher {
 
 	static class Spec {
 
-		final int hash;
+		final int imgViewHash;
 
 		public final ImageView imgView;
 		public final String imgUrl;
@@ -311,7 +311,7 @@ public class ImageFetcher {
 		public Spec(ImageView imgView, String imgUrl, Bitmap inBitmap,
 				int crossFadeMillis, ImageReshaper reshaper,
 				ImageFetchListener listener) {
-			hash = imgView.hashCode();
+			imgViewHash = imgView.hashCode();
 			this.imgView = imgView;
 			this.imgUrl = imgUrl;
 			inBitmapRef = new WeakReference<Bitmap>(inBitmap);
@@ -375,14 +375,14 @@ public class ImageFetcher {
 			if (this == o) {
 				eq = true;
 			} else if (o instanceof SpecRunnable) {
-				eq = spec.hash == ((SpecRunnable) o).spec.hash;
+				eq = spec.imgViewHash == ((SpecRunnable) o).spec.imgViewHash;
 			}
 			return eq;
 		}
 
 		@Override
 		public int hashCode() {
-			return spec.hash;
+			return spec.imgViewHash;
 		}
 
 		@Override
