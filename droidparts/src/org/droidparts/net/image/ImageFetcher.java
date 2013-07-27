@@ -23,7 +23,7 @@ import static org.droidparts.util.Strings.isNotEmpty;
 import java.io.BufferedInputStream;
 import java.io.ByteArrayOutputStream;
 import java.lang.ref.WeakReference;
-import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ThreadPoolExecutor;
 
@@ -61,7 +61,7 @@ public class ImageFetcher {
 	protected final ThreadPoolExecutor cacheExecutor;
 	protected final ThreadPoolExecutor fetchExecutor;
 
-	private final LinkedHashMap<Integer, Spec> pending = new LinkedHashMap<Integer, Spec>();
+	private final LinkedHashSet<ImageViewSpec> pending = new LinkedHashSet<ImageViewSpec>();
 	private final ConcurrentHashMap<Integer, Long> wip = new ConcurrentHashMap<Integer, Long>();
 	private Handler handler;
 
@@ -91,8 +91,7 @@ public class ImageFetcher {
 	public void resume(boolean executePendingTasks) {
 		paused = false;
 		if (executePendingTasks) {
-			for (Integer hash : pending.keySet()) {
-				Spec spec = pending.get(hash);
+			for (ImageViewSpec spec : pending) {
 				ImageView imgView = spec.imgViewRef.get();
 				if (imgView != null) {
 					attachImage(imgView, spec.imgUrl, spec.crossFadeMillis,
@@ -130,13 +129,13 @@ public class ImageFetcher {
 	public void attachImage(ImageView imageView, String imgUrl,
 			int crossFadeMillis, ImageReshaper reshaper,
 			ImageFetchListener listener, Bitmap inBitmap) {
-		Spec spec = new Spec(imageView, imgUrl, inBitmap, crossFadeMillis,
-				reshaper, listener);
+		ImageViewSpec spec = new ImageViewSpec(imageView, imgUrl, inBitmap,
+				crossFadeMillis, reshaper, listener);
 		long submitted = System.nanoTime();
 		wip.put(spec.imgViewHash, submitted);
 		if (paused) {
-			pending.remove(spec.imgViewHash);
-			pending.put(spec.imgViewHash, spec);
+			pending.remove(spec);
+			pending.add(spec);
 		} else {
 			if (listener != null) {
 				listener.onFetchAdded(imageView, imgUrl);
@@ -156,7 +155,8 @@ public class ImageFetcher {
 
 	public Bitmap getImage(String imgUrl, ImageReshaper reshaper,
 			ImageView hintImageView) throws Exception {
-		Spec spec = new Spec(hintImageView, imgUrl, null, 0, reshaper, null);
+		ImageViewSpec spec = new ImageViewSpec(hintImageView, imgUrl, null, 0,
+				reshaper, null);
 		Bitmap bm = readCached(spec);
 		if (bm == null) {
 			Pair<byte[], Pair<Bitmap, BitmapFactory.Options>> bmData = fetchAndDecode(spec);
@@ -187,7 +187,7 @@ public class ImageFetcher {
 	//
 
 	Pair<byte[], Pair<Bitmap, BitmapFactory.Options>> fetchAndDecode(
-			final Spec spec) throws Exception {
+			final ImageViewSpec spec) throws Exception {
 		final ImageView imgView = spec.imgViewRef.get();
 		if (imgView == null) {
 			throw new IllegalStateException("ImageView has been GCed.");
@@ -226,7 +226,7 @@ public class ImageFetcher {
 		}
 	}
 
-	Bitmap readCached(Spec spec) {
+	Bitmap readCached(ImageViewSpec spec) {
 		Bitmap bm = null;
 		if (memoryCache != null) {
 			bm = memoryCache.get(spec.cacheKey);
@@ -258,7 +258,8 @@ public class ImageFetcher {
 		}
 	}
 
-	Bitmap reshapeAndCache(Spec spec, Pair<Bitmap, BitmapFactory.Options> bmData) {
+	Bitmap reshapeAndCache(ImageViewSpec spec,
+			Pair<Bitmap, BitmapFactory.Options> bmData) {
 		Bitmap bm = bmData.first;
 		if (spec.reshaper != null) {
 			Bitmap reshapedBm = spec.reshaper.reshape(bm);
@@ -278,11 +279,11 @@ public class ImageFetcher {
 		return bm;
 	}
 
-	void attachIfMostRecent(Spec spec, long submitted, Bitmap bitmap) {
+	void attachIfMostRecent(ImageViewSpec spec, long submitted, Bitmap bitmap) {
 		Long mostRecent = wip.get(spec.imgViewHash);
 		if (mostRecent != null && submitted == mostRecent) {
 			wip.remove(spec.imgViewHash);
-			if (!paused || !pending.containsKey(spec.imgViewHash)) {
+			if (!paused || !pending.contains(spec)) {
 				SetBitmapRunnable r = new SetBitmapRunnable(spec, bitmap);
 				runOnUiThread(r);
 			}
@@ -300,12 +301,12 @@ public class ImageFetcher {
 
 	//
 
-	static class Spec {
+	static class ImageViewSpec {
 
 		final int imgViewHash;
 
-		public final WeakReference<ImageView> imgViewRef;
-		public final String imgUrl;
+		final WeakReference<ImageView> imgViewRef;
+		final String imgUrl;
 		final WeakReference<Bitmap> inBitmapRef;
 		final int crossFadeMillis;
 		final ImageReshaper reshaper;
@@ -316,7 +317,7 @@ public class ImageFetcher {
 		final int widthHint;
 		final int heightHint;
 
-		public Spec(ImageView imgView, String imgUrl, Bitmap inBitmap,
+		public ImageViewSpec(ImageView imgView, String imgUrl, Bitmap inBitmap,
 				int crossFadeMillis, ImageReshaper reshaper,
 				ImageFetchListener listener) {
 			imgViewHash = imgView.hashCode();
@@ -365,14 +366,31 @@ public class ImageFetcher {
 			}
 			return p;
 		}
+
+		@Override
+		public boolean equals(Object o) {
+			boolean eq = false;
+			if (this == o) {
+				eq = true;
+			} else if (o instanceof ImageViewSpec) {
+				eq = (imgViewHash == ((ImageViewSpec) o).imgViewHash);
+			}
+			return eq;
+		}
+
+		@Override
+		public int hashCode() {
+			return imgViewHash;
+		}
+
 	}
 
-	abstract class SpecRunnable implements Runnable {
+	abstract class ImageViewSpecRunnable implements Runnable {
 
-		public final Spec spec;
+		final ImageViewSpec spec;
 		final long submitted;
 
-		public SpecRunnable(Spec spec, long submitted) {
+		public ImageViewSpecRunnable(ImageViewSpec spec, long submitted) {
 			this.spec = spec;
 			this.submitted = submitted;
 		}
@@ -382,26 +400,22 @@ public class ImageFetcher {
 			boolean eq = false;
 			if (this == o) {
 				eq = true;
-			} else if (o instanceof SpecRunnable) {
-				eq = spec.imgViewHash == ((SpecRunnable) o).spec.imgViewHash;
+			} else if (o instanceof ImageViewSpecRunnable) {
+				eq = spec.equals(((ImageViewSpecRunnable) o).spec);
 			}
 			return eq;
 		}
 
 		@Override
 		public int hashCode() {
-			return spec.imgViewHash;
+			return spec.hashCode();
 		}
 
-		@Override
-		public String toString() {
-			return getClass().getSimpleName() + ": " + spec.imgUrl;
-		}
 	}
 
-	class ReadFromCacheRunnable extends SpecRunnable {
+	class ReadFromCacheRunnable extends ImageViewSpecRunnable {
 
-		public ReadFromCacheRunnable(Spec spec, long submitted) {
+		public ReadFromCacheRunnable(ImageViewSpec spec, long submitted) {
 			super(spec, submitted);
 		}
 
@@ -419,9 +433,9 @@ public class ImageFetcher {
 
 	}
 
-	class FetchAndCacheRunnable extends SpecRunnable {
+	class FetchAndCacheRunnable extends ImageViewSpecRunnable {
 
-		public FetchAndCacheRunnable(Spec spec, long submitted) {
+		public FetchAndCacheRunnable(ImageViewSpec spec, long submitted) {
 			super(spec, submitted);
 		}
 
@@ -452,11 +466,11 @@ public class ImageFetcher {
 
 	}
 
-	class SetBitmapRunnable extends SpecRunnable {
+	class SetBitmapRunnable extends ImageViewSpecRunnable {
 
 		final Bitmap bitmap;
 
-		public SetBitmapRunnable(Spec spec, Bitmap bitmap) {
+		public SetBitmapRunnable(ImageViewSpec spec, Bitmap bitmap) {
 			super(spec, -1);
 			this.bitmap = bitmap;
 		}
