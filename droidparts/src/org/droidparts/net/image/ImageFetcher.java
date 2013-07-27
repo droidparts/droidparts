@@ -93,8 +93,12 @@ public class ImageFetcher {
 		if (executePendingTasks) {
 			for (Integer hash : pending.keySet()) {
 				Spec spec = pending.get(hash);
-				attachImage(spec.imgView, spec.imgUrl, spec.crossFadeMillis,
-						spec.reshaper, spec.listener, spec.inBitmapRef.get());
+				ImageView imgView = spec.imgViewRef.get();
+				if (imgView != null) {
+					attachImage(imgView, spec.imgUrl, spec.crossFadeMillis,
+							spec.reshaper, spec.listener,
+							spec.inBitmapRef.get());
+				}
 			}
 		}
 		pending.clear();
@@ -184,6 +188,10 @@ public class ImageFetcher {
 
 	Pair<byte[], Pair<Bitmap, BitmapFactory.Options>> fetchAndDecode(
 			final Spec spec) throws Exception {
+		final ImageView imgView = spec.imgViewRef.get();
+		if (imgView == null) {
+			throw new IllegalStateException("ImageView has been GCed.");
+		}
 		int bytesReadTotal = 0;
 		byte[] buffer = new byte[BUFFER_SIZE];
 		BufferedInputStream bis = null;
@@ -202,7 +210,7 @@ public class ImageFetcher {
 
 						@Override
 						public void run() {
-							spec.listener.onFetchProgressChanged(spec.imgView,
+							spec.listener.onFetchProgressChanged(imgView,
 									spec.imgUrl, kBTotal, kBReceived);
 						}
 					});
@@ -296,7 +304,7 @@ public class ImageFetcher {
 
 		final int imgViewHash;
 
-		public final ImageView imgView;
+		public final WeakReference<ImageView> imgViewRef;
 		public final String imgUrl;
 		final WeakReference<Bitmap> inBitmapRef;
 		final int crossFadeMillis;
@@ -312,27 +320,27 @@ public class ImageFetcher {
 				int crossFadeMillis, ImageReshaper reshaper,
 				ImageFetchListener listener) {
 			imgViewHash = imgView.hashCode();
-			this.imgView = imgView;
+			this.imgViewRef = new WeakReference<ImageView>(imgView);
 			this.imgUrl = imgUrl;
 			inBitmapRef = new WeakReference<Bitmap>(inBitmap);
 			this.crossFadeMillis = crossFadeMillis;
 			this.reshaper = reshaper;
 			this.listener = listener;
-			cacheKey = getCacheKey();
+			cacheKey = getCacheKey(imgView);
 			configHint = getConfigHint();
-			Point p = getSizeHint();
+			Point p = getSizeHint(imgView);
 			widthHint = p.x;
 			heightHint = p.y;
 		}
 
-		private String getCacheKey() {
+		private String getCacheKey(ImageView imgView) {
 			StringBuilder sb = new StringBuilder();
 			sb.append(imgUrl);
 			if (reshaper != null) {
 				sb.append("-");
 				sb.append(reshaper.getCacheId());
 			}
-			Point p = getSizeHint();
+			Point p = getSizeHint(imgView);
 			if (p.x > 0 || p.y > 0) {
 				sb.append("-");
 				sb.append(p.x);
@@ -346,7 +354,7 @@ public class ImageFetcher {
 			return (reshaper != null) ? reshaper.getBitmapConfig() : null;
 		}
 
-		private Point getSizeHint() {
+		private Point getSizeHint(ImageView imgView) {
 			Point p = new Point();
 			if (reshaper != null) {
 				p.x = reshaper.getImageWidthHint();
@@ -428,13 +436,14 @@ public class ImageFetcher {
 				HTTPWorker.throwIfNetworkOnMainThreadException(e);
 				L.w("Failed to fetch %s.", spec.imgUrl);
 				L.d(e);
-				if (spec.listener != null) {
+				final ImageView imgView = spec.imgViewRef.get();
+				if (spec.listener != null && imgView != null) {
 					runOnUiThread(new Runnable() {
 
 						@Override
 						public void run() {
-							spec.listener.onFetchFailed(spec.imgView,
-									spec.imgUrl, e);
+							spec.listener
+									.onFetchFailed(imgView, spec.imgUrl, e);
 						}
 					});
 				}
@@ -454,23 +463,26 @@ public class ImageFetcher {
 
 		@Override
 		public void run() {
-			if (spec.crossFadeMillis > 0) {
-				Drawable prevDrawable = spec.imgView.getDrawable();
-				if (prevDrawable == null) {
-					prevDrawable = new ColorDrawable(TRANSPARENT);
+			ImageView imgView = spec.imgViewRef.get();
+			if (imgView != null) {
+				if (spec.crossFadeMillis > 0) {
+					Drawable prevDrawable = imgView.getDrawable();
+					if (prevDrawable == null) {
+						prevDrawable = new ColorDrawable(TRANSPARENT);
+					}
+					Drawable nextDrawable = new BitmapDrawable(
+							imgView.getResources(), bitmap);
+					TransitionDrawable transitionDrawable = new TransitionDrawable(
+							new Drawable[] { prevDrawable, nextDrawable });
+					imgView.setImageDrawable(transitionDrawable);
+					transitionDrawable.startTransition(spec.crossFadeMillis);
+				} else {
+					imgView.setImageBitmap(bitmap);
 				}
-				Drawable nextDrawable = new BitmapDrawable(
-						spec.imgView.getResources(), bitmap);
-				TransitionDrawable transitionDrawable = new TransitionDrawable(
-						new Drawable[] { prevDrawable, nextDrawable });
-				spec.imgView.setImageDrawable(transitionDrawable);
-				transitionDrawable.startTransition(spec.crossFadeMillis);
-			} else {
-				spec.imgView.setImageBitmap(bitmap);
-			}
-			if (spec.listener != null) {
-				spec.listener.onFetchCompleted(spec.imgView, spec.imgUrl,
-						bitmap);
+				if (spec.listener != null) {
+					spec.listener
+							.onFetchCompleted(imgView, spec.imgUrl, bitmap);
+				}
 			}
 		}
 
