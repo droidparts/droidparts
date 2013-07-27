@@ -15,6 +15,7 @@
  */
 package org.droidparts.bus;
 
+import static java.lang.String.format;
 import static org.droidparts.inner.ClassSpecRegistry.getReceiveEventsSpecs;
 
 import java.lang.ref.WeakReference;
@@ -114,8 +115,12 @@ public class EventBus {
 		for (EventReceiver<Object> rec : receivers) {
 			try {
 				rec.onEvent(event, data);
+			} catch (IllegalArgumentException e) {
+				L.w(format("Failed to deliver event %s to %s: %s.", event, rec
+						.getClass().getName(), e.getMessage()));
 			} catch (Exception e) {
 				L.w(e);
+				L.w("Receiver unregistered.");
 				unregisterReceiver(rec);
 			}
 		}
@@ -146,6 +151,8 @@ public class EventBus {
 			try {
 				Object obj = objectRef.get();
 				method.invoke(obj, name, data);
+			} catch (IllegalArgumentException e) {
+				throw e;
 			} catch (Exception e) {
 				throw new IllegalStateException(e);
 			}
