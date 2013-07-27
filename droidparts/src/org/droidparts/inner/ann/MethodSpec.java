@@ -27,6 +27,7 @@ public class MethodSpec<AnnType extends Ann<?>> {
 	public MethodSpec(Method method, AnnType ann) {
 		this.method = method;
 		this.ann = ann;
+		method.setAccessible(true);
 	}
 
 	@Override

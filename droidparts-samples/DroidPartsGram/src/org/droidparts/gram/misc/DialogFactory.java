@@ -13,29 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License. 
  */
-package org.droidparts.inner.ann;
+package org.droidparts.gram.misc;
 
-import java.lang.reflect.Field;
+import org.droidparts.util.ui.AbstractDialogFactory;
 
-public class FieldSpec<AnnType extends Ann<?>> {
+import android.content.Context;
 
-	public final Field field;
-	public final Class<?> componentType;
+public class DialogFactory extends AbstractDialogFactory {
 
-	public final AnnType ann;
-
-	public FieldSpec(Field field, Class<?> componentType, AnnType ann) {
-		this.field = field;
-		this.componentType = componentType;
-		this.ann = ann;
-		field.setAccessible(true);
-	}
-
-	@Override
-	public String toString() {
-		return getClass().getSimpleName() + ", fieldName:" + field.getName()
-				+ ", fieldType:" + field.getType() + ", componentType:"
-				+ componentType + ", ann:" + ann;
+	public DialogFactory(Context ctx) {
+		super(ctx);
 	}
 
 }

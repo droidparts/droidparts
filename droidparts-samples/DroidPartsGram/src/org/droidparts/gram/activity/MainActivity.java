@@ -18,28 +18,21 @@ package org.droidparts.gram.activity;
 import java.util.ArrayList;
 
 import org.droidparts.annotation.bus.ReceiveEvents;
-import org.droidparts.bus.EventBus;
+import org.droidparts.annotation.inject.InjectDependency;
+import org.droidparts.gram.R;
+import org.droidparts.gram.misc.DialogFactory;
 import org.droidparts.gram.model.Image;
 import org.droidparts.util.L;
 
 public class MainActivity extends PopularImageListActivity {
 
-	@Override
-	protected void onResume() {
-		super.onResume();
-		EventBus.registerAnnotatedReceiver(this);
-	}
-
-	@Override
-	protected void onPause() {
-		super.onPause();
-		EventBus.unregisterAnnotatedReceiver(this);
-	}
+	@InjectDependency
+	private DialogFactory dialogFactory;
 
 	@ReceiveEvents
-	public void onEvent(String name, ArrayList<Image> data) {
-		L.wtf(name);
-		L.wtf(data);
+	private void onEvent(String name, ArrayList<Image> data) {
+		dialogFactory.showToast(getString(R.string.event_format, name));
+		L.d(data);
 	}
 
 }

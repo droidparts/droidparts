@@ -16,6 +16,7 @@
 package org.droidparts.gram;
 
 import org.droidparts.AbstractDependencyProvider;
+import org.droidparts.gram.misc.DialogFactory;
 import org.droidparts.gram.persist.DBOpenHelper;
 import org.droidparts.gram.persist.ImageEntityManager;
 import org.droidparts.gram.persist.PrefsManager;
@@ -61,6 +62,10 @@ public class DependencyProvider extends AbstractDependencyProvider {
 			imageFetcher.clearCacheOlderThan(48);
 		}
 		return imageFetcher;
+	}
+
+	public DialogFactory getDialogFactory(Context ctx) {
+		return new DialogFactory(ctx);
 	}
 
 }

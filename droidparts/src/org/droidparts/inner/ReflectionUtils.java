@@ -32,7 +32,6 @@ public final class ReflectionUtils {
 	public static <T> T getFieldVal(Object obj, Field field)
 			throws IllegalArgumentException {
 		try {
-			field.setAccessible(true);
 			@SuppressWarnings("unchecked")
 			T val = (T) field.get(obj);
 			return val;
@@ -44,7 +43,6 @@ public final class ReflectionUtils {
 	public static void setFieldVal(Object obj, Field field, Object val)
 			throws IllegalArgumentException {
 		try {
-			field.setAccessible(true);
 			field.set(obj, val);
 		} catch (Exception e) {
 			String valClsName = (val != null) ? val.getClass().getSimpleName()
