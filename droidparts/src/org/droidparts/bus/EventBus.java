@@ -20,6 +20,7 @@ import static org.droidparts.inner.ClassSpecRegistry.getReceiveEventsSpecs;
 
 import java.lang.ref.WeakReference;
 import java.lang.reflect.Method;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.concurrent.ConcurrentHashMap;
@@ -36,6 +37,7 @@ public class EventBus {
 	private static final String ALL = "_all_";
 
 	private static final ConcurrentHashMap<String, HashSet<EventReceiver<Object>>> actionToReceivers = new ConcurrentHashMap<String, HashSet<EventReceiver<Object>>>();
+	private static final ConcurrentHashMap<String, Object[]> stickyEvents = new ConcurrentHashMap<String, Object[]>();
 
 	public static void registerAnnotatedReceiver(Object obj) {
 		MethodSpec<ReceiveEventsAnn>[] specs = getReceiveEventsSpecs(obj
@@ -66,8 +68,17 @@ public class EventBus {
 		@SuppressWarnings("unchecked")
 		EventReceiver<Object> rec = (EventReceiver<Object>) receiver;
 		if (eventNames.length == 0) {
+			for (String name : stickyEvents.keySet()) {
+				notifyReceiver(rec, name, stickyEvents.get(name));
+			}
 			receiversForEventName(ALL).add(rec);
 		} else {
+			for (String name : eventNames) {
+				Object[] data = stickyEvents.get(name);
+				if (data != null) {
+					notifyReceiver(rec, name, data);
+				}
+			}
 			for (String action : eventNames) {
 				receiversForEventName(action).add(rec);
 			}
@@ -85,7 +96,27 @@ public class EventBus {
 				it.remove();
 			}
 		}
+	}
 
+	public void clearStickyEvents(String... names) {
+		if (names.length == 0) {
+			stickyEvents.clear();
+		} else {
+			HashSet<String> nameSet = new HashSet<String>(Arrays.asList(names));
+			Iterator<String> it = actionToReceivers.keySet().iterator();
+			while (it.hasNext()) {
+				String name = it.next();
+				if (nameSet.contains(name)) {
+					it.remove();
+					break;
+				}
+			}
+		}
+	}
+
+	public static <T> void postEventSticky(String name, Object... data) {
+		stickyEvents.put(name, data);
+		postEvent(name, data);
 	}
 
 	public static <T> void postEvent(final String name, final Object... data) {
@@ -93,8 +124,12 @@ public class EventBus {
 
 			@Override
 			public void run() {
-				notifyReceivers(receiversForEventName(ALL), name, data);
-				notifyReceivers(receiversForEventName(name), name, data);
+				HashSet<EventReceiver<Object>> receivers = new HashSet<EventReceiver<Object>>();
+				receivers.addAll(receiversForEventName(ALL));
+				receivers.addAll(receiversForEventName(name));
+				for (EventReceiver<Object> rec : receivers) {
+					notifyReceiver(rec, name, data);
+				}
 			}
 		};
 		runOnUiThread(r);
@@ -110,26 +145,23 @@ public class EventBus {
 		return set;
 	}
 
-	private static void notifyReceivers(
-			HashSet<EventReceiver<Object>> receivers, String event,
-			Object[] data) {
+	private static void notifyReceiver(EventReceiver<Object> receiver,
+			String event, Object[] data) {
 		Object realData = data;
 		if (data.length == 0) {
 			realData = null;
 		} else if (data.length == 1) {
 			realData = data[0];
 		}
-		for (EventReceiver<Object> rec : receivers) {
-			try {
-				rec.onEvent(event, realData);
-			} catch (IllegalArgumentException e) {
-				L.w(format("Failed to deliver event %s to %s: %s.", event, rec
-						.getClass().getName(), e.getMessage()));
-			} catch (Exception e) {
-				L.w(e);
-				L.w("Receiver unregistered.");
-				unregisterReceiver(rec);
-			}
+		try {
+			receiver.onEvent(event, realData);
+		} catch (IllegalArgumentException e) {
+			L.w(format("Failed to deliver event %s to %s: %s.", event, receiver
+					.getClass().getName(), e.getMessage()));
+		} catch (Exception e) {
+			L.w(e);
+			L.w("Receiver unregistered.");
+			unregisterReceiver(receiver);
 		}
 
 	}
