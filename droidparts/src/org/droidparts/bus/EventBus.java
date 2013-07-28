@@ -22,7 +22,6 @@ import java.lang.ref.WeakReference;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.droidparts.inner.ann.MethodSpec;
@@ -36,7 +35,7 @@ public class EventBus {
 
 	private static final String ALL = "_all_";
 
-	private static final ConcurrentHashMap<String, HashSet<EventReceiver<Object>>> actionToReceivers = new ConcurrentHashMap<String, HashSet<EventReceiver<Object>>>();
+	private static final ConcurrentHashMap<String, ConcurrentHashMap<EventReceiver<Object>, Boolean>> eventNameToReceivers = new ConcurrentHashMap<String, ConcurrentHashMap<EventReceiver<Object>, Boolean>>();
 	private static final ConcurrentHashMap<String, Object[]> stickyEvents = new ConcurrentHashMap<String, Object[]>();
 
 	public static void registerAnnotatedReceiver(Object obj) {
@@ -50,13 +49,12 @@ public class EventBus {
 	}
 
 	public static void unregisterAnnotatedReceiver(Object obj) {
-		for (HashSet<EventReceiver<Object>> set : actionToReceivers.values()) {
-			Iterator<EventReceiver<Object>> it = set.iterator();
-			while (it.hasNext()) {
-				EventReceiver<Object> rec = it.next();
-				if (rec instanceof ReflectiveReceiver) {
-					if (obj == ((ReflectiveReceiver) rec).objectRef.get()) {
-						it.remove();
+		for (ConcurrentHashMap<EventReceiver<Object>, Boolean> receivers : eventNameToReceivers
+				.values()) {
+			for (EventReceiver<Object> receiver : receivers.keySet()) {
+				if (receiver instanceof ReflectiveReceiver) {
+					if (obj == ((ReflectiveReceiver) receiver).objectRef.get()) {
+						receivers.remove(receiver);
 					}
 				}
 			}
@@ -71,7 +69,7 @@ public class EventBus {
 			for (String name : stickyEvents.keySet()) {
 				notifyReceiver(rec, name, stickyEvents.get(name));
 			}
-			receiversForEventName(ALL).add(rec);
+			receiversForEventName(ALL).put(rec, Boolean.FALSE);
 		} else {
 			for (String name : eventNames) {
 				Object[] data = stickyEvents.get(name);
@@ -80,21 +78,21 @@ public class EventBus {
 				}
 			}
 			for (String action : eventNames) {
-				receiversForEventName(action).add(rec);
+				receiversForEventName(action).put(rec, Boolean.FALSE);
 			}
 		}
 	}
 
 	public static void unregisterReceiver(EventReceiver<?> receiver) {
 		receiversForEventName(ALL).remove(receiver);
-		Iterator<String> it = actionToReceivers.keySet().iterator();
-		while (it.hasNext()) {
-			String action = it.next();
-			HashSet<EventReceiver<Object>> set = actionToReceivers.get(action);
-			set.remove(receiver);
-			if (set.isEmpty()) {
-				it.remove();
+		for (String eventName : eventNameToReceivers.keySet()) {
+			ConcurrentHashMap<EventReceiver<Object>, Boolean> map = eventNameToReceivers
+					.get(eventName);
+			map.remove(receiver);
+			if (map.isEmpty()) {
+				eventNameToReceivers.remove(eventName);
 			}
+
 		}
 	}
 
@@ -103,11 +101,9 @@ public class EventBus {
 			stickyEvents.clear();
 		} else {
 			HashSet<String> nameSet = new HashSet<String>(Arrays.asList(names));
-			Iterator<String> it = actionToReceivers.keySet().iterator();
-			while (it.hasNext()) {
-				String name = it.next();
-				if (nameSet.contains(name)) {
-					it.remove();
+			for (String eventName : eventNameToReceivers.keySet()) {
+				if (nameSet.contains(eventName)) {
+					eventNameToReceivers.remove(eventName);
 					break;
 				}
 			}
@@ -125,8 +121,8 @@ public class EventBus {
 			@Override
 			public void run() {
 				HashSet<EventReceiver<Object>> receivers = new HashSet<EventReceiver<Object>>();
-				receivers.addAll(receiversForEventName(ALL));
-				receivers.addAll(receiversForEventName(name));
+				receivers.addAll(receiversForEventName(ALL).keySet());
+				receivers.addAll(receiversForEventName(name).keySet());
 				for (EventReceiver<Object> rec : receivers) {
 					notifyReceiver(rec, name, data);
 				}
@@ -135,14 +131,15 @@ public class EventBus {
 		runOnUiThread(r);
 	}
 
-	private static HashSet<EventReceiver<Object>> receiversForEventName(
+	private static ConcurrentHashMap<EventReceiver<Object>, Boolean> receiversForEventName(
 			String name) {
-		HashSet<EventReceiver<Object>> set = actionToReceivers.get(name);
-		if (set == null) {
-			set = new HashSet<EventReceiver<Object>>();
-			actionToReceivers.put(name, set);
+		ConcurrentHashMap<EventReceiver<Object>, Boolean> map = eventNameToReceivers
+				.get(name);
+		if (map == null) {
+			map = new ConcurrentHashMap<EventReceiver<Object>, Boolean>();
+			eventNameToReceivers.put(name, map);
 		}
-		return set;
+		return map;
 	}
 
 	private static void notifyReceiver(EventReceiver<Object> receiver,
