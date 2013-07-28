@@ -62,7 +62,7 @@ public class ImageFetcher {
 	protected final ThreadPoolExecutor fetchExecutor;
 
 	private final LinkedHashSet<ImageViewSpec> pending = new LinkedHashSet<ImageViewSpec>();
-	private final ConcurrentHashMap<Integer, Long> wip = new ConcurrentHashMap<Integer, Long>();
+	private final ConcurrentHashMap<ImageViewSpec, Long> wip = new ConcurrentHashMap<ImageViewSpec, Long>();
 	private Handler handler;
 
 	private volatile boolean paused;
@@ -132,7 +132,7 @@ public class ImageFetcher {
 		ImageViewSpec spec = new ImageViewSpec(imageView, imgUrl, inBitmap,
 				crossFadeMillis, reshaper, listener);
 		long submitted = System.nanoTime();
-		wip.put(spec.imgViewHash, submitted);
+		wip.put(spec, submitted);
 		if (paused) {
 			pending.remove(spec);
 			pending.add(spec);
@@ -280,9 +280,9 @@ public class ImageFetcher {
 	}
 
 	void attachIfMostRecent(ImageViewSpec spec, long submitted, Bitmap bitmap) {
-		Long mostRecent = wip.get(spec.imgViewHash);
+		Long mostRecent = wip.get(spec);
 		if (mostRecent != null && submitted == mostRecent) {
-			wip.remove(spec.imgViewHash);
+			wip.remove(spec);
 			if (!paused || !pending.contains(spec)) {
 				SetBitmapRunnable r = new SetBitmapRunnable(spec, bitmap);
 				runOnUiThread(r);
@@ -303,8 +303,6 @@ public class ImageFetcher {
 
 	static class ImageViewSpec {
 
-		final int imgViewHash;
-
 		final WeakReference<ImageView> imgViewRef;
 		final String imgUrl;
 		final WeakReference<Bitmap> inBitmapRef;
@@ -317,11 +315,12 @@ public class ImageFetcher {
 		final int widthHint;
 		final int heightHint;
 
+		private final int imgViewHash;
+
 		public ImageViewSpec(ImageView imgView, String imgUrl, Bitmap inBitmap,
 				int crossFadeMillis, ImageReshaper reshaper,
 				ImageFetchListener listener) {
-			imgViewHash = imgView.hashCode();
-			this.imgViewRef = new WeakReference<ImageView>(imgView);
+			imgViewRef = new WeakReference<ImageView>(imgView);
 			this.imgUrl = imgUrl;
 			inBitmapRef = new WeakReference<Bitmap>(inBitmap);
 			this.crossFadeMillis = crossFadeMillis;
@@ -332,6 +331,7 @@ public class ImageFetcher {
 			Point p = getSizeHint(imgView);
 			widthHint = p.x;
 			heightHint = p.y;
+			imgViewHash = imgView.hashCode();
 		}
 
 		private String getCacheKey(ImageView imgView) {
