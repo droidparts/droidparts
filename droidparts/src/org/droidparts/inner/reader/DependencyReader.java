@@ -120,11 +120,9 @@ public class DependencyReader {
 	}
 
 	private static class VoidAnn extends Ann<Annotation> {
-
 		public VoidAnn() {
 			super(Annotation.class);
 		}
-
 	}
 
 }
