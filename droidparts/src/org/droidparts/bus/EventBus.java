@@ -19,7 +19,6 @@ import static java.lang.String.format;
 import static org.droidparts.inner.ClassSpecRegistry.getReceiveEventsSpecs;
 
 import java.lang.ref.WeakReference;
-import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.concurrent.ConcurrentHashMap;
@@ -102,9 +101,7 @@ public class EventBus {
 		MethodSpec<ReceiveEventsAnn>[] specs = getReceiveEventsSpecs(obj
 				.getClass());
 		for (MethodSpec<ReceiveEventsAnn> spec : specs) {
-			ReflectiveReceiver receiver = new ReflectiveReceiver(obj,
-					spec.method);
-			registerReceiver(receiver, spec.ann.names);
+			registerReceiver(new ReflectiveReceiver(obj, spec), spec.ann.names);
 		}
 	}
 
@@ -186,22 +183,22 @@ public class EventBus {
 	private static class ReflectiveReceiver implements EventReceiver<Object> {
 
 		final WeakReference<Object> objectRef;
-		final Method method;
+		final MethodSpec<ReceiveEventsAnn> spec;
 
-		ReflectiveReceiver(Object object, Method method) {
+		ReflectiveReceiver(Object object, MethodSpec<ReceiveEventsAnn> spec) {
 			objectRef = new WeakReference<Object>(object);
-			this.method = method;
+			this.spec = spec;
 		}
 
 		@Override
 		public void onEvent(String name, Object data) {
 			try {
 				Object obj = objectRef.get();
-				int argCount = method.getParameterTypes().length;
-				if (argCount == 1) {
-					method.invoke(obj, name);
+				int paramCount = spec.paramTypes.length;
+				if (paramCount == 1) {
+					spec.method.invoke(obj, name);
 				} else {
-					method.invoke(obj, name, data);
+					spec.method.invoke(obj, name, data);
 				}
 			} catch (IllegalArgumentException e) {
 				throw e;

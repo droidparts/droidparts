@@ -17,12 +17,15 @@ package org.droidparts.inner.reader;
 
 import static android.content.pm.PackageManager.GET_META_DATA;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 
 import org.droidparts.AbstractDependencyProvider;
 import org.droidparts.contract.Constants.ManifestMeta;
+import org.droidparts.inner.ann.Ann;
+import org.droidparts.inner.ann.MethodSpec;
 import org.droidparts.util.L;
 
 import android.content.Context;
@@ -33,7 +36,7 @@ public class DependencyReader {
 
 	private static volatile boolean inited = false;
 	private static AbstractDependencyProvider dependencyProvider;
-	private static HashMap<Class<?>, Method> methodRegistry = new HashMap<Class<?>, Method>();
+	private static HashMap<Class<?>, MethodSpec<VoidAnn>> methodRegistry = new HashMap<Class<?>, MethodSpec<VoidAnn>>();
 
 	public static void init(Context ctx) {
 		if (!inited) {
@@ -44,7 +47,9 @@ public class DependencyReader {
 						Method[] methods = dependencyProvider.getClass()
 								.getMethods();
 						for (Method method : methods) {
-							methodRegistry.put(method.getReturnType(), method);
+							methodRegistry.put(method.getReturnType(),
+									new MethodSpec<VoidAnn>(method,
+											new VoidAnn()));
 						}
 					}
 					inited = true;
@@ -66,13 +71,13 @@ public class DependencyReader {
 		init(ctx);
 		T val = null;
 		if (dependencyProvider != null) {
-			Method method = methodRegistry.get(valType);
+			MethodSpec<VoidAnn> spec = methodRegistry.get(valType);
 			try {
-				int paramCount = method.getGenericParameterTypes().length;
+				int paramCount = spec.paramTypes.length;
 				if (paramCount == 0) {
-					val = (T) method.invoke(dependencyProvider);
+					val = (T) spec.method.invoke(dependencyProvider);
 				} else {
-					val = (T) method.invoke(dependencyProvider, ctx);
+					val = (T) spec.method.invoke(dependencyProvider, ctx);
 				}
 			} catch (Exception e) {
 				throw new RuntimeException(
@@ -112,6 +117,14 @@ public class DependencyReader {
 			L.d(e);
 			return null;
 		}
+	}
+
+	private static class VoidAnn extends Ann<Annotation> {
+
+		public VoidAnn() {
+			super(Annotation.class);
+		}
+
 	}
 
 }

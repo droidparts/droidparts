@@ -21,11 +21,13 @@ import java.util.Arrays;
 public class MethodSpec<AnnType extends Ann<?>> {
 
 	public final Method method;
+	public final Class<?>[] paramTypes;
 
 	public final AnnType ann;
 
 	public MethodSpec(Method method, AnnType ann) {
 		this.method = method;
+		paramTypes = method.getParameterTypes();
 		this.ann = ann;
 		method.setAccessible(true);
 	}
@@ -33,8 +35,8 @@ public class MethodSpec<AnnType extends Ann<?>> {
 	@Override
 	public String toString() {
 		return getClass().getSimpleName() + ", methodName:" + method.getName()
-				+ ", methodArguments:"
-				+ Arrays.toString(method.getParameterTypes()) + ", ann:" + ann;
+				+ ", methodParamTypes:" + Arrays.toString(paramTypes)
+				+ ", ann:" + ann;
 	}
 
 }
