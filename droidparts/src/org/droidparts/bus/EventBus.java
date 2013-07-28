@@ -38,6 +38,66 @@ public class EventBus {
 	private static final ConcurrentHashMap<String, ConcurrentHashMap<EventReceiver<Object>, Boolean>> eventNameToReceivers = new ConcurrentHashMap<String, ConcurrentHashMap<EventReceiver<Object>, Boolean>>();
 	private static final ConcurrentHashMap<String, Object[]> stickyEvents = new ConcurrentHashMap<String, Object[]>();
 
+	public static void postEvent(String name, Object... data) {
+		runOnUiThread(new PostEventRunnable(name, data));
+	}
+
+	public static void postEventSticky(String name, Object... data) {
+		stickyEvents.put(name, data);
+		postEvent(name, data);
+	}
+
+	public void clearStickyEvents(String... eventNames) {
+		boolean allEvents = (eventNames.length == 0);
+		if (allEvents) {
+			stickyEvents.clear();
+		} else {
+			HashSet<String> nameSet = new HashSet<String>(
+					Arrays.asList(eventNames));
+			for (String eventName : eventNameToReceivers.keySet()) {
+				if (nameSet.contains(eventName)) {
+					eventNameToReceivers.remove(eventName);
+					break;
+				}
+			}
+		}
+	}
+
+	public static void registerReceiver(EventReceiver<?> receiver,
+			String... eventNames) {
+		@SuppressWarnings("unchecked")
+		EventReceiver<Object> rec = (EventReceiver<Object>) receiver;
+		boolean allEvents = (eventNames.length == 0);
+		if (allEvents) {
+			for (String name : stickyEvents.keySet()) {
+				notifyReceiver(rec, name, stickyEvents.get(name));
+			}
+			receiversForEventName(ALL).put(rec, Boolean.FALSE);
+		} else {
+			for (String name : eventNames) {
+				Object[] data = stickyEvents.get(name);
+				if (data != null) {
+					notifyReceiver(rec, name, data);
+				}
+			}
+			for (String action : eventNames) {
+				receiversForEventName(action).put(rec, Boolean.FALSE);
+			}
+		}
+	}
+
+	public static void unregisterReceiver(EventReceiver<?> receiver) {
+		receiversForEventName(ALL).remove(receiver);
+		for (String eventName : eventNameToReceivers.keySet()) {
+			ConcurrentHashMap<EventReceiver<Object>, Boolean> receivers = eventNameToReceivers
+					.get(eventName);
+			receivers.remove(receiver);
+			if (receivers.isEmpty()) {
+				eventNameToReceivers.remove(eventName);
+			}
+		}
+	}
+
 	public static void registerAnnotatedReceiver(Object obj) {
 		MethodSpec<ReceiveEventsAnn>[] specs = getReceiveEventsSpecs(obj
 				.getClass());
@@ -59,76 +119,6 @@ public class EventBus {
 				}
 			}
 		}
-	}
-
-	public static void registerReceiver(EventReceiver<?> receiver,
-			String... eventNames) {
-		@SuppressWarnings("unchecked")
-		EventReceiver<Object> rec = (EventReceiver<Object>) receiver;
-		if (eventNames.length == 0) {
-			for (String name : stickyEvents.keySet()) {
-				notifyReceiver(rec, name, stickyEvents.get(name));
-			}
-			receiversForEventName(ALL).put(rec, Boolean.FALSE);
-		} else {
-			for (String name : eventNames) {
-				Object[] data = stickyEvents.get(name);
-				if (data != null) {
-					notifyReceiver(rec, name, data);
-				}
-			}
-			for (String action : eventNames) {
-				receiversForEventName(action).put(rec, Boolean.FALSE);
-			}
-		}
-	}
-
-	public static void unregisterReceiver(EventReceiver<?> receiver) {
-		receiversForEventName(ALL).remove(receiver);
-		for (String eventName : eventNameToReceivers.keySet()) {
-			ConcurrentHashMap<EventReceiver<Object>, Boolean> map = eventNameToReceivers
-					.get(eventName);
-			map.remove(receiver);
-			if (map.isEmpty()) {
-				eventNameToReceivers.remove(eventName);
-			}
-
-		}
-	}
-
-	public void clearStickyEvents(String... names) {
-		if (names.length == 0) {
-			stickyEvents.clear();
-		} else {
-			HashSet<String> nameSet = new HashSet<String>(Arrays.asList(names));
-			for (String eventName : eventNameToReceivers.keySet()) {
-				if (nameSet.contains(eventName)) {
-					eventNameToReceivers.remove(eventName);
-					break;
-				}
-			}
-		}
-	}
-
-	public static <T> void postEventSticky(String name, Object... data) {
-		stickyEvents.put(name, data);
-		postEvent(name, data);
-	}
-
-	public static <T> void postEvent(final String name, final Object... data) {
-		Runnable r = new Runnable() {
-
-			@Override
-			public void run() {
-				HashSet<EventReceiver<Object>> receivers = new HashSet<EventReceiver<Object>>();
-				receivers.addAll(receiversForEventName(ALL).keySet());
-				receivers.addAll(receiversForEventName(name).keySet());
-				for (EventReceiver<Object> rec : receivers) {
-					notifyReceiver(rec, name, data);
-				}
-			}
-		};
-		runOnUiThread(r);
 	}
 
 	private static ConcurrentHashMap<EventReceiver<Object>, Boolean> receiversForEventName(
@@ -171,6 +161,27 @@ public class EventBus {
 	}
 
 	private static Handler handler;
+
+	private static class PostEventRunnable implements Runnable {
+
+		private final String name;
+		private final Object[] data;
+
+		public PostEventRunnable(String name, Object[] data) {
+			this.name = name;
+			this.data = data;
+		}
+
+		@Override
+		public void run() {
+			HashSet<EventReceiver<Object>> receivers = new HashSet<EventReceiver<Object>>();
+			receivers.addAll(receiversForEventName(ALL).keySet());
+			receivers.addAll(receiversForEventName(name).keySet());
+			for (EventReceiver<Object> rec : receivers) {
+				notifyReceiver(rec, name, data);
+			}
+		}
+	}
 
 	private static class ReflectiveReceiver implements EventReceiver<Object> {
 
