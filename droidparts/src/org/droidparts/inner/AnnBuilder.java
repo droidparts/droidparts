@@ -19,7 +19,6 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
-import java.util.HashMap;
 
 import org.droidparts.annotation.bus.ReceiveEvents;
 import org.droidparts.annotation.inject.InjectBundleExtra;
@@ -64,36 +63,42 @@ public final class AnnBuilder {
 			Annotation[] annotations) {
 		ArrayList<Ann<?>> anns = new ArrayList<Ann<?>>();
 		for (Annotation annotation : annotations) {
-			Class<? extends Annotation> annotationType = annotation
-					.annotationType();
-			Class<? extends Ann<?>> cls = map.get(annotationType);
-			if (cls != null) {
-				try {
-					Ann<?> ann = cls.getConstructor(annotationType)
-							.newInstance(annotation);
-					anns.add(ann);
-				} catch (Exception e) {
-					throw new AssertionError(e);
-				}
+			Ann<?> ann = toAnn(annotation);
+			if (ann != null) {
+				anns.add(ann);
 			}
 		}
 		return anns.toArray(new Ann[anns.size()]);
 	}
 
-	private static final HashMap<Class<? extends Annotation>, Class<? extends Ann<?>>> map = new HashMap<Class<? extends Annotation>, Class<? extends Ann<?>>>();
-
-	static {
-		map.put(InjectBundleExtra.class, InjectBundleExtraAnn.class);
-		map.put(InjectDependency.class, InjectDependencyAnn.class);
-		map.put(InjectResource.class, InjectResourceAnn.class);
-		map.put(InjectSystemService.class, InjectSystemServiceAnn.class);
-		map.put(InjectView.class, InjectViewAnn.class);
-		map.put(InjectFragment.class, InjectFragmentAnn.class);
-		map.put(InjectParentActivity.class, InjectParentActivityAnn.class);
-		map.put(Table.class, TableAnn.class);
-		map.put(Column.class, ColumnAnn.class);
-		map.put(Key.class, KeyAnn.class);
-		map.put(ReceiveEvents.class, ReceiveEventsAnn.class);
+	private static Ann<?> toAnn(Annotation annotation) {
+		Class<?> type = annotation.annotationType();
+		if (InjectBundleExtra.class == type) {
+			return new InjectBundleExtraAnn((InjectBundleExtra) annotation);
+		} else if (InjectDependency.class == type) {
+			return new InjectDependencyAnn((InjectDependency) annotation);
+		} else if (InjectResource.class == type) {
+			return new InjectResourceAnn((InjectResource) annotation);
+		} else if (InjectSystemService.class == type) {
+			return new InjectSystemServiceAnn((InjectSystemService) annotation);
+		} else if (InjectView.class == type) {
+			return new InjectViewAnn((InjectView) annotation);
+		} else if (InjectFragment.class == type) {
+			return new InjectFragmentAnn((InjectFragment) annotation);
+		} else if (InjectParentActivity.class == type) {
+			return new InjectParentActivityAnn(
+					(InjectParentActivity) annotation);
+		} else if (Table.class == type) {
+			return new TableAnn((Table) annotation);
+		} else if (Column.class == type) {
+			return new ColumnAnn((Column) annotation);
+		} else if (Key.class == type) {
+			return new KeyAnn((Key) annotation);
+		} else if (ReceiveEvents.class == type) {
+			return new ReceiveEventsAnn((ReceiveEvents) annotation);
+		} else {
+			return null;
+		}
 	}
 
 }
