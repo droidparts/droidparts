@@ -30,22 +30,6 @@ public abstract class Entity extends Model {
 	public long id;
 
 	@Override
-	public String toString() {
-		return getClass().getName() + ", id: " + id;
-	}
-
-	@Override
-	public boolean equals(Object o) {
-		if (this == o) {
-			return true;
-		} else if (o != null && getClass() == o.getClass()) {
-			return id == ((Entity) o).id;
-		} else {
-			return false;
-		}
-	}
-
-	@Override
 	public int hashCode() {
 		return getClass().hashCode() + (int) id;
 	}

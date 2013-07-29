@@ -18,11 +18,9 @@ package org.droidparts.inner;
 import static org.droidparts.inner.TypeHelper.isArray;
 
 import java.lang.reflect.Field;
-import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
-import java.util.List;
 
 import org.droidparts.util.Arrays2;
 import org.droidparts.util.L;
@@ -78,37 +76,11 @@ public final class ReflectionUtils {
 		return en;
 	}
 
-	public static List<Field> listAnnotatedFields(Class<?> cls) {
-		ArrayList<Class<?>> clsTree = buildClassTree(cls);
-		ArrayList<Field> fields = new ArrayList<Field>();
-		for (Class<?> c : clsTree) {
-			for (Field f : c.getDeclaredFields()) {
-				if (f.getAnnotations().length > 0) {
-					fields.add(f);
-				}
-			}
-		}
-		return fields;
-	}
-
-	public static List<Method> listAnnotatedMethods(Class<?> cls) {
-		ArrayList<Class<?>> clsTree = buildClassTree(cls);
-		ArrayList<Method> methods = new ArrayList<Method>();
-		for (Class<?> c : clsTree) {
-			for (Method m : c.getDeclaredMethods()) {
-				if (m.getAnnotations().length > 0) {
-					methods.add(m);
-				}
-			}
-		}
-		return methods;
-	}
-
-	private static ArrayList<Class<?>> buildClassTree(Class<?> cls) {
-		ArrayList<Class<?>> clsTree = new ArrayList<Class<?>>();
+	public static ArrayList<Class<?>> buildClassHierarchy(Class<?> cls) {
+		ArrayList<Class<?>> hierarhy = new ArrayList<Class<?>>();
 		boolean enteredDroidParts = false;
 		do {
-			clsTree.add(0, cls);
+			hierarhy.add(0, cls);
 			boolean inDroidParts = cls.getName().startsWith("org.droidparts");
 			if (enteredDroidParts && !inDroidParts) {
 				break;
@@ -117,7 +89,7 @@ public final class ReflectionUtils {
 				cls = cls.getSuperclass();
 			}
 		} while (cls != null);
-		return clsTree;
+		return hierarhy;
 	}
 
 	public static Class<?> getArrayComponentType(Class<?> arrCls) {
