@@ -53,9 +53,9 @@ public class EventBus {
 		} else {
 			HashSet<String> nameSet = new HashSet<String>(
 					Arrays.asList(eventNames));
-			for (String eventName : eventNameToReceivers.keySet()) {
+			for (String eventName : stickyEvents.keySet()) {
 				if (nameSet.contains(eventName)) {
-					eventNameToReceivers.remove(eventName);
+					stickyEvents.remove(eventName);
 					break;
 				}
 			}
