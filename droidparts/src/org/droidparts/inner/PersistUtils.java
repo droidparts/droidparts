@@ -16,7 +16,7 @@
 package org.droidparts.inner;
 
 import static java.util.Arrays.asList;
-import static org.droidparts.inner.FieldSpecRegistry.getTableName;
+import static org.droidparts.inner.ClassSpecRegistry.getTableName;
 import static org.droidparts.inner.TypeHelper.isEntity;
 import static org.droidparts.util.Strings.join;
 import static org.json.JSONObject.NULL;
@@ -195,7 +195,7 @@ public final class PersistUtils implements SQL.DDL {
 	public static <T> ArrayList<String> getAddMissingColumns(SQLiteDatabase db,
 			Class<? extends Entity> cls) {
 		String tableName = getTableName(cls);
-		FieldSpec<ColumnAnn>[] columnSpecs = FieldSpecRegistry
+		FieldSpec<ColumnAnn>[] columnSpecs = ClassSpecRegistry
 				.getTableColumnSpecs(cls);
 		ArrayList<String> presentColumns = getColumnNames(db, tableName);
 

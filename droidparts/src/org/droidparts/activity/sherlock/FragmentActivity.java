@@ -16,6 +16,7 @@
 package org.droidparts.activity.sherlock;
 
 import org.droidparts.Injector;
+import org.droidparts.bus.EventBus;
 import org.droidparts.contract.Injectable;
 import org.droidparts.inner.fragments.SecretFragmentsSupportUtil;
 
@@ -35,6 +36,10 @@ public abstract class FragmentActivity extends
 	private boolean isLoading;
 
 	@Override
+	public void onPreInject() {
+	}
+
+	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		onPreInject();
@@ -42,7 +47,15 @@ public abstract class FragmentActivity extends
 	}
 
 	@Override
-	public void onPreInject() {
+	protected void onResume() {
+		super.onResume();
+		EventBus.registerAnnotatedReceiver(this);
+	}
+
+	@Override
+	protected void onPause() {
+		super.onPause();
+		EventBus.unregisterAnnotatedReceiver(this);
 	}
 
 	public final void setActionBarLoadingIndicatorVisible(boolean visible) {

@@ -17,7 +17,7 @@ package org.droidparts;
 
 import static org.droidparts.inner.ReflectionUtils.setFieldVal;
 
-import org.droidparts.inner.FieldSpecRegistry;
+import org.droidparts.inner.ClassSpecRegistry;
 import org.droidparts.inner.ann.FieldSpec;
 import org.droidparts.inner.ann.inject.InjectAnn;
 import org.droidparts.inner.reader.DependencyReader;
@@ -94,7 +94,7 @@ public class Injector {
 	private static void inject(Context ctx, View root, Object target) {
 		long start = System.currentTimeMillis();
 		Class<?> cls = target.getClass();
-		FieldSpec<InjectAnn<?>>[] specs = FieldSpecRegistry.getInjectSpecs(cls);
+		FieldSpec<InjectAnn<?>>[] specs = ClassSpecRegistry.getInjectSpecs(cls);
 		for (FieldSpec<InjectAnn<?>> spec : specs) {
 			try {
 				Object val = ValueReader.getVal(ctx, root, target, spec);

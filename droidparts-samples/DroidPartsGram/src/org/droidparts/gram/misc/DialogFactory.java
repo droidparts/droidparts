@@ -13,18 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License. 
  */
-package org.droidparts.inner.ann.sql;
+package org.droidparts.gram.misc;
 
-import org.droidparts.annotation.sql.Table;
-import org.droidparts.inner.ann.Ann;
+import org.droidparts.util.ui.AbstractDialogFactory;
 
-public final class TableAnn extends Ann<Table> {
+import android.content.Context;
 
-	public final String name;
+public class DialogFactory extends AbstractDialogFactory {
 
-	public TableAnn(Table annotation) {
-		super(Table.class);
-		name = annotation.name();
+	public DialogFactory(Context ctx) {
+		super(ctx);
 	}
 
 }

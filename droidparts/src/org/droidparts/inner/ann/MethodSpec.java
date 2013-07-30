@@ -13,29 +13,30 @@
  * See the License for the specific language governing permissions and
  * limitations under the License. 
  */
-package org.droidparts.inner.ann.sql;
+package org.droidparts.inner.ann;
 
-import org.droidparts.annotation.sql.Column;
-import org.droidparts.inner.ann.Ann;
+import java.lang.reflect.Method;
+import java.util.Arrays;
 
-public final class ColumnAnn extends Ann<Column> {
+public class MethodSpec<AnnType extends Ann<?>> {
 
-	public String name;
-	public boolean nullable;
-	public final boolean unique;
-	public boolean eager;
+	public final Method method;
+	public final Class<?>[] paramTypes;
 
-	public ColumnAnn(Column annotation) {
-		super(Column.class);
-		name = annotation.name();
-		nullable = annotation.nullable();
-		unique = annotation.unique();
-		eager = annotation.eager();
+	public final AnnType ann;
+
+	public MethodSpec(Method method, AnnType ann) {
+		this.method = method;
+		paramTypes = method.getParameterTypes();
+		this.ann = ann;
+		method.setAccessible(true);
 	}
 
 	@Override
 	public String toString() {
-		return super.toString() + ", name: " + name + ", nullable: " + nullable
-				+ ", unique: " + unique + ", eager: " + eager;
+		return getClass().getSimpleName() + ", methodName:" + method.getName()
+				+ ", methodParamTypes:" + Arrays.toString(paramTypes)
+				+ ", ann:" + ann;
 	}
+
 }

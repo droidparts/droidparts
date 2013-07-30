@@ -21,7 +21,6 @@ import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
-import java.util.List;
 
 import org.droidparts.util.Arrays2;
 import org.droidparts.util.L;
@@ -31,7 +30,6 @@ public final class ReflectionUtils {
 	public static <T> T getFieldVal(Object obj, Field field)
 			throws IllegalArgumentException {
 		try {
-			field.setAccessible(true);
 			@SuppressWarnings("unchecked")
 			T val = (T) field.get(obj);
 			return val;
@@ -43,7 +41,6 @@ public final class ReflectionUtils {
 	public static void setFieldVal(Object obj, Field field, Object val)
 			throws IllegalArgumentException {
 		try {
-			field.setAccessible(true);
 			field.set(obj, val);
 		} catch (Exception e) {
 			String valClsName = (val != null) ? val.getClass().getSimpleName()
@@ -79,11 +76,11 @@ public final class ReflectionUtils {
 		return en;
 	}
 
-	public static List<Field> listAnnotatedFields(Class<?> cls) {
-		ArrayList<Class<?>> clsTree = new ArrayList<Class<?>>();
+	public static ArrayList<Class<?>> buildClassHierarchy(Class<?> cls) {
+		ArrayList<Class<?>> hierarhy = new ArrayList<Class<?>>();
 		boolean enteredDroidParts = false;
 		do {
-			clsTree.add(0, cls);
+			hierarhy.add(0, cls);
 			boolean inDroidParts = cls.getName().startsWith("org.droidparts");
 			if (enteredDroidParts && !inDroidParts) {
 				break;
@@ -92,15 +89,7 @@ public final class ReflectionUtils {
 				cls = cls.getSuperclass();
 			}
 		} while (cls != null);
-		ArrayList<Field> fields = new ArrayList<Field>();
-		for (Class<?> c : clsTree) {
-			for (Field f : c.getDeclaredFields()) {
-				if (f.getAnnotations().length > 0) {
-					fields.add(f);
-				}
-			}
-		}
-		return fields;
+		return hierarhy;
 	}
 
 	public static Class<?> getArrayComponentType(Class<?> arrCls) {

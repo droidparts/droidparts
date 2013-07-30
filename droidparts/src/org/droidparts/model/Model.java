@@ -15,14 +15,19 @@
  */
 package org.droidparts.model;
 
+import static org.droidparts.inner.ClassSpecRegistry.getJsonKeySpecs;
+import static org.droidparts.inner.ClassSpecRegistry.getTableColumnSpecs;
 import static org.droidparts.inner.ReflectionUtils.getFieldVal;
-import static org.droidparts.inner.ReflectionUtils.listAnnotatedFields;
+import static org.droidparts.util.Strings.join;
 
 import java.io.Serializable;
 import java.lang.reflect.Field;
-import java.util.List;
+import java.util.ArrayList;
+import java.util.LinkedHashSet;
 
-import org.droidparts.util.L;
+import org.droidparts.inner.ann.FieldSpec;
+import org.droidparts.inner.ann.json.KeyAnn;
+import org.droidparts.inner.ann.sql.ColumnAnn;
 
 public abstract class Model implements Serializable {
 	private static final long serialVersionUID = 1L;
@@ -32,43 +37,50 @@ public abstract class Model implements Serializable {
 	}
 
 	@Override
-	public String toString() {
-		StringBuilder sb = new StringBuilder();
-		sb.append(getClass().getSimpleName());
-		sb.append(" [");
-		List<Field> fields = listAnnotatedFields(getClass());
-		for (int i = 0; i < fields.size(); i++) {
-			if (i > 0) {
-				sb.append(", ");
-			}
-			Field field = fields.get(i);
-			sb.append(field.getName());
-			sb.append(": ");
-			try {
-				sb.append(getFieldVal(this, field));
-			} catch (Exception e) {
-				L.d(e);
-				sb.append("n/a");
-			}
-		}
-		sb.append("]");
-		return sb.toString();
-	}
-
-	@Override
 	public boolean equals(Object o) {
+		boolean eq = false;
 		if (this == o) {
-			return true;
+			eq = true;
 		} else if (o != null && getClass() == o.getClass()) {
-			return hashCode() == o.hashCode();
-		} else {
-			return false;
+			eq = (hashCode() == o.hashCode());
 		}
+		return eq;
 	}
 
 	@Override
 	public int hashCode() {
 		return toString().hashCode();
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public String toString() {
+		LinkedHashSet<Field> fields = new LinkedHashSet<Field>();
+		for (FieldSpec<KeyAnn> spec : getJsonKeySpecs(getClass())) {
+			fields.add(spec.field);
+		}
+		if (this instanceof Entity) {
+			for (FieldSpec<ColumnAnn> spec : getTableColumnSpecs((Class<? extends Entity>) getClass())) {
+				fields.add(spec.field);
+			}
+		}
+		StringBuilder sb = new StringBuilder();
+		ArrayList<String> fieldVals = new ArrayList<String>();
+		for (Field field : fields) {
+			sb.append(field.getName()).append(": ");
+			try {
+				sb.append(getFieldVal(this, field));
+			} catch (Exception e) {
+				sb.append("n/a");
+			}
+			fieldVals.add(sb.toString());
+			sb.setLength(0);
+		}
+		sb.append(getClass().getSimpleName());
+		sb.append(" [");
+		sb.append(join(fieldVals, ", "));
+		sb.append("]");
+		return sb.toString();
 	}
 
 }

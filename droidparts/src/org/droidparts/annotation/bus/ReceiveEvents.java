@@ -13,18 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License. 
  */
-package org.droidparts.inner.ann.sql;
+package org.droidparts.annotation.bus;
 
-import org.droidparts.annotation.sql.Table;
-import org.droidparts.inner.ann.Ann;
+import static java.lang.annotation.ElementType.METHOD;
+import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
-public final class TableAnn extends Ann<Table> {
+import java.lang.annotation.Retention;
+import java.lang.annotation.Target;
 
-	public final String name;
+@Retention(RUNTIME)
+@Target(METHOD)
+public @interface ReceiveEvents {
 
-	public TableAnn(Table annotation) {
-		super(Table.class);
-		name = annotation.name();
-	}
+	String[] name() default "";
 
 }

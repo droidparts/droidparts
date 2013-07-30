@@ -28,6 +28,7 @@ public class FieldSpec<AnnType extends Ann<?>> {
 		this.field = field;
 		this.componentType = componentType;
 		this.ann = ann;
+		field.setAccessible(true);
 	}
 
 	@Override

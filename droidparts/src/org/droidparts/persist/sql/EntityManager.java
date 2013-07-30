@@ -30,7 +30,7 @@ import java.util.HashSet;
 import org.droidparts.Injector;
 import org.droidparts.annotation.inject.InjectDependency;
 import org.droidparts.inner.ConverterRegistry;
-import org.droidparts.inner.FieldSpecRegistry;
+import org.droidparts.inner.ClassSpecRegistry;
 import org.droidparts.inner.ann.FieldSpec;
 import org.droidparts.inner.ann.sql.ColumnAnn;
 import org.droidparts.inner.converter.Converter;
@@ -70,7 +70,7 @@ public class EntityManager<EntityType extends Entity> extends
 	@Override
 	public EntityType readRow(Cursor cursor) {
 		EntityType entity = newInstance(cls);
-		FieldSpec<ColumnAnn>[] columnSpecs = FieldSpecRegistry
+		FieldSpec<ColumnAnn>[] columnSpecs = ClassSpecRegistry
 				.getTableColumnSpecs(cls);
 		for (FieldSpec<ColumnAnn> spec : columnSpecs) {
 			int colIdx = cursor.getColumnIndex(spec.ann.name);
@@ -89,7 +89,7 @@ public class EntityManager<EntityType extends Entity> extends
 	public void fillForeignKeys(EntityType item, String... columnNames) {
 		HashSet<String> columnNameSet = new HashSet<String>(asList(columnNames));
 		boolean fillAll = columnNameSet.isEmpty();
-		FieldSpec<ColumnAnn>[] columnSpecs = FieldSpecRegistry
+		FieldSpec<ColumnAnn>[] columnSpecs = ClassSpecRegistry
 				.getTableColumnSpecs(cls);
 		for (FieldSpec<ColumnAnn> spec : columnSpecs) {
 			if (fillAll || columnNameSet.contains(spec.ann.name)) {
@@ -142,13 +142,13 @@ public class EntityManager<EntityType extends Entity> extends
 
 	@Override
 	protected String getTableName() {
-		return FieldSpecRegistry.getTableName(cls);
+		return ClassSpecRegistry.getTableName(cls);
 	}
 
 	@Override
 	protected ContentValues toContentValues(EntityType item) {
 		ContentValues cv = new ContentValues();
-		FieldSpec<ColumnAnn>[] columnSpecs = FieldSpecRegistry
+		FieldSpec<ColumnAnn>[] columnSpecs = ClassSpecRegistry
 				.getTableColumnSpecs(cls);
 		for (FieldSpec<ColumnAnn> spec : columnSpecs) {
 			Object columnVal = getFieldVal(item, spec.field);
@@ -160,7 +160,7 @@ public class EntityManager<EntityType extends Entity> extends
 
 	@Override
 	protected void createForeignKeys(EntityType item) {
-		FieldSpec<ColumnAnn>[] columnSpecs = FieldSpecRegistry
+		FieldSpec<ColumnAnn>[] columnSpecs = ClassSpecRegistry
 				.getTableColumnSpecs(cls);
 		for (FieldSpec<ColumnAnn> spec : columnSpecs) {
 			Class<?> fieldType = spec.field.getType();
@@ -210,7 +210,7 @@ public class EntityManager<EntityType extends Entity> extends
 	protected String[] getEagerForeignKeyColumnNames() {
 		if (eagerForeignKeyColumnNames == null) {
 			HashSet<String> eagerColumnNames = new HashSet<String>();
-			FieldSpec<ColumnAnn>[] columnSpecs = FieldSpecRegistry
+			FieldSpec<ColumnAnn>[] columnSpecs = ClassSpecRegistry
 					.getTableColumnSpecs(cls);
 			for (FieldSpec<ColumnAnn> spec : columnSpecs) {
 				if (spec.ann.eager) {

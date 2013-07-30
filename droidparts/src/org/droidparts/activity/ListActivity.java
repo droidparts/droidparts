@@ -16,12 +16,17 @@
 package org.droidparts.activity;
 
 import org.droidparts.Injector;
+import org.droidparts.bus.EventBus;
 import org.droidparts.contract.Injectable;
 
 import android.os.Bundle;
 
 public abstract class ListActivity extends android.app.ListActivity implements
 		Injectable {
+
+	@Override
+	public void onPreInject() {
+	}
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -31,7 +36,15 @@ public abstract class ListActivity extends android.app.ListActivity implements
 	}
 
 	@Override
-	public void onPreInject() {
+	protected void onResume() {
+		super.onResume();
+		EventBus.registerAnnotatedReceiver(this);
+	}
+
+	@Override
+	protected void onPause() {
+		super.onPause();
+		EventBus.unregisterAnnotatedReceiver(this);
 	}
 
 }
