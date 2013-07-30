@@ -1,7 +1,7 @@
-1.5.0 /2013-08-01/:
+1.5.0 /2013-07-30/:
     * Added EventBus.
     * ImageFetcher: don't store strong references to ImageViews.
-    * Minor optimizations.
+    * Misc improvements.
 
 1.4.4 /2013-07-24/:
     * Tweaks & fixes.
