@@ -194,11 +194,16 @@ public class EventBus {
 		public void onEvent(String name, Object data) {
 			try {
 				Object obj = objectRef.get();
-				int paramCount = spec.paramTypes.length;
-				if (paramCount == 1) {
+				switch (spec.paramTypes.length) {
+				case 0:
+					spec.method.invoke(obj);
+					break;
+				case 1:
 					spec.method.invoke(obj, name);
-				} else {
+					break;
+				default:
 					spec.method.invoke(obj, name, data);
+					break;
 				}
 			} catch (IllegalArgumentException e) {
 				throw e;
