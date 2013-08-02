@@ -295,7 +295,7 @@ public class ImageFetcher {
 		// a hack
 		while (!success) {
 			handler = new Handler(Looper.getMainLooper());
-			success = handler.post(r);
+			runOnUiThread(r);
 		}
 	}
 

@@ -154,7 +154,12 @@ public class EventBus {
 		if (handler == null) {
 			handler = new Handler(Looper.getMainLooper());
 		}
-		handler.post(r);
+		boolean success = handler.post(r);
+		// a hack
+		while (!success) {
+			handler = null;
+			runOnUiThread(r);
+		}
 	}
 
 	private static Handler handler;
