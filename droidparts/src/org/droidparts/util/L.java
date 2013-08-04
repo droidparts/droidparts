@@ -108,10 +108,18 @@ public class L {
 		}
 	}
 
+	public static void setSilenced(boolean silenced) {
+		L.silenced = silenced;
+	}
+
+	private static boolean silenced;
+
 	public static boolean isLoggable(int level) {
-		boolean debug = isDebug();
-		boolean log = debug || (!debug && level >= getLogLevel());
-		return log;
+		if (silenced) {
+			return (level == ASSERT);
+		} else {
+			return (isDebug() || level >= getLogLevel());
+		}
 	}
 
 	public static final int VERBOSE = Log.VERBOSE;
@@ -149,13 +157,13 @@ public class L {
 	}
 
 	private static boolean isDebug() {
-		if (_debug == null) {
+		if (_debug == 0) {
 			Context ctx = Injector.getApplicationContext();
 			if (ctx != null) {
-				_debug = AppUtils.isDebuggable(ctx);
+				_debug = AppUtils.isDebuggable(ctx) ? 1 : -1;
 			}
 		}
-		return (_debug != null) ? _debug : true;
+		return (_debug == 1);
 	}
 
 	private static int getLogLevel() {
@@ -221,7 +229,7 @@ public class L {
 		}
 	}
 
-	private static Boolean _debug;
+	private static int _debug;
 	private static int _logLevel;
 	private static String _tag;
 
