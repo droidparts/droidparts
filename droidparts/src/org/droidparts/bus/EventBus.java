@@ -208,7 +208,6 @@ public class EventBus {
 					break;
 				default:
 					spec.method.invoke(obj, name, data);
-					break;
 				}
 			} catch (IllegalArgumentException e) {
 				throw e;
