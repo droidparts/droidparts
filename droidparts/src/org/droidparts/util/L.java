@@ -24,7 +24,6 @@ import org.droidparts.Injector;
 import org.droidparts.contract.Constants.ManifestMeta;
 
 import android.content.Context;
-import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.util.Log;
@@ -153,7 +152,7 @@ public class L {
 		if (_debug == null) {
 			Context ctx = Injector.getApplicationContext();
 			if (ctx != null) {
-				_debug = (ctx.getApplicationInfo().flags & ApplicationInfo.FLAG_DEBUGGABLE) != 0;
+				_debug = AppUtils.isDebuggable(ctx);
 			}
 		}
 		return (_debug != null) ? _debug : true;
