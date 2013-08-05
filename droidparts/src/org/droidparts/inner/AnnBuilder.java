@@ -47,15 +47,15 @@ import org.droidparts.inner.ann.sql.TableAnn;
 public final class AnnBuilder {
 
 	static <T extends Annotation> Ann<T>[] getClassAnns(Class<?> c) {
-		return toAnns(c.getAnnotations());
+		return toAnns(c.getDeclaredAnnotations());
 	}
 
 	static <T extends Annotation> Ann<T>[] getFieldAnns(Field f) {
-		return toAnns(f.getAnnotations());
+		return toAnns(f.getDeclaredAnnotations());
 	}
 
 	static <T extends Annotation> Ann<T>[] getMethodAnns(Method m) {
-		return toAnns(m.getAnnotations());
+		return toAnns(m.getDeclaredAnnotations());
 	}
 
 	@SuppressWarnings("unchecked")

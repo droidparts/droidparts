@@ -19,7 +19,7 @@ import java.lang.annotation.Annotation;
 
 public abstract class Ann<T extends Annotation> {
 
-	private final Class<T> cls;
+	protected final Class<T> cls;
 
 	public Ann(Class<T> cls) {
 		this.cls = cls;
