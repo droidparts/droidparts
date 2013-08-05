@@ -22,7 +22,7 @@ public final class InjectResourceAnn extends InjectAnn<InjectResource> {
 	public final int id;
 
 	public InjectResourceAnn(InjectResource annotation) {
-		super(InjectResource.class);
+		super(annotation);
 		id = annotation.value();
 	}
 }

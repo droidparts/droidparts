@@ -23,7 +23,7 @@ public final class InjectViewAnn extends InjectAnn<InjectView> {
 	public final boolean click;
 
 	public InjectViewAnn(InjectView annotation) {
-		super(InjectView.class);
+		super(annotation);
 		id = annotation.id();
 		click = annotation.click();
 	}

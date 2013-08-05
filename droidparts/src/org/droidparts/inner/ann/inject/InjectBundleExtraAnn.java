@@ -23,7 +23,7 @@ public final class InjectBundleExtraAnn extends InjectAnn<InjectBundleExtra> {
 	public final boolean optional;
 
 	public InjectBundleExtraAnn(InjectBundleExtra annotation) {
-		super(InjectBundleExtra.class);
+		super(annotation);
 		key = annotation.key();
 		optional = annotation.optional();
 	}

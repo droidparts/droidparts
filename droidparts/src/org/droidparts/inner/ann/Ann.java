@@ -19,30 +19,11 @@ import java.lang.annotation.Annotation;
 
 public abstract class Ann<T extends Annotation> {
 
-	protected final Class<T> cls;
-
-	public Ann(Class<T> cls) {
-		this.cls = cls;
-	}
-
-	@Override
-	public boolean equals(Object o) {
-		if (o == this) {
-			return true;
-		} else if (o instanceof Ann) {
-			return cls.equals(((Ann<?>) o).cls);
-		} else {
-			return false;
-		}
-	}
-
-	@Override
-	public int hashCode() {
-		return cls.hashCode();
+	public Ann(T annotation) {
 	}
 
 	@Override
 	public String toString() {
-		return cls.getSimpleName();
+		return getClass().getSimpleName();
 	}
 }

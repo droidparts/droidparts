@@ -22,7 +22,7 @@ public class InjectFragmentAnn extends InjectAnn<InjectFragment> {
 	public final int id;
 
 	public InjectFragmentAnn(InjectFragment annotation) {
-		super(InjectFragment.class);
+		super(annotation);
 		id = annotation.id();
 	}
 

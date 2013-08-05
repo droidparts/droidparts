@@ -21,8 +21,8 @@ import org.droidparts.inner.ann.Ann;
 
 public class InjectAnn<T extends Annotation> extends Ann<T> {
 
-	public InjectAnn(Class<T> cls) {
-		super(cls);
+	public InjectAnn(T annotation) {
+		super(annotation);
 	}
 
 }

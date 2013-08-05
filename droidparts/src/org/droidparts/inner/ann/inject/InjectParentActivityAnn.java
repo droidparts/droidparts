@@ -20,7 +20,7 @@ import org.droidparts.annotation.inject.InjectParentActivity;
 public class InjectParentActivityAnn extends InjectAnn<InjectParentActivity> {
 
 	public InjectParentActivityAnn(InjectParentActivity annotation) {
-		super(InjectParentActivity.class);
+		super(annotation);
 	}
 
 }

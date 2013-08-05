@@ -27,7 +27,7 @@ public final class ReceiveEventsAnn extends Ann<ReceiveEvents> {
 	public final String[] names;
 
 	public ReceiveEventsAnn(ReceiveEvents annotation) {
-		super(ReceiveEvents.class);
+		super(annotation);
 		String[] names = annotation.name();
 		boolean none = (names.length == 1) && isEmpty(names[0]);
 		if (none) {

@@ -26,7 +26,7 @@ public final class ColumnAnn extends Ann<Column> {
 	public boolean eager;
 
 	public ColumnAnn(Column annotation) {
-		super(Column.class);
+		super(annotation);
 		name = annotation.name();
 		nullable = annotation.nullable();
 		unique = annotation.unique();

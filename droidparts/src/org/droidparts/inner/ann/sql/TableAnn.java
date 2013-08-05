@@ -23,7 +23,7 @@ public final class TableAnn extends Ann<Table> {
 	public final String name;
 
 	public TableAnn(Table annotation) {
-		super(Table.class);
+		super(annotation);
 		name = annotation.name();
 	}
 

@@ -24,7 +24,7 @@ public final class KeyAnn extends Ann<Key> {
 	public final boolean optional;
 
 	public KeyAnn(Key annotation) {
-		super(Key.class);
+		super(annotation);
 		name = annotation.name();
 		optional = annotation.optional();
 	}
