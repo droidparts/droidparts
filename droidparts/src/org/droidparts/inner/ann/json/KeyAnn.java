@@ -26,8 +26,8 @@ public final class KeyAnn extends Ann<Key> {
 	public KeyAnn(Key annotation) {
 		super(annotation);
 		if (hackSuccess()) {
-			name = getElement(NAME);
-			optional = getElement(OPTIONAL);
+			name = (String) getElement(NAME);
+			optional = (Boolean) getElement(OPTIONAL);
 			cleanup();
 		} else {
 			name = annotation.name();

@@ -28,10 +28,10 @@ public final class ColumnAnn extends Ann<Column> {
 	public ColumnAnn(Column annotation) {
 		super(annotation);
 		if (hackSuccess()) {
-			name = getElement(NAME);
-			nullable = getElement(NULLABLE);
-			unique = getElement(UNIQUE);
-			eager = getElement(EAGER);
+			name = (String) getElement(NAME);
+			nullable = (Boolean) getElement(NULLABLE);
+			unique = (Boolean) getElement(UNIQUE);
+			eager = (Boolean) getElement(EAGER);
 			cleanup();
 		} else {
 			name = annotation.name();

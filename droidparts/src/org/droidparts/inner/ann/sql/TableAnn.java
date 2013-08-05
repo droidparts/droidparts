@@ -25,7 +25,7 @@ public final class TableAnn extends Ann<Table> {
 	public TableAnn(Table annotation) {
 		super(annotation);
 		if (hackSuccess()) {
-			name = getElement(NAME);
+			name = (String) getElement(NAME);
 			cleanup();
 		} else {
 			name = annotation.name();

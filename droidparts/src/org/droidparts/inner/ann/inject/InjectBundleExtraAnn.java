@@ -25,8 +25,8 @@ public final class InjectBundleExtraAnn extends InjectAnn<InjectBundleExtra> {
 	public InjectBundleExtraAnn(InjectBundleExtra annotation) {
 		super(annotation);
 		if (hackSuccess()) {
-			key = getElement(KEY);
-			optional = getElement(OPTIONAL);
+			key = (String) getElement(KEY);
+			optional = (Boolean) getElement(OPTIONAL);
 			cleanup();
 		} else {
 			key = annotation.key();

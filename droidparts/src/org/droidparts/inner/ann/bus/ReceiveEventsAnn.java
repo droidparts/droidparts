@@ -28,7 +28,7 @@ public final class ReceiveEventsAnn extends Ann<ReceiveEvents> {
 		super(annotation);
 		String[] names;
 		if (hackSuccess()) {
-			names = getElement(NAME);
+			names = (String[]) getElement(NAME);
 			cleanup();
 		} else {
 			names = annotation.name();
