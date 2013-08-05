@@ -108,14 +108,14 @@ public class L {
 		}
 	}
 
-	public static void setSilenced(boolean silenced) {
-		L.silenced = silenced;
+	public static void setMuted(boolean muted) {
+		L.muted = muted;
 	}
 
-	private static boolean silenced;
+	private static boolean muted;
 
 	public static boolean isLoggable(int level) {
-		if (silenced) {
+		if (muted) {
 			return (level == ASSERT);
 		} else {
 			return (isDebug() || level >= getLogLevel());
