@@ -33,15 +33,14 @@ public abstract class Ann<T extends Annotation> {
 	protected static final String UNIQUE = "unique";
 	protected static final String EAGER = "eager";
 
-	private HashMap<String, Object> elements = new HashMap<String, Object>();
-
 	private static boolean hackSuccess = true;
+
+	private HashMap<String, Object> elements;
 
 	public Ann(T annotation) {
 		if (hackSuccess) {
 			try {
-				elements.putAll(AnnotationElementsReader
-						.getElements(annotation));
+				elements = AnnotationElementsReader.getElements(annotation);
 			} catch (Exception e) {
 				L.w(e);
 				hackSuccess = false;
