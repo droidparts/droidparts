@@ -22,4 +22,5 @@ public final class InjectDependencyAnn extends InjectAnn<InjectDependency> {
 	public InjectDependencyAnn(InjectDependency annotation) {
 		super(annotation);
 	}
+
 }

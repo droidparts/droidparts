@@ -33,9 +33,4 @@ public final class ColumnAnn extends Ann<Column> {
 		eager = annotation.eager();
 	}
 
-	@Override
-	public String toString() {
-		return super.toString() + ", name: " + name + ", nullable: " + nullable
-				+ ", unique: " + unique + ", eager: " + eager;
-	}
 }

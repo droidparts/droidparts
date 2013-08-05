@@ -27,4 +27,5 @@ public final class InjectBundleExtraAnn extends InjectAnn<InjectBundleExtra> {
 		key = annotation.key();
 		optional = annotation.optional();
 	}
+
 }

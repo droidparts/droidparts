@@ -25,4 +25,5 @@ public final class InjectResourceAnn extends InjectAnn<InjectResource> {
 		super(annotation);
 		id = annotation.value();
 	}
+
 }

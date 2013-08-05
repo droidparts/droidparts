@@ -27,4 +27,5 @@ public final class InjectViewAnn extends InjectAnn<InjectView> {
 		id = annotation.id();
 		click = annotation.click();
 	}
+
 }

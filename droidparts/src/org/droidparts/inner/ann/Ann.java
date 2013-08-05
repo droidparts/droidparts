@@ -22,8 +22,4 @@ public abstract class Ann<T extends Annotation> {
 	public Ann(T annotation) {
 	}
 
-	@Override
-	public String toString() {
-		return getClass().getSimpleName();
-	}
 }

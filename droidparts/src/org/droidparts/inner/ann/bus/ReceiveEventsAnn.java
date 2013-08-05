@@ -17,8 +17,6 @@ package org.droidparts.inner.ann.bus;
 
 import static org.droidparts.util.Strings.isEmpty;
 
-import java.util.Arrays;
-
 import org.droidparts.annotation.bus.ReceiveEvents;
 import org.droidparts.inner.ann.Ann;
 
@@ -37,8 +35,4 @@ public final class ReceiveEventsAnn extends Ann<ReceiveEvents> {
 		}
 	}
 
-	@Override
-	public String toString() {
-		return super.toString() + ", names: " + Arrays.toString(names);
-	}
 }

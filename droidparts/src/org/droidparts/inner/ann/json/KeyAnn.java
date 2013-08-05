@@ -29,8 +29,4 @@ public final class KeyAnn extends Ann<Key> {
 		optional = annotation.optional();
 	}
 
-	@Override
-	public String toString() {
-		return super.toString() + ", name: " + name + ", optional: " + optional;
-	}
 }

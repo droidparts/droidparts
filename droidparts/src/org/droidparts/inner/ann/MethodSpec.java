@@ -16,7 +16,6 @@
 package org.droidparts.inner.ann;
 
 import java.lang.reflect.Method;
-import java.util.Arrays;
 
 public class MethodSpec<AnnType extends Ann<?>> {
 
@@ -30,13 +29,6 @@ public class MethodSpec<AnnType extends Ann<?>> {
 		paramTypes = method.getParameterTypes();
 		this.ann = ann;
 		method.setAccessible(true);
-	}
-
-	@Override
-	public String toString() {
-		return getClass().getSimpleName() + ", methodName:" + method.getName()
-				+ ", methodParamTypes:" + Arrays.toString(paramTypes)
-				+ ", ann:" + ann;
 	}
 
 }
