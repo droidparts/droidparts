@@ -16,10 +16,49 @@
 package org.droidparts.inner.ann;
 
 import java.lang.annotation.Annotation;
+import java.util.HashMap;
+
+import org.droidparts.inner.AnnotationElementsReader;
+import org.droidparts.util.L;
 
 public abstract class Ann<T extends Annotation> {
 
+	protected static final String NAME = "name";
+	protected static final String VALUE = "value";
+	protected static final String ID = "id";
+	protected static final String CLICK = "click";
+	protected static final String KEY = "key";
+	protected static final String OPTIONAL = "optional";
+	protected static final String NULLABLE = "nullable";
+	protected static final String UNIQUE = "unique";
+	protected static final String EAGER = "eager";
+
+	private final HashMap<String, Object> elements = new HashMap<String, Object>();
+
+	private static boolean hackSuccess = true;
+
 	public Ann(T annotation) {
+		if (hackSuccess) {
+			try {
+				elements.putAll(AnnotationElementsReader.getElements(annotation));
+			} catch (Exception e) {
+				L.w(e);
+				hackSuccess = false;
+			}
+		}
+	}
+
+	protected final boolean hackSuccess() {
+		return hackSuccess;
+	}
+
+	@SuppressWarnings("unchecked")
+	protected final <E> E getElement(String name) {
+		return (E) elements.get(name);
+	}
+
+	protected final void cleanup() {
+		elements.clear();
 	}
 
 }

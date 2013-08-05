@@ -24,7 +24,12 @@ public final class InjectSystemServiceAnn extends
 
 	public InjectSystemServiceAnn(InjectSystemService annotation) {
 		super(annotation);
-		name = annotation.value();
+		if (hackSuccess()) {
+			name = getElement(VALUE);
+			cleanup();
+		} else {
+			name = annotation.value();
+		}
 	}
 
 }

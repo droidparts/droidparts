@@ -23,7 +23,12 @@ public class InjectFragmentAnn extends InjectAnn<InjectFragment> {
 
 	public InjectFragmentAnn(InjectFragment annotation) {
 		super(annotation);
-		id = annotation.id();
+		if (hackSuccess()) {
+			id = getElement(ID);
+			cleanup();
+		} else {
+			id = annotation.id();
+		}
 	}
 
 }
