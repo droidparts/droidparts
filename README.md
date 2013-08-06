@@ -6,7 +6,7 @@ a carefully crafted Android framework that includes:
 * *EventBus* for posting event notifications.
 * Simple *JSON* (de)serialization capable of handling nested objects.
 * Improved *AsyncTask* & *IntentService* with Exceptions & result reporting support.
-* *L*\ogger that figures out tag itself & logs any object.
+* *Logger* that figures out tag itself & logs any object.
 * *RESTClient* for GETting, PUTting, POSTing, DELETing & InputStream-getting,
   also speaks JSON.
 * *ImageFetcher* to asynchronously attach images to ImageViews, with caching,

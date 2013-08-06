@@ -23,8 +23,13 @@ public final class TableAnn extends Ann<Table> {
 	public final String name;
 
 	public TableAnn(Table annotation) {
-		super(Table.class);
-		name = annotation.name();
+		super(annotation);
+		if (hackSuccess()) {
+			name = (String) getElement(NAME);
+			cleanup();
+		} else {
+			name = annotation.name();
+		}
 	}
 
 }

@@ -124,7 +124,6 @@ public class Where implements SQL {
 			if (argNum != 1) {
 				errArgs(spec.operator, argNum);
 			}
-			break;
 		}
 		selectionArgsBuilder.addAll(asList(whereArgs));
 		return Pair.create(selectionBuilder.toString(), selectionArgsBuilder);

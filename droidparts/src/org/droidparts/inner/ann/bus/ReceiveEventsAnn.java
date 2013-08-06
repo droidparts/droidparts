@@ -17,8 +17,6 @@ package org.droidparts.inner.ann.bus;
 
 import static org.droidparts.util.Strings.isEmpty;
 
-import java.util.Arrays;
-
 import org.droidparts.annotation.bus.ReceiveEvents;
 import org.droidparts.inner.ann.Ann;
 
@@ -27,8 +25,14 @@ public final class ReceiveEventsAnn extends Ann<ReceiveEvents> {
 	public final String[] names;
 
 	public ReceiveEventsAnn(ReceiveEvents annotation) {
-		super(ReceiveEvents.class);
-		String[] names = annotation.name();
+		super(annotation);
+		String[] names;
+		if (hackSuccess()) {
+			names = (String[]) getElement(NAME);
+			cleanup();
+		} else {
+			names = annotation.name();
+		}
 		boolean none = (names.length == 1) && isEmpty(names[0]);
 		if (none) {
 			this.names = new String[0];
@@ -37,8 +41,4 @@ public final class ReceiveEventsAnn extends Ann<ReceiveEvents> {
 		}
 	}
 
-	@Override
-	public String toString() {
-		return super.toString() + ", names: " + Arrays.toString(names);
-	}
 }

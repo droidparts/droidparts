@@ -20,6 +20,7 @@ import org.droidparts.annotation.inject.InjectDependency;
 public final class InjectDependencyAnn extends InjectAnn<InjectDependency> {
 
 	public InjectDependencyAnn(InjectDependency annotation) {
-		super(InjectDependency.class);
+		super(annotation);
 	}
+
 }

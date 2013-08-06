@@ -26,16 +26,19 @@ public final class ColumnAnn extends Ann<Column> {
 	public boolean eager;
 
 	public ColumnAnn(Column annotation) {
-		super(Column.class);
-		name = annotation.name();
-		nullable = annotation.nullable();
-		unique = annotation.unique();
-		eager = annotation.eager();
+		super(annotation);
+		if (hackSuccess()) {
+			name = (String) getElement(NAME);
+			nullable = (Boolean) getElement(NULLABLE);
+			unique = (Boolean) getElement(UNIQUE);
+			eager = (Boolean) getElement(EAGER);
+			cleanup();
+		} else {
+			name = annotation.name();
+			nullable = annotation.nullable();
+			unique = annotation.unique();
+			eager = annotation.eager();
+		}
 	}
 
-	@Override
-	public String toString() {
-		return super.toString() + ", name: " + name + ", nullable: " + nullable
-				+ ", unique: " + unique + ", eager: " + eager;
-	}
 }

@@ -22,7 +22,13 @@ public final class InjectResourceAnn extends InjectAnn<InjectResource> {
 	public final int id;
 
 	public InjectResourceAnn(InjectResource annotation) {
-		super(InjectResource.class);
-		id = annotation.value();
+		super(annotation);
+		if (hackSuccess()) {
+			id = (Integer) getElement(VALUE);
+			cleanup();
+		} else {
+			id = annotation.value();
+		}
 	}
+
 }

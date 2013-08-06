@@ -23,7 +23,13 @@ public final class InjectSystemServiceAnn extends
 	public final String name;
 
 	public InjectSystemServiceAnn(InjectSystemService annotation) {
-		super(InjectSystemService.class);
-		name = annotation.value();
+		super(annotation);
+		if (hackSuccess()) {
+			name = (String) getElement(VALUE);
+			cleanup();
+		} else {
+			name = annotation.value();
+		}
 	}
+
 }

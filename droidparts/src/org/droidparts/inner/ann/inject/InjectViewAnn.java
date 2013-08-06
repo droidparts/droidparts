@@ -23,8 +23,15 @@ public final class InjectViewAnn extends InjectAnn<InjectView> {
 	public final boolean click;
 
 	public InjectViewAnn(InjectView annotation) {
-		super(InjectView.class);
-		id = annotation.id();
-		click = annotation.click();
+		super(annotation);
+		if (hackSuccess()) {
+			id = (Integer) getElement(ID);
+			click = (Boolean) getElement(CLICK);
+			cleanup();
+		} else {
+			id = annotation.id();
+			click = annotation.click();
+		}
 	}
+
 }

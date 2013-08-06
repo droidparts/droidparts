@@ -31,11 +31,4 @@ public class FieldSpec<AnnType extends Ann<?>> {
 		field.setAccessible(true);
 	}
 
-	@Override
-	public String toString() {
-		return getClass().getSimpleName() + ", fieldName:" + field.getName()
-				+ ", fieldType:" + field.getType() + ", componentType:"
-				+ componentType + ", ann:" + ann;
-	}
-
 }

@@ -1,3 +1,8 @@
+1.5.1 /2013-08-06/:
+    * Improved annotation processing performance.
+    * @ReceiveEvents: zero-param method support.
+    * Minor awesomeness.
+
 1.5.0 /2013-07-30/:
     * Added EventBus.
     * ImageFetcher: don't store strong references to ImageViews.

@@ -154,7 +154,12 @@ public class EventBus {
 		if (handler == null) {
 			handler = new Handler(Looper.getMainLooper());
 		}
-		handler.post(r);
+		boolean success = handler.post(r);
+		// a hack
+		while (!success) {
+			handler = null;
+			runOnUiThread(r);
+		}
 	}
 
 	private static Handler handler;
@@ -194,10 +199,14 @@ public class EventBus {
 		public void onEvent(String name, Object data) {
 			try {
 				Object obj = objectRef.get();
-				int paramCount = spec.paramTypes.length;
-				if (paramCount == 1) {
+				switch (spec.paramTypes.length) {
+				case 0:
+					spec.method.invoke(obj);
+					break;
+				case 1:
 					spec.method.invoke(obj, name);
-				} else {
+					break;
+				default:
 					spec.method.invoke(obj, name, data);
 				}
 			} catch (IllegalArgumentException e) {

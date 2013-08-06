@@ -16,33 +16,48 @@
 package org.droidparts.inner.ann;
 
 import java.lang.annotation.Annotation;
+import java.util.HashMap;
+
+import org.droidparts.inner.AnnotationElementsReader;
+import org.droidparts.util.L;
 
 public abstract class Ann<T extends Annotation> {
 
-	private final Class<T> cls;
+	protected static final String NAME = "name";
+	protected static final String VALUE = "value";
+	protected static final String ID = "id";
+	protected static final String CLICK = "click";
+	protected static final String KEY = "key";
+	protected static final String OPTIONAL = "optional";
+	protected static final String NULLABLE = "nullable";
+	protected static final String UNIQUE = "unique";
+	protected static final String EAGER = "eager";
 
-	public Ann(Class<T> cls) {
-		this.cls = cls;
-	}
+	private static boolean hackSuccess = true;
 
-	@Override
-	public boolean equals(Object o) {
-		if (o == this) {
-			return true;
-		} else if (o instanceof Ann) {
-			return cls.equals(((Ann<?>) o).cls);
-		} else {
-			return false;
+	private HashMap<String, Object> elements;
+
+	public Ann(T annotation) {
+		if (hackSuccess) {
+			try {
+				elements = AnnotationElementsReader.getElements(annotation);
+			} catch (Exception e) {
+				L.w(e);
+				hackSuccess = false;
+			}
 		}
 	}
 
-	@Override
-	public int hashCode() {
-		return cls.hashCode();
+	protected final boolean hackSuccess() {
+		return hackSuccess;
 	}
 
-	@Override
-	public String toString() {
-		return cls.getSimpleName();
+	protected final Object getElement(String name) {
+		return elements.get(name);
 	}
+
+	protected final void cleanup() {
+		elements = null;
+	}
+
 }

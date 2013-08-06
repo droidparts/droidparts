@@ -24,7 +24,6 @@ import org.droidparts.Injector;
 import org.droidparts.contract.Constants.ManifestMeta;
 
 import android.content.Context;
-import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.util.Log;
@@ -109,10 +108,18 @@ public class L {
 		}
 	}
 
+	public static void setMuted(boolean muted) {
+		L.muted = muted;
+	}
+
+	private static boolean muted;
+
 	public static boolean isLoggable(int level) {
-		boolean debug = isDebug();
-		boolean log = debug || (!debug && level >= getLogLevel());
-		return log;
+		if (muted) {
+			return (level == ASSERT);
+		} else {
+			return (isDebug() || level >= getLogLevel());
+		}
 	}
 
 	public static final int VERBOSE = Log.VERBOSE;
@@ -150,13 +157,13 @@ public class L {
 	}
 
 	private static boolean isDebug() {
-		if (_debug == null) {
+		if (_debug == 0) {
 			Context ctx = Injector.getApplicationContext();
 			if (ctx != null) {
-				_debug = (ctx.getApplicationInfo().flags & ApplicationInfo.FLAG_DEBUGGABLE) != 0;
+				_debug = AppUtils.isDebuggable(ctx) ? 1 : -1;
 			}
 		}
-		return (_debug != null) ? _debug : true;
+		return (_debug == 1);
 	}
 
 	private static int getLogLevel() {
@@ -222,7 +229,7 @@ public class L {
 		}
 	}
 
-	private static Boolean _debug;
+	private static int _debug;
 	private static int _logLevel;
 	private static String _tag;
 

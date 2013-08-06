@@ -24,13 +24,15 @@ public final class KeyAnn extends Ann<Key> {
 	public final boolean optional;
 
 	public KeyAnn(Key annotation) {
-		super(Key.class);
-		name = annotation.name();
-		optional = annotation.optional();
+		super(annotation);
+		if (hackSuccess()) {
+			name = (String) getElement(NAME);
+			optional = (Boolean) getElement(OPTIONAL);
+			cleanup();
+		} else {
+			name = annotation.name();
+			optional = annotation.optional();
+		}
 	}
 
-	@Override
-	public String toString() {
-		return super.toString() + ", name: " + name + ", optional: " + optional;
-	}
 }
