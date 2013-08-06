@@ -229,10 +229,13 @@ public final class ClassSpecRegistry {
 		for (FieldSpec<ColumnAnn> spec : columnSpecs) {
 			Class<?> fieldType = spec.field.getType();
 			if (spec.ann.nullable) {
-				if (isByte(fieldType) || isShort(fieldType)
-						|| isInteger(fieldType) || isLong(fieldType)
-						|| isFloat(fieldType) || isDouble(fieldType)
-						|| isBoolean(fieldType) || isCharacter(fieldType)) {
+				if (isByte(fieldType, false) || isShort(fieldType, false)
+						|| isInteger(fieldType, false)
+						|| isLong(fieldType, false)
+						|| isFloat(fieldType, false)
+						|| isDouble(fieldType, false)
+						|| isBoolean(fieldType, false)
+						|| isCharacter(fieldType, false)) {
 					L.w("%s can't be null.", fieldType.getSimpleName());
 					spec.ann.nullable = false;
 				}

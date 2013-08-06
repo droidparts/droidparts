@@ -29,9 +29,9 @@ public class ResourceReader {
 			throws Exception {
 		Resources res = ctx.getResources();
 		Object val = null;
-		if (isBoolean(valType)) {
+		if (isBoolean(valType, true)) {
 			val = res.getBoolean(resId);
-		} else if (isInteger(valType)) {
+		} else if (isInteger(valType, true)) {
 			val = res.getInteger(resId);
 		} else if (isString(valType)) {
 			val = res.getString(resId);
@@ -39,7 +39,7 @@ public class ResourceReader {
 			val = res.getDrawable(resId);
 		} else if (isArray(valType)) {
 			Class<?> type = valType.getComponentType();
-			if (isInteger(type)) {
+			if (isInteger(type, false)) {
 				val = res.getIntArray(resId);
 			} else if (isString(type)) {
 				val = res.getStringArray(resId);

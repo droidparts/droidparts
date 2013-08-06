@@ -26,7 +26,7 @@ public class ByteConverter extends Converter<Byte> {
 
 	@Override
 	public boolean canHandle(Class<?> cls) {
-		return TypeHelper.isByte(cls);
+		return TypeHelper.isByte(cls, true);
 	}
 
 	@Override
