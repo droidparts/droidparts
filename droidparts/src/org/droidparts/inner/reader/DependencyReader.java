@@ -36,7 +36,7 @@ public class DependencyReader {
 
 	private static volatile boolean inited = false;
 	private static AbstractDependencyProvider dependencyProvider;
-	private static HashMap<Class<?>, MethodSpec<VoidAnn>> methodRegistry = new HashMap<Class<?>, MethodSpec<VoidAnn>>();
+	private static HashMap<Class<?>, MethodSpec<?>> methodRegistry = new HashMap<Class<?>, MethodSpec<?>>();
 
 	public static void init(Context ctx) {
 		if (!inited) {
@@ -48,8 +48,8 @@ public class DependencyReader {
 								.getMethods();
 						for (Method method : methods) {
 							methodRegistry.put(method.getReturnType(),
-									new MethodSpec<VoidAnn>(method,
-											new VoidAnn()));
+									new MethodSpec<Ann<Annotation>>(method,
+											null));
 						}
 					}
 					inited = true;
@@ -71,7 +71,7 @@ public class DependencyReader {
 		init(ctx);
 		T val = null;
 		if (dependencyProvider != null) {
-			MethodSpec<VoidAnn> spec = methodRegistry.get(valType);
+			MethodSpec<?> spec = methodRegistry.get(valType);
 			try {
 				int paramCount = spec.paramTypes.length;
 				if (paramCount == 0) {
@@ -116,12 +116,6 @@ public class DependencyReader {
 			L.e("Not a valid DroidParts dependency provider: %s.", className);
 			L.d(e);
 			return null;
-		}
-	}
-
-	private static class VoidAnn extends Ann<Annotation> {
-		public VoidAnn() {
-			super(null);
 		}
 	}
 
