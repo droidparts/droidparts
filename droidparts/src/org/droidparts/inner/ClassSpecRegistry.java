@@ -15,9 +15,11 @@
  */
 package org.droidparts.inner;
 
-import static org.droidparts.inner.AnnBuilder.getClassAnns;
-import static org.droidparts.inner.AnnBuilder.getFieldAnns;
-import static org.droidparts.inner.AnnBuilder.getMethodAnns;
+import static org.droidparts.inner.AnnBuilder.getColumnAnn;
+import static org.droidparts.inner.AnnBuilder.getInjectAnn;
+import static org.droidparts.inner.AnnBuilder.getKeyAnn;
+import static org.droidparts.inner.AnnBuilder.getReceiveEventsAnn;
+import static org.droidparts.inner.AnnBuilder.getTableAnn;
 import static org.droidparts.inner.ReflectionUtils.buildClassHierarchy;
 import static org.droidparts.inner.ReflectionUtils.getArrayComponentType;
 import static org.droidparts.inner.ReflectionUtils.getFieldGenericArgs;
@@ -39,7 +41,6 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.concurrent.ConcurrentHashMap;
 
-import org.droidparts.inner.ann.Ann;
 import org.droidparts.inner.ann.FieldSpec;
 import org.droidparts.inner.ann.MethodSpec;
 import org.droidparts.inner.ann.bus.ReceiveEventsAnn;
@@ -62,12 +63,9 @@ public final class ClassSpecRegistry {
 			ArrayList<FieldSpec<InjectAnn<?>>> list = new ArrayList<FieldSpec<InjectAnn<?>>>();
 			for (Class<?> cl : buildClassHierarchy(cls)) {
 				for (Field field : cl.getDeclaredFields()) {
-					for (Ann<?> ann : getFieldAnns(field)) {
-						if (ann instanceof InjectAnn) {
-							list.add(new FieldSpec<InjectAnn<?>>(field, null,
-									(InjectAnn<?>) ann));
-							break;
-						}
+					InjectAnn<?> ann = getInjectAnn(field);
+					if (ann != null) {
+						list.add(new FieldSpec<InjectAnn<?>>(field, null, ann));
 					}
 				}
 			}
@@ -87,12 +85,9 @@ public final class ClassSpecRegistry {
 			ArrayList<MethodSpec<ReceiveEventsAnn>> list = new ArrayList<MethodSpec<ReceiveEventsAnn>>();
 			for (Class<?> cl : buildClassHierarchy(cls)) {
 				for (Method method : cl.getDeclaredMethods()) {
-					for (Ann<?> ann : getMethodAnns(method)) {
-						if (ann instanceof ReceiveEventsAnn) {
-							list.add(new MethodSpec<ReceiveEventsAnn>(method,
-									(ReceiveEventsAnn) ann));
-							break;
-						}
+					ReceiveEventsAnn ann = getReceiveEventsAnn(method);
+					if (ann != null) {
+						list.add(new MethodSpec<ReceiveEventsAnn>(method, ann));
 					}
 				}
 			}
@@ -107,11 +102,9 @@ public final class ClassSpecRegistry {
 	public static String getTableName(Class<? extends Entity> cls) {
 		String name = TABLE_NAMES.get(cls);
 		if (name == null) {
-			for (Ann<?> ann : getClassAnns(cls)) {
-				if (ann instanceof TableAnn) {
-					name = ((TableAnn) ann).name;
-					break;
-				}
+			TableAnn ann = getTableAnn(cls);
+			if (ann != null) {
+				name = ((TableAnn) ann).name;
 			}
 			if (isEmpty(name)) {
 				name = cls.getSimpleName();
@@ -129,15 +122,12 @@ public final class ClassSpecRegistry {
 			ArrayList<FieldSpec<ColumnAnn>> list = new ArrayList<FieldSpec<ColumnAnn>>();
 			for (Class<?> cl : buildClassHierarchy(cls)) {
 				for (Field field : cl.getDeclaredFields()) {
-					for (Ann<?> ann : getFieldAnns(field)) {
-						if (ann instanceof ColumnAnn) {
-							ColumnAnn columnAnn = (ColumnAnn) ann;
-							Class<?> componentType = getComponentType(field);
-							columnAnn.name = getColumnName(columnAnn, field);
-							list.add(new FieldSpec<ColumnAnn>(field,
-									componentType, columnAnn));
-							break;
-						}
+					ColumnAnn ann = getColumnAnn(field);
+					if (ann != null) {
+						Class<?> componentType = getComponentType(field);
+						ann.name = getColumnName(ann, field);
+						list.add(new FieldSpec<ColumnAnn>(field, componentType,
+								ann));
 					}
 				}
 			}
@@ -156,15 +146,12 @@ public final class ClassSpecRegistry {
 			ArrayList<FieldSpec<KeyAnn>> list = new ArrayList<FieldSpec<KeyAnn>>();
 			for (Class<?> cl : buildClassHierarchy(cls)) {
 				for (Field field : cl.getDeclaredFields()) {
-					for (Ann<?> ann : getFieldAnns(field)) {
-						if (ann instanceof KeyAnn) {
-							KeyAnn keyAnn = (KeyAnn) ann;
-							Class<?> componentType = getComponentType(field);
-							keyAnn.name = getKeyName(keyAnn, field);
-							list.add(new FieldSpec<KeyAnn>(field,
-									componentType, keyAnn));
-							break;
-						}
+					KeyAnn ann = getKeyAnn(field);
+					if (ann != null) {
+						Class<?> componentType = getComponentType(field);
+						ann.name = getKeyName(ann, field);
+						list.add(new FieldSpec<KeyAnn>(field, componentType,
+								ann));
 					}
 				}
 			}
