@@ -26,7 +26,7 @@ public class DoubleConverter extends Converter<Double> {
 
 	@Override
 	public boolean canHandle(Class<?> cls) {
-		return TypeHelper.isDouble(cls);
+		return TypeHelper.isDouble(cls, true);
 	}
 
 	@Override

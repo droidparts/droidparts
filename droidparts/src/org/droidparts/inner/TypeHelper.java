@@ -30,36 +30,44 @@ import android.net.Uri;
 
 public final class TypeHelper {
 
-	public static boolean isByte(Class<?> cls) {
-		return (cls == byte.class || cls == Byte.class);
+	public static boolean isBoolean(Class<?> cls, boolean orWrapper) {
+		return (cls == boolean.class) ? true
+				: orWrapper ? (cls == Boolean.class) : false;
 	}
 
-	public static boolean isShort(Class<?> cls) {
-		return (cls == short.class || cls == Short.class);
+	public static boolean isInteger(Class<?> cls, boolean orWrapper) {
+		return (cls == int.class) ? true : orWrapper ? (cls == Integer.class)
+				: false;
 	}
 
-	public static boolean isInteger(Class<?> cls) {
-		return (cls == int.class || cls == Integer.class);
+	public static boolean isLong(Class<?> cls, boolean orWrapper) {
+		return (cls == long.class) ? true : orWrapper ? (cls == Long.class)
+				: false;
 	}
 
-	public static boolean isLong(Class<?> cls) {
-		return (cls == long.class || cls == Long.class);
+	public static boolean isFloat(Class<?> cls, boolean orWrapper) {
+		return (cls == float.class) ? true : orWrapper ? (cls == Float.class)
+				: false;
 	}
 
-	public static boolean isFloat(Class<?> cls) {
-		return (cls == float.class || cls == Float.class);
+	public static boolean isDouble(Class<?> cls, boolean orWrapper) {
+		return (cls == double.class) ? true : orWrapper ? (cls == Double.class)
+				: false;
 	}
 
-	public static boolean isDouble(Class<?> cls) {
-		return (cls == double.class || cls == Double.class);
+	public static boolean isByte(Class<?> cls, boolean orWrapper) {
+		return (cls == byte.class) ? true : orWrapper ? (cls == Byte.class)
+				: false;
 	}
 
-	public static boolean isBoolean(Class<?> cls) {
-		return (cls == boolean.class || cls == Boolean.class);
+	public static boolean isShort(Class<?> cls, boolean orWrapper) {
+		return (cls == short.class) ? true : orWrapper ? (cls == Short.class)
+				: false;
 	}
 
-	public static boolean isCharacter(Class<?> cls) {
-		return (cls == char.class || cls == Character.class);
+	public static boolean isCharacter(Class<?> cls, boolean orWrapper) {
+		return (cls == char.class) ? true
+				: orWrapper ? (cls == Character.class) : false;
 	}
 
 	//

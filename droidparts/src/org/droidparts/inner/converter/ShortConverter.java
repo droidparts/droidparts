@@ -26,7 +26,7 @@ public class ShortConverter extends Converter<Short> {
 
 	@Override
 	public boolean canHandle(Class<?> cls) {
-		return TypeHelper.isShort(cls);
+		return TypeHelper.isShort(cls, true);
 	}
 
 	@Override

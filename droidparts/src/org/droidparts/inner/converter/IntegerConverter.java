@@ -26,7 +26,7 @@ public class IntegerConverter extends Converter<Integer> {
 
 	@Override
 	public boolean canHandle(Class<?> cls) {
-		return TypeHelper.isInteger(cls);
+		return TypeHelper.isInteger(cls, true);
 	}
 
 	@Override

@@ -26,7 +26,7 @@ public class CharacterConverter extends Converter<Character> {
 
 	@Override
 	public boolean canHandle(Class<?> cls) {
-		return TypeHelper.isCharacter(cls);
+		return TypeHelper.isCharacter(cls, true);
 	}
 
 	@Override

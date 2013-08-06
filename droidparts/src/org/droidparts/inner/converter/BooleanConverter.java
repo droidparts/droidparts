@@ -26,7 +26,7 @@ public class BooleanConverter extends Converter<Boolean> {
 
 	@Override
 	public boolean canHandle(Class<?> cls) {
-		return TypeHelper.isBoolean(cls);
+		return TypeHelper.isBoolean(cls, true);
 	}
 
 	@Override

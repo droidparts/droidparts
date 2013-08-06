@@ -26,7 +26,7 @@ public class LongConverter extends Converter<Long> {
 
 	@Override
 	public boolean canHandle(Class<?> cls) {
-		return TypeHelper.isLong(cls);
+		return TypeHelper.isLong(cls, true);
 	}
 
 	@Override

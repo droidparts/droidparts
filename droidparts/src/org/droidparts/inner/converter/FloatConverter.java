@@ -26,7 +26,7 @@ public class FloatConverter extends Converter<Float> {
 
 	@Override
 	public boolean canHandle(Class<?> cls) {
-		return TypeHelper.isFloat(cls);
+		return TypeHelper.isFloat(cls, true);
 	}
 
 	@Override
