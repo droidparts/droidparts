@@ -12,7 +12,7 @@
 	<artifactId>droidparts-parent</artifactId>
 	<packaging>pom</packaging>
 
-	<version>1.5.1</version>
+	<version>1.5.2-SNAPSHOT</version>
 
 	<name>DroidParts - Parent</name>
 	<description>A carefully crafted Android framework.</description>
