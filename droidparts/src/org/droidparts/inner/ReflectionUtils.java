@@ -16,6 +16,14 @@
 package org.droidparts.inner;
 
 import static org.droidparts.inner.TypeHelper.isArray;
+import static org.droidparts.inner.TypeHelper.isBoolean;
+import static org.droidparts.inner.TypeHelper.isByte;
+import static org.droidparts.inner.TypeHelper.isCharacter;
+import static org.droidparts.inner.TypeHelper.isDouble;
+import static org.droidparts.inner.TypeHelper.isFloat;
+import static org.droidparts.inner.TypeHelper.isInteger;
+import static org.droidparts.inner.TypeHelper.isLong;
+import static org.droidparts.inner.TypeHelper.isShort;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
@@ -27,12 +35,32 @@ import org.droidparts.util.L;
 
 public final class ReflectionUtils {
 
+	@SuppressWarnings("unchecked")
 	public static <T> T getFieldVal(Object obj, Field field)
 			throws IllegalArgumentException {
+		Class<?> ft = field.getType();
+		Object val;
 		try {
-			@SuppressWarnings("unchecked")
-			T val = (T) field.get(obj);
-			return val;
+			if (isBoolean(ft, false)) {
+				val = Boolean.valueOf(field.getBoolean(obj));
+			} else if (isInteger(ft, false)) {
+				val = Integer.valueOf(field.getInt(obj));
+			} else if (isLong(ft, false)) {
+				val = Long.valueOf(field.getLong(obj));
+			} else if (isFloat(ft, false)) {
+				val = Float.valueOf(field.getFloat(obj));
+			} else if (isDouble(ft, false)) {
+				val = Double.valueOf(field.getDouble(obj));
+			} else if (isByte(ft, false)) {
+				val = Byte.valueOf(field.getByte(obj));
+			} else if (isShort(ft, false)) {
+				val = Short.valueOf(field.getShort(obj));
+			} else if (isCharacter(ft, false)) {
+				val = Character.valueOf(field.getChar(obj));
+			} else {
+				val = field.get(obj);
+			}
+			return (T) val;
 		} catch (Exception e) {
 			throw new IllegalArgumentException(e);
 		}
@@ -40,8 +68,27 @@ public final class ReflectionUtils {
 
 	public static void setFieldVal(Object obj, Field field, Object val)
 			throws IllegalArgumentException {
+		Class<?> ft = field.getType();
 		try {
-			field.set(obj, val);
+			if (isBoolean(ft, false)) {
+				field.setBoolean(obj, (Boolean) val);
+			} else if (isInteger(ft, false)) {
+				field.setInt(obj, (Integer) val);
+			} else if (isLong(ft, false)) {
+				field.setLong(obj, (Long) val);
+			} else if (isFloat(ft, false)) {
+				field.setFloat(obj, (Float) val);
+			} else if (isDouble(ft, false)) {
+				field.setDouble(obj, (Double) val);
+			} else if (isByte(ft, false)) {
+				field.setByte(obj, (Byte) val);
+			} else if (isShort(ft, false)) {
+				field.setShort(obj, (Short) val);
+			} else if (isCharacter(ft, false)) {
+				field.setChar(obj, (Character) val);
+			} else {
+				field.set(obj, val);
+			}
 		} catch (Exception e) {
 			String valClsName = (val != null) ? val.getClass().getSimpleName()
 					: "?";

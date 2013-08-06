@@ -30,14 +30,9 @@ import android.net.Uri;
 
 public final class TypeHelper {
 
-	public static boolean isByte(Class<?> cls, boolean orWrapper) {
-		return (cls == byte.class) ? true : orWrapper ? (cls == Byte.class)
-				: false;
-	}
-
-	public static boolean isShort(Class<?> cls, boolean orWrapper) {
-		return (cls == short.class) ? true : orWrapper ? (cls == Short.class)
-				: false;
+	public static boolean isBoolean(Class<?> cls, boolean orWrapper) {
+		return (cls == boolean.class) ? true
+				: orWrapper ? (cls == Boolean.class) : false;
 	}
 
 	public static boolean isInteger(Class<?> cls, boolean orWrapper) {
@@ -60,9 +55,14 @@ public final class TypeHelper {
 				: false;
 	}
 
-	public static boolean isBoolean(Class<?> cls, boolean orWrapper) {
-		return (cls == boolean.class) ? true
-				: orWrapper ? (cls == Boolean.class) : false;
+	public static boolean isByte(Class<?> cls, boolean orWrapper) {
+		return (cls == byte.class) ? true : orWrapper ? (cls == Byte.class)
+				: false;
+	}
+
+	public static boolean isShort(Class<?> cls, boolean orWrapper) {
+		return (cls == short.class) ? true : orWrapper ? (cls == Short.class)
+				: false;
 	}
 
 	public static boolean isCharacter(Class<?> cls, boolean orWrapper) {
