@@ -15,7 +15,6 @@
  */
 package org.droidparts.util;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Arrays;
@@ -25,7 +24,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.content.Context;
-import android.database.sqlite.SQLiteDatabase;
 import android.util.TypedValue;
 
 public final class ResourceUtils {
@@ -39,19 +37,6 @@ public final class ResourceUtils {
 			if (!target.has(key) || overwrite) {
 				target.put(key, source.get(key));
 			}
-		}
-	}
-
-	public static void dumpDBToCacheDir(Context ctx, SQLiteDatabase db) {
-		String dbFilePath = db.getPath();
-		String dbFileName = dbFilePath.substring(dbFilePath.lastIndexOf('/',
-				dbFilePath.length()));
-		File fileTo = new File(ctx.getExternalCacheDir(), dbFileName);
-		try {
-			IOUtils.copy(new File(dbFilePath), fileTo);
-			L.i("Copied DB file to '%s'.", fileTo.getAbsolutePath());
-		} catch (IOException e) {
-			L.w(e);
 		}
 	}
 
