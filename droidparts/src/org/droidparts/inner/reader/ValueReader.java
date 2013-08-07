@@ -59,7 +59,7 @@ public class ValueReader {
 				val = SupportFragmentsReader.getFragment(target, ann2.id,
 						fieldName);
 			} else {
-				val = NativeFragmentsReader.getFragment(target, ann2.id,
+				val = StockFragmentsReader.getFragment(target, ann2.id,
 						fieldName);
 			}
 		} else if (annType == InjectParentActivityAnn.class) {
@@ -67,7 +67,7 @@ public class ValueReader {
 					&& SupportFragmentsReader.isSupportObject(target)) {
 				val = SupportFragmentsReader.getParentActivity(target);
 			} else {
-				val = NativeFragmentsReader.getParentActivity(target);
+				val = StockFragmentsReader.getParentActivity(target);
 			}
 		}
 		return val;

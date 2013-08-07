@@ -27,6 +27,8 @@ import org.json.JSONObject;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
+import android.preference.Preference;
+import android.view.View;
 
 public final class TypeHelper {
 
@@ -124,6 +126,17 @@ public final class TypeHelper {
 
 	public static boolean isJSONArray(Class<?> cls) {
 		return JSONArray.class.isAssignableFrom(cls);
+	}
+
+	//
+
+	public static boolean isView(Class<?> cls) {
+		return View.class.isAssignableFrom(cls);
+
+	}
+
+	public static boolean isPreference(Class<?> cls) {
+		return Preference.class.isAssignableFrom(cls);
 	}
 
 	//

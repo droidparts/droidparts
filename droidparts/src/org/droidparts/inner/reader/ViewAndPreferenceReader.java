@@ -15,6 +15,9 @@
  */
 package org.droidparts.inner.reader;
 
+import java.lang.reflect.Method;
+
+import org.droidparts.inner.TypeHelper;
 import org.droidparts.util.L;
 import org.droidparts.util.ResourceUtils;
 
@@ -28,11 +31,8 @@ public class ViewAndPreferenceReader {
 	static Object readVal(Context ctx, View rootView, int viewOrPrefId,
 			boolean click, Object target, Class<?> valType, String valName)
 			throws Exception {
-		if (rootView == null) {
-			throw new IllegalArgumentException("Null View.");
-		}
-		boolean isView = View.class.isAssignableFrom(valType);
-		boolean isPreference = Preference.class.isAssignableFrom(valType);
+		boolean isView = TypeHelper.isView(valType);
+		boolean isPreference = TypeHelper.isPreference(valType);
 		if (!isView && !isPreference) {
 			throw new Exception("Not a View or Preference '"
 					+ valType.getName() + "'.");
@@ -44,41 +44,77 @@ public class ViewAndPreferenceReader {
 				viewOrPrefId = ResourceUtils.getStringId(ctx, valName);
 			}
 		}
-		Object val;
+		Object viewOrPref = null;
 		if (isView) {
-			val = rootView.findViewById(viewOrPrefId);
+			if (rootView == null) {
+				throw new IllegalArgumentException("Null View.");
+			}
+			viewOrPref = rootView.findViewById(viewOrPrefId);
 		} else {
-			val = ((PreferenceActivity) ctx).findPreference(ctx
-					.getText(viewOrPrefId));
+			String prefKey = ctx.getString(viewOrPrefId);
+			if (target instanceof PreferenceActivity) {
+				viewOrPref = ((PreferenceActivity) target)
+						.findPreference(prefKey);
+			} else {
+				viewOrPref = findPreferenceInFragment(target, prefKey);
+			}
 		}
-		if (val != null) {
+		if (viewOrPref != null) {
 			if (click) {
 				if (isView) {
-					if (target instanceof View.OnClickListener) {
-						((View) val)
-								.setOnClickListener((View.OnClickListener) target);
-					} else {
+					boolean success = setListener((View) viewOrPref, target);
+					if (!success) {
 						L.w("Failed to set OnClickListener");
 					}
 				} else {
-					boolean done = false;
-					Preference pref = (Preference) val;
-					if (target instanceof Preference.OnPreferenceClickListener) {
-						pref.setOnPreferenceClickListener((Preference.OnPreferenceClickListener) target);
-						done = true;
-					}
-					if (target instanceof Preference.OnPreferenceChangeListener) {
-						pref.setOnPreferenceChangeListener((Preference.OnPreferenceChangeListener) target);
-						done = true;
-					}
-					if (!done) {
+					boolean success = setListener((Preference) viewOrPref,
+							target);
+					if (!success) {
 						L.w("Failed to set OnPreferenceClickListener or OnPreferenceChangeListener.");
 					}
 				}
 			}
-			return val;
+			return viewOrPref;
 		} else {
 			throw new Exception("View or Preference not found for id.");
 		}
 	}
+
+	private static Preference findPreferenceInFragment(Object prefFragment,
+			String prefKey) {
+		try {
+			if (findPreferenceMethod == null) {
+				findPreferenceMethod = prefFragment.getClass().getMethod(
+						"findPreference", CharSequence.class);
+			}
+			return (Preference) findPreferenceMethod.invoke(prefFragment, prefKey);
+		} catch (Exception e) {
+			L.d(e);
+			return null;
+		}
+	}
+
+	private static Method findPreferenceMethod;
+
+	private static boolean setListener(View view, Object target) {
+		if (target instanceof View.OnClickListener) {
+			view.setOnClickListener((View.OnClickListener) target);
+			return true;
+		}
+		return false;
+	}
+
+	private static boolean setListener(Preference pref, Object target) {
+		boolean success = false;
+		if (target instanceof Preference.OnPreferenceClickListener) {
+			pref.setOnPreferenceClickListener((Preference.OnPreferenceClickListener) target);
+			success = true;
+		}
+		if (target instanceof Preference.OnPreferenceChangeListener) {
+			pref.setOnPreferenceChangeListener((Preference.OnPreferenceChangeListener) target);
+			success = true;
+		}
+		return success;
+	}
+
 }

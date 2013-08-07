@@ -29,7 +29,7 @@ public class BundleExtraReader {
 				&& SupportFragmentsReader.isSupportObject(obj)) {
 			data = SupportFragmentsReader.getFragmentArguments(obj);
 		} else {
-			data = NativeFragmentsReader.getFragmentArguments(obj);
+			data = StockFragmentsReader.getFragmentArguments(obj);
 		}
 		Object val = data.get(key);
 		if (val == null && !optional) {

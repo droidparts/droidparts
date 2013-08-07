@@ -21,7 +21,7 @@ import android.app.Activity;
 import android.app.Fragment;
 import android.os.Bundle;
 
-public class NativeFragmentsReader {
+public class StockFragmentsReader {
 
 	static Activity getParentActivity(Object fragmentObj) {
 		Fragment fragment = (Fragment) fragmentObj;

@@ -1,3 +1,7 @@
+1.5.3 /2013-08-07/:
+    * Added PreferenceFragment.
+    * Moved ListActivity & PreferenceActivity to legacy subpackage.
+
 1.5.2 /2013-08-06/:
     * Code improvements.
 
