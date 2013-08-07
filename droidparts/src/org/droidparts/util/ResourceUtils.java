@@ -18,26 +18,15 @@ package org.droidparts.util;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Arrays;
-import java.util.Iterator;
-
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import android.content.Context;
 import android.util.TypedValue;
 
 public final class ResourceUtils {
 
-	public static void merge(JSONObject source, JSONObject target,
-			boolean overwrite) throws JSONException {
-		@SuppressWarnings("unchecked")
-		Iterator<String> it = source.keys();
-		while (it.hasNext()) {
-			String key = it.next();
-			if (!target.has(key) || overwrite) {
-				target.put(key, source.get(key));
-			}
-		}
+	public static int dpToPx(Context ctx, int val) {
+		return (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,
+				val, ctx.getResources().getDisplayMetrics());
 	}
 
 	public static String valueForKey(Context ctx, int keysArrId,
@@ -46,11 +35,6 @@ public final class ResourceUtils {
 		String[] valuesArr = ctx.getResources().getStringArray(valuesArrId);
 		int idx = Arrays.asList(keysArr).indexOf(key);
 		return (idx != -1) ? valuesArr[idx] : null;
-	}
-
-	public static int dpToPx(Context ctx, int val) {
-		return (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,
-				val, ctx.getResources().getDisplayMetrics());
 	}
 
 	public static String readRawResource(Context ctx, int resId)
