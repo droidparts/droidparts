@@ -20,8 +20,6 @@ import android.app.DialogFragment;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
-import android.preference.Preference;
-import android.preference.PreferenceFragment;
 
 public class SecretFragmentsStockUtil extends SecretFragmentsUtil {
 
@@ -57,13 +55,6 @@ public class SecretFragmentsStockUtil extends SecretFragmentsUtil {
 			ft.remove(f);
 		}
 		dialogFragment.show(ft, tag);
-	}
-
-	public static Preference findPreference(Object fragment, String key) {
-		if (fragment instanceof PreferenceFragment) {
-			return ((PreferenceFragment) fragment).findPreference(key);
-		}
-		return null;
 	}
 
 }
