@@ -49,11 +49,11 @@ public class ViewAndPreferenceReader {
 			}
 			viewOrPref = rootView.findViewById(viewOrPrefId);
 		} else {
+			String prefKey = ctx.getString(viewOrPrefId);
 			if (ctx instanceof PreferenceActivity) {
-				viewOrPref = ((PreferenceActivity) ctx).findPreference(ctx
-						.getText(viewOrPrefId));
+				viewOrPref = ((PreferenceActivity) ctx).findPreference(prefKey);
 			} else {
-				// TODO PreferenceFragment
+				viewOrPref = getPreferenceFromFragment(ctx, target, prefKey);
 			}
 		}
 		if (viewOrPref != null) {
@@ -75,6 +75,12 @@ public class ViewAndPreferenceReader {
 		} else {
 			throw new Exception("View or Preference not found for id.");
 		}
+	}
+
+	private static Preference getPreferenceFromFragment(Context ctx,
+			Object target, String prefKey) {
+		// TODO
+		return null;
 	}
 
 	private static boolean setListener(View view, Object target) {

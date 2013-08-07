@@ -17,7 +17,7 @@ package org.droidparts.sample.activity;
 
 import java.util.ArrayList;
 
-import org.droidparts.activity.ListActivity;
+import org.droidparts.activity.stock.legacy.ListActivity;
 import org.droidparts.annotation.inject.InjectView;
 import org.droidparts.sample.R;
 import org.droidparts.sample.adapter.EntryListAdapter;

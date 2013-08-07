@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License. 
  */
-package org.droidparts.activity;
+package org.droidparts.activity.stock.legacy;
 
 import org.droidparts.Injector;
 import org.droidparts.bus.EventBus;
@@ -21,8 +21,8 @@ import org.droidparts.contract.Injectable;
 
 import android.os.Bundle;
 
-public abstract class ListActivity extends android.app.ListActivity implements
-		Injectable {
+public abstract class PreferenceActivity extends
+		android.preference.PreferenceActivity implements Injectable {
 
 	@Override
 	public void onPreInject() {
