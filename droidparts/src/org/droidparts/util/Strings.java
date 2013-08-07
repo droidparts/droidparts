@@ -19,6 +19,8 @@ import static org.droidparts.contract.Constants.UTF8;
 
 import java.io.UnsupportedEncodingException;
 import java.math.BigInteger;
+import java.net.URLDecoder;
+import java.net.URLEncoder;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Collection;
@@ -60,7 +62,21 @@ public class Strings {
 		return sb.toString();
 	}
 
-	//
+	public static String urlEncode(String str) {
+		try {
+			return URLEncoder.encode(str, UTF8);
+		} catch (UnsupportedEncodingException e) {
+			throw new IllegalArgumentException("failed to encode", e);
+		}
+	}
+
+	public static String urlDecode(String str) {
+		try {
+			return URLDecoder.decode(str, UTF8);
+		} catch (UnsupportedEncodingException e) {
+			throw new IllegalArgumentException("failed to decode", e);
+		}
+	}
 
 	public static final String SHA1 = "SHA-1";
 	public static final String MD5 = "MD5";
