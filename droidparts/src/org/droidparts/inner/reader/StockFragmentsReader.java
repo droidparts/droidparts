@@ -20,8 +20,6 @@ import org.droidparts.util.ResourceUtils;
 import android.app.Activity;
 import android.app.Fragment;
 import android.os.Bundle;
-import android.preference.Preference;
-import android.preference.PreferenceFragment;
 
 public class StockFragmentsReader {
 
@@ -42,13 +40,6 @@ public class StockFragmentsReader {
 
 	static Bundle getFragmentArguments(Object fragmentObj) {
 		return ((Fragment) fragmentObj).getArguments();
-	}
-
-	public static Preference findPreference(Object fragmentObj, String prefKey) {
-		if (fragmentObj instanceof PreferenceFragment) {
-			return ((PreferenceFragment) fragmentObj).findPreference(prefKey);
-		}
-		return null;
 	}
 
 }

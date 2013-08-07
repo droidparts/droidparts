@@ -15,6 +15,8 @@
  */
 package org.droidparts.inner.reader;
 
+import java.lang.reflect.Method;
+
 import org.droidparts.inner.TypeHelper;
 import org.droidparts.util.L;
 import org.droidparts.util.ResourceUtils;
@@ -50,10 +52,11 @@ public class ViewAndPreferenceReader {
 			viewOrPref = rootView.findViewById(viewOrPrefId);
 		} else {
 			String prefKey = ctx.getString(viewOrPrefId);
-			if (ctx instanceof PreferenceActivity) {
-				viewOrPref = ((PreferenceActivity) ctx).findPreference(prefKey);
+			if (target instanceof PreferenceActivity) {
+				viewOrPref = ((PreferenceActivity) target)
+						.findPreference(prefKey);
 			} else {
-				viewOrPref = getPreferenceFromFragment(ctx, target, prefKey);
+				viewOrPref = findPreferenceInFragment(target, prefKey);
 			}
 		}
 		if (viewOrPref != null) {
@@ -77,11 +80,21 @@ public class ViewAndPreferenceReader {
 		}
 	}
 
-	private static Preference getPreferenceFromFragment(Context ctx,
-			Object target, String prefKey) {
-		// TODO
-		return null;
+	private static Preference findPreferenceInFragment(Object prefFragment,
+			String prefKey) {
+		try {
+			if (findPreferenceMethod == null) {
+				findPreferenceMethod = prefFragment.getClass().getMethod(
+						"findPreference", CharSequence.class);
+			}
+			return (Preference) findPreferenceMethod.invoke(prefFragment, prefKey);
+		} catch (Exception e) {
+			L.d(e);
+			return null;
+		}
 	}
+
+	private static Method findPreferenceMethod;
 
 	private static boolean setListener(View view, Object target) {
 		if (target instanceof View.OnClickListener) {
