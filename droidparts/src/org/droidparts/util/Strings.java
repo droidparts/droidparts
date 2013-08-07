@@ -15,6 +15,12 @@
  */
 package org.droidparts.util;
 
+import static org.droidparts.contract.Constants.UTF8;
+
+import java.io.UnsupportedEncodingException;
+import java.math.BigInteger;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.Collection;
 
 public class Strings {
@@ -52,6 +58,42 @@ public class Strings {
 			}
 		}
 		return sb.toString();
+	}
+
+	//
+
+	public static final String SHA1 = "SHA-1";
+	public static final String MD5 = "MD5";
+
+	public static String getMD5(String str) {
+		try {
+			return getHash(str, MD5);
+		} catch (Exception e) {
+			L.w(e);
+			return null;
+		}
+	}
+
+	public static String getSHA1(String str) {
+		try {
+			return getHash(str, SHA1);
+		} catch (Exception e) {
+			L.w(e);
+			return null;
+		}
+	}
+
+	public static String getHash(String str, String algorithm)
+			throws UnsupportedEncodingException, NoSuchAlgorithmException {
+		byte[] bytes = str.getBytes(UTF8);
+		MessageDigest md = MessageDigest.getInstance(algorithm);
+		byte[] digest = md.digest(bytes);
+		BigInteger bigInt = new BigInteger(1, digest);
+		String hash = bigInt.toString(16);
+		while (hash.length() < 32) {
+			hash = "0" + hash;
+		}
+		return hash;
 	}
 
 }

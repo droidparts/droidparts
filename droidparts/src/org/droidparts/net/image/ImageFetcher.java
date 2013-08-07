@@ -28,7 +28,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ThreadPoolExecutor;
 
 import org.droidparts.contract.HTTP.Header;
-import org.droidparts.executor.concurrent.BackgroundExecutor;
+import org.droidparts.executor.BackgroundExecutor;
 import org.droidparts.inner.BitmapFactoryUtils;
 import org.droidparts.net.http.HTTPResponse;
 import org.droidparts.net.http.RESTClient;
