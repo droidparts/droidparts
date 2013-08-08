@@ -1,3 +1,6 @@
+1.5.4 /2013-08-08/:
+    * Moved rarely used helpers to Gist.
+
 1.5.3 /2013-08-07/:
     * Added PreferenceFragment.
     * Moved ListActivity & PreferenceActivity to legacy subpackage.
