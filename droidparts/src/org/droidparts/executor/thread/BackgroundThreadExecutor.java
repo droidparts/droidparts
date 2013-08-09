@@ -13,16 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License. 
  */
-package org.droidparts.util.concurrent;
+package org.droidparts.executor.thread;
 
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
-public class BackgroundExecutor extends ThreadPoolExecutor {
+public class BackgroundThreadExecutor extends ThreadPoolExecutor {
 
-	public BackgroundExecutor(int nThreads, String name) {
+	public BackgroundThreadExecutor(int nThreads, String name) {
 		super(nThreads, nThreads, 0L, TimeUnit.MILLISECONDS,
 				new LinkedBlockingQueue<Runnable>(),
 				new BackgroundThreadFactory(name));
