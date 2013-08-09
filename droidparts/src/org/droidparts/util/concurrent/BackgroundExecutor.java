@@ -16,6 +16,7 @@
 package org.droidparts.util.concurrent;
 
 import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
@@ -24,7 +25,22 @@ public class BackgroundExecutor extends ThreadPoolExecutor {
 	public BackgroundExecutor(int nThreads, String name) {
 		super(nThreads, nThreads, 0L, TimeUnit.MILLISECONDS,
 				new LinkedBlockingQueue<Runnable>(),
-				new BackgroundPriorityThreadFactory(name));
+				new BackgroundThreadFactory(name));
+	}
+
+	private static class BackgroundThreadFactory implements ThreadFactory {
+
+		private final String name;
+
+		public BackgroundThreadFactory(String name) {
+			this.name = name;
+		}
+
+		@Override
+		public Thread newThread(Runnable r) {
+			return new BackgroundThread(r, name);
+		}
+
 	}
 
 }

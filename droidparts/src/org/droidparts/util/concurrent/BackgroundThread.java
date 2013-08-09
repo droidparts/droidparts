@@ -16,31 +16,28 @@
 package org.droidparts.util.concurrent;
 
 import static org.droidparts.util.Strings.isNotEmpty;
-
-import java.util.concurrent.ThreadFactory;
-
 import android.os.Process;
 
-public class BackgroundPriorityThreadFactory implements ThreadFactory {
+public class BackgroundThread extends Thread {
 
-	private final String name;
+	public BackgroundThread(String name) {
+		initName(name);
+	}
 
-	public BackgroundPriorityThreadFactory(String name) {
-		this.name = name;
+	public BackgroundThread(Runnable r, String name) {
+		super(r);
 	}
 
 	@Override
-	public Thread newThread(Runnable r) {
-		return new Thread(r) {
-			@Override
-			public void run() {
-				if (isNotEmpty(name)) {
-					setName(name + "-" + getId());
-				}
-				Process.setThreadPriority(Process.THREAD_PRIORITY_BACKGROUND);
-				super.run();
-			}
-		};
+	public void run() {
+		Process.setThreadPriority(Process.THREAD_PRIORITY_BACKGROUND);
+		super.run();
+	}
+
+	private void initName(String name) {
+		if (isNotEmpty(name)) {
+			setName(name + "-" + getId());
+		}
 	}
 
 }
