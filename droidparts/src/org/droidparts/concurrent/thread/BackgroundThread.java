@@ -26,18 +26,19 @@ public class BackgroundThread extends Thread {
 
 	public BackgroundThread(Runnable r, String name) {
 		super(r);
-	}
-
-	@Override
-	public void run() {
-		Process.setThreadPriority(Process.THREAD_PRIORITY_BACKGROUND);
-		super.run();
+		initName(name);
 	}
 
 	private void initName(String name) {
 		if (isNotEmpty(name)) {
 			setName(name + "-" + getId());
 		}
+	}
+
+	@Override
+	public void run() {
+		Process.setThreadPriority(Process.THREAD_PRIORITY_BACKGROUND);
+		super.run();
 	}
 
 }
