@@ -28,7 +28,6 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ThreadPoolExecutor;
 
 import org.droidparts.contract.HTTP.Header;
-import org.droidparts.executor.BackgroundExecutor;
 import org.droidparts.inner.BitmapFactoryUtils;
 import org.droidparts.net.http.HTTPResponse;
 import org.droidparts.net.http.RESTClient;
@@ -36,6 +35,7 @@ import org.droidparts.net.http.worker.HTTPWorker;
 import org.droidparts.net.image.cache.BitmapDiskCache;
 import org.droidparts.net.image.cache.BitmapMemoryCache;
 import org.droidparts.util.L;
+import org.droidparts.util.concurrent.BackgroundExecutor;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -68,9 +68,9 @@ public class ImageFetcher {
 	private volatile boolean paused;
 
 	public ImageFetcher(Context ctx) {
-		this(ctx, new BackgroundExecutor(2), new RESTClient(ctx),
-				BitmapMemoryCache.getDefaultInstance(ctx), BitmapDiskCache
-						.getDefaultInstance(ctx));
+		this(ctx, new BackgroundExecutor(2, "ImageFetcher-Fetch"),
+				new RESTClient(ctx), BitmapMemoryCache.getDefaultInstance(ctx),
+				BitmapDiskCache.getDefaultInstance(ctx));
 	}
 
 	protected ImageFetcher(Context ctx, ThreadPoolExecutor fetchExecutor,
@@ -81,7 +81,7 @@ public class ImageFetcher {
 		this.memoryCache = memoryCache;
 		this.diskCache = diskCache;
 		handler = new Handler(Looper.getMainLooper());
-		cacheExecutor = new BackgroundExecutor(1);
+		cacheExecutor = new BackgroundExecutor(1, "ImageFetcher-Cache");
 	}
 
 	public void pause() {
