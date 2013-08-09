@@ -25,6 +25,9 @@ import java.lang.annotation.Target;
 @Target(FIELD)
 public @interface Key {
 
+	// ASCII GS (group separator), '->' for readability
+	String SUB = "->" + (char) 29;
+
 	String name() default "";
 
 	boolean optional() default false;
