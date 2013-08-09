@@ -13,12 +13,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License. 
  */
-package org.droidparts.executor.task;
+package org.droidparts.concurrent.task;
 
-public interface AsyncTaskResultListener<Result> {
+import android.content.Context;
 
-	void onAsyncTaskSuccess(Result result);
+public abstract class SimpleAsyncTask<Result> extends
+		AsyncTask<Void, Void, Result> {
 
-	void onAsyncTaskFailure(Exception e);
+	public SimpleAsyncTask(Context ctx,
+			AsyncTaskResultListener<Result> resultListener) {
+		super(ctx, resultListener);
+	}
+
+	@Override
+	protected final Result onExecute(Void... params) throws Exception {
+		return onExecute();
+	}
+
+	protected abstract Result onExecute() throws Exception;
 
 }

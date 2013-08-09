@@ -13,16 +13,31 @@
  * See the License for the specific language governing permissions and
  * limitations under the License. 
  */
-package org.droidparts.executor.service;
+package org.droidparts.concurrent.thread;
 
-import android.os.Handler;
-import android.os.Looper;
-import android.os.ResultReceiver;
+import static org.droidparts.util.Strings.isNotEmpty;
+import android.os.Process;
 
-public class MainThreadResultReceiver extends ResultReceiver {
+public class BackgroundThread extends Thread {
 
-	public MainThreadResultReceiver() {
-		super(new Handler(Looper.getMainLooper()));
+	public BackgroundThread(String name) {
+		initName(name);
+	}
+
+	public BackgroundThread(Runnable r, String name) {
+		super(r);
+	}
+
+	@Override
+	public void run() {
+		Process.setThreadPriority(Process.THREAD_PRIORITY_BACKGROUND);
+		super.run();
+	}
+
+	private void initName(String name) {
+		if (isNotEmpty(name)) {
+			setName(name + "-" + getId());
+		}
 	}
 
 }
