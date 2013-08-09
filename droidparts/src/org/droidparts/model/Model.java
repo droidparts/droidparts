@@ -33,7 +33,8 @@ public abstract class Model implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	public Model() {
-		// subclasses must have a no-arg constructor
+		// Subclasses must have a no-argument constructor
+		// and should override hashCode() and equals().
 	}
 
 	@Override
