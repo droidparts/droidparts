@@ -15,8 +15,6 @@
  */
 package org.droidparts.gram.model;
 
-import static org.droidparts.persist.json.JSONSerializer.__;
-
 import org.droidparts.annotation.json.Key;
 import org.droidparts.annotation.sql.Column;
 import org.droidparts.annotation.sql.Table;
@@ -31,18 +29,18 @@ public class Image extends Entity {
 	@Column(name = DB.Column.REMOTE_ID)
 	public String remoteId;
 
-	@Key(name = "caption" + __ + "text", optional = true)
+	@Key(name = "caption" + Key.SUB + "text", optional = true)
 	@Column(name = DB.Column.CAPTION)
 	public String captionText = "";
 
-	@Key(name = "images" + __ + "thumbnail" + __ + "width")
+	@Key(name = "images" + Key.SUB + "thumbnail" + Key.SUB + "width")
 	public int thumbnailWidth;
 
-	@Key(name = "images" + __ + "thumbnail" + __ + "url")
+	@Key(name = "images" + Key.SUB + "thumbnail" + Key.SUB + "url")
 	@Column(name = DB.Column.THUMBNAIL_URL)
 	public String thumbnailUrl = "";
 
-	@Key(name = "images" + __ + "standard_resolution" + __ + "url")
+	@Key(name = "images" + Key.SUB + "standard_resolution" + Key.SUB + "url")
 	@Column(name = DB.Column.IMAGE_URL)
 	public String imageUrl = "";
 

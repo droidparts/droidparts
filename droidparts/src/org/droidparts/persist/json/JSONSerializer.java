@@ -24,8 +24,9 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 import org.droidparts.Injector;
-import org.droidparts.inner.ConverterRegistry;
+import org.droidparts.annotation.json.Key;
 import org.droidparts.inner.ClassSpecRegistry;
+import org.droidparts.inner.ConverterRegistry;
 import org.droidparts.inner.PersistUtils;
 import org.droidparts.inner.ann.FieldSpec;
 import org.droidparts.inner.ann.json.KeyAnn;
@@ -41,9 +42,6 @@ import android.util.Log;
 import android.util.Pair;
 
 public class JSONSerializer<ModelType extends Model> {
-
-	// ASCII GS (group separator), '->' for readability
-	public static final String __ = "->" + (char) 29;
 
 	private final Class<ModelType> cls;
 	private Context ctx;
@@ -189,10 +187,10 @@ public class JSONSerializer<ModelType extends Model> {
 	}
 
 	private Pair<String, String> getNestedKeyParts(String key) {
-		int firstSep = key.indexOf(__);
+		int firstSep = key.indexOf(Key.SUB);
 		if (firstSep != -1) {
 			String subKey = key.substring(0, firstSep);
-			String leftKey = key.substring(firstSep + __.length());
+			String leftKey = key.substring(firstSep + Key.SUB.length());
 			Pair<String, String> pair = Pair.create(subKey, leftKey);
 			return pair;
 		} else {

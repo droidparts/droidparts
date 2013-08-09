@@ -13,26 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License. 
  */
-package org.droidparts.model;
+package org.droidparts.concurrent.service;
 
-import static org.droidparts.contract.DB.Column.ID;
+import android.os.Handler;
+import android.os.Looper;
+import android.os.ResultReceiver;
 
-import org.droidparts.annotation.sql.Column;
+public class MainThreadResultReceiver extends ResultReceiver {
 
-public abstract class Entity extends Model {
-	private static final long serialVersionUID = 1L;
-
-	public Entity() {
-		// Subclasses must have a no-argument constructor
-		// and should override hashCode() and equals().
-	}
-
-	@Column(name = ID)
-	public long id;
-
-	@Override
-	public int hashCode() {
-		return getClass().hashCode() + (int) id;
+	public MainThreadResultReceiver() {
+		super(new Handler(Looper.getMainLooper()));
 	}
 
 }

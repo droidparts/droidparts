@@ -13,23 +13,32 @@
  * See the License for the specific language governing permissions and
  * limitations under the License. 
  */
-package org.droidparts.executor.task;
+package org.droidparts.concurrent.thread;
 
-import android.content.Context;
+import static org.droidparts.util.Strings.isNotEmpty;
+import android.os.Process;
 
-public abstract class SimpleAsyncTask<Result> extends
-		AsyncTask<Void, Void, Result> {
+public class BackgroundThread extends Thread {
 
-	public SimpleAsyncTask(Context ctx,
-			AsyncTaskResultListener<Result> resultListener) {
-		super(ctx, resultListener);
+	public BackgroundThread(String name) {
+		initName(name);
+	}
+
+	public BackgroundThread(Runnable r, String name) {
+		super(r);
+		initName(name);
+	}
+
+	private void initName(String name) {
+		if (isNotEmpty(name)) {
+			setName(name + "-" + getId());
+		}
 	}
 
 	@Override
-	protected final Result onExecute(Void... params) throws Exception {
-		return onExecute();
+	public void run() {
+		Process.setThreadPriority(Process.THREAD_PRIORITY_BACKGROUND);
+		super.run();
 	}
-
-	protected abstract Result onExecute() throws Exception;
 
 }

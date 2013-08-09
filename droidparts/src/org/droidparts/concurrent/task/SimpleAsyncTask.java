@@ -13,16 +13,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License. 
  */
-package org.droidparts.executor.service;
+package org.droidparts.concurrent.task;
 
-import android.os.Handler;
-import android.os.Looper;
-import android.os.ResultReceiver;
+import android.content.Context;
 
-public class MainThreadResultReceiver extends ResultReceiver {
+public abstract class SimpleAsyncTask<Result> extends
+		AsyncTask<Void, Void, Result> {
 
-	public MainThreadResultReceiver() {
-		super(new Handler(Looper.getMainLooper()));
+	public SimpleAsyncTask(Context ctx,
+			AsyncTaskResultListener<Result> resultListener) {
+		super(ctx, resultListener);
 	}
+
+	@Override
+	protected final Result onExecute(Void... params) throws Exception {
+		return onExecute();
+	}
+
+	protected abstract Result onExecute() throws Exception;
 
 }

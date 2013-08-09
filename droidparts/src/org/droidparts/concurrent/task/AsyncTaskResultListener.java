@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License. 
  */
-package org.droidparts.executor.task;
+package org.droidparts.concurrent.task;
 
 public interface AsyncTaskResultListener<Result> {
 

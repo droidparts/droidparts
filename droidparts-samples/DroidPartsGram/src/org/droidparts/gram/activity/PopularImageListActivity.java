@@ -17,7 +17,7 @@ package org.droidparts.gram.activity;
 
 import org.droidparts.activity.sherlock.SingleFragmentActivity;
 import org.droidparts.annotation.inject.InjectDependency;
-import org.droidparts.executor.service.MainThreadResultReceiver;
+import org.droidparts.concurrent.service.MainThreadResultReceiver;
 import org.droidparts.gram.R;
 import org.droidparts.gram.adapter.ImageListAdapter;
 import org.droidparts.gram.fragment.ImageDetailFragment;

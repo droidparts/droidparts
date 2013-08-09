@@ -19,7 +19,7 @@ import java.util.ArrayList;
 
 import org.droidparts.annotation.inject.InjectDependency;
 import org.droidparts.bus.EventBus;
-import org.droidparts.executor.service.IntentService;
+import org.droidparts.concurrent.service.IntentService;
 import org.droidparts.gram.contract.Instagram;
 import org.droidparts.gram.model.Image;
 import org.droidparts.gram.persist.ImageEntityManager;
@@ -52,7 +52,7 @@ public class ImageIntentService extends IntentService {
 	private ImageEntityManager imageEntityManager;
 
 	public ImageIntentService() {
-		super(ImageIntentService.class.getName());
+		super(ImageIntentService.class.getSimpleName());
 		refreshUri = Uri
 				.parse(Instagram.Url.POPULAR_MEDIA)
 				.buildUpon()
