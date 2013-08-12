@@ -29,6 +29,12 @@ Download
   <version>${version.from.jar.above}</version>
 </dependency>
 ```
+or Gradle:
+```groovy
+dependencies {
+   compile 'org.droidparts:droidparts:${version.from.jar.above}'
+}
+```
 or use as a plain old Android library project.
 
  [1]: http://developer.android.com/tools/extras/support-library.html
