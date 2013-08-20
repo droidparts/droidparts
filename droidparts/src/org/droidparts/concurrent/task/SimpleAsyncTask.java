@@ -18,7 +18,7 @@ package org.droidparts.concurrent.task;
 import android.content.Context;
 
 public abstract class SimpleAsyncTask<Result> extends
-		AsyncTask<Void, Void, Result> {
+		AsyncTask<Void, Integer, Result> {
 
 	public SimpleAsyncTask(Context ctx,
 			AsyncTaskResultListener<Result> resultListener) {

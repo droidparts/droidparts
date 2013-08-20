@@ -1,3 +1,8 @@
+1.5.6 /2013-08-21/:
+    * EventBus: support extra annotated method signature.
+    * AppUtils: changed getVersionName() params.
+    * SimpleAsyncTask: Void => Integer for progress.
+
 1.5.5 /2013-08-10/:
     * Renamed executor subpackage to concurrent.
     * JSONSerializer: moved nested separator to @Key.

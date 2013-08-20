@@ -44,15 +44,18 @@ public class AppUtils {
 		return debug;
 	}
 
-	public static String getVersionName(Context ctx) {
-		String verName = "?";
+	public static String getVersionName(Context ctx, boolean withVersionCode) {
 		try {
-			verName = ctx.getPackageManager().getPackageInfo(
-					ctx.getPackageName(), 0).versionName;
+			PackageInfo pi = ctx.getPackageManager().getPackageInfo(
+					ctx.getPackageName(), 0);
+			if (withVersionCode) {
+				return pi.versionName + " (" + pi.versionCode + ")";
+			} else {
+				return pi.versionName;
+			}
 		} catch (NameNotFoundException e) {
-			L.w(e);
+			throw new IllegalArgumentException(e);
 		}
-		return verName;
 	}
 
 	//
