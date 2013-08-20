@@ -35,13 +35,21 @@ public class EventBus {
 	private static final String ALL = "_all_";
 
 	private static final ConcurrentHashMap<String, ConcurrentHashMap<EventReceiver<Object>, Boolean>> eventNameToReceivers = new ConcurrentHashMap<String, ConcurrentHashMap<EventReceiver<Object>, Boolean>>();
-	private static final ConcurrentHashMap<String, Object[]> stickyEvents = new ConcurrentHashMap<String, Object[]>();
+	private static final ConcurrentHashMap<String, Object> stickyEvents = new ConcurrentHashMap<String, Object>();
 
-	public static void postEvent(String name, Object... data) {
+	public static void postEvent(String name) {
+		postEvent(name, null);
+	}
+
+	public static void postEvent(String name, Object data) {
 		runOnUiThread(new PostEventRunnable(name, data));
 	}
 
-	public static void postEventSticky(String name, Object... data) {
+	public static void postEventSticky(String name) {
+		postEventSticky(name, null);
+	}
+
+	public static void postEventSticky(String name, Object data) {
 		stickyEvents.put(name, data);
 		postEvent(name, data);
 	}
@@ -74,7 +82,7 @@ public class EventBus {
 			receiversForEventName(ALL).put(rec, Boolean.FALSE);
 		} else {
 			for (String name : eventNames) {
-				Object[] data = stickyEvents.get(name);
+				Object data = stickyEvents.get(name);
 				if (data != null) {
 					notifyReceiver(rec, name, data);
 				}
@@ -130,15 +138,9 @@ public class EventBus {
 	}
 
 	private static void notifyReceiver(EventReceiver<Object> receiver,
-			String event, Object[] data) {
-		Object realData = data;
-		if (data.length == 0) {
-			realData = null;
-		} else if (data.length == 1) {
-			realData = data[0];
-		}
+			String event, Object data) {
 		try {
-			receiver.onEvent(event, realData);
+			receiver.onEvent(event, data);
 		} catch (IllegalArgumentException e) {
 			L.w(format("Failed to deliver event %s to %s: %s.", event, receiver
 					.getClass().getName(), e.getMessage()));
@@ -167,9 +169,9 @@ public class EventBus {
 	private static class PostEventRunnable implements Runnable {
 
 		private final String name;
-		private final Object[] data;
+		private final Object data;
 
-		public PostEventRunnable(String name, Object[] data) {
+		public PostEventRunnable(String name, Object data) {
 			this.name = name;
 			this.data = data;
 		}
@@ -204,7 +206,11 @@ public class EventBus {
 					spec.method.invoke(obj);
 					break;
 				case 1:
-					spec.method.invoke(obj, name);
+					if (spec.paramTypes[0] == String.class) {
+						spec.method.invoke(obj, name);
+					} else {
+						spec.method.invoke(obj, data);
+					}
 					break;
 				default:
 					spec.method.invoke(obj, name, data);
