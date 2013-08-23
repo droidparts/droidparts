@@ -58,8 +58,10 @@ public class ViewUtils {
 		}
 	}
 
-	public static void putCursorAfterLastSymbol(EditText editText) {
-		editText.setSelection(editText.getText().length());
+	public static void putCursorAfterLastSymbol(EditText... editTexts) {
+		for (EditText editText : editTexts) {
+			editText.setSelection(editText.getText().length());
+		}
 	}
 
 	public static void showKeyboard(final View view) {
