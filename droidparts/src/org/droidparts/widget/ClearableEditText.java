@@ -85,7 +85,8 @@ public class ClearableEditText extends EditText implements OnTouchListener,
 
 	@Override
 	public void setOnFocusChangeListener(OnFocusChangeListener f) {
-		this.f = f;
+		if(this != f)
+			this.f = f;
 	}
 
 	private OnTouchListener l;
