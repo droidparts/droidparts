@@ -23,6 +23,7 @@ import android.app.Activity;
 import android.os.Handler;
 import android.os.Looper;
 import android.view.View;
+import android.view.ViewTreeObserver.OnGlobalLayoutListener;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 
@@ -56,6 +57,18 @@ public class ViewUtils {
 		for (View view : views) {
 			view.setEnabled(enabled);
 		}
+	}
+
+	public static void runOnLayoutDone(final View view, final Runnable runnable) {
+		OnGlobalLayoutListener l = new OnGlobalLayoutListener() {
+
+			@Override
+			public void onGlobalLayout() {
+				view.getViewTreeObserver().removeGlobalOnLayoutListener(this);
+				runnable.run();
+			}
+		};
+		view.getViewTreeObserver().addOnGlobalLayoutListener(l);
 	}
 
 	public static void putCursorAfterLastSymbol(EditText... editTexts) {
