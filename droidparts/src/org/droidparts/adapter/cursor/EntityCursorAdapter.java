@@ -35,8 +35,15 @@ public abstract class EntityCursorAdapter<EntityType extends Entity> extends
 
 	public EntityCursorAdapter(Class<EntityType> entityCls, Context ctx,
 			AbstractSelect<EntityType> select) {
+		this(entityCls, ctx, new EntityManager<EntityType>(entityCls, ctx),
+				select);
+	}
+
+	public EntityCursorAdapter(Class<EntityType> entityCls, Context ctx,
+			EntityManager<EntityType> entityManager,
+			AbstractSelect<EntityType> select) {
 		super(ctx, (select != null) ? select.execute() : null);
-		this.entityManager = new EntityManager<EntityType>(entityCls, ctx);
+		this.entityManager = entityManager;
 	}
 
 	@Override
