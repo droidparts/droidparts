@@ -1,5 +1,7 @@
 package org.droidparts.sample.model;
 
+import java.util.Date;
+
 import org.droidparts.annotation.json.Key;
 import org.droidparts.annotation.sql.Column;
 import org.droidparts.annotation.sql.Table;
@@ -11,7 +13,7 @@ public class Entry extends Entity {
 
 	@Column
 	@Key(name = "date_created")
-	public long created;
+	public Date created;
 
 	@Column
 	@Key

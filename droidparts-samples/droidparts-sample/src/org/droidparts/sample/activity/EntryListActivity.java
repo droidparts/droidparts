@@ -15,6 +15,9 @@
  */
 package org.droidparts.sample.activity;
 
+import static org.droidparts.util.Strings.isNotEmpty;
+import static org.droidparts.util.ui.ViewUtils.setKeyboardVisible;
+
 import java.util.ArrayList;
 
 import org.droidparts.activity.stock.legacy.ListActivity;
@@ -24,6 +27,7 @@ import org.droidparts.sample.adapter.EntryListAdapter;
 import org.droidparts.sample.db.EntryManager;
 import org.droidparts.sample.model.Entry;
 import org.droidparts.util.L;
+import org.droidparts.widget.ClearableEditText;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -35,6 +39,9 @@ import android.widget.ListView;
 public class EntryListActivity extends ListActivity implements OnClickListener {
 
 	private EntryListAdapter adapter;
+
+	@InjectView(id = R.id.view_name)
+	private ClearableEditText nameView;
 
 	@InjectView(id = R.id.button_add, click = true)
 	private Button addButton;
@@ -70,7 +77,14 @@ public class EntryListActivity extends ListActivity implements OnClickListener {
 	private void addEntry() {
 		L.i("Adding an Entry.");
 		Entry entry = new Entry();
-		entry.name = "Entry #" + adapter.getCount();
+		String name = nameView.getText().toString().trim();
+		if (isNotEmpty(name)) {
+			nameView.setText("");
+			setKeyboardVisible(nameView, false);
+		} else {
+			name = "Entry";
+		}
+		entry.name = name + " #" + adapter.getCount();
 		adapter.create(entry);
 	}
 

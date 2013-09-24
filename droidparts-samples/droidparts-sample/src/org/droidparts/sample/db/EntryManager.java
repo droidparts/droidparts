@@ -1,5 +1,7 @@
 package org.droidparts.sample.db;
 
+import java.util.Date;
+
 import org.droidparts.persist.sql.EntityManager;
 import org.droidparts.sample.model.Entry;
 
@@ -13,7 +15,7 @@ public class EntryManager extends EntityManager<Entry> {
 
 	@Override
 	public boolean create(Entry item) {
-		item.created = System.currentTimeMillis();
+		item.created = new Date();
 		return super.create(item);
 	}
 
