@@ -1,3 +1,8 @@
+1.5.7 /2013-09-24/:
+    * ClearableEditText: user sexier icon on newer Androids. 
+    * ViewUtils: runOnLayoutDone(...)
+    * Minor stuff.
+
 1.5.6 /2013-08-21/:
     * EventBus: support extra annotated method signature.
     * AppUtils: changed getVersionName() params.
