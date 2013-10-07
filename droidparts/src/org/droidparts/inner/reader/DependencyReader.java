@@ -15,7 +15,7 @@
  */
 package org.droidparts.inner.reader;
 
-import static android.content.pm.PackageManager.GET_META_DATA;
+import static org.droidparts.inner.ManifestMetaData.DEPENDENCY_PROVIDER;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
@@ -23,14 +23,12 @@ import java.lang.reflect.Method;
 import java.util.HashMap;
 
 import org.droidparts.AbstractDependencyProvider;
-import org.droidparts.contract.Constants.ManifestMeta;
+import org.droidparts.inner.ManifestMetaData;
 import org.droidparts.inner.ann.Ann;
 import org.droidparts.inner.ann.MethodSpec;
 import org.droidparts.util.L;
 
 import android.content.Context;
-import android.content.pm.PackageManager;
-import android.os.Bundle;
 
 public class DependencyReader {
 
@@ -89,18 +87,13 @@ public class DependencyReader {
 	}
 
 	private static AbstractDependencyProvider getDependencyProvider(Context ctx) {
-		PackageManager pm = ctx.getPackageManager();
-		String className = null;
+		String className;
 		try {
-			Bundle metaData = pm.getApplicationInfo(ctx.getPackageName(),
-					GET_META_DATA).metaData;
-			className = metaData.getString(ManifestMeta.DEPENDENCY_PROVIDER);
+			className = ManifestMetaData.get(ctx, DEPENDENCY_PROVIDER);
 		} catch (Exception e) {
 			L.d(e);
-		}
-		if (className == null) {
 			L.e("No <meta-data android:name=\"%s\" android:value=\"...\"/> in AndroidManifest.xml.",
-					ManifestMeta.DEPENDENCY_PROVIDER);
+					ManifestMetaData.DEPENDENCY_PROVIDER);
 			return null;
 		}
 		if (className.startsWith(".")) {

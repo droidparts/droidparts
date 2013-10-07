@@ -15,17 +15,17 @@
  */
 package org.droidparts.util;
 
+import static org.droidparts.inner.ManifestMetaData.LOG_LEVEL;
 import static org.droidparts.util.Strings.isEmpty;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
 
 import org.droidparts.Injector;
-import org.droidparts.contract.Constants.ManifestMeta;
+import org.droidparts.inner.ManifestMetaData;
+import org.droidparts.inner.ManifestMetaData.LogLevel;
 
 import android.content.Context;
-import android.content.pm.PackageManager;
-import android.os.Bundle;
 import android.util.Log;
 
 public class L {
@@ -172,33 +172,30 @@ public class L {
 			if (ctx != null) {
 				String logLevelStr = null;
 				try {
-					Bundle metaData = ctx.getPackageManager()
-							.getApplicationInfo(ctx.getPackageName(),
-									PackageManager.GET_META_DATA).metaData;
-					logLevelStr = metaData.getString(ManifestMeta.LOG_LEVEL)
-							.toLowerCase().trim();
+					logLevelStr = ManifestMetaData.get(ctx, LOG_LEVEL)
+							.toLowerCase();
 				} catch (Exception e) {
 					// pass
 				}
-				if (ManifestMeta.VERBOSE.equals(logLevelStr)) {
+				if (LogLevel.VERBOSE.equals(logLevelStr)) {
 					_logLevel = VERBOSE;
-				} else if (ManifestMeta.DEBUG.equals(logLevelStr)) {
+				} else if (LogLevel.DEBUG.equals(logLevelStr)) {
 					_logLevel = DEBUG;
-				} else if (ManifestMeta.INFO.equals(logLevelStr)) {
+				} else if (LogLevel.INFO.equals(logLevelStr)) {
 					_logLevel = INFO;
-				} else if (ManifestMeta.WARN.equals(logLevelStr)) {
+				} else if (LogLevel.WARN.equals(logLevelStr)) {
 					_logLevel = WARN;
-				} else if (ManifestMeta.ERROR.equals(logLevelStr)) {
+				} else if (LogLevel.ERROR.equals(logLevelStr)) {
 					_logLevel = ERROR;
-				} else if (ManifestMeta.ASSERT.equals(logLevelStr)) {
+				} else if (LogLevel.ASSERT.equals(logLevelStr)) {
 					_logLevel = ASSERT;
-				} else if (ManifestMeta.DISABLE.equals(logLevelStr)) {
+				} else if (LogLevel.DISABLE.equals(logLevelStr)) {
 					_logLevel = DISABLE;
 				} else {
 					_logLevel = DISABLE;
 					Log.i(TAG,
 							"No valid <meta-data android:name=\""
-									+ ManifestMeta.LOG_LEVEL
+									+ ManifestMetaData.LOG_LEVEL
 									+ "\" android:value=\"...\"/> in AndroidManifest.xml. Logging disabled.");
 				}
 			}
