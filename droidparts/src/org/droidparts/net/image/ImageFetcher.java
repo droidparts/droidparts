@@ -326,22 +326,22 @@ public class ImageFetcher {
 			this.crossFadeMillis = crossFadeMillis;
 			this.reshaper = reshaper;
 			this.listener = listener;
-			cacheKey = getCacheKey(imgView);
+			cacheKey = getCacheKey();
 			configHint = getConfigHint();
-			Point p = getSizeHint(imgView);
+			Point p = getSizeHint();
 			widthHint = p.x;
 			heightHint = p.y;
 			imgViewHash = imgView.hashCode();
 		}
 
-		private String getCacheKey(ImageView imgView) {
+		private String getCacheKey() {
 			StringBuilder sb = new StringBuilder();
 			sb.append(imgUrl);
 			if (reshaper != null) {
 				sb.append("-");
 				sb.append(reshaper.getCacheId());
 			}
-			Point p = getSizeHint(imgView);
+			Point p = getSizeHint();
 			if (p.x > 0 || p.y > 0) {
 				sb.append("-");
 				sb.append(p.x);
@@ -355,14 +355,14 @@ public class ImageFetcher {
 			return (reshaper != null) ? reshaper.getBitmapConfig() : null;
 		}
 
-		private Point getSizeHint(ImageView imgView) {
+		private Point getSizeHint() {
 			Point p = new Point();
 			if (reshaper != null) {
 				p.x = reshaper.getImageWidthHint();
 				p.y = reshaper.getImageHeightHint();
 			}
 			if (p.x <= 0 && p.y <= 0) {
-				p = BitmapFactoryUtils.calcDecodeSizeHint(imgView);
+				p = BitmapFactoryUtils.calcDecodeSizeHint(imgViewRef.get());
 			}
 			return p;
 		}
