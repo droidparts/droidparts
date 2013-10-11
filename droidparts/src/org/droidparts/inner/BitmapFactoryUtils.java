@@ -23,7 +23,6 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Point;
 import android.os.Build;
-import android.util.DisplayMetrics;
 import android.util.Pair;
 import android.view.ViewGroup.LayoutParams;
 import android.widget.ImageView;
@@ -35,16 +34,6 @@ public class BitmapFactoryUtils {
 		LayoutParams params = imageView.getLayoutParams();
 		p.x = (params != null) ? params.width : imageView.getWidth();
 		p.y = (params != null) ? params.height : imageView.getHeight();
-		if (p.x <= 0 || p.y <= 0) {
-			DisplayMetrics metrics = imageView.getContext().getResources()
-					.getDisplayMetrics();
-			if (p.x <= 0) {
-				p.x = metrics.widthPixels;
-			}
-			if (p.y <= 0) {
-				p.y = metrics.heightPixels;
-			}
-		}
 		return p;
 	}
 
