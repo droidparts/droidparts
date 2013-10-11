@@ -46,11 +46,11 @@ public abstract class AbstractPrefsManager {
 		init(version);
 	}
 
-	public Context getContext() {
+	protected Context getContext() {
 		return ctx;
 	}
 
-	public SharedPreferences getPreferences() {
+	protected SharedPreferences getPreferences() {
 		return prefs;
 	}
 

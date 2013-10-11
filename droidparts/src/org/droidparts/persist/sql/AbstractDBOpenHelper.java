@@ -38,7 +38,7 @@ public abstract class AbstractDBOpenHelper extends SQLiteOpenHelper implements
 		this.ctx = ctx.getApplicationContext();
 	}
 
-	public Context getContext() {
+	protected Context getContext() {
 		return ctx;
 	}
 

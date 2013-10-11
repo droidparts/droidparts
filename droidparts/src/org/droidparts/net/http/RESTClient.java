@@ -69,7 +69,7 @@ public class RESTClient {
 		}
 	}
 
-	public Context getContext() {
+	protected Context getContext() {
 		return ctx;
 	}
 

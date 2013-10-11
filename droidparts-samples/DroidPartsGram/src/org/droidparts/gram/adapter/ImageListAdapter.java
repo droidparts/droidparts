@@ -49,7 +49,7 @@ public class ImageListAdapter extends EntityCursorAdapter<Image> implements
 
 	@Override
 	public final View newView(Context ctx, Cursor cursor, ViewGroup parent) {
-		View view = layoutInflater.inflate(R.layout.list_row_image, null);
+		View view = getLayoutInflater().inflate(R.layout.list_row_image, null);
 		IconText2Holder holder = new IconText2Holder(view);
 		view.setTag(holder);
 		if (placeholderDrawable == null) {

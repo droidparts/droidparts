@@ -37,7 +37,7 @@ public abstract class AsyncTask<Params, Progress, Result> extends
 		this.resultListener = resultListener;
 	}
 
-	public Context getContext() {
+	protected Context getContext() {
 		return ctx;
 	}
 

@@ -29,8 +29,8 @@ import java.util.HashSet;
 
 import org.droidparts.Injector;
 import org.droidparts.annotation.inject.InjectDependency;
-import org.droidparts.inner.ConverterRegistry;
 import org.droidparts.inner.ClassSpecRegistry;
+import org.droidparts.inner.ConverterRegistry;
 import org.droidparts.inner.ann.FieldSpec;
 import org.droidparts.inner.ann.sql.ColumnAnn;
 import org.droidparts.inner.converter.Converter;
@@ -63,7 +63,7 @@ public class EntityManager<EntityType extends Entity> extends
 		this.db = db;
 	}
 
-	public Context getContext() {
+	protected Context getContext() {
 		return ctx;
 	}
 
