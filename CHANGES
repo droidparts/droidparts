@@ -1,5 +1,11 @@
+1.5.8 /2013-10-11/:
+    * ImageFetcher: changed method signatures. 
+    * ImageFetcher: removed decode hint based on screen size. 
+    * Protected Context accessors.
+    * Internal stuff.
+
 1.5.7 /2013-09-24/:
-    * ClearableEditText: user sexier icon on newer Androids. 
+    * ClearableEditText: use sexier icon on newer Androids. 
     * ViewUtils: runOnLayoutDone(...)
     * Minor stuff.
 
