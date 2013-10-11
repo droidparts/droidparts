@@ -22,8 +22,8 @@ public class EntryListAdapter extends EntityCursorAdapter<Entry> {
 
 	@Override
 	public View newView(Context context, Cursor cursor, ViewGroup parent) {
-		View v = layoutInflater.inflate(android.R.layout.simple_list_item_2,
-				null);
+		View v = getLayoutInflater().inflate(
+				android.R.layout.simple_list_item_2, null);
 		Text2Holder holder = new Text2Holder(v);
 		v.setTag(holder);
 		return v;

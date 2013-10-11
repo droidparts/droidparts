@@ -27,7 +27,7 @@ public abstract class CursorAdapter extends android.widget.CursorAdapter {
 	private final Context ctx;
 
 	@InjectSystemService
-	protected LayoutInflater layoutInflater;
+	private LayoutInflater layoutInflater;
 
 	public CursorAdapter(Context ctx, Cursor cursor) {
 		super(ctx, cursor);
@@ -35,8 +35,12 @@ public abstract class CursorAdapter extends android.widget.CursorAdapter {
 		Injector.inject(ctx, this);
 	}
 
-	public Context getContext() {
+	protected Context getContext() {
 		return ctx;
+	}
+
+	protected LayoutInflater getLayoutInflater() {
+		return layoutInflater;
 	}
 
 	public void requeryData() {

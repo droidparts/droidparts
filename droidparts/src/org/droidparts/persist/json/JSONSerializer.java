@@ -54,7 +54,7 @@ public class JSONSerializer<ModelType extends Model> {
 		}
 	}
 
-	public Context getContext() {
+	protected Context getContext() {
 		return ctx;
 	}
 

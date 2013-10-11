@@ -61,6 +61,8 @@ public class ImageFetcher {
 	protected final ThreadPoolExecutor cacheExecutor;
 	protected final ThreadPoolExecutor fetchExecutor;
 
+	private final ImageView mockImageView;
+
 	private final LinkedHashSet<ImageViewSpec> pending = new LinkedHashSet<ImageViewSpec>();
 	private final ConcurrentHashMap<ImageViewSpec, Long> wip = new ConcurrentHashMap<ImageViewSpec, Long>();
 	private Handler handler;
@@ -82,6 +84,7 @@ public class ImageFetcher {
 		this.diskCache = diskCache;
 		handler = new Handler(Looper.getMainLooper());
 		cacheExecutor = new BackgroundThreadExecutor(1, "ImageFetcher-Cache");
+		mockImageView = new ImageView(ctx.getApplicationContext());
 	}
 
 	public void pause() {
@@ -94,7 +97,7 @@ public class ImageFetcher {
 			for (ImageViewSpec spec : pending) {
 				ImageView imgView = spec.imgViewRef.get();
 				if (imgView != null) {
-					attachImage(imgView, spec.imgUrl, spec.crossFadeMillis,
+					attachImage(spec.imgUrl, imgView, spec.crossFadeMillis,
 							spec.reshaper, spec.listener,
 							spec.inBitmapRef.get());
 				}
@@ -105,28 +108,28 @@ public class ImageFetcher {
 
 	//
 
-	public void attachImage(ImageView imageView, String imgUrl) {
-		attachImage(imageView, imgUrl, 0);
+	public void attachImage(String imgUrl, ImageView imageView) {
+		attachImage(imgUrl, imageView, 0);
 	}
 
-	public void attachImage(ImageView imageView, String imgUrl,
+	public void attachImage(String imgUrl, ImageView imageView,
 			int crossFadeMillis) {
-		attachImage(imageView, imgUrl, crossFadeMillis, null);
+		attachImage(imgUrl, imageView, null, crossFadeMillis);
 	}
 
-	public void attachImage(ImageView imageView, String imgUrl,
-			int crossFadeMillis, ImageReshaper reshaper) {
-		attachImage(imageView, imgUrl, crossFadeMillis, reshaper, null);
+	public void attachImage(String imgUrl, ImageView imageView,
+			ImageReshaper reshaper, int crossFadeMillis) {
+		attachImage(imgUrl, imageView, reshaper, crossFadeMillis, null);
 	}
 
-	public void attachImage(ImageView imageView, String imgUrl,
-			int crossFadeMillis, ImageReshaper reshaper,
+	public void attachImage(String imgUrl, ImageView imageView,
+			ImageReshaper reshaper, int crossFadeMillis,
 			ImageFetchListener listener) {
-		attachImage(imageView, imgUrl, crossFadeMillis, reshaper, listener,
+		attachImage(imgUrl, imageView, crossFadeMillis, reshaper, listener,
 				null);
 	}
 
-	public void attachImage(ImageView imageView, String imgUrl,
+	public void attachImage(String imgUrl, ImageView imageView,
 			int crossFadeMillis, ImageReshaper reshaper,
 			ImageFetchListener listener, Bitmap inBitmap) {
 		ImageViewSpec spec = new ImageViewSpec(imageView, imgUrl, inBitmap,
@@ -153,8 +156,12 @@ public class ImageFetcher {
 		}
 	}
 
-	public Bitmap getImage(String imgUrl, ImageReshaper reshaper,
-			ImageView hintImageView) throws Exception {
+	public Bitmap getImage(String imgUrl) throws Exception {
+		return getImage(imgUrl, mockImageView, null);
+	}
+
+	public Bitmap getImage(String imgUrl, ImageView hintImageView,
+			ImageReshaper reshaper) throws Exception {
 		ImageViewSpec spec = new ImageViewSpec(hintImageView, imgUrl, null, 0,
 				reshaper, null);
 		Bitmap bm = readCached(spec);
@@ -326,22 +333,22 @@ public class ImageFetcher {
 			this.crossFadeMillis = crossFadeMillis;
 			this.reshaper = reshaper;
 			this.listener = listener;
-			cacheKey = getCacheKey(imgView);
+			cacheKey = getCacheKey();
 			configHint = getConfigHint();
-			Point p = getSizeHint(imgView);
+			Point p = getSizeHint();
 			widthHint = p.x;
 			heightHint = p.y;
 			imgViewHash = imgView.hashCode();
 		}
 
-		private String getCacheKey(ImageView imgView) {
+		private String getCacheKey() {
 			StringBuilder sb = new StringBuilder();
 			sb.append(imgUrl);
 			if (reshaper != null) {
 				sb.append("-");
 				sb.append(reshaper.getCacheId());
 			}
-			Point p = getSizeHint(imgView);
+			Point p = getSizeHint();
 			if (p.x > 0 || p.y > 0) {
 				sb.append("-");
 				sb.append(p.x);
@@ -355,27 +362,27 @@ public class ImageFetcher {
 			return (reshaper != null) ? reshaper.getBitmapConfig() : null;
 		}
 
-		private Point getSizeHint(ImageView imgView) {
+		private Point getSizeHint() {
 			Point p = new Point();
 			if (reshaper != null) {
 				p.x = reshaper.getImageWidthHint();
 				p.y = reshaper.getImageHeightHint();
 			}
 			if (p.x <= 0 && p.y <= 0) {
-				p = BitmapFactoryUtils.calcDecodeSizeHint(imgView);
+				p = BitmapFactoryUtils.calcDecodeSizeHint(imgViewRef.get());
 			}
 			return p;
 		}
 
 		@Override
 		public boolean equals(Object o) {
-			boolean eq = false;
 			if (this == o) {
-				eq = true;
+				return true;
 			} else if (o instanceof ImageViewSpec) {
-				eq = (imgViewHash == ((ImageViewSpec) o).imgViewHash);
+				return hashCode() == o.hashCode();
+			} else {
+				return false;
 			}
-			return eq;
 		}
 
 		@Override
@@ -448,7 +455,7 @@ public class ImageFetcher {
 				attachIfMostRecent(spec, submitted, bm);
 			} catch (final Exception e) {
 				HTTPWorker.throwIfNetworkOnMainThreadException(e);
-				L.w("Failed to fetch %s.", spec.imgUrl);
+				L.w("Failed to fetch '%s'.", spec.imgUrl);
 				L.d(e);
 				final ImageView imgView = spec.imgViewRef.get();
 				if (spec.listener != null && imgView != null) {

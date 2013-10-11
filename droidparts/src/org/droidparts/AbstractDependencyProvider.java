@@ -22,10 +22,14 @@ import android.database.sqlite.SQLiteDatabase;
 
 public abstract class AbstractDependencyProvider {
 
-	protected final Context ctx;
+	private final Context ctx;
 
 	public AbstractDependencyProvider(Context ctx) {
 		this.ctx = ctx.getApplicationContext();
+	}
+
+	protected Context getContext() {
+		return ctx;
 	}
 
 	public final SQLiteDatabase getDB() {

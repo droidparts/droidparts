@@ -49,7 +49,7 @@ public class ImageListAdapter extends EntityCursorAdapter<Image> implements
 
 	@Override
 	public final View newView(Context ctx, Cursor cursor, ViewGroup parent) {
-		View view = layoutInflater.inflate(R.layout.list_row_image, null);
+		View view = getLayoutInflater().inflate(R.layout.list_row_image, null);
 		IconText2Holder holder = new IconText2Holder(view);
 		view.setTag(holder);
 		if (placeholderDrawable == null) {
@@ -65,7 +65,7 @@ public class ImageListAdapter extends EntityCursorAdapter<Image> implements
 		holder.text1.setText(item.captionText);
 		holder.text2.setText(buildDescription(item));
 		holder.icon.setImageDrawable(placeholderDrawable);
-		imageFetcher.attachImage(holder.icon, item.thumbnailUrl, 400);
+		imageFetcher.attachImage(item.thumbnailUrl, holder.icon, 400);
 	}
 
 	private Spanned buildDescription(Image img) {

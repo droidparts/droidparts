@@ -24,12 +24,20 @@ public class AbstractDialogFactory {
 
 	public static final String ERROR = "Error";
 
-	protected final Context ctx;
-	protected final LayoutInflater layoutInflater;
+	private final Context ctx;
+	private final LayoutInflater layoutInflater;
 
 	public AbstractDialogFactory(Context ctx) {
 		this.ctx = ctx;
 		layoutInflater = LayoutInflater.from(ctx);
+	}
+
+	protected Context getContext() {
+		return ctx;
+	}
+
+	protected LayoutInflater getLayoutInflater() {
+		return layoutInflater;
 	}
 
 	public void showErrorToast() {

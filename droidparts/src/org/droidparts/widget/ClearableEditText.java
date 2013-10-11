@@ -131,8 +131,8 @@ public class ClearableEditText extends EditText implements OnTouchListener,
 	}
 
 	private int getDefaultClearIconId() {
-		int id = getContext().getResources().getIdentifier("ic_clear",
-				"drawable", "android");
+		int id = getResources()
+				.getIdentifier("ic_clear", "drawable", "android");
 		if (id == 0) {
 			id = android.R.drawable.presence_offline;
 		}
