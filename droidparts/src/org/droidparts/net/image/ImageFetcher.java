@@ -455,7 +455,7 @@ public class ImageFetcher {
 				attachIfMostRecent(spec, submitted, bm);
 			} catch (final Exception e) {
 				HTTPWorker.throwIfNetworkOnMainThreadException(e);
-				L.w("Failed to fetch %s.", spec.imgUrl);
+				L.w("Failed to fetch '%s'.", spec.imgUrl);
 				L.d(e);
 				final ImageView imgView = spec.imgViewRef.get();
 				if (spec.listener != null && imgView != null) {
