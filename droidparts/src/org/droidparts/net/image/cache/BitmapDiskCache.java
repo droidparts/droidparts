@@ -43,12 +43,8 @@ public class BitmapDiskCache {
 
 	public static BitmapDiskCache getDefaultInstance(Context ctx) {
 		if (instance == null) {
-			File cacheDir = ctx.getExternalCacheDir();
-			if (cacheDir != null) {
-				instance = new BitmapDiskCache(new File(cacheDir, DEFAULT_DIR));
-			} else {
-				L.w("External cache dir null. Lacking 'android.permission.WRITE_EXTERNAL_STORAGE' permission?");
-			}
+			File cacheDir = new File(ctx.getCacheDir(), DEFAULT_DIR);
+			instance = new BitmapDiskCache(cacheDir);
 		}
 		return instance;
 	}
