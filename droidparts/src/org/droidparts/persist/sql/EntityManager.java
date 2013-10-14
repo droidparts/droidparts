@@ -28,7 +28,6 @@ import java.util.Collection;
 import java.util.HashSet;
 
 import org.droidparts.Injector;
-import org.droidparts.annotation.inject.InjectDependency;
 import org.droidparts.inner.ClassSpecRegistry;
 import org.droidparts.inner.ConverterRegistry;
 import org.droidparts.inner.ann.FieldSpec;
@@ -44,23 +43,20 @@ import android.database.sqlite.SQLiteDatabase;
 public class EntityManager<EntityType extends Entity> extends
 		AbstractEntityManager<EntityType> {
 
-	@InjectDependency
-	private SQLiteDatabase db;
-
 	private final Class<EntityType> cls;
 	private final Context ctx;
+	private final SQLiteDatabase db;
 
 	public EntityManager(Class<EntityType> cls, Context ctx) {
-		this.cls = cls;
-		this.ctx = ctx.getApplicationContext();
-		Injector.inject(ctx, this);
+		this(cls, ctx, Injector.getDependency(ctx, SQLiteDatabase.class));
 	}
 
 	protected EntityManager(Class<EntityType> cls, Context ctx,
 			SQLiteDatabase db) {
 		this.cls = cls;
-		this.ctx = ctx;
+		this.ctx = ctx.getApplicationContext();
 		this.db = db;
+		Injector.inject(ctx, this);
 	}
 
 	protected Context getContext() {

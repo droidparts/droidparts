@@ -197,7 +197,7 @@ public class ImageFetcher {
 			final ImageViewSpec spec) throws Exception {
 		final ImageView imgView = spec.imgViewRef.get();
 		if (imgView == null) {
-			throw new IllegalStateException("ImageView has been GCed.");
+			throw new IllegalStateException("ImageView is null.");
 		}
 		int bytesReadTotal = 0;
 		byte[] buffer = new byte[BUFFER_SIZE];
