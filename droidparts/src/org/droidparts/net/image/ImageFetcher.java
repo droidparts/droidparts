@@ -485,7 +485,9 @@ public class ImageFetcher {
 		@Override
 		public void run() {
 			ImageView imgView = spec.imgViewRef.get();
-			if (imgView != null) {
+			if (imgView == null) {
+				L.i("ImageView became null (no strong references => GCed).");
+			} else {
 				if (spec.crossFadeMillis > 0) {
 					Drawable prevDrawable = imgView.getDrawable();
 					if (prevDrawable == null) {
