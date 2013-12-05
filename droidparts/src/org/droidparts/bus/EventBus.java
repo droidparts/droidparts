@@ -54,7 +54,7 @@ public class EventBus {
 		postEvent(name, data);
 	}
 
-	public void clearStickyEvents(String... eventNames) {
+	public static void clearStickyEvents(String... eventNames) {
 		boolean allEvents = (eventNames.length == 0);
 		if (allEvents) {
 			stickyEvents.clear();
