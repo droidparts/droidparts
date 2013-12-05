@@ -1,3 +1,8 @@
+1.6.0 /2013-11-05/:
+    * Updated ProGuard config.
+    * ImageFetcher: log when ImageView gets GCed.
+    * EventBus: made clearStickyEvents() static.
+
 1.5.9 /2013-10-14/:
     * ImageFetcher: use internal memory for disk caching.
     * Misc internal.
