@@ -28,6 +28,11 @@
 			<artifactId>actionbarsherlock</artifactId>
 			<optional>true</optional>
 		</dependency>
-	</dependencies>
+        <dependency>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpmime</artifactId>
+            <version>4.1</version>
+        </dependency>
+    </dependencies>
 
 </project>

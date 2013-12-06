@@ -15,6 +15,8 @@
  */
 package org.droidparts.net.http;
 
+import java.io.File;
+import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.util.Date;
 
@@ -149,6 +151,25 @@ public class RESTClient {
 		return response;
 	}
 
+    public HTTPResponse postMultipartFile(String uri, String name, File file) throws IOException, HTTPException {
+        if (file == null || !file.exists()) {
+            throw new IllegalArgumentException("'file' must not be null and must exist");
+        }
+        L.i("POST on '%s', file: '%s' .", uri, file.getPath());
+        HTTPResponse response;
+        if (useHttpURLConnection()) {
+            HttpURLConnection conn = httpURLConnectionWorker.getConnection(uri,
+                    Method.POST);
+            HttpURLConnectionWorker.postMultipartFile(conn, name, file);
+            response = HttpURLConnectionWorker.getResponse(conn, true);
+        } else {
+            HttpPost req = new HttpPost(uri);
+            req.setEntity(HttpClientWorker.buildMultipartEntity(name, file));
+            response = httpClientWorker.getResponse(req, true);
+        }
+        return response;
+    }
+
 	public HTTPResponse put(String uri, String contentType, String data)
 			throws HTTPException {
 		L.i("PUT on '%s', data: '%s'.", uri, data);
@@ -190,7 +211,7 @@ public class RESTClient {
 		return worker;
 	}
 
-	private boolean useHttpURLConnection() {
+	protected boolean useHttpURLConnection() {
 		// http://android-developers.blogspot.com/2011/09/androids-http-clients.html
 		boolean recentAndroid = Build.VERSION.SDK_INT >= 10;
 		return recentAndroid && !forceApacheHttpClient;

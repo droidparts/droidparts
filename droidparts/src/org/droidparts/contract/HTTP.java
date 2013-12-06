@@ -35,6 +35,7 @@ public interface HTTP {
 
 		public static final String APPLICATION_FORM_DATA = "application/x-www-form-urlencoded";
 		public static final String APPLICATION_JSON = "application/json";
+        public static final String MULTIPART = "multipart/form-data";
 		public static final String TEXT_PLAIN = "text/plain";
 
 	}
@@ -44,6 +45,8 @@ public interface HTTP {
 		// Request
 		public static final String ACCEPT_ENCODING = "Accept-Encoding";
 		public static final String ACCEPT_CHARSET = "Accept-Charset";
+        public static final String CACHE_CONTROL = "Cache-Control";
+        public static final String CONNECTION = "Connection";
 		public static final String IF_MODIFIED_SINCE = "If-Modified-Since";
 		public static final String IF_NONE_MATCH = "If-None-Match";
 
