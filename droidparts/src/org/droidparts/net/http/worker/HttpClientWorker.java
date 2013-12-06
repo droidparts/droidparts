@@ -20,6 +20,7 @@ import static org.droidparts.contract.Constants.BUFFER_SIZE;
 import static org.droidparts.contract.Constants.UTF8;
 import static org.droidparts.contract.HTTP.Header.ACCEPT_ENCODING;
 
+import java.io.File;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -27,12 +28,16 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.http.Header;
+import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.UsernamePasswordCredentials;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.client.params.HttpClientParams;
 import org.apache.http.entity.StringEntity;
+import org.apache.http.entity.mime.MultipartEntity;
+import org.apache.http.entity.mime.content.ContentBody;
+import org.apache.http.entity.mime.content.FileBody;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.params.HttpConnectionParams;
 import org.apache.http.params.HttpParams;
@@ -87,7 +92,15 @@ public class HttpClientWorker extends HTTPWorker {
 		}
 	}
 
-	public HTTPResponse getReponse(HttpUriRequest req, boolean body)
+    public static HttpEntity buildMultipartEntity(String name, File file) {
+        MultipartEntity entity = new MultipartEntity();
+        ContentBody fileBody = new FileBody(file);
+        entity.addPart(name, fileBody);
+
+        return entity;
+    }
+
+	public HTTPResponse getResponse(HttpUriRequest req, boolean body)
 			throws HTTPException {
 		HTTPResponse response = new HTTPResponse();
 		HttpResponse resp = getHttpResponse(req);
@@ -139,5 +152,4 @@ public class HttpClientWorker extends HTTPWorker {
 		}
 		return headers;
 	}
-
 }

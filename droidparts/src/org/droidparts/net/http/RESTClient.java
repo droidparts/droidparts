@@ -15,6 +15,8 @@
  */
 package org.droidparts.net.http;
 
+import java.io.File;
+import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.util.Date;
 
@@ -115,7 +117,7 @@ public class RESTClient {
 			if (etag != null) {
 				conn.addRequestProperty(Header.IF_NONE_MATCH, etag);
 			}
-			response = HttpURLConnectionWorker.getReponse(conn, body);
+			response = HttpURLConnectionWorker.getResponse(conn, body);
 		} else {
 			HttpGet req = new HttpGet(uri);
 			if (ifModifiedSince > 0) {
@@ -125,7 +127,7 @@ public class RESTClient {
 			if (etag != null) {
 				req.addHeader(Header.IF_NONE_MATCH, etag);
 			}
-			response = httpClientWorker.getReponse(req, body);
+			response = httpClientWorker.getResponse(req, body);
 		}
 		L.d(response);
 		return response;
@@ -139,15 +141,34 @@ public class RESTClient {
 			HttpURLConnection conn = httpURLConnectionWorker.getConnection(uri,
 					Method.POST);
 			HttpURLConnectionWorker.postOrPut(conn, contentType, data);
-			response = HttpURLConnectionWorker.getReponse(conn, true);
+			response = HttpURLConnectionWorker.getResponse(conn, true);
 		} else {
 			HttpPost req = new HttpPost(uri);
 			req.setEntity(HttpClientWorker.buildStringEntity(contentType, data));
-			response = httpClientWorker.getReponse(req, true);
+			response = httpClientWorker.getResponse(req, true);
 		}
 		L.d(response);
 		return response;
 	}
+
+    public HTTPResponse postMultipartFile(String uri, String name, File file) throws IOException, HTTPException {
+        if (file == null || !file.exists()) {
+            throw new IllegalArgumentException("'file' must not be null and must exist");
+        }
+        L.i("POST on '%s', file: '%s' .", uri, file.getPath());
+        HTTPResponse response;
+        if (useHttpURLConnection()) {
+            HttpURLConnection conn = httpURLConnectionWorker.getConnection(uri,
+                    Method.POST);
+            HttpURLConnectionWorker.postMultipartFile(conn, name, file);
+            response = HttpURLConnectionWorker.getResponse(conn, true);
+        } else {
+            HttpPost req = new HttpPost(uri);
+            req.setEntity(HttpClientWorker.buildMultipartEntity(name, file));
+            response = httpClientWorker.getResponse(req, true);
+        }
+        return response;
+    }
 
 	public HTTPResponse put(String uri, String contentType, String data)
 			throws HTTPException {
@@ -157,11 +178,11 @@ public class RESTClient {
 			HttpURLConnection conn = httpURLConnectionWorker.getConnection(uri,
 					Method.PUT);
 			HttpURLConnectionWorker.postOrPut(conn, contentType, data);
-			response = HttpURLConnectionWorker.getReponse(conn, true);
+			response = HttpURLConnectionWorker.getResponse(conn, true);
 		} else {
 			HttpPut req = new HttpPut(uri);
 			req.setEntity(HttpClientWorker.buildStringEntity(contentType, data));
-			response = httpClientWorker.getReponse(req, true);
+			response = httpClientWorker.getResponse(req, true);
 		}
 		L.d(response);
 		return response;
@@ -173,10 +194,10 @@ public class RESTClient {
 		if (useHttpURLConnection()) {
 			HttpURLConnection conn = httpURLConnectionWorker.getConnection(uri,
 					Method.DELETE);
-			response = HttpURLConnectionWorker.getReponse(conn, true);
+			response = HttpURLConnectionWorker.getResponse(conn, true);
 		} else {
 			HttpDelete req = new HttpDelete(uri);
-			response = httpClientWorker.getReponse(req, true);
+			response = httpClientWorker.getResponse(req, true);
 		}
 		L.d(response);
 		return response;
@@ -190,7 +211,7 @@ public class RESTClient {
 		return worker;
 	}
 
-	private boolean useHttpURLConnection() {
+	protected boolean useHttpURLConnection() {
 		// http://android-developers.blogspot.com/2011/09/androids-http-clients.html
 		boolean recentAndroid = Build.VERSION.SDK_INT >= 10;
 		return recentAndroid && !forceApacheHttpClient;

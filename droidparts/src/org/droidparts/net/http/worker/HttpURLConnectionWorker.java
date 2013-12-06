@@ -15,14 +15,17 @@
  */
 package org.droidparts.net.http.worker;
 
+import static org.droidparts.contract.Constants.KEEP_ALIVE;
+import static org.droidparts.contract.Constants.NO_CACHE;
 import static org.droidparts.contract.Constants.UTF8;
 import static org.droidparts.contract.HTTP.Header.ACCEPT_CHARSET;
 import static org.droidparts.contract.HTTP.Header.ACCEPT_ENCODING;
+import static org.droidparts.contract.HTTP.Header.CACHE_CONTROL;
+import static org.droidparts.contract.HTTP.Header.CONNECTION;
 import static org.droidparts.contract.HTTP.Header.CONTENT_TYPE;
 import static org.droidparts.util.IOUtils.silentlyClose;
 
-import java.io.File;
-import java.io.OutputStream;
+import java.io.*;
 import java.net.Authenticator;
 import java.net.CookieHandler;
 import java.net.HttpURLConnection;
@@ -33,10 +36,13 @@ import java.net.URL;
 import java.net.UnknownHostException;
 
 import org.apache.http.auth.AuthScope;
+import org.droidparts.contract.Constants;
+import org.droidparts.contract.HTTP;
 import org.droidparts.contract.HTTP.Method;
 import org.droidparts.net.http.CookieJar;
 import org.droidparts.net.http.HTTPException;
 import org.droidparts.net.http.HTTPResponse;
+import org.droidparts.util.IOUtils;
 import org.droidparts.util.L;
 
 import android.content.Context;
@@ -132,7 +138,43 @@ public class HttpURLConnectionWorker extends HTTPWorker {
 		}
 	}
 
-	public static HTTPResponse getReponse(HttpURLConnection conn, boolean body)
+    public static void postMultipartFile(HttpURLConnection conn, String name, File file) throws HTTPException {
+        conn.setDoOutput(true);
+        conn.setRequestProperty(CACHE_CONTROL, NO_CACHE);
+        conn.setRequestProperty(CONNECTION, KEEP_ALIVE);
+        StringBuilder contentType = new StringBuilder(HTTP.ContentType.MULTIPART);
+        contentType.append(";boundary=")
+                .append(Constants.BOUNDARY);
+        conn.setRequestProperty(CONTENT_TYPE, contentType.toString());
+        DataOutputStream request = null;
+        try {
+            request = new DataOutputStream(conn.getOutputStream());
+
+            startContentWrapper(request, name, file);
+            request.write(IOUtils.readToByteArray(new FileInputStream(file)));
+            endContentWrapper(request);
+
+            request.flush();
+        } catch (Exception e) {
+            throwIfNetworkOnMainThreadException(e);
+            throw new HTTPException(e);
+        } finally {
+            silentlyClose(request);
+        }
+    }
+
+    private static void startContentWrapper(DataOutputStream request, String name, File file) throws IOException {
+        request.writeBytes(Constants.TWO_HYPHENS + Constants.BOUNDARY + Constants.CRLF);
+        request.writeBytes("Content-Disposition: form-data; name=\"" + name + "\";filename=\"" + file.getName() + "\"" + Constants.CRLF);
+        request.writeBytes(Constants.CRLF);
+    }
+
+    private static void endContentWrapper(DataOutputStream request) throws IOException {
+        request.writeBytes(Constants.CRLF);
+        request.writeBytes(Constants.TWO_HYPHENS + Constants.BOUNDARY + Constants.TWO_HYPHENS + Constants.CRLF);
+    }
+
+    public static HTTPResponse getResponse(HttpURLConnection conn, boolean body)
 			throws HTTPException {
 		HTTPResponse response = new HTTPResponse();
 		response.code = connectAndGetResponseCodeOrThrow(conn);

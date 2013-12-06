@@ -17,7 +17,12 @@ package org.droidparts.contract;
 
 public interface Constants {
 
-	String UTF8 = "utf-8";
-	int BUFFER_SIZE = 8 * 1024;
+    String UTF8 = "utf-8";
+    String KEEP_ALIVE = "Keep-Alive";
+    String NO_CACHE = "no-cache";
+    int BUFFER_SIZE = 8 * 1024;
+    String CRLF = "\r\n";
+    String TWO_HYPHENS = "--";
+    String BOUNDARY = "*****";
 
 }
