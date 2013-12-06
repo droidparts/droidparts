@@ -132,7 +132,7 @@ public class HttpURLConnectionWorker extends HTTPWorker {
 		}
 	}
 
-	public static HTTPResponse getReponse(HttpURLConnection conn, boolean body)
+	public static HTTPResponse getResponse(HttpURLConnection conn, boolean body)
 			throws HTTPException {
 		HTTPResponse response = new HTTPResponse();
 		response.code = connectAndGetResponseCodeOrThrow(conn);
