@@ -125,7 +125,7 @@ public class RESTClient {
 			if (etag != null) {
 				req.addHeader(Header.IF_NONE_MATCH, etag);
 			}
-			response = httpClientWorker.getReponse(req, body);
+			response = httpClientWorker.getResponse(req, body);
 		}
 		L.d(response);
 		return response;
@@ -143,7 +143,7 @@ public class RESTClient {
 		} else {
 			HttpPost req = new HttpPost(uri);
 			req.setEntity(HttpClientWorker.buildStringEntity(contentType, data));
-			response = httpClientWorker.getReponse(req, true);
+			response = httpClientWorker.getResponse(req, true);
 		}
 		L.d(response);
 		return response;
@@ -161,7 +161,7 @@ public class RESTClient {
 		} else {
 			HttpPut req = new HttpPut(uri);
 			req.setEntity(HttpClientWorker.buildStringEntity(contentType, data));
-			response = httpClientWorker.getReponse(req, true);
+			response = httpClientWorker.getResponse(req, true);
 		}
 		L.d(response);
 		return response;
@@ -176,7 +176,7 @@ public class RESTClient {
 			response = HttpURLConnectionWorker.getReponse(conn, true);
 		} else {
 			HttpDelete req = new HttpDelete(uri);
-			response = httpClientWorker.getReponse(req, true);
+			response = httpClientWorker.getResponse(req, true);
 		}
 		L.d(response);
 		return response;

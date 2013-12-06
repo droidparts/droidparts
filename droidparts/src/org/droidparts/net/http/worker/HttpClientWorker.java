@@ -87,7 +87,7 @@ public class HttpClientWorker extends HTTPWorker {
 		}
 	}
 
-	public HTTPResponse getReponse(HttpUriRequest req, boolean body)
+	public HTTPResponse getResponse(HttpUriRequest req, boolean body)
 			throws HTTPException {
 		HTTPResponse response = new HTTPResponse();
 		HttpResponse resp = getHttpResponse(req);
