@@ -1,12 +1,12 @@
 /**
  * Copyright 2013 Alex Yanchenko
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *  
+ *
  *     http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -15,9 +15,8 @@
  */
 package org.droidparts.net.http;
 
-import java.net.HttpURLConnection;
-import java.util.Date;
-
+import android.content.Context;
+import android.os.Build;
 import org.apache.http.auth.AuthScope;
 import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpGet;
@@ -30,8 +29,10 @@ import org.droidparts.net.http.worker.HttpClientWorker;
 import org.droidparts.net.http.worker.HttpURLConnectionWorker;
 import org.droidparts.util.L;
 
-import android.content.Context;
-import android.os.Build;
+import java.io.File;
+import java.io.IOException;
+import java.net.HttpURLConnection;
+import java.util.Date;
 
 public class RESTClient {
 
@@ -54,7 +55,7 @@ public class RESTClient {
 	}
 
 	public RESTClient(Context ctx, String userAgent,
-			boolean forceApacheHttpClient) {
+					  boolean forceApacheHttpClient) {
 		this.ctx = ctx.getApplicationContext();
 		this.forceApacheHttpClient = forceApacheHttpClient;
 		httpClientWorker = useHttpURLConnection() ? null
@@ -87,7 +88,7 @@ public class RESTClient {
 	}
 
 	public void authenticateBasic(String username, String password,
-			AuthScope scope) {
+								  AuthScope scope) {
 		getWorker().authenticateBasic(username, password, scope);
 	}
 
@@ -102,7 +103,7 @@ public class RESTClient {
 	}
 
 	public HTTPResponse get(String uri, long ifModifiedSince, String etag,
-			boolean body) throws HTTPException {
+							boolean body) throws HTTPException {
 		L.i("GET on '%s', If-Modified-Since: '%d', ETag: '%s', body: '%b'.",
 				uri, ifModifiedSince, etag, body);
 		HTTPResponse response;
@@ -149,6 +150,25 @@ public class RESTClient {
 		return response;
 	}
 
+	public HTTPResponse postMultipartFile(String uri, String name, File file) throws IOException, HTTPException {
+		if (file == null || !file.exists()) {
+			throw new IllegalArgumentException("'file' must not be null and must exist");
+		}
+		L.i("POST on '%s', file: '%s' .", uri, file.getPath());
+		HTTPResponse response;
+		if (useHttpURLConnection()) {
+			HttpURLConnection conn = httpURLConnectionWorker.getConnection(uri,
+					Method.POST);
+			HttpURLConnectionWorker.postMultipartFile(conn, name, file);
+			response = HttpURLConnectionWorker.getResponse(conn, true);
+		} else {
+			HttpPost req = new HttpPost(uri);
+			req.setEntity(HttpClientWorker.buildMultipartEntity(name, file));
+			response = httpClientWorker.getResponse(req, true);
+		}
+		return response;
+	}
+
 	public HTTPResponse put(String uri, String contentType, String data)
 			throws HTTPException {
 		L.i("PUT on '%s', data: '%s'.", uri, data);
@@ -190,7 +210,7 @@ public class RESTClient {
 		return worker;
 	}
 
-	private boolean useHttpURLConnection() {
+	protected boolean useHttpURLConnection() {
 		// http://android-developers.blogspot.com/2011/09/androids-http-clients.html
 		boolean recentAndroid = Build.VERSION.SDK_INT >= 10;
 		return recentAndroid && !forceApacheHttpClient;

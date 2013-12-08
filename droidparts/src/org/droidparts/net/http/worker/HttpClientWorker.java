@@ -1,12 +1,12 @@
 /**
  * Copyright 2013 Alex Yanchenko
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *  
+ *
  *     http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -15,24 +15,17 @@
  */
 package org.droidparts.net.http.worker;
 
-import static org.apache.http.client.params.CookiePolicy.BROWSER_COMPATIBILITY;
-import static org.droidparts.contract.Constants.BUFFER_SIZE;
-import static org.droidparts.contract.Constants.UTF8;
-import static org.droidparts.contract.HTTP.Header.ACCEPT_ENCODING;
-
-import java.io.UnsupportedEncodingException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import org.apache.http.Header;
+import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.UsernamePasswordCredentials;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.client.params.HttpClientParams;
 import org.apache.http.entity.StringEntity;
+import org.apache.http.entity.mime.MultipartEntity;
+import org.apache.http.entity.mime.content.ContentBody;
+import org.apache.http.entity.mime.content.FileBody;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.params.HttpConnectionParams;
 import org.apache.http.params.HttpParams;
@@ -40,6 +33,18 @@ import org.apache.http.params.HttpProtocolParams;
 import org.droidparts.net.http.CookieJar;
 import org.droidparts.net.http.HTTPException;
 import org.droidparts.net.http.HTTPResponse;
+
+import java.io.File;
+import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import static org.apache.http.client.params.CookiePolicy.BROWSER_COMPATIBILITY;
+import static org.droidparts.contract.Constants.BUFFER_SIZE;
+import static org.droidparts.contract.Constants.UTF8;
+import static org.droidparts.contract.HTTP.Header.ACCEPT_ENCODING;
 
 // For API < 10
 public class HttpClientWorker extends HTTPWorker {
@@ -85,6 +90,14 @@ public class HttpClientWorker extends HTTPWorker {
 		} catch (UnsupportedEncodingException e) {
 			throw new HTTPException(e);
 		}
+	}
+
+	public static HttpEntity buildMultipartEntity(String name, File file) {
+		MultipartEntity entity = new MultipartEntity();
+		ContentBody fileBody = new FileBody(file);
+		entity.addPart(name, fileBody);
+
+		return entity;
 	}
 
 	public HTTPResponse getResponse(HttpUriRequest req, boolean body)
