@@ -1,12 +1,12 @@
 /**
  * Copyright 2013 Alex Yanchenko
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *  
+ *
  *     http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -15,6 +15,8 @@
  */
 package org.droidparts.net.http;
 
+import java.io.File;
+import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.util.Date;
 
@@ -148,6 +150,27 @@ public class RESTClient {
 			response = httpClientWorker.getResponse(req, true);
 		}
 		L.d(response);
+		return response;
+	}
+
+	public HTTPResponse postMultipartFile(String uri, String name, File file)
+			throws IOException, HTTPException {
+		if (file == null || !file.exists()) {
+			throw new IllegalArgumentException(
+					"'file' must not be null and must exist");
+		}
+		L.i("POST on '%s', file: '%s' .", uri, file.getPath());
+		HTTPResponse response;
+		if (httpURLConnectionWorker != null) {
+			HttpURLConnection conn = httpURLConnectionWorker.getConnection(uri,
+					Method.POST);
+			HttpURLConnectionWorker.postMultipartFile(conn, name, file);
+			response = HttpURLConnectionWorker.getResponse(conn, true);
+		} else {
+			HttpPost req = new HttpPost(uri);
+			req.setEntity(HttpClientWorker.buildMultipartEntity(name, file));
+			response = httpClientWorker.getResponse(req, true);
+		}
 		return response;
 	}
 
