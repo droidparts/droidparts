@@ -23,9 +23,6 @@ import org.apache.http.auth.UsernamePasswordCredentials;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.client.params.HttpClientParams;
 import org.apache.http.entity.StringEntity;
-import org.apache.http.entity.mime.MultipartEntity;
-import org.apache.http.entity.mime.content.ContentBody;
-import org.apache.http.entity.mime.content.FileBody;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.params.HttpConnectionParams;
 import org.apache.http.params.HttpParams;
@@ -33,9 +30,11 @@ import org.apache.http.params.HttpProtocolParams;
 import org.droidparts.net.http.CookieJar;
 import org.droidparts.net.http.HTTPException;
 import org.droidparts.net.http.HTTPResponse;
+import org.droidparts.util.L;
 
 import java.io.File;
 import java.io.UnsupportedEncodingException;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -92,13 +91,23 @@ public class HttpClientWorker extends HTTPWorker {
 		}
 	}
 
-	public static HttpEntity buildMultipartEntity(String name, File file) {
-		MultipartEntity entity = new MultipartEntity();
-		ContentBody fileBody = new FileBody(file);
-		entity.addPart(name, fileBody);
+    public static HttpEntity buildMultipartEntity(String name, File file) {
+        try {
+            Class<?> classMultipartEntity = Class.forName("org.apache.http.entity.mime.MultipartEntity");
+            Class<?> classFileBody = Class.forName("org.apache.http.entity.mime.content.FileBody");
+            Object fileBody = classFileBody.getConstructor(File.class).newInstance(file);
+            HttpEntity multipartEntity = (HttpEntity) classMultipartEntity.newInstance();
 
-		return entity;
-	}
+            Method methodAddPart = classMultipartEntity.getMethod("addPart", String.class,
+                    Class.forName("org.apache.http.entity.mime.content.ContentBody"));
+            methodAddPart.invoke(multipartEntity, name, fileBody);
+
+            return multipartEntity;
+        } catch (Exception e) {
+            L.i(e);
+            throw new IllegalStateException("You have to add Apache HttpMime dependency in order to use multipart entities", e);
+        }
+    }
 
 	public HTTPResponse getResponse(HttpUriRequest req, boolean body)
 			throws HTTPException {
