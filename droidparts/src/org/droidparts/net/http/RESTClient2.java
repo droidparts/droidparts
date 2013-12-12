@@ -18,6 +18,7 @@ package org.droidparts.net.http;
 import java.util.Map;
 
 import org.droidparts.contract.HTTP.ContentType;
+import org.droidparts.net.http.worker.HTTPWorker;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -31,9 +32,12 @@ public class RESTClient2 extends RESTClient {
 		super(ctx);
 	}
 
-	public RESTClient2(Context ctx, String userAgent,
-			boolean forceApacheHttpClient) {
-		super(ctx, userAgent, forceApacheHttpClient);
+	public RESTClient2(Context ctx, String userAgent) {
+		super(ctx, userAgent);
+	}
+
+	public RESTClient2(Context ctx, HTTPWorker worker) {
+		super(ctx, worker);
 	}
 
 	public JSONObject getJSONObject(String uri) throws HTTPException {

@@ -35,7 +35,7 @@ public abstract class HTTPWorker {
 	protected final HashMap<String, ArrayList<String>> headers = new HashMap<String, ArrayList<String>>();
 	protected final String userAgent;
 
-	public HTTPWorker(String userAgent) {
+	protected HTTPWorker(String userAgent) {
 		this.userAgent = userAgent;
 	}
 

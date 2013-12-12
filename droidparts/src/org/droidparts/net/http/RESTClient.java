@@ -37,10 +37,9 @@ public class RESTClient {
 
 	private final Context ctx;
 
-	private final boolean forceApacheHttpClient;
-
 	private final HttpClientWorker httpClientWorker;
 	private final HttpURLConnectionWorker httpURLConnectionWorker;
+
 	private static volatile CookieJar cookieJar;
 
 	public static String getUserAgent(String nameHint) {
@@ -50,17 +49,20 @@ public class RESTClient {
 	}
 
 	public RESTClient(Context ctx) {
-		this(ctx, getUserAgent(null), false);
+		this(ctx, getUserAgent(null));
 	}
 
-	public RESTClient(Context ctx, String userAgent,
-			boolean forceApacheHttpClient) {
+	public RESTClient(Context ctx, String userAgent) {
+		this(ctx, (Build.VERSION.SDK_INT >= 10) ? new HttpURLConnectionWorker(
+				userAgent) : new HttpClientWorker(userAgent));
+	}
+
+	public RESTClient(Context ctx, HTTPWorker worker) {
 		this.ctx = ctx.getApplicationContext();
-		this.forceApacheHttpClient = forceApacheHttpClient;
-		httpClientWorker = useHttpURLConnection() ? null
-				: new HttpClientWorker(userAgent);
-		httpURLConnectionWorker = useHttpURLConnection() ? new HttpURLConnectionWorker(
-				userAgent) : null;
+		this.httpClientWorker = (worker instanceof HttpClientWorker) ? (HttpClientWorker) worker
+				: null;
+		this.httpURLConnectionWorker = (worker instanceof HttpURLConnectionWorker) ? (HttpURLConnectionWorker) worker
+				: null;
 		if (cookieJar == null) {
 			cookieJar = new CookieJar(ctx);
 		}
@@ -106,7 +108,7 @@ public class RESTClient {
 		L.i("GET on '%s', If-Modified-Since: '%d', ETag: '%s', body: '%b'.",
 				uri, ifModifiedSince, etag, body);
 		HTTPResponse response;
-		if (useHttpURLConnection()) {
+		if (httpURLConnectionWorker != null) {
 			HttpURLConnection conn = httpURLConnectionWorker.getConnection(uri,
 					Method.GET);
 			if (ifModifiedSince > 0) {
@@ -135,7 +137,7 @@ public class RESTClient {
 			throws HTTPException {
 		L.i("POST on '%s', data: '%s'.", uri, data);
 		HTTPResponse response;
-		if (useHttpURLConnection()) {
+		if (httpURLConnectionWorker != null) {
 			HttpURLConnection conn = httpURLConnectionWorker.getConnection(uri,
 					Method.POST);
 			HttpURLConnectionWorker.postOrPut(conn, contentType, data);
@@ -153,7 +155,7 @@ public class RESTClient {
 			throws HTTPException {
 		L.i("PUT on '%s', data: '%s'.", uri, data);
 		HTTPResponse response;
-		if (useHttpURLConnection()) {
+		if (httpURLConnectionWorker != null) {
 			HttpURLConnection conn = httpURLConnectionWorker.getConnection(uri,
 					Method.PUT);
 			HttpURLConnectionWorker.postOrPut(conn, contentType, data);
@@ -170,7 +172,7 @@ public class RESTClient {
 	public HTTPResponse delete(String uri) throws HTTPException {
 		L.i("DELETE on '%s'.", uri);
 		HTTPResponse response;
-		if (useHttpURLConnection()) {
+		if (httpURLConnectionWorker != null) {
 			HttpURLConnection conn = httpURLConnectionWorker.getConnection(uri,
 					Method.DELETE);
 			response = HttpURLConnectionWorker.getResponse(conn, true);
@@ -182,17 +184,10 @@ public class RESTClient {
 		return response;
 	}
 
-	//
-
-	protected final HTTPWorker getWorker() {
+	private HTTPWorker getWorker() {
 		HTTPWorker worker = (httpClientWorker != null) ? httpClientWorker
 				: httpURLConnectionWorker;
 		return worker;
 	}
 
-	private boolean useHttpURLConnection() {
-		// http://android-developers.blogspot.com/2011/09/androids-http-clients.html
-		boolean recentAndroid = Build.VERSION.SDK_INT >= 10;
-		return recentAndroid && !forceApacheHttpClient;
-	}
 }

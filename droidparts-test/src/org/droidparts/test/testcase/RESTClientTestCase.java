@@ -19,6 +19,7 @@ import org.droidparts.net.http.HTTPException;
 import org.droidparts.net.http.HTTPResponse;
 import org.droidparts.net.http.RESTClient;
 import org.droidparts.net.http.RESTClient2;
+import org.droidparts.net.http.worker.HttpClientWorker;
 
 import android.test.AndroidTestCase;
 
@@ -36,7 +37,7 @@ public class RESTClientTestCase extends AndroidTestCase {
 
 	public void _testHttpBasicAuthLegacy() {
 		RESTClient2 client = new RESTClient2(getContext(),
-				RESTClient.getUserAgent(null), true);
+				new HttpClientWorker(RESTClient.getUserAgent(null)));
 		testUnauthenticated(client);
 		testAuthenticatedWrongCredentials(client);
 		testAuthenticated(client);
