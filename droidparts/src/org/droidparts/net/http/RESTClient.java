@@ -15,6 +15,8 @@
  */
 package org.droidparts.net.http;
 
+import java.io.File;
+import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.util.Date;
 
@@ -148,6 +150,23 @@ public class RESTClient {
 			response = httpClientWorker.getResponse(req, true);
 		}
 		L.d(response);
+		return response;
+	}
+
+	public HTTPResponse postFile(String uri, String name, File file)
+			throws IOException, HTTPException {
+		L.i("POST on '%s', file: '%s' .", uri, file.getPath());
+		HTTPResponse response;
+		if (httpURLConnectionWorker != null) {
+			HttpURLConnection conn = httpURLConnectionWorker.getConnection(uri,
+					Method.POST);
+			HttpURLConnectionWorker.postFile(conn, name, file);
+			response = HttpURLConnectionWorker.getResponse(conn, true);
+		} else {
+			HttpPost req = new HttpPost(uri);
+			req.setEntity(HttpClientWorker.buildFileEntity(name, file));
+			response = httpClientWorker.getResponse(req, true);
+		}
 		return response;
 	}
 

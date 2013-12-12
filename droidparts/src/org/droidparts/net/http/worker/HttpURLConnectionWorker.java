@@ -16,12 +16,20 @@
 package org.droidparts.net.http.worker;
 
 import static org.droidparts.contract.Constants.UTF8;
+import static org.droidparts.contract.HTTP.ContentType.MULTIPART;
 import static org.droidparts.contract.HTTP.Header.ACCEPT_CHARSET;
 import static org.droidparts.contract.HTTP.Header.ACCEPT_ENCODING;
+import static org.droidparts.contract.HTTP.Header.CACHE_CONTROL;
+import static org.droidparts.contract.HTTP.Header.CONNECTION;
 import static org.droidparts.contract.HTTP.Header.CONTENT_TYPE;
+import static org.droidparts.contract.HTTP.Header.KEEP_ALIVE;
+import static org.droidparts.contract.HTTP.Header.NO_CACHE;
+import static org.droidparts.util.IOUtils.readToByteArray;
 import static org.droidparts.util.IOUtils.silentlyClose;
 
+import java.io.DataOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.OutputStream;
 import java.net.Authenticator;
 import java.net.CookieHandler;
@@ -42,6 +50,10 @@ import org.droidparts.util.L;
 import android.content.Context;
 
 public class HttpURLConnectionWorker extends HTTPWorker {
+
+	private static final String CRLF = "\r\n";
+	private static final String TWO_HYPHENS = "--";
+	private static final String BOUNDARY = "*****";
 
 	private Proxy proxy;
 	private PasswordAuthentication passAuth;
@@ -129,6 +141,42 @@ public class HttpURLConnectionWorker extends HTTPWorker {
 			throw new HTTPException(e);
 		} finally {
 			silentlyClose(os);
+		}
+	}
+
+	public static void postFile(HttpURLConnection conn, String name,
+			File file) throws HTTPException {
+		conn.setDoOutput(true);
+		conn.setRequestProperty(CACHE_CONTROL, NO_CACHE);
+		conn.setRequestProperty(CONNECTION, KEEP_ALIVE);
+		conn.setRequestProperty(CONTENT_TYPE, MULTIPART + ";boundary="
+				+ BOUNDARY);
+		DataOutputStream request = null;
+		try {
+			request = new DataOutputStream(conn.getOutputStream());
+
+			request.writeBytes(TWO_HYPHENS + BOUNDARY + CRLF);
+			request.writeBytes("Content-Disposition: form-data; name=\"" + name
+					+ "\";filename=\"" + file.getName() + "\"" + CRLF);
+			request.writeBytes(CRLF);
+			//
+			FileInputStream fis = null;
+			try {
+				fis = new FileInputStream(file);
+				request.write(readToByteArray(fis));
+			} finally {
+				silentlyClose(fis);
+			}
+			//
+			request.writeBytes(CRLF);
+			request.writeBytes(TWO_HYPHENS + BOUNDARY + TWO_HYPHENS + CRLF);
+
+			request.flush();
+		} catch (Exception e) {
+			throwIfNetworkOnMainThreadException(e);
+			throw new HTTPException(e);
+		} finally {
+			silentlyClose(request);
 		}
 	}
 

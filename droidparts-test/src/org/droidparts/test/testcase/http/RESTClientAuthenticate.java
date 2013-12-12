@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License. 
  */
-package org.droidparts.test.testcase;
+package org.droidparts.test.testcase.http;
 
 import org.droidparts.net.http.HTTPException;
 import org.droidparts.net.http.HTTPResponse;
@@ -23,19 +23,19 @@ import org.droidparts.net.http.worker.HttpClientWorker;
 
 import android.test.AndroidTestCase;
 
-public class RESTClientTestCase extends AndroidTestCase {
+public class RESTClientAuthenticate extends AndroidTestCase {
 
 	private static final String AUTH_URL = "http://www.httpwatch.com/httpgallery/authentication/authenticatedimage/default.aspx";
 	private static final String AUTH_LOGIN = "httpwatch";
 
-	public void _testHttpBasicAuth() {
+	public void testHttpBasicAuth() {
 		RESTClient2 client = new RESTClient2(getContext());
 		testUnauthenticated(client);
 		testAuthenticatedWrongCredentials(client);
 		testAuthenticated(client);
 	}
 
-	public void _testHttpBasicAuthLegacy() {
+	public void testHttpBasicAuthLegacy() {
 		RESTClient2 client = new RESTClient2(getContext(),
 				new HttpClientWorker(RESTClient.getUserAgent(null)));
 		testUnauthenticated(client);
@@ -71,5 +71,4 @@ public class RESTClientTestCase extends AndroidTestCase {
 			assertNull(e);
 		}
 	}
-
 }
