@@ -1,12 +1,12 @@
 /**
  * Copyright 2013 Alex Yanchenko
- *
+ * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
+ *  
  *     http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -14,6 +14,19 @@
  * limitations under the License. 
  */
 package org.droidparts.net.http.worker;
+
+import static org.apache.http.client.params.CookiePolicy.BROWSER_COMPATIBILITY;
+import static org.droidparts.contract.Constants.BUFFER_SIZE;
+import static org.droidparts.contract.Constants.UTF8;
+import static org.droidparts.contract.HTTP.Header.ACCEPT_ENCODING;
+
+import java.io.File;
+import java.io.UnsupportedEncodingException;
+import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
@@ -30,20 +43,6 @@ import org.apache.http.params.HttpProtocolParams;
 import org.droidparts.net.http.CookieJar;
 import org.droidparts.net.http.HTTPException;
 import org.droidparts.net.http.HTTPResponse;
-import org.droidparts.util.L;
-
-import java.io.File;
-import java.io.UnsupportedEncodingException;
-import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import static org.apache.http.client.params.CookiePolicy.BROWSER_COMPATIBILITY;
-import static org.droidparts.contract.Constants.BUFFER_SIZE;
-import static org.droidparts.contract.Constants.UTF8;
-import static org.droidparts.contract.HTTP.Header.ACCEPT_ENCODING;
 
 // For API < 10
 public class HttpClientWorker extends HTTPWorker {
@@ -91,23 +90,31 @@ public class HttpClientWorker extends HTTPWorker {
 		}
 	}
 
-    public static HttpEntity buildMultipartEntity(String name, File file) {
-        try {
-            Class<?> classMultipartEntity = Class.forName("org.apache.http.entity.mime.MultipartEntity");
-            Class<?> classFileBody = Class.forName("org.apache.http.entity.mime.content.FileBody");
-            Object fileBody = classFileBody.getConstructor(File.class).newInstance(file);
-            HttpEntity multipartEntity = (HttpEntity) classMultipartEntity.newInstance();
+	public static HttpEntity buildFileEntity(String name, File file) {
+		try {
+			Class<?> classMultipartEntity = Class
+					.forName("org.apache.http.entity.mime.MultipartEntity");
+			Class<?> classFileBody = Class
+					.forName("org.apache.http.entity.mime.content.FileBody");
+			Object fileBody = classFileBody.getConstructor(File.class)
+					.newInstance(file);
+			HttpEntity multipartEntity = (HttpEntity) classMultipartEntity
+					.newInstance();
 
-            Method methodAddPart = classMultipartEntity.getMethod("addPart", String.class,
-                    Class.forName("org.apache.http.entity.mime.content.ContentBody"));
-            methodAddPart.invoke(multipartEntity, name, fileBody);
+			Method methodAddPart = classMultipartEntity
+					.getMethod(
+							"addPart",
+							String.class,
+							Class.forName("org.apache.http.entity.mime.content.ContentBody"));
+			methodAddPart.invoke(multipartEntity, name, fileBody);
 
-            return multipartEntity;
-        } catch (Exception e) {
-            L.i(e);
-            throw new IllegalStateException("You have to add Apache HttpMime dependency in order to use multipart entities", e);
-        }
-    }
+			return multipartEntity;
+		} catch (Exception e) {
+			throw new IllegalStateException(
+					"You have to add Apache HttpMime dependency in order to use multipart entities.",
+					e);
+		}
+	}
 
 	public HTTPResponse getResponse(HttpUriRequest req, boolean body)
 			throws HTTPException {

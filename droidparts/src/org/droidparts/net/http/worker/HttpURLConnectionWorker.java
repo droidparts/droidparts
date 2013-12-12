@@ -1,12 +1,12 @@
 /**
  * Copyright 2013 Alex Yanchenko
- *
+ * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
+ *  
  *     http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -15,225 +15,245 @@
  */
 package org.droidparts.net.http.worker;
 
-import android.content.Context;
+import static org.droidparts.contract.Constants.UTF8;
+import static org.droidparts.contract.HTTP.ContentType.MULTIPART;
+import static org.droidparts.contract.HTTP.Header.ACCEPT_CHARSET;
+import static org.droidparts.contract.HTTP.Header.ACCEPT_ENCODING;
+import static org.droidparts.contract.HTTP.Header.CACHE_CONTROL;
+import static org.droidparts.contract.HTTP.Header.CONNECTION;
+import static org.droidparts.contract.HTTP.Header.CONTENT_TYPE;
+import static org.droidparts.contract.HTTP.Header.KEEP_ALIVE;
+import static org.droidparts.contract.HTTP.Header.NO_CACHE;
+import static org.droidparts.util.IOUtils.readToByteArray;
+import static org.droidparts.util.IOUtils.silentlyClose;
+
+import java.io.DataOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.OutputStream;
+import java.net.Authenticator;
+import java.net.CookieHandler;
+import java.net.HttpURLConnection;
+import java.net.InetAddress;
+import java.net.PasswordAuthentication;
+import java.net.Proxy;
+import java.net.URL;
+import java.net.UnknownHostException;
+
 import org.apache.http.auth.AuthScope;
-import org.droidparts.contract.Constants;
-import org.droidparts.contract.HTTP;
 import org.droidparts.contract.HTTP.Method;
 import org.droidparts.net.http.CookieJar;
 import org.droidparts.net.http.HTTPException;
 import org.droidparts.net.http.HTTPResponse;
-import org.droidparts.util.IOUtils;
 import org.droidparts.util.L;
 
-import java.io.*;
-import java.net.*;
-
-import static org.droidparts.contract.Constants.*;
-import static org.droidparts.contract.HTTP.Header.*;
-import static org.droidparts.util.IOUtils.silentlyClose;
+import android.content.Context;
 
 public class HttpURLConnectionWorker extends HTTPWorker {
 
-    private Proxy proxy;
-    private PasswordAuthentication passAuth;
-    private AuthScope authScope;
+	private static final String CRLF = "\r\n";
+	private static final String TWO_HYPHENS = "--";
+	private static final String BOUNDARY = "*****";
 
-    // ICS+
-    public static void setHttpResponseCacheEnabled(Context ctx, boolean enabled) {
-        File cacheDir = new File(ctx.getCacheDir(), "http");
-        long cacheSize = 10 * 1024 * 1024; // 10 MiB
-        try {
-            Class<?> cls = Class.forName("android.net.http.HttpResponseCache");
-            if (enabled) {
-                cls.getMethod("install", File.class, long.class).invoke(null,
-                        cacheDir, cacheSize);
-            } else {
-                Object instance = cls.getMethod("getInstalled").invoke(null);
-                if (instance != null) {
-                    cls.getMethod("delete").invoke(instance);
-                }
-            }
-        } catch (Exception e) {
-            L.i(e);
-        }
-    }
+	private Proxy proxy;
+	private PasswordAuthentication passAuth;
+	private AuthScope authScope;
 
-    public HttpURLConnectionWorker(String userAgent) {
-        super(userAgent);
-    }
+	// ICS+
+	public static void setHttpResponseCacheEnabled(Context ctx, boolean enabled) {
+		File cacheDir = new File(ctx.getCacheDir(), "http");
+		long cacheSize = 10 * 1024 * 1024; // 10 MiB
+		try {
+			Class<?> cls = Class.forName("android.net.http.HttpResponseCache");
+			if (enabled) {
+				cls.getMethod("install", File.class, long.class).invoke(null,
+						cacheDir, cacheSize);
+			} else {
+				Object instance = cls.getMethod("getInstalled").invoke(null);
+				if (instance != null) {
+					cls.getMethod("delete").invoke(instance);
+				}
+			}
+		} catch (Exception e) {
+			L.i(e);
+		}
+	}
 
-    @Override
-    public void setCookieJar(CookieJar cookieJar) {
-        CookieHandler.setDefault(cookieJar);
-    }
+	public HttpURLConnectionWorker(String userAgent) {
+		super(userAgent);
+	}
 
-    @Override
-    public void authenticateBasic(String user, String password, AuthScope scope) {
-        passAuth = new PasswordAuthentication(user, password.toCharArray());
-        authScope = scope;
-    }
+	@Override
+	public void setCookieJar(CookieJar cookieJar) {
+		CookieHandler.setDefault(cookieJar);
+	}
 
-    public void setProxy(Proxy proxy) {
-        this.proxy = proxy;
-    }
+	@Override
+	public void authenticateBasic(String user, String password, AuthScope scope) {
+		passAuth = new PasswordAuthentication(user, password.toCharArray());
+		authScope = scope;
+	}
 
-    public HttpURLConnection getConnection(String urlStr, String requestMethod)
-            throws HTTPException {
-        try {
-            URL url = new URL(urlStr);
-            HttpURLConnection conn;
-            if (proxy != null) {
-                conn = (HttpURLConnection) url.openConnection(proxy);
-            } else {
-                conn = (HttpURLConnection) url.openConnection();
-            }
-            for (String key : headers.keySet()) {
-                for (String val : headers.get(key)) {
-                    conn.addRequestProperty(key, val);
-                }
-            }
-            conn.setRequestProperty("http.agent", userAgent);
-            conn.setRequestProperty(ACCEPT_ENCODING, "gzip,deflate");
-            setupBasicAuth();
-            conn.setRequestMethod(requestMethod);
-            if (Method.PUT.equals(requestMethod)
-                    || Method.POST.equals(requestMethod)) {
-                conn.setDoOutput(true);
-            }
-            return conn;
-        } catch (Exception e) {
-            throwIfNetworkOnMainThreadException(e);
-            throw new HTTPException(e);
-        }
-    }
+	public void setProxy(Proxy proxy) {
+		this.proxy = proxy;
+	}
 
-    public static void postOrPut(HttpURLConnection conn, String contentType,
-                                 String data) throws HTTPException {
-        conn.setRequestProperty(ACCEPT_CHARSET, UTF8);
-        conn.setRequestProperty(CONTENT_TYPE, contentType);
-        OutputStream os = null;
-        try {
-            os = conn.getOutputStream();
-            os.write(data.getBytes(UTF8));
-        } catch (Exception e) {
-            throwIfNetworkOnMainThreadException(e);
-            throw new HTTPException(e);
-        } finally {
-            silentlyClose(os);
-        }
-    }
+	public HttpURLConnection getConnection(String urlStr, String requestMethod)
+			throws HTTPException {
+		try {
+			URL url = new URL(urlStr);
+			HttpURLConnection conn;
+			if (proxy != null) {
+				conn = (HttpURLConnection) url.openConnection(proxy);
+			} else {
+				conn = (HttpURLConnection) url.openConnection();
+			}
+			for (String key : headers.keySet()) {
+				for (String val : headers.get(key)) {
+					conn.addRequestProperty(key, val);
+				}
+			}
+			conn.setRequestProperty("http.agent", userAgent);
+			conn.setRequestProperty(ACCEPT_ENCODING, "gzip,deflate");
+			setupBasicAuth();
+			conn.setRequestMethod(requestMethod);
+			if (Method.PUT.equals(requestMethod)
+					|| Method.POST.equals(requestMethod)) {
+				conn.setDoOutput(true);
+			}
+			return conn;
+		} catch (Exception e) {
+			throwIfNetworkOnMainThreadException(e);
+			throw new HTTPException(e);
+		}
+	}
 
-    public static void postMultipartFile(HttpURLConnection conn, String name, File file) throws HTTPException {
-        conn.setDoOutput(true);
-        conn.setRequestProperty(CACHE_CONTROL, NO_CACHE);
-        conn.setRequestProperty(CONNECTION, KEEP_ALIVE);
-        StringBuilder contentType = new StringBuilder(HTTP.ContentType.MULTIPART);
-        contentType.append(";boundary=")
-                .append(Constants.BOUNDARY);
-        conn.setRequestProperty(CONTENT_TYPE, contentType.toString());
-        DataOutputStream request = null;
-        try {
-            request = new DataOutputStream(conn.getOutputStream());
+	public static void postOrPut(HttpURLConnection conn, String contentType,
+			String data) throws HTTPException {
+		conn.setRequestProperty(ACCEPT_CHARSET, UTF8);
+		conn.setRequestProperty(CONTENT_TYPE, contentType);
+		OutputStream os = null;
+		try {
+			os = conn.getOutputStream();
+			os.write(data.getBytes(UTF8));
+		} catch (Exception e) {
+			throwIfNetworkOnMainThreadException(e);
+			throw new HTTPException(e);
+		} finally {
+			silentlyClose(os);
+		}
+	}
 
-            startContentWrapper(request, name, file);
-            request.write(IOUtils.readToByteArray(new FileInputStream(file)));
-            endContentWrapper(request);
+	public static void postFile(HttpURLConnection conn, String name,
+			File file) throws HTTPException {
+		conn.setDoOutput(true);
+		conn.setRequestProperty(CACHE_CONTROL, NO_CACHE);
+		conn.setRequestProperty(CONNECTION, KEEP_ALIVE);
+		conn.setRequestProperty(CONTENT_TYPE, MULTIPART + ";boundary="
+				+ BOUNDARY);
+		DataOutputStream request = null;
+		try {
+			request = new DataOutputStream(conn.getOutputStream());
 
-            request.flush();
-        } catch (Exception e) {
-            throwIfNetworkOnMainThreadException(e);
-            throw new HTTPException(e);
-        } finally {
-            silentlyClose(request);
-        }
-    }
+			request.writeBytes(TWO_HYPHENS + BOUNDARY + CRLF);
+			request.writeBytes("Content-Disposition: form-data; name=\"" + name
+					+ "\";filename=\"" + file.getName() + "\"" + CRLF);
+			request.writeBytes(CRLF);
+			//
+			FileInputStream fis = null;
+			try {
+				fis = new FileInputStream(file);
+				request.write(readToByteArray(fis));
+			} finally {
+				silentlyClose(fis);
+			}
+			//
+			request.writeBytes(CRLF);
+			request.writeBytes(TWO_HYPHENS + BOUNDARY + TWO_HYPHENS + CRLF);
 
-    private static void startContentWrapper(DataOutputStream request, String name, File file) throws IOException {
-        request.writeBytes(Constants.TWO_HYPHENS + Constants.BOUNDARY + Constants.CRLF);
-        request.writeBytes("Content-Disposition: form-data; name=\"" + name + "\";filename=\"" + file.getName() + "\"" + Constants.CRLF);
-        request.writeBytes(Constants.CRLF);
-    }
+			request.flush();
+		} catch (Exception e) {
+			throwIfNetworkOnMainThreadException(e);
+			throw new HTTPException(e);
+		} finally {
+			silentlyClose(request);
+		}
+	}
 
-    private static void endContentWrapper(DataOutputStream request) throws IOException {
-        request.writeBytes(Constants.CRLF);
-        request.writeBytes(Constants.TWO_HYPHENS + Constants.BOUNDARY + Constants.TWO_HYPHENS + Constants.CRLF);
-    }
+	public static HTTPResponse getResponse(HttpURLConnection conn, boolean body)
+			throws HTTPException {
+		HTTPResponse response = new HTTPResponse();
+		response.code = connectAndGetResponseCodeOrThrow(conn);
+		response.headers = conn.getHeaderFields();
+		HTTPInputStream is = HTTPInputStream.getInstance(conn, false);
+		if (body) {
+			response.body = is.readAndClose();
+		} else {
+			response.inputStream = is;
+		}
+		return response;
+	}
 
-    public static HTTPResponse getResponse(HttpURLConnection conn, boolean body)
-            throws HTTPException {
-        HTTPResponse response = new HTTPResponse();
-        response.code = connectAndGetResponseCodeOrThrow(conn);
-        response.headers = conn.getHeaderFields();
-        HTTPInputStream is = HTTPInputStream.getInstance(conn, false);
-        if (body) {
-            response.body = is.readAndClose();
-        } else {
-            response.inputStream = is;
-        }
-        return response;
-    }
+	private static int connectAndGetResponseCodeOrThrow(HttpURLConnection conn)
+			throws HTTPException {
+		try {
+			conn.connect();
+			int respCode = conn.getResponseCode();
+			if (isErrorResponseCode(respCode)) {
+				HTTPInputStream is = HTTPInputStream.getInstance(conn,
+						(conn.getErrorStream() != null));
+				throw new HTTPException(respCode, is.readAndClose());
+			}
+			return respCode;
+		} catch (HTTPException e) {
+			throw e;
+		} catch (Exception e) {
+			throwIfNetworkOnMainThreadException(e);
+			throw new HTTPException(e);
+		}
 
-    private static int connectAndGetResponseCodeOrThrow(HttpURLConnection conn)
-            throws HTTPException {
-        try {
-            conn.connect();
-            int respCode = conn.getResponseCode();
-            if (isErrorResponseCode(respCode)) {
-                HTTPInputStream is = HTTPInputStream.getInstance(conn,
-                        (conn.getErrorStream() != null));
-                throw new HTTPException(respCode, is.readAndClose());
-            }
-            return respCode;
-        } catch (HTTPException e) {
-            throw e;
-        } catch (Exception e) {
-            throwIfNetworkOnMainThreadException(e);
-            throw new HTTPException(e);
-        }
+	}
 
-    }
+	private void setupBasicAuth() {
+		if (passAuth != null) {
+			Authenticator.setDefault(new FixedAuthenticator(passAuth));
+			if (!AuthScope.ANY.equals(authScope)) {
+				InetAddress host = null;
+				if (authScope.getHost() != null) {
+					try {
+						host = InetAddress.getByName(authScope.getHost());
+					} catch (UnknownHostException e) {
+						L.e("Failed to setup basic auth.");
+						L.d(e);
+						Authenticator.setDefault(null);
+						return;
+					}
+				}
+				int port = (authScope.getPort() == AuthScope.ANY_PORT) ? 0
+						: authScope.getPort();
+				Authenticator.requestPasswordAuthentication(host, port, null,
+						authScope.getRealm(), authScope.getScheme());
+			}
+		}
+	}
 
-    private void setupBasicAuth() {
-        if (passAuth != null) {
-            Authenticator.setDefault(new FixedAuthenticator(passAuth));
-            if (!AuthScope.ANY.equals(authScope)) {
-                InetAddress host = null;
-                if (authScope.getHost() != null) {
-                    try {
-                        host = InetAddress.getByName(authScope.getHost());
-                    } catch (UnknownHostException e) {
-                        L.e("Failed to setup basic auth.");
-                        L.d(e);
-                        Authenticator.setDefault(null);
-                        return;
-                    }
-                }
-                int port = (authScope.getPort() == AuthScope.ANY_PORT) ? 0
-                        : authScope.getPort();
-                Authenticator.requestPasswordAuthentication(host, port, null,
-                        authScope.getRealm(), authScope.getScheme());
-            }
-        }
-    }
+	private static class FixedAuthenticator extends Authenticator {
 
-    private static class FixedAuthenticator extends Authenticator {
+		private PasswordAuthentication passAuth;
 
-        private PasswordAuthentication passAuth;
+		public FixedAuthenticator(PasswordAuthentication passAuth) {
+			this.passAuth = passAuth;
+		}
 
-        public FixedAuthenticator(PasswordAuthentication passAuth) {
-            this.passAuth = passAuth;
-        }
+		@Override
+		protected PasswordAuthentication getPasswordAuthentication() {
+			try {
+				return passAuth;
+			} finally {
+				passAuth = null;
+			}
+		}
 
-        @Override
-        protected PasswordAuthentication getPasswordAuthentication() {
-            try {
-                return passAuth;
-            } finally {
-                passAuth = null;
-            }
-        }
-
-    }
+	}
 
 }

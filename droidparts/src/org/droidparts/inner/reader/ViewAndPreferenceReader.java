@@ -87,7 +87,8 @@ public class ViewAndPreferenceReader {
 				findPreferenceMethod = prefFragment.getClass().getMethod(
 						"findPreference", CharSequence.class);
 			}
-			return (Preference) findPreferenceMethod.invoke(prefFragment, prefKey);
+			return (Preference) findPreferenceMethod.invoke(prefFragment,
+					prefKey);
 		} catch (Exception e) {
 			L.d(e);
 			return null;
