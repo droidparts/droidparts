@@ -29,6 +29,10 @@
 			<version>${project.version}</version>
 			<type>jar</type>
 		</dependency>
+        <dependency>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpmime</artifactId>
+        </dependency>
 	</dependencies>
 
 	<build>
