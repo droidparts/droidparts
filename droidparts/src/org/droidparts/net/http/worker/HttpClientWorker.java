@@ -75,7 +75,7 @@ public class HttpClientWorker extends HTTPWorker {
 		httpClient.getCredentialsProvider().setCredentials(scope, credentials);
 	}
 
-	public DefaultHttpClient getHttpClient() {
+	public final DefaultHttpClient getHttpClient() {
 		return httpClient;
 	}
 

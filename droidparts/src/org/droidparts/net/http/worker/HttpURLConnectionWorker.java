@@ -102,12 +102,7 @@ public class HttpURLConnectionWorker extends HTTPWorker {
 			throws HTTPException {
 		try {
 			URL url = new URL(urlStr);
-			HttpURLConnection conn;
-			if (proxy != null) {
-				conn = (HttpURLConnection) url.openConnection(proxy);
-			} else {
-				conn = (HttpURLConnection) url.openConnection();
-			}
+			HttpURLConnection conn = openConnection(url, proxy);
 			for (String key : headers.keySet()) {
 				for (String val : headers.get(key)) {
 					conn.addRequestProperty(key, val);
@@ -128,6 +123,16 @@ public class HttpURLConnectionWorker extends HTTPWorker {
 		}
 	}
 
+	// Override to provide a different implementation.
+	protected HttpURLConnection openConnection(URL url, Proxy proxy)
+			throws Exception {
+		if (proxy != null) {
+			return (HttpURLConnection) url.openConnection(proxy);
+		} else {
+			return (HttpURLConnection) url.openConnection();
+		}
+	}
+
 	public static void postOrPut(HttpURLConnection conn, String contentType,
 			String data) throws HTTPException {
 		conn.setRequestProperty(ACCEPT_CHARSET, UTF8);
@@ -144,8 +149,8 @@ public class HttpURLConnectionWorker extends HTTPWorker {
 		}
 	}
 
-	public static void postFile(HttpURLConnection conn, String name,
-			File file) throws HTTPException {
+	public static void postFile(HttpURLConnection conn, String name, File file)
+			throws HTTPException {
 		conn.setDoOutput(true);
 		conn.setRequestProperty(CACHE_CONTROL, NO_CACHE);
 		conn.setRequestProperty(CONNECTION, KEEP_ALIVE);

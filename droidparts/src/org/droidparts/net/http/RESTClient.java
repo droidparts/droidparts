@@ -203,7 +203,7 @@ public class RESTClient {
 		return response;
 	}
 
-	private HTTPWorker getWorker() {
+	protected final HTTPWorker getWorker() {
 		HTTPWorker worker = (httpClientWorker != null) ? httpClientWorker
 				: httpURLConnectionWorker;
 		return worker;
