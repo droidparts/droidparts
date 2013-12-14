@@ -22,7 +22,7 @@ import android.content.Context;
 import android.util.Pair;
 
 public abstract class AsyncTask<Params, Progress, Result> extends
-		android.os.AsyncTask<Params, Progress, Pair<Result, Exception>> {
+		android.os.AsyncTask<Params, Progress, Pair<Exception, Result>> {
 
 	private final Context ctx;
 	private final AsyncTaskResultListener<Result> resultListener;
@@ -42,7 +42,7 @@ public abstract class AsyncTask<Params, Progress, Result> extends
 	}
 
 	@Override
-	protected final Pair<Result, Exception> doInBackground(Params... params) {
+	protected final Pair<Exception, Result> doInBackground(Params... params) {
 		Result res = null;
 		Exception ex = null;
 		try {
@@ -54,23 +54,23 @@ public abstract class AsyncTask<Params, Progress, Result> extends
 			L.w(e);
 			ex = e;
 		}
-		return new Pair<Result, Exception>(res, ex);
+		return new Pair<Exception, Result>(ex, res);
 	}
 
 	@Override
-	protected final void onPostExecute(Pair<Result, Exception> result) {
+	protected final void onPostExecute(Pair<Exception, Result> result) {
 		// try-catch to avoid lifecycle-related crashes
 		try {
 			if (result.first != null) {
+				onPostExecuteFailure(result.first);
 				if (resultListener != null) {
-					resultListener.onAsyncTaskSuccess(result.first);
+					resultListener.onAsyncTaskFailure(result.first);
 				}
-				onPostExecuteSuccess(result.first);
 			} else {
+				onPostExecuteSuccess(result.second);
 				if (resultListener != null) {
-					resultListener.onAsyncTaskFailure(result.second);
+					resultListener.onAsyncTaskSuccess(result.second);
 				}
-				onPostExecuteFailure(result.second);
 			}
 		} catch (Throwable t) {
 			L.w(t.getMessage());
