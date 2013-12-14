@@ -33,6 +33,11 @@
 			<artifactId>httpmime</artifactId>
 			<optional>true</optional>
 		</dependency>
+		<dependency>
+			<groupId>com.squareup.okhttp</groupId>
+			<artifactId>okhttp</artifactId>
+			<optional>true</optional>
+		</dependency>
 	</dependencies>
 
 </project>

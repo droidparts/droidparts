@@ -81,6 +81,11 @@
 				<artifactId>httpmime</artifactId>
 				<version>4.1</version>
 			</dependency>
+			<dependency>
+				<groupId>com.squareup.okhttp</groupId>
+				<artifactId>okhttp</artifactId>
+				<version>1.2.1</version>
+			</dependency>
 		</dependencies>
 	</dependencyManagement>
 
