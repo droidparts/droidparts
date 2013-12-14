@@ -1,4 +1,9 @@
-1.6.0 /2013-11-05/:
+1.6.1 /2013-12-14/:
+    * RESTClient: file upload support /kudos to @makovkastar/.
+    * RESTClient: custom HTTPWorker support.
+    * CookieJar: made thread-safe.
+
+1.6.0 /2013-12-05/:
     * Updated ProGuard config.
     * ImageFetcher: log when ImageView gets GCed.
     * EventBus: made clearStickyEvents() static.
