@@ -16,12 +16,20 @@
 package org.droidparts.net.http.worker;
 
 import static org.droidparts.contract.Constants.UTF8;
+import static org.droidparts.contract.HTTP.ContentType.MULTIPART;
 import static org.droidparts.contract.HTTP.Header.ACCEPT_CHARSET;
 import static org.droidparts.contract.HTTP.Header.ACCEPT_ENCODING;
+import static org.droidparts.contract.HTTP.Header.CACHE_CONTROL;
+import static org.droidparts.contract.HTTP.Header.CONNECTION;
 import static org.droidparts.contract.HTTP.Header.CONTENT_TYPE;
+import static org.droidparts.contract.HTTP.Header.KEEP_ALIVE;
+import static org.droidparts.contract.HTTP.Header.NO_CACHE;
+import static org.droidparts.util.IOUtils.readToByteArray;
 import static org.droidparts.util.IOUtils.silentlyClose;
 
+import java.io.DataOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.OutputStream;
 import java.net.Authenticator;
 import java.net.CookieHandler;
@@ -42,6 +50,10 @@ import org.droidparts.util.L;
 import android.content.Context;
 
 public class HttpURLConnectionWorker extends HTTPWorker {
+
+	private static final String CRLF = "\r\n";
+	private static final String TWO_HYPHENS = "--";
+	private static final String BOUNDARY = "*****";
 
 	private Proxy proxy;
 	private PasswordAuthentication passAuth;
@@ -90,12 +102,7 @@ public class HttpURLConnectionWorker extends HTTPWorker {
 			throws HTTPException {
 		try {
 			URL url = new URL(urlStr);
-			HttpURLConnection conn;
-			if (proxy != null) {
-				conn = (HttpURLConnection) url.openConnection(proxy);
-			} else {
-				conn = (HttpURLConnection) url.openConnection();
-			}
+			HttpURLConnection conn = openConnection(url, proxy);
 			for (String key : headers.keySet()) {
 				for (String val : headers.get(key)) {
 					conn.addRequestProperty(key, val);
@@ -116,6 +123,16 @@ public class HttpURLConnectionWorker extends HTTPWorker {
 		}
 	}
 
+	// Override to provide a different implementation.
+	protected HttpURLConnection openConnection(URL url, Proxy proxy)
+			throws Exception {
+		if (proxy != null) {
+			return (HttpURLConnection) url.openConnection(proxy);
+		} else {
+			return (HttpURLConnection) url.openConnection();
+		}
+	}
+
 	public static void postOrPut(HttpURLConnection conn, String contentType,
 			String data) throws HTTPException {
 		conn.setRequestProperty(ACCEPT_CHARSET, UTF8);
@@ -132,7 +149,43 @@ public class HttpURLConnectionWorker extends HTTPWorker {
 		}
 	}
 
-	public static HTTPResponse getReponse(HttpURLConnection conn, boolean body)
+	public static void postFile(HttpURLConnection conn, String name, File file)
+			throws HTTPException {
+		conn.setDoOutput(true);
+		conn.setRequestProperty(CACHE_CONTROL, NO_CACHE);
+		conn.setRequestProperty(CONNECTION, KEEP_ALIVE);
+		conn.setRequestProperty(CONTENT_TYPE, MULTIPART + ";boundary="
+				+ BOUNDARY);
+		DataOutputStream request = null;
+		try {
+			request = new DataOutputStream(conn.getOutputStream());
+
+			request.writeBytes(TWO_HYPHENS + BOUNDARY + CRLF);
+			request.writeBytes("Content-Disposition: form-data; name=\"" + name
+					+ "\";filename=\"" + file.getName() + "\"" + CRLF);
+			request.writeBytes(CRLF);
+			//
+			FileInputStream fis = null;
+			try {
+				fis = new FileInputStream(file);
+				request.write(readToByteArray(fis));
+			} finally {
+				silentlyClose(fis);
+			}
+			//
+			request.writeBytes(CRLF);
+			request.writeBytes(TWO_HYPHENS + BOUNDARY + TWO_HYPHENS + CRLF);
+
+			request.flush();
+		} catch (Exception e) {
+			throwIfNetworkOnMainThreadException(e);
+			throw new HTTPException(e);
+		} finally {
+			silentlyClose(request);
+		}
+	}
+
+	public static HTTPResponse getResponse(HttpURLConnection conn, boolean body)
 			throws HTTPException {
 		HTTPResponse response = new HTTPResponse();
 		response.code = connectAndGetResponseCodeOrThrow(conn);

@@ -31,6 +31,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.apache.http.client.CookieStore;
 import org.apache.http.cookie.Cookie;
@@ -148,7 +149,7 @@ public class CookieJar extends CookieHandler implements CookieStore {
 
 	// Custom
 
-	private final ArrayList<Cookie> cookies = new ArrayList<Cookie>();
+	private final CopyOnWriteArrayList<Cookie> cookies = new CopyOnWriteArrayList<Cookie>();
 
 	private List<Cookie> parseCookies(URI uri, List<String> cookieHeaders) {
 		ArrayList<Cookie> cookies = new ArrayList<Cookie>();
