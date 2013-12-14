@@ -13,13 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License. 
  */
-package org.droidparts.test.testcase.http;
+package org.droidparts.test.testcase.rest;
 
 import org.droidparts.net.http.HTTPException;
 import org.droidparts.net.http.HTTPResponse;
 import org.droidparts.net.http.RESTClient;
-import org.droidparts.net.http.RESTClient2;
+import org.droidparts.net.http.UserAgent;
+import org.droidparts.net.http.worker.HTTPWorker;
 import org.droidparts.net.http.worker.HttpClientWorker;
+import org.droidparts.net.http.worker.OkHttpWorker;
 
 import android.test.AndroidTestCase;
 
@@ -28,16 +30,29 @@ public class RESTClientAuthenticate extends AndroidTestCase {
 	private static final String AUTH_URL = "http://www.httpwatch.com/httpgallery/authentication/authenticatedimage/default.aspx";
 	private static final String AUTH_LOGIN = "httpwatch";
 
-	public void testHttpBasicAuth() {
-		RESTClient2 client = new RESTClient2(getContext());
-		testUnauthenticated(client);
-		testAuthenticatedWrongCredentials(client);
-		testAuthenticated(client);
+	public void testHttpBasicAuth() throws Exception {
+		testHttpBasicAuth(null);
 	}
 
-	public void testHttpBasicAuthLegacy() {
-		RESTClient2 client = new RESTClient2(getContext(),
-				new HttpClientWorker(RESTClient.getUserAgent(null)));
+	public void testHttpBasicAuthOkHttp() throws Exception {
+		HTTPWorker worker = new OkHttpWorker(getContext());
+		testHttpBasicAuth(worker);
+	}
+
+	public void testHttpBasicAuthLegacy() throws Exception {
+		HTTPWorker worker = new HttpClientWorker(UserAgent.getDefault());
+		testHttpBasicAuth(worker);
+	}
+
+	//
+
+	private void testHttpBasicAuth(HTTPWorker worker) throws Exception {
+		RESTClient client;
+		if (worker == null) {
+			client = new RESTClient(getContext());
+		} else {
+			client = new RESTClient(getContext(), worker);
+		}
 		testUnauthenticated(client);
 		testAuthenticatedWrongCredentials(client);
 		testAuthenticated(client);
@@ -45,8 +60,8 @@ public class RESTClientAuthenticate extends AndroidTestCase {
 
 	private void testUnauthenticated(RESTClient client) {
 		try {
-			HTTPResponse resp = client.get(AUTH_URL);
-			assertNull(resp);
+			client.get(AUTH_URL);
+			throw new AssertionError();
 		} catch (HTTPException e) {
 			assertEquals(401, e.getResponseCode());
 		}
@@ -55,20 +70,16 @@ public class RESTClientAuthenticate extends AndroidTestCase {
 	private void testAuthenticatedWrongCredentials(RESTClient client) {
 		client.authenticateBasic("wtf", AUTH_LOGIN);
 		try {
-			HTTPResponse resp = client.get(AUTH_URL);
-			assertNull(resp);
+			client.get(AUTH_URL);
+			throw new AssertionError();
 		} catch (HTTPException e) {
 			assertEquals(401, e.getResponseCode());
 		}
 	}
 
-	private void testAuthenticated(RESTClient client) {
+	private void testAuthenticated(RESTClient client) throws HTTPException {
 		client.authenticateBasic(AUTH_LOGIN, AUTH_LOGIN);
-		try {
-			HTTPResponse resp = client.get(AUTH_URL);
-			assertNotNull(resp);
-		} catch (HTTPException e) {
-			assertNull(e);
-		}
+		HTTPResponse resp = client.get(AUTH_URL);
+		assertEquals(200, resp.code);
 	}
 }

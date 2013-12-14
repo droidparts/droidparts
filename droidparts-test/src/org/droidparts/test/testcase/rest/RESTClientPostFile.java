@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License. 
  */
-package org.droidparts.test.testcase.http;
+package org.droidparts.test.testcase.rest;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -25,7 +25,10 @@ import org.droidparts.net.http.HTTPException;
 import org.droidparts.net.http.HTTPResponse;
 import org.droidparts.net.http.RESTClient;
 import org.droidparts.net.http.RESTClient2;
+import org.droidparts.net.http.UserAgent;
+import org.droidparts.net.http.worker.HTTPWorker;
 import org.droidparts.net.http.worker.HttpClientWorker;
+import org.droidparts.net.http.worker.OkHttpWorker;
 
 import android.test.AndroidTestCase;
 
@@ -38,20 +41,40 @@ public class RESTClientPostFile extends AndroidTestCase {
 	private static final String POST_MULTIPART_FILE_BODY = "Test POST multipart file";
 
 	public void testPostMultipartFile() throws Exception {
-		RESTClient client = new RESTClient(getContext());
+		testPostMultipartFile(null);
+	}
+
+	public void testPostMultipartFileOkHttp() throws Exception {
+		HTTPWorker worker = new OkHttpWorker(getContext());
+		testPostMultipartFile(worker);
+	}
+
+	public void testPostMultipartFileLegacy() throws Exception {
+		HTTPWorker worker = new HttpClientWorker(UserAgent.getDefault());
+		testPostMultipartFile(worker);
+	}
+
+	//
+
+	public void testPostMultipartFile(HTTPWorker worker) throws Exception {
+		RESTClient client;
+		if (worker == null) {
+			client = new RESTClient(getContext());
+		} else {
+			client = new RESTClient(getContext(), worker);
+		}
 		File file = writeTestFile(POST_MULTIPART_FILE_BODY);
 		HTTPResponse resp = client.postFile(POST_MULTIPART_URL,
 				POST_MULTIPART_FILE_NAME, file);
 		assertPostMultipartFileResponse(resp);
 	}
 
-	public void testPostMultipartFileLegacy() throws Exception {
-		RESTClient client = new RESTClient(getContext(), new HttpClientWorker(
-				RESTClient.getUserAgent(null)));
-		File file = writeTestFile(POST_MULTIPART_FILE_BODY);
-		HTTPResponse resp = client.postFile(POST_MULTIPART_URL,
-				POST_MULTIPART_FILE_NAME, file);
-		assertPostMultipartFileResponse(resp);
+	private File writeTestFile(String data) throws IOException {
+		File file = new File(getContext().getCacheDir(), "test.txt");
+		FileWriter fw = new FileWriter(file);
+		fw.write(data);
+		fw.close();
+		return file;
 	}
 
 	private void assertPostMultipartFileResponse(HTTPResponse response)
@@ -67,13 +90,5 @@ public class RESTClientPostFile extends AndroidTestCase {
 		String fileUrl = matcher.group(1);
 		RESTClient2 client = new RESTClient2(getContext());
 		assertEquals(client.get(fileUrl).body, POST_MULTIPART_FILE_BODY);
-	}
-
-	private File writeTestFile(String data) throws IOException {
-		File file = new File(getContext().getCacheDir(), "test.txt");
-		FileWriter fw = new FileWriter(file);
-		fw.write(data);
-		fw.close();
-		return file;
 	}
 }

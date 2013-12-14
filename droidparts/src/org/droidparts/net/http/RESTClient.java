@@ -44,14 +44,8 @@ public class RESTClient {
 
 	private static volatile CookieJar cookieJar;
 
-	public static String getUserAgent(String nameHint) {
-		return ((nameHint != null) ? nameHint : " DroidParts.org")
-				+ " (Android " + Build.VERSION.RELEASE + "; " + Build.MODEL
-				+ " Build/" + Build.ID + ")";
-	}
-
 	public RESTClient(Context ctx) {
-		this(ctx, getUserAgent(null));
+		this(ctx, UserAgent.getDefault());
 	}
 
 	public RESTClient(Context ctx, String userAgent) {

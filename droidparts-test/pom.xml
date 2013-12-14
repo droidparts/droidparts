@@ -33,6 +33,10 @@
 			<groupId>org.apache.httpcomponents</groupId>
 			<artifactId>httpmime</artifactId>
 		</dependency>
+		<dependency>
+			<groupId>com.squareup.okhttp</groupId>
+			<artifactId>okhttp</artifactId>
+		</dependency>
 	</dependencies>
 
 	<build>

@@ -20,6 +20,7 @@ import java.net.Proxy;
 import java.net.URL;
 
 import org.droidparts.net.http.CookieJar;
+import org.droidparts.net.http.UserAgent;
 
 import android.content.Context;
 
@@ -28,6 +29,10 @@ import com.squareup.okhttp.OkHttpClient;
 public class OkHttpWorker extends HttpURLConnectionWorker {
 
 	private final OkHttpClient okHttp;
+
+	public OkHttpWorker(Context ctx) {
+		this(ctx, UserAgent.getDefault());
+	}
 
 	public OkHttpWorker(Context ctx, String userAgent) {
 		super(ctx, userAgent);
