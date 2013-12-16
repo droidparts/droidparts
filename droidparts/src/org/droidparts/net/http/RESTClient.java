@@ -44,19 +44,13 @@ public class RESTClient {
 
 	private static volatile CookieJar cookieJar;
 
-	public static String getUserAgent(String nameHint) {
-		return ((nameHint != null) ? nameHint : " DroidParts.org")
-				+ " (Android " + Build.VERSION.RELEASE + "; " + Build.MODEL
-				+ " Build/" + Build.ID + ")";
-	}
-
 	public RESTClient(Context ctx) {
-		this(ctx, getUserAgent(null));
+		this(ctx, UserAgent.getDefault());
 	}
 
 	public RESTClient(Context ctx, String userAgent) {
 		this(ctx, (Build.VERSION.SDK_INT >= 10) ? new HttpURLConnectionWorker(
-				userAgent) : new HttpClientWorker(userAgent));
+				ctx, userAgent) : new HttpClientWorker(userAgent));
 	}
 
 	public RESTClient(Context ctx, HTTPWorker worker) {
@@ -67,9 +61,6 @@ public class RESTClient {
 				: null;
 		if (cookieJar == null) {
 			cookieJar = new CookieJar(ctx);
-		}
-		if (Build.VERSION.SDK_INT >= 14) {
-			HttpURLConnectionWorker.setHttpResponseCacheEnabled(ctx, true);
 		}
 	}
 

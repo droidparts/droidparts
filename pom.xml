@@ -12,7 +12,7 @@
 	<artifactId>droidparts-parent</artifactId>
 	<packaging>pom</packaging>
 
-	<version>1.6.1</version>
+	<version>1.6.2</version>
 
 	<name>DroidParts - Parent</name>
 	<description>A carefully crafted Android framework.</description>
@@ -80,6 +80,11 @@
 				<groupId>org.apache.httpcomponents</groupId>
 				<artifactId>httpmime</artifactId>
 				<version>4.1</version>
+			</dependency>
+			<dependency>
+				<groupId>com.squareup.okhttp</groupId>
+				<artifactId>okhttp</artifactId>
+				<version>1.2.1</version>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>

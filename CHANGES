@@ -1,3 +1,8 @@
+1.6.2 /2013-12-16/:
+    * RESTClient: added OkHttp worker.
+    * RESTClient: internal tweaks.
+    * AsyncTask: fixed incorrectly handled null result.
+
 1.6.1 /2013-12-14/:
     * RESTClient: file upload support /kudos to @makovkastar/.
     * RESTClient: custom HTTPWorker support.

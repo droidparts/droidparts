@@ -30,6 +30,7 @@ import static org.droidparts.util.IOUtils.silentlyClose;
 import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.IOException;
 import java.io.OutputStream;
 import java.net.Authenticator;
 import java.net.CookieHandler;
@@ -45,9 +46,11 @@ import org.droidparts.contract.HTTP.Method;
 import org.droidparts.net.http.CookieJar;
 import org.droidparts.net.http.HTTPException;
 import org.droidparts.net.http.HTTPResponse;
+import org.droidparts.net.http.worker.wrapper.HttpResponseCacheWrapper;
 import org.droidparts.util.L;
 
 import android.content.Context;
+import android.os.Build;
 
 public class HttpURLConnectionWorker extends HTTPWorker {
 
@@ -59,28 +62,19 @@ public class HttpURLConnectionWorker extends HTTPWorker {
 	private PasswordAuthentication passAuth;
 	private AuthScope authScope;
 
-	// ICS+
-	public static void setHttpResponseCacheEnabled(Context ctx, boolean enabled) {
-		File cacheDir = new File(ctx.getCacheDir(), "http");
-		long cacheSize = 10 * 1024 * 1024; // 10 MiB
-		try {
-			Class<?> cls = Class.forName("android.net.http.HttpResponseCache");
-			if (enabled) {
-				cls.getMethod("install", File.class, long.class).invoke(null,
-						cacheDir, cacheSize);
-			} else {
-				Object instance = cls.getMethod("getInstalled").invoke(null);
-				if (instance != null) {
-					cls.getMethod("delete").invoke(instance);
-				}
-			}
-		} catch (Exception e) {
-			L.i(e);
-		}
+	public HttpURLConnectionWorker(Context ctx, String userAgent) {
+		super(userAgent);
+		enableCache(ctx);
 	}
 
-	public HttpURLConnectionWorker(String userAgent) {
-		super(userAgent);
+	protected void enableCache(Context ctx) {
+		if (Build.VERSION.SDK_INT >= 14) {
+			try {
+				HttpResponseCacheWrapper.install(ctx);
+			} catch (IOException e) {
+				L.w(e);
+			}
+		}
 	}
 
 	@Override
@@ -102,7 +96,7 @@ public class HttpURLConnectionWorker extends HTTPWorker {
 			throws HTTPException {
 		try {
 			URL url = new URL(urlStr);
-			HttpURLConnection conn = openConnection(url, proxy);
+			HttpURLConnection conn = openConnection(url);
 			for (String key : headers.keySet()) {
 				for (String val : headers.get(key)) {
 					conn.addRequestProperty(key, val);
@@ -124,8 +118,7 @@ public class HttpURLConnectionWorker extends HTTPWorker {
 	}
 
 	// Override to provide a different implementation.
-	protected HttpURLConnection openConnection(URL url, Proxy proxy)
-			throws Exception {
+	protected HttpURLConnection openConnection(URL url) throws Exception {
 		if (proxy != null) {
 			return (HttpURLConnection) url.openConnection(proxy);
 		} else {

@@ -22,7 +22,6 @@ import static org.droidparts.contract.HTTP.Header.ACCEPT_ENCODING;
 
 import java.io.File;
 import java.io.UnsupportedEncodingException;
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -43,6 +42,7 @@ import org.apache.http.params.HttpProtocolParams;
 import org.droidparts.net.http.CookieJar;
 import org.droidparts.net.http.HTTPException;
 import org.droidparts.net.http.HTTPResponse;
+import org.droidparts.net.http.worker.wrapper.HttpMimeWrapper;
 
 // For API < 10
 public class HttpClientWorker extends HTTPWorker {
@@ -92,23 +92,7 @@ public class HttpClientWorker extends HTTPWorker {
 
 	public static HttpEntity buildFileEntity(String name, File file) {
 		try {
-			Class<?> classMultipartEntity = Class
-					.forName("org.apache.http.entity.mime.MultipartEntity");
-			Class<?> classFileBody = Class
-					.forName("org.apache.http.entity.mime.content.FileBody");
-			Object fileBody = classFileBody.getConstructor(File.class)
-					.newInstance(file);
-			HttpEntity multipartEntity = (HttpEntity) classMultipartEntity
-					.newInstance();
-
-			Method methodAddPart = classMultipartEntity
-					.getMethod(
-							"addPart",
-							String.class,
-							Class.forName("org.apache.http.entity.mime.content.ContentBody"));
-			methodAddPart.invoke(multipartEntity, name, fileBody);
-
-			return multipartEntity;
+			return HttpMimeWrapper.buildFileEntity(name, file);
 		} catch (Exception e) {
 			throw new IllegalStateException(
 					"You have to add Apache HttpMime dependency in order to use multipart entities.",

@@ -5,7 +5,7 @@
 	<parent>
 		<groupId>org.droidparts</groupId>
 		<artifactId>droidparts-parent</artifactId>
-		<version>1.6.1</version>
+		<version>1.6.2</version>
 	</parent>
 
 	<artifactId>droidparts-test</artifactId>
@@ -32,6 +32,10 @@
 		<dependency>
 			<groupId>org.apache.httpcomponents</groupId>
 			<artifactId>httpmime</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.squareup.okhttp</groupId>
+			<artifactId>okhttp</artifactId>
 		</dependency>
 	</dependencies>
 
