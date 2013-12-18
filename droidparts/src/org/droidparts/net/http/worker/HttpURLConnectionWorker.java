@@ -142,7 +142,7 @@ public class HttpURLConnectionWorker extends HTTPWorker {
 		}
 	}
 
-	public static void postFile(HttpURLConnection conn, String name, File file)
+	public static void postMultipart(HttpURLConnection conn, String name, File file)
 			throws HTTPException {
 		conn.setDoOutput(true);
 		conn.setRequestProperty(CACHE_CONTROL, NO_CACHE);

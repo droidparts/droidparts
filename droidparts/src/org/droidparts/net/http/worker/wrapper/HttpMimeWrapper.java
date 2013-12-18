@@ -23,7 +23,7 @@ import org.apache.http.entity.mime.content.FileBody;
 
 public class HttpMimeWrapper {
 
-	public static HttpEntity buildFileEntity(String name, File file) {
+	public static HttpEntity buildMultipartEntity(String name, File file) {
 		MultipartEntity entity = new MultipartEntity();
 		entity.addPart(name, new FileBody(file));
 		return entity;

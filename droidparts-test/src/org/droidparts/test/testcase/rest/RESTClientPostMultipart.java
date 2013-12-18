@@ -32,7 +32,7 @@ import org.droidparts.net.http.worker.OkHttpWorker;
 
 import android.test.AndroidTestCase;
 
-public class RESTClientPostFile extends AndroidTestCase {
+public class RESTClientPostMultipart extends AndroidTestCase {
 
 	// Simple server for testing POST requests. Supports multipart/form-data
 	// file uploads.
@@ -40,23 +40,23 @@ public class RESTClientPostFile extends AndroidTestCase {
 	private static final String POST_MULTIPART_FILE_NAME = "test";
 	private static final String POST_MULTIPART_FILE_BODY = "Test POST multipart file";
 
-	public void testPostMultipartFile() throws Exception {
-		testPostMultipartFile(null);
+	public void testPostMultipart() throws Exception {
+		testPostMultipart(null);
 	}
 
-	public void testPostMultipartFileOkHttp() throws Exception {
+	public void testPostMultipartOkHttp() throws Exception {
 		HTTPWorker worker = new OkHttpWorker(getContext());
-		testPostMultipartFile(worker);
+		testPostMultipart(worker);
 	}
 
-	public void testPostMultipartFileLegacy() throws Exception {
+	public void testPostMultipartLegacy() throws Exception {
 		HTTPWorker worker = new HttpClientWorker(UserAgent.getDefault());
-		testPostMultipartFile(worker);
+		testPostMultipart(worker);
 	}
 
 	//
 
-	public void testPostMultipartFile(HTTPWorker worker) throws Exception {
+	public void testPostMultipart(HTTPWorker worker) throws Exception {
 		RESTClient client;
 		if (worker == null) {
 			client = new RESTClient(getContext());
@@ -64,9 +64,9 @@ public class RESTClientPostFile extends AndroidTestCase {
 			client = new RESTClient(getContext(), worker);
 		}
 		File file = writeTestFile(POST_MULTIPART_FILE_BODY);
-		HTTPResponse resp = client.postFile(POST_MULTIPART_URL,
+		HTTPResponse resp = client.postMultipart(POST_MULTIPART_URL,
 				POST_MULTIPART_FILE_NAME, file);
-		assertPostMultipartFileResponse(resp);
+		assertPostMultipartResponse(resp);
 	}
 
 	private File writeTestFile(String data) throws IOException {
@@ -77,7 +77,7 @@ public class RESTClientPostFile extends AndroidTestCase {
 		return file;
 	}
 
-	private void assertPostMultipartFileResponse(HTTPResponse response)
+	private void assertPostMultipartResponse(HTTPResponse response)
 			throws HTTPException {
 		assertNotNull(response);
 		String body = response.body;

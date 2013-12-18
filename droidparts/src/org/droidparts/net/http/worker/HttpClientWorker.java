@@ -90,9 +90,9 @@ public class HttpClientWorker extends HTTPWorker {
 		}
 	}
 
-	public static HttpEntity buildFileEntity(String name, File file) {
+	public static HttpEntity buildMultipartEntity(String name, File file) {
 		try {
-			return HttpMimeWrapper.buildFileEntity(name, file);
+			return HttpMimeWrapper.buildMultipartEntity(name, file);
 		} catch (Exception e) {
 			throw new IllegalStateException(
 					"You have to add Apache HttpMime dependency in order to use multipart entities.",

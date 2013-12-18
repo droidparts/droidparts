@@ -144,18 +144,18 @@ public class RESTClient {
 		return response;
 	}
 
-	public HTTPResponse postFile(String uri, String name, File file)
+	public HTTPResponse postMultipart(String uri, String name, File file)
 			throws IOException, HTTPException {
 		L.i("POST on '%s', file: '%s' .", uri, file.getPath());
 		HTTPResponse response;
 		if (httpURLConnectionWorker != null) {
 			HttpURLConnection conn = httpURLConnectionWorker.getConnection(uri,
 					Method.POST);
-			HttpURLConnectionWorker.postFile(conn, name, file);
+			HttpURLConnectionWorker.postMultipart(conn, name, file);
 			response = HttpURLConnectionWorker.getResponse(conn, true);
 		} else {
 			HttpPost req = new HttpPost(uri);
-			req.setEntity(HttpClientWorker.buildFileEntity(name, file));
+			req.setEntity(HttpClientWorker.buildMultipartEntity(name, file));
 			response = httpClientWorker.getResponse(req, true);
 		}
 		return response;
