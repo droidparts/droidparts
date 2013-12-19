@@ -39,6 +39,7 @@ public class RESTClientPostMultipart extends AndroidTestCase {
 	private static final String POST_MULTIPART_URL = "http://posttestserver.com/post.php?dump";
 	private static final String POST_MULTIPART_FILE_NAME = "test";
 	private static final String POST_MULTIPART_FILE_BODY = "Test POST multipart file";
+	private static final String POST_MULTIPART_CONTENT_TYPE = "text/plain";
 
 	public void testPostMultipart() throws Exception {
 		testPostMultipart(null);
@@ -64,8 +65,13 @@ public class RESTClientPostMultipart extends AndroidTestCase {
 			client = new RESTClient(getContext(), worker);
 		}
 		File file = writeTestFile(POST_MULTIPART_FILE_BODY);
+		// Without content type
 		HTTPResponse resp = client.postMultipart(POST_MULTIPART_URL,
 				POST_MULTIPART_FILE_NAME, file);
+		assertPostMultipartResponse(resp);
+		// With content type
+		resp = client.postMultipart(POST_MULTIPART_URL,
+				POST_MULTIPART_FILE_NAME, POST_MULTIPART_CONTENT_TYPE, file);
 		assertPostMultipartResponse(resp);
 	}
 
