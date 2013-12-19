@@ -15,11 +15,8 @@
  */
 package org.droidparts.net.http;
 
-import java.io.File;
-import java.io.IOException;
-import java.net.HttpURLConnection;
-import java.util.Date;
-
+import android.content.Context;
+import android.os.Build;
 import org.apache.http.auth.AuthScope;
 import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpGet;
@@ -32,8 +29,10 @@ import org.droidparts.net.http.worker.HttpClientWorker;
 import org.droidparts.net.http.worker.HttpURLConnectionWorker;
 import org.droidparts.util.L;
 
-import android.content.Context;
-import android.os.Build;
+import java.io.File;
+import java.io.IOException;
+import java.net.HttpURLConnection;
+import java.util.Date;
 
 public class RESTClient {
 
@@ -146,22 +145,27 @@ public class RESTClient {
 
 	public HTTPResponse postMultipart(String uri, String name, File file)
 			throws IOException, HTTPException {
+		return postMultipart(uri, name, null, file);
+	}
+
+	public HTTPResponse postMultipart(String uri, String name, String contentType, File file)
+			throws IOException, HTTPException {
 		L.i("POST on '%s', file: '%s' .", uri, file.getPath());
 		HTTPResponse response;
 		if (httpURLConnectionWorker != null) {
 			HttpURLConnection conn = httpURLConnectionWorker.getConnection(uri,
 					Method.POST);
-			HttpURLConnectionWorker.postMultipart(conn, name, file);
+			HttpURLConnectionWorker.postMultipart(conn, name, contentType, file);
 			response = HttpURLConnectionWorker.getResponse(conn, true);
 		} else {
 			HttpPost req = new HttpPost(uri);
-			req.setEntity(HttpClientWorker.buildMultipartEntity(name, file));
+			req.setEntity(HttpClientWorker.buildMultipartEntity(name, contentType, file));
 			response = httpClientWorker.getResponse(req, true);
 		}
 		return response;
 	}
 
-	public HTTPResponse put(String uri, String contentType, String data)
+    public HTTPResponse put(String uri, String contentType, String data)
 			throws HTTPException {
 		L.i("PUT on '%s', data: '%s'.", uri, data);
 		HTTPResponse response;

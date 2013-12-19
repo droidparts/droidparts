@@ -15,32 +15,8 @@
  */
 package org.droidparts.net.http.worker;
 
-import static org.droidparts.contract.Constants.UTF8;
-import static org.droidparts.contract.HTTP.ContentType.MULTIPART;
-import static org.droidparts.contract.HTTP.Header.ACCEPT_CHARSET;
-import static org.droidparts.contract.HTTP.Header.ACCEPT_ENCODING;
-import static org.droidparts.contract.HTTP.Header.CACHE_CONTROL;
-import static org.droidparts.contract.HTTP.Header.CONNECTION;
-import static org.droidparts.contract.HTTP.Header.CONTENT_TYPE;
-import static org.droidparts.contract.HTTP.Header.KEEP_ALIVE;
-import static org.droidparts.contract.HTTP.Header.NO_CACHE;
-import static org.droidparts.util.IOUtils.readToByteArray;
-import static org.droidparts.util.IOUtils.silentlyClose;
-
-import java.io.DataOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.net.Authenticator;
-import java.net.CookieHandler;
-import java.net.HttpURLConnection;
-import java.net.InetAddress;
-import java.net.PasswordAuthentication;
-import java.net.Proxy;
-import java.net.URL;
-import java.net.UnknownHostException;
-
+import android.content.Context;
+import android.os.Build;
 import org.apache.http.auth.AuthScope;
 import org.droidparts.contract.HTTP.Method;
 import org.droidparts.net.http.CookieJar;
@@ -49,8 +25,14 @@ import org.droidparts.net.http.HTTPResponse;
 import org.droidparts.net.http.worker.wrapper.HttpResponseCacheWrapper;
 import org.droidparts.util.L;
 
-import android.content.Context;
-import android.os.Build;
+import java.io.*;
+import java.net.*;
+
+import static org.droidparts.contract.Constants.UTF8;
+import static org.droidparts.contract.HTTP.ContentType.MULTIPART;
+import static org.droidparts.contract.HTTP.Header.*;
+import static org.droidparts.util.IOUtils.readToByteArray;
+import static org.droidparts.util.IOUtils.silentlyClose;
 
 public class HttpURLConnectionWorker extends HTTPWorker {
 
@@ -142,7 +124,7 @@ public class HttpURLConnectionWorker extends HTTPWorker {
 		}
 	}
 
-	public static void postMultipart(HttpURLConnection conn, String name, File file)
+	public static void postMultipart(HttpURLConnection conn, String name, String contentType, File file)
 			throws HTTPException {
 		conn.setDoOutput(true);
 		conn.setRequestProperty(CACHE_CONTROL, NO_CACHE);
@@ -156,6 +138,9 @@ public class HttpURLConnectionWorker extends HTTPWorker {
 			request.writeBytes(TWO_HYPHENS + BOUNDARY + CRLF);
 			request.writeBytes("Content-Disposition: form-data; name=\"" + name
 					+ "\";filename=\"" + file.getName() + "\"" + CRLF);
+            if (contentType != null) {
+				request.writeBytes("Content-Type: " + contentType + CRLF);
+			}
 			request.writeBytes(CRLF);
 			//
 			FileInputStream fis = null;
