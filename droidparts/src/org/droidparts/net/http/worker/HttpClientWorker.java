@@ -15,18 +15,6 @@
  */
 package org.droidparts.net.http.worker;
 
-import static org.apache.http.client.params.CookiePolicy.BROWSER_COMPATIBILITY;
-import static org.droidparts.contract.Constants.BUFFER_SIZE;
-import static org.droidparts.contract.Constants.UTF8;
-import static org.droidparts.contract.HTTP.Header.ACCEPT_ENCODING;
-
-import java.io.File;
-import java.io.UnsupportedEncodingException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -43,6 +31,18 @@ import org.droidparts.net.http.CookieJar;
 import org.droidparts.net.http.HTTPException;
 import org.droidparts.net.http.HTTPResponse;
 import org.droidparts.net.http.worker.wrapper.HttpMimeWrapper;
+
+import java.io.File;
+import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import static org.apache.http.client.params.CookiePolicy.BROWSER_COMPATIBILITY;
+import static org.droidparts.contract.Constants.BUFFER_SIZE;
+import static org.droidparts.contract.Constants.UTF8;
+import static org.droidparts.contract.HTTP.Header.ACCEPT_ENCODING;
 
 // For API < 10
 public class HttpClientWorker extends HTTPWorker {
@@ -90,9 +90,9 @@ public class HttpClientWorker extends HTTPWorker {
 		}
 	}
 
-	public static HttpEntity buildMultipartEntity(String name, File file) {
+	public static HttpEntity buildMultipartEntity(String name, String contentType, File file) {
 		try {
-			return HttpMimeWrapper.buildMultipartEntity(name, file);
+			return HttpMimeWrapper.buildMultipartEntity(name, contentType, file);
 		} catch (Exception e) {
 			throw new IllegalStateException(
 					"You have to add Apache HttpMime dependency in order to use multipart entities.",
