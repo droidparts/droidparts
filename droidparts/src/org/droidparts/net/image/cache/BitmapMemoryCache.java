@@ -18,6 +18,8 @@ package org.droidparts.net.image.cache;
 import static android.content.Context.ACTIVITY_SERVICE;
 import static org.droidparts.util.ui.BitmapUtils.getSize;
 
+import java.lang.reflect.Constructor;
+
 import org.droidparts.util.L;
 
 import android.app.ActivityManager;
@@ -26,7 +28,7 @@ import android.graphics.Bitmap;
 
 public class BitmapMemoryCache {
 
-	public interface BitmapLruCache {
+	public interface Delegate {
 		Bitmap put(String key, Bitmap bm);
 
 		Bitmap get(String key);
@@ -45,7 +47,7 @@ public class BitmapMemoryCache {
 		return instance;
 	}
 
-	private BitmapLruCache cache;
+	private Delegate delegate;
 	private final int maxItemSize;
 
 	public BitmapMemoryCache(Context ctx, int appMemoryPercent, int maxItemSize) {
@@ -54,11 +56,11 @@ public class BitmapMemoryCache {
 				.getSystemService(ACTIVITY_SERVICE)).getMemoryClass();
 		int maxBytes = (int) (maxAvailableMemory * ((float) appMemoryPercent / 100)) * 1024 * 1024;
 		try {
-			cache = new StockBitmapLruCache(maxBytes);
+			delegate = new BitmapLruCache(maxBytes);
 			L.i("Using stock LruCache.");
 		} catch (Throwable t) {
 			try {
-				cache = new SupportBitmapLruCache(maxBytes);
+				delegate = getSupportLruCache(maxBytes);
 				L.i("Using Support Package LruCache.");
 			} catch (Throwable tr) {
 				L.i("LruCache not available.");
@@ -67,13 +69,13 @@ public class BitmapMemoryCache {
 	}
 
 	public boolean isAvailable() {
-		return (cache != null);
+		return (delegate != null);
 	}
 
 	public boolean put(String key, Bitmap bm) {
 		boolean put = false;
 		if (isAvailable() && getSize(bm) <= maxItemSize) {
-			cache.put(key, bm);
+			delegate.put(key, bm);
 			put = true;
 		}
 		return put;
@@ -82,11 +84,20 @@ public class BitmapMemoryCache {
 	public Bitmap get(String key) {
 		Bitmap bm = null;
 		if (isAvailable()) {
-			bm = cache.get(key);
+			bm = delegate.get(key);
 		}
 		L.v("MemoryCache " + ((bm == null) ? "miss" : "hit") + " for '%s'.",
 				key);
 		return bm;
+	}
+
+	//
+
+	private static Delegate getSupportLruCache(int maxSize) throws Exception {
+		Class<?> cls = Class
+				.forName("org.droidparts.net.image.cache.SupportBitmapLruCache");
+		Constructor<?> con = cls.getConstructor(int.class);
+		return (Delegate) con.newInstance(maxSize);
 	}
 
 }

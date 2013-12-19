@@ -15,27 +15,31 @@
  */
 package org.droidparts.inner.reader;
 
+import org.droidparts.util.ResourceUtils;
+
 import android.app.Activity;
+import android.app.Fragment;
 import android.os.Bundle;
 
-public class BundleExtraReader {
+public class FragmentsReader {
 
-	static Object readVal(Object obj, String key, boolean optional)
-			throws Exception {
-		Bundle data;
-		if (obj instanceof Activity) {
-			data = ((Activity) obj).getIntent().getExtras();
-		} else if (LegacyReader.isSupportAvaliable()
-				&& LegacyReader.isSupportObject(obj)) {
-			data = LegacyReader.getFragmentArguments(obj);
-		} else {
-			data = FragmentsReader.getFragmentArguments(obj);
-		}
-		Object val = data.get(key);
-		if (val == null && !optional) {
-			throw new Exception("Bundle missing required key: " + key);
-		} else {
-			return val;
-		}
+	static Activity getParentActivity(Object fragmentObj) {
+		Fragment fragment = (Fragment) fragmentObj;
+		return fragment.getActivity();
 	}
+
+	static Fragment getFragment(Object fragmentActivityObj, int fragmentId,
+			String valName) {
+		Activity fragmentActivity = (Activity) fragmentActivityObj;
+		if (fragmentId == 0) {
+			fragmentId = ResourceUtils.getResourceId(fragmentActivity, valName);
+		}
+		return fragmentActivity.getFragmentManager().findFragmentById(
+				fragmentId);
+	}
+
+	static Bundle getFragmentArguments(Object fragmentObj) {
+		return ((Fragment) fragmentObj).getArguments();
+	}
+
 }

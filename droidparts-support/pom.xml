@@ -8,9 +8,9 @@
 		<version>1.6.3-SNAPSHOT</version>
 	</parent>
 
-	<artifactId>droidparts-test</artifactId>
-	<name>DroidParts - Test</name>
-	<packaging>apk</packaging>
+	<artifactId>droidparts-support</artifactId>
+	<name>DroidParts Support - Library</name>
+	<packaging>jar</packaging>
 
 	<dependencies>
 		<dependency>
@@ -20,16 +20,13 @@
 		</dependency>
 		<dependency>
 			<groupId>com.google.android</groupId>
-			<artifactId>android-test</artifactId>
-			<scope>provided</scope>
+			<artifactId>annotations</artifactId>
+			<optional>true</optional>
 		</dependency>
 		<dependency>
-			<groupId>org.apache.httpcomponents</groupId>
-			<artifactId>httpmime</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>com.squareup.okhttp</groupId>
-			<artifactId>okhttp</artifactId>
+			<groupId>com.actionbarsherlock</groupId>
+			<artifactId>actionbarsherlock</artifactId>
+			<optional>true</optional>
 		</dependency>
 		<dependency>
 			<groupId>org.droidparts</groupId>
@@ -37,21 +34,6 @@
 			<version>${project.version}</version>
 			<type>jar</type>
 		</dependency>
-		<dependency>
-			<groupId>org.droidparts</groupId>
-			<artifactId>droidparts-support</artifactId>
-			<version>${project.version}</version>
-			<type>jar</type>
-		</dependency>
 	</dependencies>
-
-	<build>
-		<plugins>
-			<plugin>
-				<groupId>com.jayway.maven.plugins.android.generation2</groupId>
-				<artifactId>android-maven-plugin</artifactId>
-			</plugin>
-		</plugins>
-	</build>
 
 </project>

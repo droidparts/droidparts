@@ -13,25 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License. 
  */
-package org.droidparts.activity;
+package org.droidparts.activity.support.v4;
 
 import org.droidparts.Injector;
 import org.droidparts.bus.EventBus;
 import org.droidparts.contract.Injectable;
-import org.droidparts.inner.fragments.SecretFragmentsStockUtil;
+import org.droidparts.inner.fragments.SecretFragmentsSupportUtil;
 
-import android.app.Fragment;
 import android.os.Bundle;
-import android.view.MenuItem;
-import android.view.View;
+import android.support.v4.app.Fragment;
 
-public abstract class Activity extends android.app.Activity implements
-		Injectable {
-
-	private MenuItem reloadMenuItem;
-	private View loadingIndicator;
-
-	private boolean isLoading;
+public abstract class FragmentActivity extends
+		android.support.v4.app.FragmentActivity implements Injectable {
 
 	@Override
 	public void onPreInject() {
@@ -56,26 +49,8 @@ public abstract class Activity extends android.app.Activity implements
 		EventBus.unregisterAnnotatedReceiver(this);
 	}
 
-	public final void setActionBarLoadingIndicatorVisible(boolean visible) {
-		isLoading = visible;
-		if (reloadMenuItem != null) {
-			reloadMenuItem.setActionView(visible ? loadingIndicator : null);
-		} else {
-			super.setProgressBarIndeterminateVisibility(visible);
-		}
-	}
-
-	public final void setActionBarReloadMenuItem(MenuItem menuItem) {
-		this.reloadMenuItem = menuItem;
-		if (menuItem != null && loadingIndicator == null) {
-			loadingIndicator = SecretFragmentsStockUtil
-					.fragmentActivityBuildLoadingIndicator(this);
-		}
-		setActionBarLoadingIndicatorVisible(isLoading);
-	}
-
 	public void setFragmentVisible(boolean visible, Fragment... fragments) {
-		SecretFragmentsStockUtil.fragmentActivitySetFragmentVisible(this,
+		SecretFragmentsSupportUtil.fragmentActivitySetFragmentVisible(this,
 				visible, fragments);
 	}
 

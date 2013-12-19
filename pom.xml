@@ -21,6 +21,7 @@
 
 	<modules>
 		<module>droidparts</module>
+		<module>droidparts-support</module>
 		<module>droidparts-test</module>
 	</modules>
 
@@ -35,7 +36,7 @@
 			<id>yanchenko</id>
 			<name>Alex Yanchenko</name>
 			<email>alex@yanchenko.com</email>
-			<timezone>2</timezone>
+			<timezone>1</timezone>
 			<roles>
 				<role>developer</role>
 			</roles>
