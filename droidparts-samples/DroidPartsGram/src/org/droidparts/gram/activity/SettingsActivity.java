@@ -17,7 +17,7 @@ package org.droidparts.gram.activity;
 
 import static org.droidparts.util.Strings.join;
 
-import org.droidparts.activity.sherlock.PreferenceActivity;
+import org.droidparts.activity.legacy.PreferenceActivity;
 import org.droidparts.annotation.inject.InjectView;
 import org.droidparts.gram.R;
 import org.droidparts.widget.MultiSelectListPreference;
@@ -27,8 +27,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.preference.Preference;
 import android.preference.Preference.OnPreferenceChangeListener;
-
-import com.actionbarsherlock.view.MenuItem;
+import android.view.MenuItem;
 
 public class SettingsActivity extends PreferenceActivity implements
 		OnPreferenceChangeListener {
@@ -42,7 +41,7 @@ public class SettingsActivity extends PreferenceActivity implements
 
 	@Override
 	public void onPreInject() {
-		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+		getActionBar().setDisplayHomeAsUpEnabled(true);
 		addPreferencesFromResource(R.xml.preferences);
 	}
 
