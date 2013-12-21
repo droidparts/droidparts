@@ -9,7 +9,7 @@
 	</parent>
 
 	<artifactId>droidparts-support</artifactId>
-	<name>DroidParts Support - Library</name>
+	<name>DroidParts - Support Library</name>
 	<packaging>jar</packaging>
 
 	<dependencies>

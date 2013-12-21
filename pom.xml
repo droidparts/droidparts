@@ -73,11 +73,6 @@
 				<version>4.1.1.4</version>
 			</dependency>
 			<dependency>
-				<groupId>com.actionbarsherlock</groupId>
-				<artifactId>actionbarsherlock</artifactId>
-				<version>4.4.0</version>
-			</dependency>
-			<dependency>
 				<groupId>org.apache.httpcomponents</groupId>
 				<artifactId>httpmime</artifactId>
 				<version>4.1</version>
@@ -86,6 +81,13 @@
 				<groupId>com.squareup.okhttp</groupId>
 				<artifactId>okhttp</artifactId>
 				<version>1.2.1</version>
+			</dependency>
+			<dependency>
+				<groupId>com.actionbarsherlock</groupId>
+				<artifactId>actionbarsherlock</artifactId>
+				<version>4.4.0</version>
+				<scope>system</scope>
+				<systemPath>${project.basedir}/libs/actionbarsherlock-4.4.0.jar</systemPath>
 			</dependency>
 			<dependency>
 				<groupId>com.google.android</groupId>
