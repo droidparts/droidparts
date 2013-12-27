@@ -12,8 +12,6 @@ a carefully crafted Android framework that includes:
 * *ImageFetcher* to asynchronously attach images to ImageViews, with caching,
   cross-fade & transformation support.
 * Numerous *Utils*.
-* *Fragments* support: native on 3.0+ and either
-  pure [SupportLibrary][1] or [ActionBarSherlock][2]-backed on 2.2+.
 
 Documentation
 -------------
@@ -21,7 +19,7 @@ available at http://droidparts.org.
 
 Download
 --------
-[the latest JAR][3], get from Maven:
+[the latest JAR][1], get from Maven:
 ```xml
 <dependency>
   <groupId>org.droidparts</groupId>
@@ -37,6 +35,4 @@ dependencies {
 ```
 or use as a plain old Android library project.
 
- [1]: http://developer.android.com/tools/extras/support-library.html
- [2]: https://github.com/JakeWharton/ActionBarSherlock
- [3]: http://repository.sonatype.org/service/local/artifact/maven/redirect?r=central-proxy&g=org.droidparts&a=droidparts&v=LATEST
+ [1]: http://repository.sonatype.org/service/local/artifact/maven/redirect?r=central-proxy&g=org.droidparts&a=droidparts&v=LATEST
