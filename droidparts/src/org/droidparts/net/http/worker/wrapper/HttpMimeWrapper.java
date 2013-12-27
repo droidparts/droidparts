@@ -15,17 +15,27 @@
  */
 package org.droidparts.net.http.worker.wrapper;
 
+import static org.droidparts.contract.Constants.UTF8;
+
 import java.io.File;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.entity.mime.MultipartEntity;
+import org.apache.http.entity.mime.content.ContentBody;
 import org.apache.http.entity.mime.content.FileBody;
 
 public class HttpMimeWrapper {
 
-	public static HttpEntity buildFileEntity(String name, File file) {
+	public static HttpEntity buildMultipartEntity(String name,
+			String contentType, File file) {
 		MultipartEntity entity = new MultipartEntity();
-		entity.addPart(name, new FileBody(file));
+		ContentBody contentBody;
+		if (contentType != null) {
+			contentBody = new FileBody(file, contentType, UTF8);
+		} else {
+			contentBody = new FileBody(file);
+		}
+		entity.addPart(name, contentBody);
 		return entity;
 	}
 

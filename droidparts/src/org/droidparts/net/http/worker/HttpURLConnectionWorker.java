@@ -142,8 +142,8 @@ public class HttpURLConnectionWorker extends HTTPWorker {
 		}
 	}
 
-	public static void postFile(HttpURLConnection conn, String name, File file)
-			throws HTTPException {
+	public static void postMultipart(HttpURLConnection conn, String name,
+			String contentType, File file) throws HTTPException {
 		conn.setDoOutput(true);
 		conn.setRequestProperty(CACHE_CONTROL, NO_CACHE);
 		conn.setRequestProperty(CONNECTION, KEEP_ALIVE);
@@ -156,6 +156,9 @@ public class HttpURLConnectionWorker extends HTTPWorker {
 			request.writeBytes(TWO_HYPHENS + BOUNDARY + CRLF);
 			request.writeBytes("Content-Disposition: form-data; name=\"" + name
 					+ "\";filename=\"" + file.getName() + "\"" + CRLF);
+			if (contentType != null) {
+				request.writeBytes("Content-Type: " + contentType + CRLF);
+			}
 			request.writeBytes(CRLF);
 			//
 			FileInputStream fis = null;

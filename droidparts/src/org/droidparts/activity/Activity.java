@@ -18,10 +18,20 @@ package org.droidparts.activity;
 import org.droidparts.Injector;
 import org.droidparts.bus.EventBus;
 import org.droidparts.contract.Injectable;
+import org.droidparts.inner.fragments.SecretFragmentsStockUtil;
 
+import android.app.Fragment;
 import android.os.Bundle;
+import android.view.MenuItem;
+import android.view.View;
 
-public class Activity extends android.app.Activity implements Injectable {
+public abstract class Activity extends android.app.Activity implements
+		Injectable {
+
+	private MenuItem reloadMenuItem;
+	private View loadingIndicator;
+
+	private boolean isLoading;
 
 	@Override
 	public void onPreInject() {
@@ -44,6 +54,29 @@ public class Activity extends android.app.Activity implements Injectable {
 	protected void onPause() {
 		super.onPause();
 		EventBus.unregisterAnnotatedReceiver(this);
+	}
+
+	public final void setActionBarLoadingIndicatorVisible(boolean visible) {
+		isLoading = visible;
+		if (reloadMenuItem != null) {
+			reloadMenuItem.setActionView(visible ? loadingIndicator : null);
+		} else {
+			super.setProgressBarIndeterminateVisibility(visible);
+		}
+	}
+
+	public final void setActionBarReloadMenuItem(MenuItem menuItem) {
+		this.reloadMenuItem = menuItem;
+		if (menuItem != null && loadingIndicator == null) {
+			loadingIndicator = SecretFragmentsStockUtil
+					.fragmentActivityBuildLoadingIndicator(this);
+		}
+		setActionBarLoadingIndicatorVisible(isLoading);
+	}
+
+	public void setFragmentVisible(boolean visible, Fragment... fragments) {
+		SecretFragmentsStockUtil.fragmentActivitySetFragmentVisible(this,
+				visible, fragments);
 	}
 
 }

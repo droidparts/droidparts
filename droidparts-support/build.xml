@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<project name="droidparts">
+	<loadproperties srcFile="project.properties" />
+	<import file="${sdk.dir}/tools/ant/build.xml" />
+</project>

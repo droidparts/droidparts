@@ -54,38 +54,22 @@ public class ValueReader {
 					ann2.click, target, fieldType, fieldName);
 		} else if (annType == InjectFragmentAnn.class) {
 			InjectFragmentAnn ann2 = (InjectFragmentAnn) spec.ann;
-			if (isSupportAvaliable()
-					&& SupportFragmentsReader.isSupportObject(target)) {
-				val = SupportFragmentsReader.getFragment(target, ann2.id,
-						fieldName);
+			if (LegacyReader.isSupportAvaliable()
+					&& LegacyReader.isSupportObject(target)) {
+				val = LegacyReader.getFragment(target, ann2.id, fieldName);
 			} else {
-				val = StockFragmentsReader.getFragment(target, ann2.id,
+				val = FragmentsReader.getFragment(target, ann2.id,
 						fieldName);
 			}
 		} else if (annType == InjectParentActivityAnn.class) {
-			if (isSupportAvaliable()
-					&& SupportFragmentsReader.isSupportObject(target)) {
-				val = SupportFragmentsReader.getParentActivity(target);
+			if (LegacyReader.isSupportAvaliable()
+					&& LegacyReader.isSupportObject(target)) {
+				val = LegacyReader.getParentActivity(target);
 			} else {
-				val = StockFragmentsReader.getParentActivity(target);
+				val = FragmentsReader.getParentActivity(target);
 			}
 		}
 		return val;
 	}
-
-	static boolean isSupportAvaliable() {
-		return supportAvailable;
-	}
-
-	static {
-		try {
-			Class.forName("android.support.v4.app.Fragment");
-			supportAvailable = true;
-		} catch (Exception e) {
-			supportAvailable = false;
-		}
-	}
-
-	private static boolean supportAvailable;
 
 }

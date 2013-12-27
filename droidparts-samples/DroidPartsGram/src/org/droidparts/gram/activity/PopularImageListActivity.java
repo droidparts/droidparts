@@ -15,7 +15,7 @@
  */
 package org.droidparts.gram.activity;
 
-import org.droidparts.activity.sherlock.SingleFragmentActivity;
+import org.droidparts.activity.SingleFragmentActivity;
 import org.droidparts.annotation.inject.InjectDependency;
 import org.droidparts.concurrent.service.MainThreadResultReceiver;
 import org.droidparts.gram.R;
@@ -28,9 +28,8 @@ import org.droidparts.gram.service.ImageIntentService;
 
 import android.content.Intent;
 import android.os.Bundle;
-
-import com.actionbarsherlock.view.Menu;
-import com.actionbarsherlock.view.MenuItem;
+import android.view.Menu;
+import android.view.MenuItem;
 
 public class PopularImageListActivity extends
 		SingleFragmentActivity<ImageListFragment> implements
@@ -54,7 +53,7 @@ public class PopularImageListActivity extends
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
-		getSupportMenuInflater().inflate(R.menu.options_image_list, menu);
+		getMenuInflater().inflate(R.menu.options_image_list, menu);
 		setActionBarReloadMenuItem(menu.findItem(R.id.menu_refresh));
 		return true;
 	}
