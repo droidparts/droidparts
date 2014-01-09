@@ -16,7 +16,6 @@
 package org.droidparts.net.http;
 
 import java.io.File;
-import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.util.Date;
 
@@ -145,12 +144,12 @@ public class RESTClient {
 	}
 
 	public HTTPResponse postMultipart(String uri, String name, File file)
-			throws IOException, HTTPException {
+			throws HTTPException {
 		return postMultipart(uri, name, null, file);
 	}
 
 	public HTTPResponse postMultipart(String uri, String name,
-			String contentType, File file) throws IOException, HTTPException {
+			String contentType, File file) throws HTTPException {
 		L.i("POST on '%s', file: '%s' .", uri, file.getPath());
 		HTTPResponse response;
 		if (httpURLConnectionWorker != null) {
