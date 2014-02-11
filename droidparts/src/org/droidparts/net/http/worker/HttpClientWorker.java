@@ -50,7 +50,6 @@ public class HttpClientWorker extends HTTPWorker {
 	private final DefaultHttpClient httpClient;
 
 	public HttpClientWorker(String userAgent) {
-		super(userAgent);
 		httpClient = new DefaultHttpClient();
 		HttpParams params = httpClient.getParams();
 		HttpProtocolParams.setUserAgent(params, userAgent);

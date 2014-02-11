@@ -33,11 +33,6 @@ public abstract class HTTPWorker {
 	protected static final int SOCKET_OPERATION_TIMEOUT = 60 * 1000;
 
 	protected final HashMap<String, ArrayList<String>> headers = new HashMap<String, ArrayList<String>>();
-	protected final String userAgent;
-
-	protected HTTPWorker(String userAgent) {
-		this.userAgent = userAgent;
-	}
 
 	public final void addHeader(String key, String val) {
 		if (val != null) {

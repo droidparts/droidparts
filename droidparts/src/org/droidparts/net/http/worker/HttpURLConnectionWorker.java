@@ -24,6 +24,7 @@ import static org.droidparts.contract.HTTP.Header.CONNECTION;
 import static org.droidparts.contract.HTTP.Header.CONTENT_TYPE;
 import static org.droidparts.contract.HTTP.Header.KEEP_ALIVE;
 import static org.droidparts.contract.HTTP.Header.NO_CACHE;
+import static org.droidparts.contract.HTTP.Header.USER_AGENT;
 import static org.droidparts.util.IOUtils.readToByteArray;
 import static org.droidparts.util.IOUtils.silentlyClose;
 
@@ -58,12 +59,14 @@ public class HttpURLConnectionWorker extends HTTPWorker {
 	private static final String TWO_HYPHENS = "--";
 	private static final String BOUNDARY = "*****";
 
+	private final String userAgent;
+
 	private Proxy proxy;
 	private PasswordAuthentication passAuth;
 	private AuthScope authScope;
 
 	public HttpURLConnectionWorker(Context ctx, String userAgent) {
-		super(userAgent);
+		this.userAgent = userAgent;
 		enableCache(ctx);
 	}
 
@@ -102,7 +105,7 @@ public class HttpURLConnectionWorker extends HTTPWorker {
 					conn.addRequestProperty(key, val);
 				}
 			}
-			conn.setRequestProperty("http.agent", userAgent);
+			conn.setRequestProperty(USER_AGENT, userAgent);
 			conn.setRequestProperty(ACCEPT_ENCODING, "gzip,deflate");
 			setupBasicAuth();
 			conn.setRequestMethod(requestMethod);
