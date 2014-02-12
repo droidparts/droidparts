@@ -15,11 +15,13 @@
  */
 package org.droidparts.net.http.worker;
 
-import java.util.ArrayList;
+import static android.util.Base64.NO_WRAP;
+
 import java.util.HashMap;
 
-import org.apache.http.auth.AuthScope;
 import org.droidparts.net.http.CookieJar;
+
+import android.util.Base64;
 
 public abstract class HTTPWorker {
 
@@ -32,28 +34,27 @@ public abstract class HTTPWorker {
 
 	protected static final int SOCKET_OPERATION_TIMEOUT = 60 * 1000;
 
-	protected final HashMap<String, ArrayList<String>> headers = new HashMap<String, ArrayList<String>>();
-	protected final String userAgent;
+	protected final HashMap<String, String> headers = new HashMap<String, String>();
 
-	protected HTTPWorker(String userAgent) {
-		this.userAgent = userAgent;
+	public final void authenticateBasic(String user, String password) {
+		String val = null;
+		if (user != null && password != null) {
+			String userPass = Base64.encodeToString(
+					(user + ":" + password).getBytes(), NO_WRAP);
+			val = "Basic " + userPass;
+		}
+		setHeader("Authorization", val);
 	}
 
-	public final void putHeader(String key, String val) {
+	public final void setHeader(String key, String val) {
 		if (val != null) {
-			if (!headers.containsKey(key)) {
-				headers.put(key, new ArrayList<String>());
-			}
-			headers.get(key).add(val);
+			headers.put(key, val);
 		} else {
 			headers.remove(key);
 		}
 	}
 
 	public abstract void setCookieJar(CookieJar cookieJar);
-
-	public abstract void authenticateBasic(String user, String password,
-			AuthScope scope);
 
 	protected static final boolean isErrorResponseCode(int responseCode) {
 		return responseCode >= 400;

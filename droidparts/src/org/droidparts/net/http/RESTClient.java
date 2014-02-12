@@ -16,11 +16,9 @@
 package org.droidparts.net.http;
 
 import java.io.File;
-import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.util.Date;
 
-import org.apache.http.auth.AuthScope;
 import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
@@ -73,17 +71,12 @@ public class RESTClient {
 		getWorker().setCookieJar(enabled ? cookieJar : null);
 	}
 
-	public void putHeader(String key, String value) {
-		getWorker().putHeader(key, value);
+	public void setHeader(String key, String value) {
+		getWorker().setHeader(key, value);
 	}
 
 	public void authenticateBasic(String username, String password) {
-		authenticateBasic(username, password, AuthScope.ANY);
-	}
-
-	public void authenticateBasic(String username, String password,
-			AuthScope scope) {
-		getWorker().authenticateBasic(username, password, scope);
+		getWorker().authenticateBasic(username, password);
 	}
 
 	//
@@ -145,12 +138,12 @@ public class RESTClient {
 	}
 
 	public HTTPResponse postMultipart(String uri, String name, File file)
-			throws IOException, HTTPException {
+			throws HTTPException {
 		return postMultipart(uri, name, null, file);
 	}
 
 	public HTTPResponse postMultipart(String uri, String name,
-			String contentType, File file) throws IOException, HTTPException {
+			String contentType, File file) throws HTTPException {
 		L.i("POST on '%s', file: '%s' .", uri, file.getPath());
 		HTTPResponse response;
 		if (httpURLConnectionWorker != null) {

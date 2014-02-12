@@ -30,8 +30,6 @@ import java.util.Map;
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
-import org.apache.http.auth.AuthScope;
-import org.apache.http.auth.UsernamePasswordCredentials;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.client.params.HttpClientParams;
 import org.apache.http.entity.StringEntity;
@@ -50,10 +48,11 @@ public class HttpClientWorker extends HTTPWorker {
 	private final DefaultHttpClient httpClient;
 
 	public HttpClientWorker(String userAgent) {
-		super(userAgent);
 		httpClient = new DefaultHttpClient();
 		HttpParams params = httpClient.getParams();
-		HttpProtocolParams.setUserAgent(params, userAgent);
+		if (userAgent != null) {
+			HttpProtocolParams.setUserAgent(params, userAgent);
+		}
 		HttpConnectionParams.setStaleCheckingEnabled(params, false);
 		HttpClientParams.setRedirecting(params, false);
 		HttpConnectionParams.setConnectionTimeout(params,
@@ -66,13 +65,6 @@ public class HttpClientWorker extends HTTPWorker {
 	@Override
 	public void setCookieJar(CookieJar cookieJar) {
 		httpClient.setCookieStore(cookieJar);
-	}
-
-	@Override
-	public void authenticateBasic(String user, String password, AuthScope scope) {
-		UsernamePasswordCredentials credentials = new UsernamePasswordCredentials(
-				user, password);
-		httpClient.getCredentialsProvider().setCredentials(scope, credentials);
 	}
 
 	public final DefaultHttpClient getHttpClient() {
@@ -120,9 +112,7 @@ public class HttpClientWorker extends HTTPWorker {
 	private HttpResponse getHttpResponse(HttpUriRequest req)
 			throws HTTPException {
 		for (String key : headers.keySet()) {
-			for (String val : headers.get(key)) {
-				req.addHeader(key, val);
-			}
+			req.addHeader(key, headers.get(key));
 		}
 		req.setHeader(ACCEPT_ENCODING, "gzip,deflate");
 		try {

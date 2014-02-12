@@ -43,6 +43,7 @@ public interface HTTP {
 	public interface Header {
 
 		// Request
+		String USER_AGENT = "User-Agent";
 		String ACCEPT_ENCODING = "Accept-Encoding";
 		String ACCEPT_CHARSET = "Accept-Charset";
 		String CACHE_CONTROL = "Cache-Control";
