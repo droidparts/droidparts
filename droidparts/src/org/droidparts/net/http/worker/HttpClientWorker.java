@@ -52,7 +52,9 @@ public class HttpClientWorker extends HTTPWorker {
 	public HttpClientWorker(String userAgent) {
 		httpClient = new DefaultHttpClient();
 		HttpParams params = httpClient.getParams();
-		HttpProtocolParams.setUserAgent(params, userAgent);
+		if (userAgent != null) {
+			HttpProtocolParams.setUserAgent(params, userAgent);
+		}
 		HttpConnectionParams.setStaleCheckingEnabled(params, false);
 		HttpClientParams.setRedirecting(params, false);
 		HttpConnectionParams.setConnectionTimeout(params,

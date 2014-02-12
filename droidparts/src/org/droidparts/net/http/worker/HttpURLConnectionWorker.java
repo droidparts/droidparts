@@ -105,7 +105,9 @@ public class HttpURLConnectionWorker extends HTTPWorker {
 					conn.addRequestProperty(key, val);
 				}
 			}
-			conn.setRequestProperty(USER_AGENT, userAgent);
+			if (userAgent != null) {
+				conn.setRequestProperty(USER_AGENT, userAgent);
+			}
 			conn.setRequestProperty(ACCEPT_ENCODING, "gzip,deflate");
 			setupBasicAuth();
 			conn.setRequestMethod(requestMethod);
