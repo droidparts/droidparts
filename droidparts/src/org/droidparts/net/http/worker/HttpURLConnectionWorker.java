@@ -33,16 +33,11 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.net.Authenticator;
 import java.net.CookieHandler;
 import java.net.HttpURLConnection;
-import java.net.InetAddress;
-import java.net.PasswordAuthentication;
 import java.net.Proxy;
 import java.net.URL;
-import java.net.UnknownHostException;
 
-import org.apache.http.auth.AuthScope;
 import org.droidparts.contract.HTTP.Method;
 import org.droidparts.net.http.CookieJar;
 import org.droidparts.net.http.HTTPException;
@@ -62,8 +57,6 @@ public class HttpURLConnectionWorker extends HTTPWorker {
 	private final String userAgent;
 
 	private Proxy proxy;
-	private PasswordAuthentication passAuth;
-	private AuthScope authScope;
 
 	public HttpURLConnectionWorker(Context ctx, String userAgent) {
 		this.userAgent = userAgent;
@@ -85,12 +78,6 @@ public class HttpURLConnectionWorker extends HTTPWorker {
 		CookieHandler.setDefault(cookieJar);
 	}
 
-	@Override
-	public void authenticateBasic(String user, String password, AuthScope scope) {
-		passAuth = new PasswordAuthentication(user, password.toCharArray());
-		authScope = scope;
-	}
-
 	public void setProxy(Proxy proxy) {
 		this.proxy = proxy;
 	}
@@ -101,15 +88,12 @@ public class HttpURLConnectionWorker extends HTTPWorker {
 			URL url = new URL(urlStr);
 			HttpURLConnection conn = openConnection(url);
 			for (String key : headers.keySet()) {
-				for (String val : headers.get(key)) {
-					conn.addRequestProperty(key, val);
-				}
+				conn.addRequestProperty(key, headers.get(key));
 			}
 			if (userAgent != null) {
 				conn.setRequestProperty(USER_AGENT, userAgent);
 			}
 			conn.setRequestProperty(ACCEPT_ENCODING, "gzip,deflate");
-			setupBasicAuth();
 			conn.setRequestMethod(requestMethod);
 			if (Method.PUT.equals(requestMethod)
 					|| Method.POST.equals(requestMethod)) {
@@ -216,48 +200,6 @@ public class HttpURLConnectionWorker extends HTTPWorker {
 		} catch (Exception e) {
 			throwIfNetworkOnMainThreadException(e);
 			throw new HTTPException(e);
-		}
-
-	}
-
-	private void setupBasicAuth() {
-		if (passAuth != null) {
-			Authenticator.setDefault(new FixedAuthenticator(passAuth));
-			if (!AuthScope.ANY.equals(authScope)) {
-				InetAddress host = null;
-				if (authScope.getHost() != null) {
-					try {
-						host = InetAddress.getByName(authScope.getHost());
-					} catch (UnknownHostException e) {
-						L.e("Failed to setup basic auth.");
-						L.d(e);
-						Authenticator.setDefault(null);
-						return;
-					}
-				}
-				int port = (authScope.getPort() == AuthScope.ANY_PORT) ? 0
-						: authScope.getPort();
-				Authenticator.requestPasswordAuthentication(host, port, null,
-						authScope.getRealm(), authScope.getScheme());
-			}
-		}
-	}
-
-	private static class FixedAuthenticator extends Authenticator {
-
-		private PasswordAuthentication passAuth;
-
-		public FixedAuthenticator(PasswordAuthentication passAuth) {
-			this.passAuth = passAuth;
-		}
-
-		@Override
-		protected PasswordAuthentication getPasswordAuthentication() {
-			try {
-				return passAuth;
-			} finally {
-				passAuth = null;
-			}
 		}
 
 	}

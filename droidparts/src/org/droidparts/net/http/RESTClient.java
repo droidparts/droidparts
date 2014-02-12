@@ -19,7 +19,6 @@ import java.io.File;
 import java.net.HttpURLConnection;
 import java.util.Date;
 
-import org.apache.http.auth.AuthScope;
 import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
@@ -73,16 +72,11 @@ public class RESTClient {
 	}
 
 	public void setHeader(String key, String value) {
-		getWorker().addHeader(key, value);
+		getWorker().setHeader(key, value);
 	}
 
 	public void authenticateBasic(String username, String password) {
-		authenticateBasic(username, password, AuthScope.ANY);
-	}
-
-	public void authenticateBasic(String username, String password,
-			AuthScope scope) {
-		getWorker().authenticateBasic(username, password, scope);
+		getWorker().authenticateBasic(username, password);
 	}
 
 	//
