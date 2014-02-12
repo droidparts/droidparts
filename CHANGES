@@ -1,3 +1,9 @@
+2.0.1 /2014-02-12/:
+    * RESTClient: putHeader() => setHeader().
+    * RESTClient: removed multiple vals for single header key feature.
+    * RESTClient: simplified http basic auth to avoid compatibility issues.
+    * RESTClient: fixed setting user agent in HttpURLConnection.
+
 2.0.0 /2013-12-28/:
     * Moved ABS & support-v4 classes to droidparts-support lib.
     * Base classes for ActionBar by Android Support Library v7. (untested)
