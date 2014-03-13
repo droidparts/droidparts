@@ -95,6 +95,7 @@ public class HttpURLConnectionWorker extends HTTPWorker {
 			}
 			conn.setRequestProperty(ACCEPT_ENCODING, "gzip,deflate");
 			conn.setRequestMethod(requestMethod);
+			conn.setInstanceFollowRedirects(followRedirects);
 			if (Method.PUT.equals(requestMethod)
 					|| Method.POST.equals(requestMethod)) {
 				conn.setDoOutput(true);
