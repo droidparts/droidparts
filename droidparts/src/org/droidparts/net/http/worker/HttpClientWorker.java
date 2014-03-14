@@ -54,12 +54,18 @@ public class HttpClientWorker extends HTTPWorker {
 			HttpProtocolParams.setUserAgent(params, userAgent);
 		}
 		HttpConnectionParams.setStaleCheckingEnabled(params, false);
-		HttpClientParams.setRedirecting(params, false);
+		setFollowRedirects(followRedirects);
 		HttpConnectionParams.setConnectionTimeout(params,
 				SOCKET_OPERATION_TIMEOUT);
 		HttpConnectionParams.setSoTimeout(params, SOCKET_OPERATION_TIMEOUT);
 		HttpConnectionParams.setSocketBufferSize(params, BUFFER_SIZE);
 		HttpClientParams.setCookiePolicy(params, BROWSER_COMPATIBILITY);
+	}
+
+	@Override
+	public void setFollowRedirects(boolean follow) {
+		HttpClientParams
+				.setRedirecting(httpClient.getParams(), followRedirects);
 	}
 
 	@Override

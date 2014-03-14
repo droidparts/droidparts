@@ -71,6 +71,10 @@ public class RESTClient {
 		getWorker().setCookieJar(enabled ? cookieJar : null);
 	}
 
+	public void setFollowRedirects(boolean follow) {
+		getWorker().setFollowRedirects(follow);
+	}
+
 	public void setHeader(String key, String value) {
 		getWorker().setHeader(key, value);
 	}

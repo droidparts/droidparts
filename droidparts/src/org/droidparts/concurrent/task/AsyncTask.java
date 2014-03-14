@@ -51,7 +51,7 @@ public abstract class AsyncTask<Params, Progress, Result> extends
 			L.i("Executed %s in %d ms.", getClass().getSimpleName(),
 					(System.currentTimeMillis() - start));
 		} catch (Exception e) {
-			L.w(e);
+			L.d(e);
 			ex = e;
 		}
 		return new Pair<Exception, Result>(ex, res);
@@ -73,7 +73,6 @@ public abstract class AsyncTask<Params, Progress, Result> extends
 				}
 			}
 		} catch (Throwable t) {
-			L.w(t.getMessage());
 			L.d(t);
 		}
 	}

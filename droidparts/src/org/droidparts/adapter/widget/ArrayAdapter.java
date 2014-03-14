@@ -52,10 +52,12 @@ public class ArrayAdapter<T> extends android.widget.ArrayAdapter<T> implements
 
 	@Override
 	public void setContent(Collection<T> coll) {
+		setNotifyOnChange(false);
 		clear();
 		for (T item : coll) {
 			add(item);
 		}
+		notifyDataSetChanged();
 	}
 
 }

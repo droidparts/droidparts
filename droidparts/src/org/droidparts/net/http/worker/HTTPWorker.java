@@ -35,6 +35,7 @@ public abstract class HTTPWorker {
 	protected static final int SOCKET_OPERATION_TIMEOUT = 60 * 1000;
 
 	protected final HashMap<String, String> headers = new HashMap<String, String>();
+	protected boolean followRedirects = true;
 
 	public final void authenticateBasic(String user, String password) {
 		String val = null;
@@ -52,6 +53,10 @@ public abstract class HTTPWorker {
 		} else {
 			headers.remove(key);
 		}
+	}
+
+	public void setFollowRedirects(boolean follow) {
+		this.followRedirects = follow;
 	}
 
 	public abstract void setCookieJar(CookieJar cookieJar);

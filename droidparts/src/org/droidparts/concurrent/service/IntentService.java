@@ -79,7 +79,7 @@ public abstract class IntentService extends android.app.IntentService {
 				resultReceiver.send(RESULT_OK, data);
 			}
 		} catch (Exception e) {
-			L.w(e);
+			L.d(e);
 			if (resultReceiver != null) {
 				data.putSerializable(EXTRA_EXCEPTION, e);
 				resultReceiver.send(RESULT_CANCELED, data);
