@@ -1,3 +1,8 @@
+2.0.2 /2014-03-14/:
+    * RESTClient: follow redirects, on by default.
+    * ArrayAdapter: optimized setContent().
+    * AsyncTask: log exceptions at debug level.
+
 2.0.1 /2014-02-12/:
     * RESTClient: putHeader() => setHeader().
     * RESTClient: removed multiple vals for single header key feature.
