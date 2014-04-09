@@ -1,3 +1,8 @@
+2.0.3 /2014-04-09/:
+    * L: removed setMuted(), verbose by default.
+    * ClearableEditText: reverted to old icon.
+    * IOUtils: readToStream(...).
+
 2.0.2 /2014-03-14/:
     * RESTClient: follow redirects, on by default.
     * ArrayAdapter: optimized setContent().
