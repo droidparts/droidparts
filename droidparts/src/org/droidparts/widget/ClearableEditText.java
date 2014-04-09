@@ -121,22 +121,14 @@ public class ClearableEditText extends EditText implements OnTouchListener,
 	private void init() {
 		xD = getCompoundDrawables()[2];
 		if (xD == null) {
-			xD = getResources().getDrawable(getDefaultClearIconId());
+			xD = getResources()
+					.getDrawable(android.R.drawable.presence_offline);
 		}
 		xD.setBounds(0, 0, xD.getIntrinsicWidth(), xD.getIntrinsicHeight());
 		setClearIconVisible(false);
 		super.setOnTouchListener(this);
 		super.setOnFocusChangeListener(this);
 		addTextChangedListener(new TextWatcherAdapter(this, this));
-	}
-
-	private int getDefaultClearIconId() {
-		int id = getResources()
-				.getIdentifier("ic_clear", "drawable", "android");
-		if (id == 0) {
-			id = android.R.drawable.presence_offline;
-		}
-		return id;
 	}
 
 	protected void setClearIconVisible(boolean visible) {

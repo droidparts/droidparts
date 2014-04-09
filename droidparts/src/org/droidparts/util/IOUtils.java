@@ -25,6 +25,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.nio.channels.FileChannel;
 import java.util.ArrayList;
 
@@ -52,12 +53,17 @@ public class IOUtils {
 
 	public static byte[] readToByteArray(InputStream is) throws IOException {
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		readToStream(is, baos);
+		return baos.toByteArray();
+	}
+
+	public static void readToStream(InputStream is, OutputStream os)
+			throws IOException {
 		byte[] buffer = new byte[BUFFER_SIZE];
 		int len;
 		while ((len = is.read(buffer)) != -1) {
-			baos.write(buffer, 0, len);
+			os.write(buffer, 0, len);
 		}
-		return baos.toByteArray();
 	}
 
 	public static ArrayList<File> getFileList(File dir,

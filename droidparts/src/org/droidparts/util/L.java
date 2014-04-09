@@ -108,18 +108,8 @@ public class L {
 		}
 	}
 
-	public static void setMuted(boolean muted) {
-		L.muted = muted;
-	}
-
-	private static boolean muted;
-
 	public static boolean isLoggable(int level) {
-		if (muted) {
-			return (level == ASSERT);
-		} else {
-			return (isDebug() || level >= getLogLevel());
-		}
+		return (level >= getLogLevel());
 	}
 
 	public static final int VERBOSE = Log.VERBOSE;
@@ -192,15 +182,15 @@ public class L {
 				} else if (LogLevel.DISABLE.equals(logLevelStr)) {
 					_logLevel = DISABLE;
 				} else {
-					_logLevel = DISABLE;
+					_logLevel = VERBOSE;
 					Log.i(TAG,
 							"No valid <meta-data android:name=\""
 									+ ManifestMetaData.LOG_LEVEL
-									+ "\" android:value=\"...\"/> in AndroidManifest.xml. Logging disabled.");
+									+ "\" android:value=\"...\"/> in AndroidManifest.xml.");
 				}
 			}
 		}
-		return (_logLevel != 0) ? _logLevel : DISABLE;
+		return (_logLevel != 0) ? _logLevel : VERBOSE;
 	}
 
 	private static String getTag(boolean debug) {
