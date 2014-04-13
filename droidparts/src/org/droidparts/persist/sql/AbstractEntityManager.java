@@ -171,7 +171,7 @@ public abstract class AbstractEntityManager<EntityType extends Entity>
 
 	public abstract EntityType readRow(Cursor cursor);
 
-	public abstract void fillForeignKeys(EntityType item, String... fieldNames);
+	public abstract void fillForeignKeys(EntityType item, String... columnNames);
 
 	protected abstract SQLiteDatabase getDB();
 
