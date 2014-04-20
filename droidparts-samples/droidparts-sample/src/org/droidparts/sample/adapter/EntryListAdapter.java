@@ -32,7 +32,7 @@ import android.view.ViewGroup;
 public class EntryListAdapter extends EntityCursorAdapter<Entry> {
 
 	public EntryListAdapter(Context ctx, Select<Entry> select) {
-		super(Entry.class, ctx, new EntryManager(ctx), select);
+		super(ctx, new EntryManager(ctx), select);
 	}
 
 	@Override
