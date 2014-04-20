@@ -93,31 +93,7 @@ public class JSONSerializer<ModelType extends Model> {
 		return list;
 	}
 
-	@SuppressWarnings("unchecked")
-	protected <T> void putToJSONObject(JSONObject obj, String key,
-			Class<T> valType, Class<?> componentType, Object val)
-			throws Exception {
-		if (val == null) {
-			obj.put(key, NULL);
-		} else {
-			Converter<T> converter = ConverterRegistry.getConverter(valType);
-			converter.putToJSON(valType, componentType, obj, key, (T) val);
-		}
-	}
-
-	protected <T, V> Object readFromJSON(Class<T> valType,
-			Class<V> componentType, JSONObject obj, String key)
-			throws Exception {
-		Object jsonVal = obj.get(key);
-		if (NULL.equals(jsonVal)) {
-			return jsonVal;
-		} else {
-			Converter<T> converter = ConverterRegistry.getConverter(valType);
-			return converter.readFromJSON(valType, componentType, obj, key);
-		}
-	}
-
-	protected boolean hasNonNull(JSONObject obj, String key)
+	protected final boolean hasNonNull(JSONObject obj, String key)
 			throws JSONException {
 		return PersistUtils.hasNonNull(obj, key);
 	}
@@ -152,6 +128,18 @@ public class JSONSerializer<ModelType extends Model> {
 		}
 	}
 
+	@SuppressWarnings("unchecked")
+	private <T> void putToJSONObject(JSONObject obj, String key,
+			Class<T> valType, Class<?> componentType, Object val)
+			throws Exception {
+		if (val == null) {
+			obj.put(key, NULL);
+		} else {
+			Converter<T> converter = ConverterRegistry.getConverter(valType);
+			converter.putToJSON(valType, componentType, obj, key, (T) val);
+		}
+	}
+
 	private void readFromJSONAndSetFieldVal(ModelType model,
 			FieldSpec<KeyAnn> spec, JSONObject obj, String key)
 			throws JSONException {
@@ -183,6 +171,18 @@ public class JSONSerializer<ModelType extends Model> {
 			}
 		} else {
 			throwIfRequired(spec);
+		}
+	}
+
+	private <T, V> Object readFromJSON(Class<T> valType,
+			Class<V> componentType, JSONObject obj, String key)
+			throws Exception {
+		Object jsonVal = obj.get(key);
+		if (NULL.equals(jsonVal)) {
+			return jsonVal;
+		} else {
+			Converter<T> converter = ConverterRegistry.getConverter(valType);
+			return converter.readFromJSON(valType, componentType, obj, key);
 		}
 	}
 
