@@ -15,8 +15,8 @@
  */
 package org.droidparts.inner;
 
+import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.LinkedHashSet;
 
 import org.droidparts.inner.converter.ArrayCollectionConverter;
 import org.droidparts.inner.converter.BitmapConverter;
@@ -42,31 +42,35 @@ import org.droidparts.inner.converter.UriConverter;
 
 public class ConverterRegistry {
 
-	private static final LinkedHashSet<Converter<?>> converters = new LinkedHashSet<Converter<?>>();
+	private static final ArrayList<Converter<?>> converters = new ArrayList<Converter<?>>();
 
 	private static final HashMap<Class<?>, Converter<?>> map = new HashMap<Class<?>, Converter<?>>();
 
 	static {
-		converters.add(new BooleanConverter());
-		converters.add(new ByteConverter());
-		converters.add(new CharacterConverter());
-		converters.add(new DoubleConverter());
-		converters.add(new FloatConverter());
-		converters.add(new IntegerConverter());
-		converters.add(new LongConverter());
-		converters.add(new ShortConverter());
-		converters.add(new StringConverter());
-		converters.add(new EnumConverter());
-		converters.add(new DateConverter());
-		converters.add(new UUIDConverter());
-		converters.add(new UriConverter());
-		converters.add(new ByteArrayConverter());
-		converters.add(new JSONObjectConverter());
-		converters.add(new JSONArrayConverter());
-		converters.add(new BitmapConverter());
-		converters.add(new ModelConverter());
-		converters.add(new EntityConverter());
-		converters.add(new ArrayCollectionConverter());
+		registerConverter(new BooleanConverter());
+		registerConverter(new ByteConverter());
+		registerConverter(new CharacterConverter());
+		registerConverter(new DoubleConverter());
+		registerConverter(new FloatConverter());
+		registerConverter(new IntegerConverter());
+		registerConverter(new LongConverter());
+		registerConverter(new ShortConverter());
+		registerConverter(new StringConverter());
+		registerConverter(new EnumConverter());
+		registerConverter(new DateConverter());
+		registerConverter(new UUIDConverter());
+		registerConverter(new UriConverter());
+		registerConverter(new ByteArrayConverter());
+		registerConverter(new JSONObjectConverter());
+		registerConverter(new JSONArrayConverter());
+		registerConverter(new BitmapConverter());
+		registerConverter(new ModelConverter());
+		registerConverter(new EntityConverter());
+		registerConverter(new ArrayCollectionConverter());
+	}
+
+	public static void registerConverter(Converter<?> converter) {
+		converters.add(converter);
 	}
 
 	@SuppressWarnings("unchecked")
@@ -74,9 +78,9 @@ public class ConverterRegistry {
 			throws IllegalArgumentException {
 		Converter<?> converter = map.get(cls);
 		if (converter == null) {
-			for (Converter<?> h : converters) {
-				if (h.canHandle(cls)) {
-					converter = h;
+			for (Converter<?> conv : converters) {
+				if (conv.canHandle(cls)) {
+					converter = conv;
 					map.put(cls, converter);
 					break;
 				}
@@ -88,10 +92,6 @@ public class ConverterRegistry {
 			throw new IllegalArgumentException("No converter for '"
 					+ cls.getName() + "'.");
 		}
-	}
-
-	public static void registerConverter(Converter<?> converter) {
-		converters.add(converter);
 	}
 
 	private ConverterRegistry() {
