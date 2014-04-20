@@ -30,7 +30,7 @@ public class ArrayAdapter<T> extends android.widget.ArrayAdapter<T> implements
 		AlterableContent<Collection<T>> {
 
 	@InjectSystemService
-	protected LayoutInflater layoutInflater;
+	private LayoutInflater layoutInflater;
 
 	public ArrayAdapter(Context ctx) {
 		this(ctx, new ArrayList<T>());
@@ -58,6 +58,10 @@ public class ArrayAdapter<T> extends android.widget.ArrayAdapter<T> implements
 			add(item);
 		}
 		notifyDataSetChanged();
+	}
+
+	protected LayoutInflater getLayoutInflater() {
+		return layoutInflater;
 	}
 
 }
