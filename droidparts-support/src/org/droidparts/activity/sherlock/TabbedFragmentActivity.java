@@ -30,7 +30,7 @@ import com.actionbarsherlock.app.ActionBar.TabListener;
 
 public abstract class TabbedFragmentActivity extends FragmentActivity {
 
-	private static final String CURR_TAB = "_curr_tab";
+	private static final String CURR_TAB = "__curr_tab__";
 
 	private final ArrayList<Fragment[]> fragmentsOnTab = new ArrayList<Fragment[]>();
 

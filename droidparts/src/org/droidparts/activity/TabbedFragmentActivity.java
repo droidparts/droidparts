@@ -29,7 +29,7 @@ import android.os.Bundle;
 
 public abstract class TabbedFragmentActivity extends Activity {
 
-	private static final String CURR_TAB = "_curr_tab";
+	private static final String CURR_TAB = "__curr_tab__";
 
 	private final ArrayList<Fragment[]> fragmentsOnTab = new ArrayList<Fragment[]>();
 

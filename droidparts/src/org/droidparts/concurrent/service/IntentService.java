@@ -32,11 +32,11 @@ import android.os.ResultReceiver;
 public abstract class IntentService extends android.app.IntentService {
 
 	// in
-	private static final String EXTRA_RESULT_RECEIVER = "_result_receiver";
+	private static final String EXTRA_RESULT_RECEIVER = "__result_receiver__";
 
 	// out
-	public static final String EXTRA_ACTION = "_action";
-	public static final String EXTRA_EXCEPTION = "_exception";
+	public static final String EXTRA_ACTION = "__action__";
+	public static final String EXTRA_EXCEPTION = "__exception__";
 
 	public static final Intent getIntent(Context ctx,
 			Class<? extends IntentService> cls, String action) {

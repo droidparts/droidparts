@@ -38,11 +38,11 @@ import android.widget.TextView;
 
 public class JsonViewActivity extends Activity implements OnClickListener {
 
-	private static final String EXTRA_ARR_STR = "arr_str";
+	private static final String EXTRA_ENTRIES = "entries";
 
 	public static Intent getIntent(Context ctx, ArrayList<Entry> entries) {
 		Intent intent = new Intent(ctx, JsonViewActivity.class);
-		intent.putExtra(EXTRA_ARR_STR, entries);
+		intent.putExtra(EXTRA_ENTRIES, entries);
 		return intent;
 	}
 
@@ -54,7 +54,7 @@ public class JsonViewActivity extends Activity implements OnClickListener {
 	@InjectDependency
 	private AbstractDialogFactory dialogFactory;
 
-	@InjectBundleExtra(key = EXTRA_ARR_STR)
+	@InjectBundleExtra(key = EXTRA_ENTRIES)
 	private ArrayList<Entry> entries;
 
 	@Override
