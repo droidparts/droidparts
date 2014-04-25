@@ -1,5 +1,5 @@
 /**
- * Copyright 2013 Alex Yanchenko
+ * Copyright 2014 Alex Yanchenko
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,11 +32,11 @@ import android.os.ResultReceiver;
 public abstract class IntentService extends android.app.IntentService {
 
 	// in
-	private static final String EXTRA_RESULT_RECEIVER = "_result_receiver";
+	private static final String EXTRA_RESULT_RECEIVER = "__result_receiver__";
 
 	// out
-	public static final String EXTRA_ACTION = "_action";
-	public static final String EXTRA_EXCEPTION = "_exception";
+	public static final String EXTRA_ACTION = "__action__";
+	public static final String EXTRA_EXCEPTION = "__exception__";
 
 	public static final Intent getIntent(Context ctx,
 			Class<? extends IntentService> cls, String action) {

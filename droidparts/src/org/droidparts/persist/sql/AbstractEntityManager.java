@@ -1,5 +1,5 @@
 /**
- * Copyright 2013 Alex Yanchenko
+ * Copyright 2014 Alex Yanchenko
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -171,7 +171,7 @@ public abstract class AbstractEntityManager<EntityType extends Entity>
 
 	public abstract EntityType readRow(Cursor cursor);
 
-	public abstract void fillForeignKeys(EntityType item, String... fieldNames);
+	public abstract void fillForeignKeys(EntityType item, String... columnNames);
 
 	protected abstract SQLiteDatabase getDB();
 

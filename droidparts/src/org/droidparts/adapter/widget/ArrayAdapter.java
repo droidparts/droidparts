@@ -1,5 +1,5 @@
 /**
- * Copyright 2013 Alex Yanchenko
+ * Copyright 2014 Alex Yanchenko
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,7 +30,7 @@ public class ArrayAdapter<T> extends android.widget.ArrayAdapter<T> implements
 		AlterableContent<Collection<T>> {
 
 	@InjectSystemService
-	protected LayoutInflater layoutInflater;
+	private LayoutInflater layoutInflater;
 
 	public ArrayAdapter(Context ctx) {
 		this(ctx, new ArrayList<T>());
@@ -58,6 +58,10 @@ public class ArrayAdapter<T> extends android.widget.ArrayAdapter<T> implements
 			add(item);
 		}
 		notifyDataSetChanged();
+	}
+
+	protected LayoutInflater getLayoutInflater() {
+		return layoutInflater;
 	}
 
 }

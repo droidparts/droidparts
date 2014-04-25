@@ -1,3 +1,8 @@
+2.0.4 /2014-04-25/:
+    * EntityCursorAdapter: changed constructors.
+    * ArrayAdapter: LayoutInflater getter.
+    * ImageFetcher: reordered args in a method.
+
 2.0.3 /2014-04-09/:
     * L: removed setMuted(), verbose by default.
     * ClearableEditText: reverted to old icon.

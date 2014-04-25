@@ -1,5 +1,5 @@
 /**
- * Copyright 2013 Alex Yanchenko
+ * Copyright 2014 Alex Yanchenko
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,17 +29,16 @@ public abstract class EntityCursorAdapter<EntityType extends Entity> extends
 
 	protected final EntityManager<EntityType> entityManager;
 
-	public EntityCursorAdapter(Class<EntityType> entityCls, Context ctx) {
-		this(entityCls, ctx, null);
+	public EntityCursorAdapter(Context ctx, Class<EntityType> entityCls) {
+		this(ctx, entityCls, null);
 	}
 
-	public EntityCursorAdapter(Class<EntityType> entityCls, Context ctx,
+	public EntityCursorAdapter(Context ctx, Class<EntityType> entityCls,
 			AbstractSelect<EntityType> select) {
-		this(entityCls, ctx, new EntityManager<EntityType>(entityCls, ctx),
-				select);
+		this(ctx, new EntityManager<EntityType>(entityCls, ctx), select);
 	}
 
-	public EntityCursorAdapter(Class<EntityType> entityCls, Context ctx,
+	public EntityCursorAdapter(Context ctx,
 			EntityManager<EntityType> entityManager,
 			AbstractSelect<EntityType> select) {
 		super(ctx, (select != null) ? select.execute() : null);

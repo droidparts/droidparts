@@ -1,5 +1,5 @@
 /**
- * Copyright 2013 Alex Yanchenko
+ * Copyright 2014 Alex Yanchenko
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,7 +29,7 @@ import android.support.v7.app.ActionBar.TabListener;
 
 public abstract class TabbedActionBarActivity extends ActionBarActivity {
 
-	private static final String CURR_TAB = "_curr_tab";
+	private static final String CURR_TAB = "__curr_tab__";
 
 	private final ArrayList<Fragment[]> fragmentsOnTab = new ArrayList<Fragment[]>();
 

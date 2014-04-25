@@ -1,5 +1,5 @@
 /**
- * Copyright 2013 Alex Yanchenko
+ * Copyright 2014 Alex Yanchenko
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -97,8 +97,8 @@ public class ImageFetcher {
 			for (ImageViewSpec spec : pending) {
 				ImageView imgView = spec.imgViewRef.get();
 				if (imgView != null) {
-					attachImage(spec.imgUrl, imgView, spec.crossFadeMillis,
-							spec.reshaper, spec.listener,
+					attachImage(spec.imgUrl, imgView, spec.reshaper,
+							spec.crossFadeMillis, spec.listener,
 							spec.inBitmapRef.get());
 				}
 			}
@@ -125,12 +125,12 @@ public class ImageFetcher {
 	public void attachImage(String imgUrl, ImageView imageView,
 			ImageReshaper reshaper, int crossFadeMillis,
 			ImageFetchListener listener) {
-		attachImage(imgUrl, imageView, crossFadeMillis, reshaper, listener,
+		attachImage(imgUrl, imageView, reshaper, crossFadeMillis, listener,
 				null);
 	}
 
 	public void attachImage(String imgUrl, ImageView imageView,
-			int crossFadeMillis, ImageReshaper reshaper,
+			ImageReshaper reshaper, int crossFadeMillis,
 			ImageFetchListener listener, Bitmap inBitmap) {
 		ImageViewSpec spec = new ImageViewSpec(imageView, imgUrl, inBitmap,
 				crossFadeMillis, reshaper, listener);

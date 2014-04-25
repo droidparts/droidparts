@@ -1,5 +1,5 @@
 /**
- * Copyright 2013 Alex Yanchenko
+ * Copyright 2014 Alex Yanchenko
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,7 +32,7 @@ import android.os.Looper;
 
 public class EventBus {
 
-	private static final String ALL = "_all_";
+	private static final String ALL = "__all__";
 
 	private static final ConcurrentHashMap<String, ConcurrentHashMap<EventReceiver<Object>, Boolean>> eventNameToReceivers = new ConcurrentHashMap<String, ConcurrentHashMap<EventReceiver<Object>, Boolean>>();
 	private static final ConcurrentHashMap<String, Object> stickyEvents = new ConcurrentHashMap<String, Object>();
