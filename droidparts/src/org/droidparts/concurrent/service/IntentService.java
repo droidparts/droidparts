@@ -15,14 +15,12 @@
  */
 package org.droidparts.concurrent.service;
 
-import static android.app.Activity.RESULT_CANCELED;
-import static android.app.Activity.RESULT_OK;
-
 import java.lang.reflect.Field;
 
 import org.droidparts.Injector;
 import org.droidparts.util.L;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -35,6 +33,9 @@ public abstract class IntentService extends android.app.IntentService {
 	private static final String EXTRA_RESULT_RECEIVER = "__result_receiver__";
 
 	// out
+	public static final int RESULT_SUCCESS = Activity.RESULT_OK;
+	public static final int RESULT_FAILURE = Activity.RESULT_CANCELED;
+	//
 	public static final String EXTRA_ACTION = "__action__";
 	public static final String EXTRA_EXCEPTION = "__exception__";
 
@@ -76,13 +77,13 @@ public abstract class IntentService extends android.app.IntentService {
 		try {
 			data = onExecute(action, data);
 			if (resultReceiver != null) {
-				resultReceiver.send(RESULT_OK, data);
+				resultReceiver.send(RESULT_SUCCESS, data);
 			}
 		} catch (Exception e) {
 			L.d(e);
 			if (resultReceiver != null) {
 				data.putSerializable(EXTRA_EXCEPTION, e);
-				resultReceiver.send(RESULT_CANCELED, data);
+				resultReceiver.send(RESULT_FAILURE, data);
 			}
 		}
 	}

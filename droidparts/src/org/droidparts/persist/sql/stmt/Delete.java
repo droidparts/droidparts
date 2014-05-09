@@ -41,7 +41,7 @@ public class Delete<EntityType extends Entity> extends Statement<EntityType> {
 	}
 
 	@Override
-	protected Delete<EntityType> where(Where where) {
+	public Delete<EntityType> where(Where where) {
 		return (Delete<EntityType>) super.where(where);
 	}
 
