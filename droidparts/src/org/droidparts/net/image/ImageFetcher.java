@@ -70,9 +70,14 @@ public class ImageFetcher {
 	private volatile boolean paused;
 
 	public ImageFetcher(Context ctx) {
+		this(ctx, BitmapMemoryCache.getDefaultInstance(ctx), BitmapDiskCache
+				.getDefaultInstance(ctx));
+	}
+
+	public ImageFetcher(Context ctx, BitmapMemoryCache memoryCache,
+			BitmapDiskCache diskCache) {
 		this(ctx, new BackgroundThreadExecutor(2, "ImageFetcher-Fetch"),
-				new RESTClient(ctx), BitmapMemoryCache.getDefaultInstance(ctx),
-				BitmapDiskCache.getDefaultInstance(ctx));
+				new RESTClient(ctx), memoryCache, diskCache);
 	}
 
 	protected ImageFetcher(Context ctx, ThreadPoolExecutor fetchExecutor,
