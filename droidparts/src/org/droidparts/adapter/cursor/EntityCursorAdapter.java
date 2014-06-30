@@ -72,9 +72,17 @@ public abstract class EntityCursorAdapter<EntityType extends Entity> extends
 		boolean success = entityManager.update(item);
 		return requeryOnSuccess(success);
 	}
+	
+	public boolean delete(EntityType item) {
+		return deleteById(item.id);
+	}
 
 	public boolean delete(int position) {
 		long id = getItemId(position);
+		return deleteById(long id);
+	}
+	
+	private boolean deleteById(long id) {
 		boolean success = entityManager.delete(id);
 		return requeryOnSuccess(success);
 	}
