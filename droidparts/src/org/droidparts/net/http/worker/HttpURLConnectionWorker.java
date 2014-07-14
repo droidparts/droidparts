@@ -31,7 +31,6 @@ import static org.droidparts.util.IOUtils.silentlyClose;
 import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.IOException;
 import java.io.OutputStream;
 import java.net.CookieHandler;
 import java.net.HttpURLConnection;
@@ -42,11 +41,8 @@ import org.droidparts.contract.HTTP.Method;
 import org.droidparts.net.http.CookieJar;
 import org.droidparts.net.http.HTTPException;
 import org.droidparts.net.http.HTTPResponse;
-import org.droidparts.net.http.worker.wrapper.HttpResponseCacheWrapper;
-import org.droidparts.util.L;
 
 import android.content.Context;
-import android.os.Build;
 
 public class HttpURLConnectionWorker extends HTTPWorker {
 
@@ -60,17 +56,6 @@ public class HttpURLConnectionWorker extends HTTPWorker {
 
 	public HttpURLConnectionWorker(Context ctx, String userAgent) {
 		this.userAgent = userAgent;
-		enableCache(ctx);
-	}
-
-	protected void enableCache(Context ctx) {
-		if (Build.VERSION.SDK_INT >= 14) {
-			try {
-				HttpResponseCacheWrapper.install(ctx);
-			} catch (IOException e) {
-				L.w(e);
-			}
-		}
 	}
 
 	@Override

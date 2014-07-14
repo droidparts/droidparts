@@ -40,11 +40,6 @@ public class OkHttpWorker extends HttpURLConnectionWorker {
 	}
 
 	@Override
-	protected void enableCache(Context ctx) {
-		// pass
-	}
-
-	@Override
 	public void setProxy(Proxy proxy) {
 		okHttp.setProxy(proxy);
 	}
