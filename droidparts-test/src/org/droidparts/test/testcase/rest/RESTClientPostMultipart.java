@@ -28,7 +28,6 @@ import org.droidparts.net.http.RESTClient2;
 import org.droidparts.net.http.UserAgent;
 import org.droidparts.net.http.worker.HTTPWorker;
 import org.droidparts.net.http.worker.HttpClientWorker;
-import org.droidparts.net.http.worker.OkHttpWorker;
 
 import android.test.AndroidTestCase;
 
@@ -43,11 +42,6 @@ public class RESTClientPostMultipart extends AndroidTestCase {
 
 	public void testPostMultipart() throws Exception {
 		testPostMultipart(null);
-	}
-
-	public void testPostMultipartOkHttp() throws Exception {
-		HTTPWorker worker = new OkHttpWorker(getContext());
-		testPostMultipart(worker);
 	}
 
 	public void testPostMultipartLegacy() throws Exception {

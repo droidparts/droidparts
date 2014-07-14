@@ -28,10 +28,6 @@
 			<artifactId>httpmime</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>com.squareup.okhttp</groupId>
-			<artifactId>okhttp</artifactId>
-		</dependency>
-		<dependency>
 			<groupId>org.droidparts</groupId>
 			<artifactId>droidparts</artifactId>
 			<version>${project.version}</version>

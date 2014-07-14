@@ -25,7 +25,6 @@ import org.droidparts.gram.model.Image;
 import org.droidparts.gram.persist.ImageEntityManager;
 import org.droidparts.gram.persist.ImageSerializer;
 import org.droidparts.net.http.RESTClient2;
-import org.droidparts.net.http.worker.OkHttpWorker;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -64,7 +63,7 @@ public class ImageIntentService extends IntentService {
 	@Override
 	public void onCreate() {
 		super.onCreate();
-		restClient = new RESTClient2(this, new OkHttpWorker(this));
+		restClient = new RESTClient2(this);
 		imageSerializer = new ImageSerializer(this);
 	}
 

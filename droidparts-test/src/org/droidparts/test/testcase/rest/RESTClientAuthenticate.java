@@ -21,7 +21,6 @@ import org.droidparts.net.http.RESTClient;
 import org.droidparts.net.http.UserAgent;
 import org.droidparts.net.http.worker.HTTPWorker;
 import org.droidparts.net.http.worker.HttpClientWorker;
-import org.droidparts.net.http.worker.OkHttpWorker;
 
 import android.test.AndroidTestCase;
 
@@ -32,11 +31,6 @@ public class RESTClientAuthenticate extends AndroidTestCase {
 
 	public void testHttpBasicAuth() throws Exception {
 		testHttpBasicAuth(null);
-	}
-
-	public void testHttpBasicAuthOkHttp() throws Exception {
-		HTTPWorker worker = new OkHttpWorker(getContext());
-		testHttpBasicAuth(worker);
 	}
 
 	public void testHttpBasicAuthLegacy() throws Exception {

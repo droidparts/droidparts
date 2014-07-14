@@ -78,11 +78,6 @@
 				<version>4.1</version>
 			</dependency>
 			<dependency>
-				<groupId>com.squareup.okhttp</groupId>
-				<artifactId>okhttp</artifactId>
-				<version>1.5.3</version>
-			</dependency>
-			<dependency>
 				<groupId>com.actionbarsherlock</groupId>
 				<artifactId>actionbarsherlock</artifactId>
 				<version>4.4.0</version>
