@@ -1,3 +1,8 @@
+2.0.6 /2014-07-14/:
+    * HttpResponseCache: don't install by default.
+    * ImageFetcher: added an extra constructor.
+    * EntityCursorAdapter: createOrUpdate(...) /kudos to @aleksanb/.
+
 2.0.5 /2014-05-09/:
     * Delete object: made a method public.
     * IntentService: added RESULT_SUCCESS & RESULT_FAILURE codes.
