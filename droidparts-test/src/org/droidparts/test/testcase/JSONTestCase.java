@@ -20,12 +20,12 @@ import static org.droidparts.util.Strings.join;
 import java.util.ArrayList;
 
 import org.droidparts.annotation.json.Key;
-import org.droidparts.persist.json.JSONSerializer;
+import org.droidparts.persist.serializer.JSONSerializer;
 import org.droidparts.test.R;
 import org.droidparts.test.model.Album;
 import org.droidparts.test.model.Nested;
 import org.droidparts.test.model.Primitives;
-import org.droidparts.test.persist.json.AlbumSerializer;
+import org.droidparts.test.persist.serializer.AlbumSerializer;
 import org.droidparts.util.ResourceUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;

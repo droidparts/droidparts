@@ -15,7 +15,7 @@
  */
 package org.droidparts.sample.json;
 
-import org.droidparts.persist.json.JSONSerializer;
+import org.droidparts.persist.serializer.JSONSerializer;
 import org.droidparts.sample.model.Entry;
 
 import android.content.Context;

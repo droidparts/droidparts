@@ -15,7 +15,7 @@
  */
 package org.droidparts.model;
 
-import static org.droidparts.inner.ClassSpecRegistry.getJsonKeySpecs;
+import static org.droidparts.inner.ClassSpecRegistry.getKeySpecs;
 import static org.droidparts.inner.ClassSpecRegistry.getTableColumnSpecs;
 import static org.droidparts.inner.ReflectionUtils.getFieldVal;
 import static org.droidparts.util.Strings.join;
@@ -57,7 +57,7 @@ public abstract class Model implements Serializable {
 	@Override
 	public String toString() {
 		LinkedHashSet<Field> fields = new LinkedHashSet<Field>();
-		for (FieldSpec<KeyAnn> spec : getJsonKeySpecs(getClass())) {
+		for (FieldSpec<KeyAnn> spec : getKeySpecs(getClass())) {
 			fields.add(spec.field);
 		}
 		if (this instanceof Entity) {

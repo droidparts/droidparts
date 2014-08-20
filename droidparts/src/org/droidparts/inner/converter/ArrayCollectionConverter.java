@@ -28,7 +28,7 @@ import java.util.List;
 import org.droidparts.inner.ConverterRegistry;
 import org.droidparts.inner.TypeHelper;
 import org.droidparts.model.Model;
-import org.droidparts.persist.json.JSONSerializer;
+import org.droidparts.persist.serializer.JSONSerializer;
 import org.droidparts.util.Arrays2;
 import org.droidparts.util.Strings;
 import org.json.JSONArray;

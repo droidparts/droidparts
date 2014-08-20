@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License. 
  */
-package org.droidparts.persist.json;
+package org.droidparts.persist.serializer;
 
 import static org.droidparts.inner.ReflectionUtils.getFieldVal;
 import static org.droidparts.inner.ReflectionUtils.newInstance;
@@ -60,7 +60,7 @@ public class JSONSerializer<ModelType extends Model> {
 
 	public JSONObject serialize(ModelType item) throws JSONException {
 		JSONObject obj = new JSONObject();
-		FieldSpec<KeyAnn>[] keySpecs = ClassSpecRegistry.getJsonKeySpecs(cls);
+		FieldSpec<KeyAnn>[] keySpecs = ClassSpecRegistry.getKeySpecs(cls);
 		for (FieldSpec<KeyAnn> spec : keySpecs) {
 			readFromModelAndPutToJSON(item, spec, obj, spec.ann.name);
 		}
@@ -69,7 +69,7 @@ public class JSONSerializer<ModelType extends Model> {
 
 	public ModelType deserialize(JSONObject obj) throws JSONException {
 		ModelType model = newInstance(cls);
-		FieldSpec<KeyAnn>[] keySpecs = ClassSpecRegistry.getJsonKeySpecs(cls);
+		FieldSpec<KeyAnn>[] keySpecs = ClassSpecRegistry.getKeySpecs(cls);
 		for (FieldSpec<KeyAnn> spec : keySpecs) {
 			readFromJSONAndSetFieldVal(model, spec, obj, spec.ann.name);
 		}

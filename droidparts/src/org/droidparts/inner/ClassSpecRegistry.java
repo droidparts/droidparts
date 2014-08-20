@@ -140,7 +140,7 @@ public final class ClassSpecRegistry {
 
 	// JSON
 	@SuppressWarnings("unchecked")
-	public static FieldSpec<KeyAnn>[] getJsonKeySpecs(Class<? extends Model> cls) {
+	public static FieldSpec<KeyAnn>[] getKeySpecs(Class<? extends Model> cls) {
 		FieldSpec<KeyAnn>[] specs = KEY_SPECS.get(cls);
 		if (specs == null) {
 			ArrayList<FieldSpec<KeyAnn>> list = new ArrayList<FieldSpec<KeyAnn>>();

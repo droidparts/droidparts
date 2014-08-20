@@ -13,9 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License. 
  */
-package org.droidparts.test.persist.json;
+package org.droidparts.test.persist.serializer;
 
-import org.droidparts.persist.json.JSONSerializer;
+import org.droidparts.persist.serializer.JSONSerializer;
 import org.droidparts.test.model.Album;
 
 import android.content.Context;
