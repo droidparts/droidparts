@@ -24,6 +24,8 @@ import org.droidparts.util.L;
 public abstract class Ann<T extends Annotation> {
 
 	protected static final String NAME = "name";
+	protected static final String TAG = "tag";
+	protected static final String ATTRIBUTE = "attribute";
 	protected static final String VALUE = "value";
 	protected static final String ID = "id";
 	protected static final String CLICK = "click";

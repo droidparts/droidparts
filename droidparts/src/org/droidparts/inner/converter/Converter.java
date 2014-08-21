@@ -16,8 +16,9 @@
 package org.droidparts.inner.converter;
 
 import org.droidparts.contract.SQL;
-import org.json.JSONException;
+import org.droidparts.inner.PersistUtils;
 import org.json.JSONObject;
+import org.w3c.dom.Node;
 
 import android.content.ContentValues;
 import android.database.Cursor;
@@ -32,13 +33,19 @@ public abstract class Converter<T> implements SQL.DDL {
 			Class<V> componentType, String str);
 
 	public <V> void putToJSON(Class<T> valType, Class<V> componentType,
-			JSONObject obj, String key, T val) throws JSONException {
+			JSONObject obj, String key, T val) throws Exception {
 		obj.put(key, val);
 	}
 
 	public abstract <V> T readFromJSON(Class<T> valType,
 			Class<V> componentType, JSONObject obj, String key)
-			throws JSONException;
+			throws Exception;
+
+	public <V> T readFromXML(Class<T> valType, Class<V> componentType,
+			Node node, String nodeListItemTagHint) throws Exception {
+		return parseFromString(valType, componentType,
+				PersistUtils.getNodeText(node));
+	}
 
 	public abstract <V> void putToContentValues(Class<T> valueType,
 			Class<V> componentType, ContentValues cv, String key, T val);

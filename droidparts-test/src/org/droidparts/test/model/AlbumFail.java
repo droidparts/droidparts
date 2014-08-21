@@ -13,17 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License. 
  */
-package org.droidparts.test.persist.serializer;
+package org.droidparts.test.model;
 
-import org.droidparts.persist.serializer.JSONSerializer;
-import org.droidparts.test.model.Album;
+import org.droidparts.annotation.serialize.JSON;
+import org.droidparts.annotation.serialize.XML;
+import org.droidparts.model.Entity;
 
-import android.content.Context;
+public class AlbumFail extends Entity {
+	private static final long serialVersionUID = 1L;
 
-public class AlbumSerializer extends JSONSerializer<Album> {
-
-	public AlbumSerializer(Context ctx) {
-		super(Album.class, ctx);
-	}
+	@XML(tag = "wtf")
+	@JSON(key = "wtf")
+	public int year;
 
 }

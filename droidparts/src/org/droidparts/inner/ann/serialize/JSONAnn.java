@@ -13,24 +13,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License. 
  */
-package org.droidparts.inner.ann.json;
+package org.droidparts.inner.ann.serialize;
 
-import org.droidparts.annotation.json.Key;
+import org.droidparts.annotation.serialize.JSON;
 import org.droidparts.inner.ann.Ann;
 
-public final class KeyAnn extends Ann<Key> {
+public final class JSONAnn extends Ann<JSON> {
 
-	public String name;
+	public String key;
 	public final boolean optional;
 
-	public KeyAnn(Key annotation) {
+	public JSONAnn(JSON annotation) {
 		super(annotation);
 		if (hackSuccess()) {
-			name = (String) getElement(NAME);
+			key = (String) getElement(KEY);
 			optional = (Boolean) getElement(OPTIONAL);
 			cleanup();
 		} else {
-			name = annotation.name();
+			key = annotation.key();
 			optional = annotation.optional();
 		}
 	}

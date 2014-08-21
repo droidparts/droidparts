@@ -58,8 +58,7 @@ public class ValueReader {
 					&& LegacyReader.isSupportObject(target)) {
 				val = LegacyReader.getFragment(target, ann2.id, fieldName);
 			} else {
-				val = FragmentsReader.getFragment(target, ann2.id,
-						fieldName);
+				val = FragmentsReader.getFragment(target, ann2.id, fieldName);
 			}
 		} else if (annType == InjectParentActivityAnn.class) {
 			if (LegacyReader.isSupportAvaliable()

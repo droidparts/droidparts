@@ -23,13 +23,11 @@ import static org.json.JSONObject.NULL;
 import java.util.ArrayList;
 import java.util.Collection;
 
-import org.droidparts.Injector;
-import org.droidparts.annotation.json.Key;
 import org.droidparts.inner.ClassSpecRegistry;
 import org.droidparts.inner.ConverterRegistry;
 import org.droidparts.inner.PersistUtils;
 import org.droidparts.inner.ann.FieldSpec;
-import org.droidparts.inner.ann.json.KeyAnn;
+import org.droidparts.inner.ann.serialize.JSONAnn;
 import org.droidparts.inner.converter.Converter;
 import org.droidparts.model.Model;
 import org.droidparts.util.L;
@@ -38,46 +36,36 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.content.Context;
-import android.util.Log;
 import android.util.Pair;
 
-public class JSONSerializer<ModelType extends Model> {
-
-	private final Class<ModelType> cls;
-	private Context ctx;
+public class JSONSerializer<ModelType extends Model> extends
+		AbstractSerializer<ModelType, JSONObject, JSONArray> {
 
 	public JSONSerializer(Class<ModelType> cls, Context ctx) {
-		this.cls = cls;
-		if (ctx != null) {
-			this.ctx = ctx.getApplicationContext();
-			Injector.inject(ctx, this);
-		}
+		super(cls, ctx);
 	}
 
-	protected Context getContext() {
-		return ctx;
-	}
-
-	public JSONObject serialize(ModelType item) throws JSONException {
+	public JSONObject serialize(ModelType item) throws Exception {
 		JSONObject obj = new JSONObject();
-		FieldSpec<KeyAnn>[] keySpecs = ClassSpecRegistry.getKeySpecs(cls);
-		for (FieldSpec<KeyAnn> spec : keySpecs) {
-			readFromModelAndPutToJSON(item, spec, obj, spec.ann.name);
+		FieldSpec<JSONAnn>[] jsonSpecs = ClassSpecRegistry.getJSONSpecs(cls);
+		for (FieldSpec<JSONAnn> spec : jsonSpecs) {
+			readFromModelAndPutToJSON(item, spec, obj, spec.ann.key);
 		}
 		return obj;
 	}
 
-	public ModelType deserialize(JSONObject obj) throws JSONException {
+	@Override
+	public ModelType deserialize(JSONObject obj) throws Exception {
 		ModelType model = newInstance(cls);
-		FieldSpec<KeyAnn>[] keySpecs = ClassSpecRegistry.getKeySpecs(cls);
-		for (FieldSpec<KeyAnn> spec : keySpecs) {
-			readFromJSONAndSetFieldVal(model, spec, obj, spec.ann.name);
+		FieldSpec<JSONAnn>[] jsonSpecs = ClassSpecRegistry.getJSONSpecs(cls);
+		for (FieldSpec<JSONAnn> spec : jsonSpecs) {
+			readFromJSONAndSetFieldVal(model, spec, obj, spec.ann.key);
 		}
 		return model;
 	}
 
-	public JSONArray serialize(Collection<ModelType> items)
-			throws JSONException {
+	public JSONArray serializeAll(Collection<ModelType> items)
+			throws Exception {
 		JSONArray arr = new JSONArray();
 		for (ModelType item : items) {
 			arr.put(serialize(item));
@@ -85,7 +73,8 @@ public class JSONSerializer<ModelType extends Model> {
 		return arr;
 	}
 
-	public ArrayList<ModelType> deserialize(JSONArray arr) throws JSONException {
+	@Override
+	public ArrayList<ModelType> deserializeAll(JSONArray arr) throws Exception {
 		ArrayList<ModelType> list = new ArrayList<ModelType>();
 		for (int i = 0; i < arr.length(); i++) {
 			list.add(deserialize(arr.getJSONObject(i)));
@@ -93,14 +82,18 @@ public class JSONSerializer<ModelType extends Model> {
 		return list;
 	}
 
+	//
+
 	protected final boolean hasNonNull(JSONObject obj, String key)
 			throws JSONException {
 		return PersistUtils.hasNonNull(obj, key);
 	}
 
+	//
+
 	private void readFromModelAndPutToJSON(ModelType item,
-			FieldSpec<KeyAnn> spec, JSONObject obj, String key)
-			throws JSONException {
+			FieldSpec<JSONAnn> spec, JSONObject obj, String key)
+			throws Exception {
 		Pair<String, String> keyParts = getNestedKeyParts(key);
 		if (keyParts != null) {
 			String subKey = keyParts.first;
@@ -115,34 +108,22 @@ public class JSONSerializer<ModelType extends Model> {
 		} else {
 			Object columnVal = getFieldVal(item, spec.field);
 			try {
-				putToJSONObject(obj, key, spec.field.getType(),
-						spec.componentType, columnVal);
+				putToJSON(obj, key, spec.field.getType(), spec.componentType,
+						columnVal);
 			} catch (Exception e) {
 				if (spec.ann.optional) {
 					L.w("Failded to serialize %s.%s: %s.", cls.getSimpleName(),
 							spec.field.getName(), e.getMessage());
 				} else {
-					throw new JSONException(Log.getStackTraceString(e));
+					throw e;
 				}
 			}
 		}
 	}
 
-	@SuppressWarnings("unchecked")
-	private <T> void putToJSONObject(JSONObject obj, String key,
-			Class<T> valType, Class<?> componentType, Object val)
-			throws Exception {
-		if (val == null) {
-			obj.put(key, NULL);
-		} else {
-			Converter<T> converter = ConverterRegistry.getConverter(valType);
-			converter.putToJSON(valType, componentType, obj, key, (T) val);
-		}
-	}
-
 	private void readFromJSONAndSetFieldVal(ModelType model,
-			FieldSpec<KeyAnn> spec, JSONObject obj, String key)
-			throws JSONException {
+			FieldSpec<JSONAnn> spec, JSONObject obj, String key)
+			throws Exception {
 		Pair<String, String> keyParts = getNestedKeyParts(key);
 		if (keyParts != null) {
 			String subKey = keyParts.first;
@@ -150,7 +131,7 @@ public class JSONSerializer<ModelType extends Model> {
 				JSONObject subObj = obj.getJSONObject(subKey);
 				readFromJSONAndSetFieldVal(model, spec, subObj, keyParts.second);
 			} else {
-				throwIfRequired(spec);
+				throwIfNotOptional(spec);
 			}
 		} else if (obj.has(key)) {
 			try {
@@ -159,22 +140,22 @@ public class JSONSerializer<ModelType extends Model> {
 				if (!NULL.equals(val)) {
 					setFieldVal(model, spec.field, val);
 				} else {
-					L.i("Received NULL '%s', skipping.", spec.ann.name);
+					L.i("Received NULL '%s', skipping.", spec.ann.key);
 				}
 			} catch (Exception e) {
 				if (spec.ann.optional) {
-					L.w("Failed to deserialize '%s': %s.", spec.ann.name,
+					L.w("Failed to deserialize '%s': %s.", spec.ann.key,
 							e.getMessage());
 				} else {
-					throw new JSONException(Log.getStackTraceString(e));
+					throw e;
 				}
 			}
 		} else {
-			throwIfRequired(spec);
+			throwIfNotOptional(spec);
 		}
 	}
 
-	private <T, V> Object readFromJSON(Class<T> valType,
+	protected <T, V> Object readFromJSON(Class<T> valType,
 			Class<V> componentType, JSONObject obj, String key)
 			throws Exception {
 		Object jsonVal = obj.get(key);
@@ -186,22 +167,22 @@ public class JSONSerializer<ModelType extends Model> {
 		}
 	}
 
-	private Pair<String, String> getNestedKeyParts(String key) {
-		int firstSep = key.indexOf(Key.SUB);
-		if (firstSep != -1) {
-			String subKey = key.substring(0, firstSep);
-			String leftKey = key.substring(firstSep + Key.SUB.length());
-			Pair<String, String> pair = Pair.create(subKey, leftKey);
-			return pair;
+	@SuppressWarnings("unchecked")
+	protected <T> void putToJSON(JSONObject obj, String key, Class<T> valType,
+			Class<?> componentType, Object val) throws Exception {
+		if (val == null) {
+			obj.put(key, NULL);
 		} else {
-			return null;
+			Converter<T> converter = ConverterRegistry.getConverter(valType);
+			converter.putToJSON(valType, componentType, obj, key, (T) val);
 		}
 	}
 
-	private void throwIfRequired(FieldSpec<KeyAnn> spec) throws JSONException {
+	private static void throwIfNotOptional(FieldSpec<JSONAnn> spec)
+			throws IllegalArgumentException {
 		if (!spec.ann.optional) {
-			throw new JSONException("Required key '" + spec.ann.name
-					+ "' not present.");
+			throw new IllegalArgumentException(String.format(
+					"Required key '%s' not present.", spec.ann.key));
 		}
 	}
 

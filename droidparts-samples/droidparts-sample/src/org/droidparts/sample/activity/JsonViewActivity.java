@@ -27,7 +27,6 @@ import org.droidparts.sample.model.Entry;
 import org.droidparts.util.L;
 import org.droidparts.util.ui.AbstractDialogFactory;
 import org.json.JSONArray;
-import org.json.JSONException;
 
 import android.content.Context;
 import android.content.Intent;
@@ -81,9 +80,9 @@ public class JsonViewActivity extends Activity implements OnClickListener {
 	private void init() {
 		String msg;
 		try {
-			JSONArray arr = entrySerializer.serialize(entries);
+			JSONArray arr = entrySerializer.serializeAll(entries);
 			msg = arr.toString();
-		} catch (JSONException e) {
+		} catch (Exception e) {
 			L.e(e);
 			msg = "o_O";
 		}

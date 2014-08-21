@@ -13,25 +13,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License. 
  */
-package org.droidparts.sample.model;
+package org.droidparts.annotation.serialize;
 
-import java.util.Date;
+import static java.lang.annotation.ElementType.FIELD;
+import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
-import org.droidparts.annotation.serialize.JSON;
-import org.droidparts.annotation.sql.Column;
-import org.droidparts.annotation.sql.Table;
-import org.droidparts.model.Entity;
+import java.lang.annotation.Retention;
+import java.lang.annotation.Target;
 
-@Table(name = "entries")
-public class Entry extends Entity {
-	private static final long serialVersionUID = 1L;
+import org.droidparts.persist.serializer.AbstractSerializer;
 
-	@JSON(key = "date_created")
-	@Column
-	public Date created;
+@Retention(RUNTIME)
+@Target(FIELD)
+public @interface XML {
 
-	@JSON
-	@Column
-	public String name;
+	String SUB = AbstractSerializer.SUB;
+
+	String tag() default "";
+
+	String attribute() default "";
+
+	boolean optional() default false;
 
 }

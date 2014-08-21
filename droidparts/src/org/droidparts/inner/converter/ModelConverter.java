@@ -18,8 +18,9 @@ package org.droidparts.inner.converter;
 import org.droidparts.inner.TypeHelper;
 import org.droidparts.model.Model;
 import org.droidparts.persist.serializer.JSONSerializer;
-import org.json.JSONException;
+import org.droidparts.persist.serializer.XMLSerializer;
 import org.json.JSONObject;
+import org.w3c.dom.Node;
 
 import android.content.ContentValues;
 import android.database.Cursor;
@@ -50,7 +51,7 @@ public class ModelConverter extends Converter<Model> {
 
 	@Override
 	public <V> void putToJSON(Class<Model> valType, Class<V> componentType,
-			JSONObject obj, String key, Model val) throws JSONException {
+			JSONObject obj, String key, Model val) throws Exception {
 		@SuppressWarnings("unchecked")
 		Class<Model> cls = (Class<Model>) val.getClass();
 		JSONObject valStr = new JSONSerializer<Model>(cls, null).serialize(val);
@@ -59,9 +60,15 @@ public class ModelConverter extends Converter<Model> {
 
 	@Override
 	public <V> Model readFromJSON(Class<Model> valType, Class<V> componentType,
-			JSONObject obj, String key) throws JSONException {
+			JSONObject obj, String key) throws Exception {
 		return new JSONSerializer<Model>(valType, null).deserialize(obj
 				.getJSONObject(key));
+	}
+
+	@Override
+	public <V> Model readFromXML(Class<Model> valType, Class<V> componentType,
+			Node node, String nodeListItemTagHint) throws Exception {
+		return new XMLSerializer<Model>(valType, null).deserialize(node);
 	}
 
 	@Override
@@ -70,7 +77,7 @@ public class ModelConverter extends Converter<Model> {
 		try {
 			return new JSONSerializer<Model>(valType, null)
 					.deserialize(new JSONObject(str));
-		} catch (JSONException e) {
+		} catch (Exception e) {
 			throw new IllegalArgumentException(e);
 		}
 	}

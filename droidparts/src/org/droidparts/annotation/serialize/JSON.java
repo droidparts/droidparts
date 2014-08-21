@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License. 
  */
-package org.droidparts.annotation.json;
+package org.droidparts.annotation.serialize;
 
 import static java.lang.annotation.ElementType.FIELD;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
@@ -21,14 +21,15 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
+import org.droidparts.persist.serializer.AbstractSerializer;
+
 @Retention(RUNTIME)
 @Target(FIELD)
-public @interface Key {
+public @interface JSON {
 
-	// ASCII GS (group separator), '->' for readability
-	String SUB = "->" + (char) 29;
+	String SUB = AbstractSerializer.SUB;
 
-	String name() default "";
+	String key() default "";
 
 	boolean optional() default false;
 

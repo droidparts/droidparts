@@ -15,7 +15,7 @@
  */
 package org.droidparts.gram.model;
 
-import org.droidparts.annotation.json.Key;
+import org.droidparts.annotation.serialize.JSON;
 import org.droidparts.annotation.sql.Column;
 import org.droidparts.annotation.sql.Table;
 import org.droidparts.gram.contract.DB;
@@ -25,26 +25,26 @@ import org.droidparts.model.Entity;
 public class Image extends Entity {
 	private static final long serialVersionUID = 1L;
 
-	@Key(name = "id")
+	@JSON(key = "id")
 	@Column(name = DB.Column.REMOTE_ID)
 	public String remoteId;
 
-	@Key(name = "caption" + Key.SUB + "text", optional = true)
+	@JSON(key = "caption" + JSON.SUB + "text", optional = true)
 	@Column(name = DB.Column.CAPTION)
 	public String captionText = "";
 
-	@Key(name = "images" + Key.SUB + "thumbnail" + Key.SUB + "width")
+	@JSON(key = "images" + JSON.SUB + "thumbnail" + JSON.SUB + "width")
 	public int thumbnailWidth;
 
-	@Key(name = "images" + Key.SUB + "thumbnail" + Key.SUB + "url")
+	@JSON(key = "images" + JSON.SUB + "thumbnail" + JSON.SUB + "url")
 	@Column(name = DB.Column.THUMBNAIL_URL)
 	public String thumbnailUrl = "";
 
-	@Key(name = "images" + Key.SUB + "standard_resolution" + Key.SUB + "url")
+	@JSON(key = "images" + JSON.SUB + "standard_resolution" + JSON.SUB + "url")
 	@Column(name = DB.Column.IMAGE_URL)
 	public String imageUrl = "";
 
-	@Key(name = "tags")
+	@JSON(key = "tags")
 	@Column(name = DB.Column.TAGS)
 	public String[] tags;
 
