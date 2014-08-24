@@ -1,3 +1,9 @@
+2.5.0 /2014-08-24/:
+    * Added XMLSerialiser & @XML annotation.
+    * JSONSerializer changed package, method signatures.
+    * @Key annotation renamed to @JSON.
+    * Dropped OkHttp & ABS support.
+
 2.0.6 /2014-07-14/:
     * HttpResponseCache: don't install by default.
     * ImageFetcher: added an extra constructor.
