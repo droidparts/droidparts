@@ -24,11 +24,6 @@
 			<optional>true</optional>
 		</dependency>
 		<dependency>
-			<groupId>com.actionbarsherlock</groupId>
-			<artifactId>actionbarsherlock</artifactId>
-			<optional>true</optional>
-		</dependency>
-		<dependency>
 			<groupId>com.google.android</groupId>
 			<artifactId>android-support-v4</artifactId>
 			<optional>true</optional>
