@@ -13,17 +13,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License. 
  */
-package org.droidparts.test.persist.json;
+package org.droidparts.inner.ann.serialize;
 
-import org.droidparts.persist.json.JSONSerializer;
-import org.droidparts.test.model.Album;
+import org.droidparts.annotation.serialize.JSON;
+import org.droidparts.inner.ann.Ann;
 
-import android.content.Context;
+public final class JSONAnn extends Ann<JSON> {
 
-public class AlbumSerializer extends JSONSerializer<Album> {
+	public String key;
+	public final boolean optional;
 
-	public AlbumSerializer(Context ctx) {
-		super(Album.class, ctx);
+	public JSONAnn(JSON annotation) {
+		super(annotation);
+		if (hackSuccess()) {
+			key = (String) getElement(KEY);
+			optional = (Boolean) getElement(OPTIONAL);
+			cleanup();
+		} else {
+			key = annotation.key();
+			optional = annotation.optional();
+		}
 	}
 
 }

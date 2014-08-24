@@ -13,23 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License. 
  */
-package org.droidparts.annotation.json;
+package org.droidparts.test.model;
 
-import static java.lang.annotation.ElementType.FIELD;
-import static java.lang.annotation.RetentionPolicy.RUNTIME;
+import org.droidparts.annotation.serialize.JSON;
+import org.droidparts.annotation.serialize.XML;
+import org.droidparts.model.Entity;
 
-import java.lang.annotation.Retention;
-import java.lang.annotation.Target;
+public class AlbumFail extends Entity {
+	private static final long serialVersionUID = 1L;
 
-@Retention(RUNTIME)
-@Target(FIELD)
-public @interface Key {
-
-	// ASCII GS (group separator), '->' for readability
-	String SUB = "->" + (char) 29;
-
-	String name() default "";
-
-	boolean optional() default false;
+	@XML(tag = "wtf")
+	@JSON(key = "wtf")
+	public int year;
 
 }

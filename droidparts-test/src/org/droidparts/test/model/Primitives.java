@@ -19,30 +19,30 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
 
-import org.droidparts.annotation.json.Key;
+import org.droidparts.annotation.serialize.JSON;
 import org.droidparts.annotation.sql.Column;
 import org.droidparts.model.Entity;
 
 public class Primitives extends Entity {
 	private static final long serialVersionUID = 1L;
 
-	@Key
+	@JSON
 	public int int1;
-	@Key
+	@JSON
 	public int int2;
-	@Key
+	@JSON
 	public float float1;
-	@Key
+	@JSON
 	public float float2;
-	@Key
+	@JSON
 	public boolean boolean1;
-	@Key
+	@JSON
 	public boolean boolean2;
-	@Key
+	@JSON
 	public boolean boolean3;
-	@Key
+	@JSON
 	public boolean boolean4;
-	@Key
+	@JSON
 	public String string1;
 
 	@Column(nullable = true)
@@ -55,7 +55,7 @@ public class Primitives extends Entity {
 	@Column
 	public final ArrayList<Date> dates = new ArrayList<Date>();
 
-	@Key(name = "string_array")
+	@JSON(key = "string_array")
 	@Column(nullable = true)
 	public String[] strArr;
 	@Column(nullable = true)

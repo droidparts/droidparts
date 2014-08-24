@@ -78,7 +78,7 @@ public abstract class EntityCursorAdapter<EntityType extends Entity> extends
 		boolean success = entityManager.delete(id);
 		return requeryOnSuccess(success);
 	}
-	
+
 	public boolean createOrUpdate(EntityType entity) {
 		boolean success = entityManager.createOrUpdate(entity);
 		return requeryOnSuccess(success);

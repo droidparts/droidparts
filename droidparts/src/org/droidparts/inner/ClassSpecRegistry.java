@@ -17,9 +17,10 @@ package org.droidparts.inner;
 
 import static org.droidparts.inner.AnnBuilder.getColumnAnn;
 import static org.droidparts.inner.AnnBuilder.getInjectAnn;
-import static org.droidparts.inner.AnnBuilder.getKeyAnn;
+import static org.droidparts.inner.AnnBuilder.getJSONAnn;
 import static org.droidparts.inner.AnnBuilder.getReceiveEventsAnn;
 import static org.droidparts.inner.AnnBuilder.getTableAnn;
+import static org.droidparts.inner.AnnBuilder.getXMLAnn;
 import static org.droidparts.inner.ReflectionUtils.buildClassHierarchy;
 import static org.droidparts.inner.ReflectionUtils.getArrayComponentType;
 import static org.droidparts.inner.ReflectionUtils.getFieldGenericArgs;
@@ -45,7 +46,8 @@ import org.droidparts.inner.ann.FieldSpec;
 import org.droidparts.inner.ann.MethodSpec;
 import org.droidparts.inner.ann.bus.ReceiveEventsAnn;
 import org.droidparts.inner.ann.inject.InjectAnn;
-import org.droidparts.inner.ann.json.KeyAnn;
+import org.droidparts.inner.ann.serialize.JSONAnn;
+import org.droidparts.inner.ann.serialize.XMLAnn;
 import org.droidparts.inner.ann.sql.ColumnAnn;
 import org.droidparts.inner.ann.sql.TableAnn;
 import org.droidparts.model.Entity;
@@ -140,23 +142,46 @@ public final class ClassSpecRegistry {
 
 	// JSON
 	@SuppressWarnings("unchecked")
-	public static FieldSpec<KeyAnn>[] getJsonKeySpecs(Class<? extends Model> cls) {
-		FieldSpec<KeyAnn>[] specs = KEY_SPECS.get(cls);
+	public static FieldSpec<JSONAnn>[] getJSONSpecs(Class<? extends Model> cls) {
+		FieldSpec<JSONAnn>[] specs = JSON_SPECS.get(cls);
 		if (specs == null) {
-			ArrayList<FieldSpec<KeyAnn>> list = new ArrayList<FieldSpec<KeyAnn>>();
+			ArrayList<FieldSpec<JSONAnn>> list = new ArrayList<FieldSpec<JSONAnn>>();
 			for (Class<?> cl : buildClassHierarchy(cls)) {
 				for (Field field : cl.getDeclaredFields()) {
-					KeyAnn ann = getKeyAnn(field);
+					JSONAnn ann = getJSONAnn(field);
 					if (ann != null) {
 						Class<?> componentType = getComponentType(field);
-						ann.name = getKeyName(ann, field);
-						list.add(new FieldSpec<KeyAnn>(field, componentType,
+						ann.key = getName(ann.key, field);
+						list.add(new FieldSpec<JSONAnn>(field, componentType,
 								ann));
 					}
 				}
 			}
 			specs = list.toArray(new FieldSpec[list.size()]);
-			KEY_SPECS.put(cls, specs);
+			JSON_SPECS.put(cls, specs);
+		}
+		return specs;
+	}
+
+	// XML
+	@SuppressWarnings("unchecked")
+	public static FieldSpec<XMLAnn>[] getXMLSpecs(Class<? extends Model> cls) {
+		FieldSpec<XMLAnn>[] specs = XML_SPECS.get(cls);
+		if (specs == null) {
+			ArrayList<FieldSpec<XMLAnn>> list = new ArrayList<FieldSpec<XMLAnn>>();
+			for (Class<?> cl : buildClassHierarchy(cls)) {
+				for (Field field : cl.getDeclaredFields()) {
+					XMLAnn ann = getXMLAnn(field);
+					if (ann != null) {
+						Class<?> componentType = getComponentType(field);
+						ann.tag = getName(ann.tag, field);
+						list.add(new FieldSpec<XMLAnn>(field, componentType,
+								ann));
+					}
+				}
+			}
+			specs = list.toArray(new FieldSpec[list.size()]);
+			XML_SPECS.put(cls, specs);
 		}
 		return specs;
 	}
@@ -169,7 +194,8 @@ public final class ClassSpecRegistry {
 	private static final ConcurrentHashMap<Class<? extends Entity>, String> TABLE_NAMES = new ConcurrentHashMap<Class<? extends Entity>, String>();
 	private static final ConcurrentHashMap<Class<? extends Entity>, FieldSpec<ColumnAnn>[]> COLUMN_SPECS = new ConcurrentHashMap<Class<? extends Entity>, FieldSpec<ColumnAnn>[]>();
 
-	private static final ConcurrentHashMap<Class<? extends Model>, FieldSpec<KeyAnn>[]> KEY_SPECS = new ConcurrentHashMap<Class<? extends Model>, FieldSpec<KeyAnn>[]>();
+	private static final ConcurrentHashMap<Class<? extends Model>, FieldSpec<JSONAnn>[]> JSON_SPECS = new ConcurrentHashMap<Class<? extends Model>, FieldSpec<JSONAnn>[]>();
+	private static final ConcurrentHashMap<Class<? extends Model>, FieldSpec<XMLAnn>[]> XML_SPECS = new ConcurrentHashMap<Class<? extends Model>, FieldSpec<XMLAnn>[]>();
 
 	// Utils
 
@@ -186,10 +212,9 @@ public final class ClassSpecRegistry {
 		return componentType;
 	}
 
-	// JSON
+	// JSON & XML
 
-	private static String getKeyName(KeyAnn ann, Field field) {
-		String name = ann.name;
+	private static String getName(String name, Field field) {
 		if (isEmpty(name)) {
 			name = field.getName();
 		}

@@ -17,9 +17,8 @@ package org.droidparts.gram.persist;
 
 import org.droidparts.gram.model.Filter;
 import org.droidparts.gram.model.Image;
-import org.droidparts.persist.json.JSONSerializer;
+import org.droidparts.persist.serializer.JSONSerializer;
 import org.droidparts.util.L;
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.content.Context;
@@ -31,7 +30,7 @@ public class ImageSerializer extends JSONSerializer<Image> {
 	}
 
 	@Override
-	public Image deserialize(JSONObject obj) throws JSONException {
+	public Image deserialize(JSONObject obj) throws Exception {
 		Image img = super.deserialize(obj);
 		img.filter = new Filter(obj.getString("filter"));
 		L.i("Thumbnail witdh: " + img.thumbnailWidth);

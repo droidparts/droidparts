@@ -36,6 +36,7 @@ import org.droidparts.persist.sql.AbstractEntityManager;
 import org.droidparts.util.L;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.w3c.dom.Node;
 
 import android.content.ContentValues;
 import android.database.Cursor;
@@ -45,11 +46,17 @@ import android.database.sqlite.SQLiteQueryBuilder;
 
 public final class PersistUtils implements SQL.DDL {
 
-	// JSONSerializer
+	// JSON
 
 	public static boolean hasNonNull(JSONObject obj, String key)
 			throws JSONException {
 		return obj.has(key) && !NULL.equals(obj.get(key));
+	}
+
+	// XML
+
+	public static String getNodeText(Node n) {
+		return n.getTextContent().trim();
 	}
 
 	// EntityManager

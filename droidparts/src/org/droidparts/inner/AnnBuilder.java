@@ -27,7 +27,8 @@ import org.droidparts.annotation.inject.InjectParentActivity;
 import org.droidparts.annotation.inject.InjectResource;
 import org.droidparts.annotation.inject.InjectSystemService;
 import org.droidparts.annotation.inject.InjectView;
-import org.droidparts.annotation.json.Key;
+import org.droidparts.annotation.serialize.JSON;
+import org.droidparts.annotation.serialize.XML;
 import org.droidparts.annotation.sql.Column;
 import org.droidparts.annotation.sql.Table;
 import org.droidparts.inner.ann.bus.ReceiveEventsAnn;
@@ -39,7 +40,8 @@ import org.droidparts.inner.ann.inject.InjectParentActivityAnn;
 import org.droidparts.inner.ann.inject.InjectResourceAnn;
 import org.droidparts.inner.ann.inject.InjectSystemServiceAnn;
 import org.droidparts.inner.ann.inject.InjectViewAnn;
-import org.droidparts.inner.ann.json.KeyAnn;
+import org.droidparts.inner.ann.serialize.JSONAnn;
+import org.droidparts.inner.ann.serialize.XMLAnn;
 import org.droidparts.inner.ann.sql.ColumnAnn;
 import org.droidparts.inner.ann.sql.TableAnn;
 
@@ -77,11 +79,21 @@ public final class AnnBuilder {
 		return null;
 	}
 
-	static KeyAnn getKeyAnn(Field f) {
+	static JSONAnn getJSONAnn(Field f) {
 		for (Annotation a : f.getDeclaredAnnotations()) {
 			Class<?> at = a.annotationType();
-			if (Key.class == at) {
-				return new KeyAnn((Key) a);
+			if (JSON.class == at) {
+				return new JSONAnn((JSON) a);
+			}
+		}
+		return null;
+	}
+
+	static XMLAnn getXMLAnn(Field f) {
+		for (Annotation a : f.getDeclaredAnnotations()) {
+			Class<?> at = a.annotationType();
+			if (XML.class == at) {
+				return new XMLAnn((XML) a);
 			}
 		}
 		return null;

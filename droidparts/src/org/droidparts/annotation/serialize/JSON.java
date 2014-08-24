@@ -13,26 +13,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License. 
  */
-package org.droidparts.inner.ann.json;
+package org.droidparts.annotation.serialize;
 
-import org.droidparts.annotation.json.Key;
-import org.droidparts.inner.ann.Ann;
+import static java.lang.annotation.ElementType.FIELD;
+import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
-public final class KeyAnn extends Ann<Key> {
+import java.lang.annotation.Retention;
+import java.lang.annotation.Target;
 
-	public String name;
-	public final boolean optional;
+import org.droidparts.persist.serializer.AbstractSerializer;
 
-	public KeyAnn(Key annotation) {
-		super(annotation);
-		if (hackSuccess()) {
-			name = (String) getElement(NAME);
-			optional = (Boolean) getElement(OPTIONAL);
-			cleanup();
-		} else {
-			name = annotation.name();
-			optional = annotation.optional();
-		}
-	}
+@Retention(RUNTIME)
+@Target(FIELD)
+public @interface JSON {
+
+	String SUB = AbstractSerializer.SUB;
+
+	String key() default "";
+
+	boolean optional() default false;
 
 }

@@ -13,19 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License. 
  */
-package org.droidparts.test.testcase;
+package org.droidparts.test.testcase.serialize;
 
 import static org.droidparts.util.Strings.join;
 
 import java.util.ArrayList;
 
-import org.droidparts.annotation.json.Key;
-import org.droidparts.persist.json.JSONSerializer;
+import org.droidparts.annotation.serialize.JSON;
+import org.droidparts.persist.serializer.JSONSerializer;
 import org.droidparts.test.R;
 import org.droidparts.test.model.Album;
 import org.droidparts.test.model.Nested;
 import org.droidparts.test.model.Primitives;
-import org.droidparts.test.persist.json.AlbumSerializer;
 import org.droidparts.util.ResourceUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -56,15 +55,16 @@ public class JSONTestCase extends AndroidTestCase {
 	}
 
 	public void testAlbums() throws Exception {
-		AlbumSerializer serializer = new AlbumSerializer(getContext());
-		ArrayList<Album> albums = serializer.deserialize(getAlbums());
+		JSONSerializer<Album> serializer = new JSONSerializer<Album>(
+				Album.class, getContext());
+		ArrayList<Album> albums = serializer.deserializeAll(getAlbums());
 		assertEquals(2, albums.size());
 		assertEquals("Diamond", albums.get(0).name);
 		assertEquals(2009, albums.get(1).year);
 	}
 
 	public void testNestedKeys() throws Exception {
-		assertEquals("obj->key", join(new String[] { "obj", "key" }, Key.SUB));
+		assertEquals("obj->key", join(new String[] { "obj", "key" }, JSON.SUB));
 		JSONSerializer<Nested> serializer = new JSONSerializer<Nested>(
 				Nested.class, getContext());
 		Nested model = serializer.deserialize(getNested());
@@ -75,19 +75,19 @@ public class JSONTestCase extends AndroidTestCase {
 
 	//
 	private JSONObject getPrimitives() throws Exception {
-		String str = ResourceUtils.readRawResource(getContext(),
-				R.raw.primitives);
-		return new JSONObject(str);
+		return new JSONObject(getJSONString(R.raw.primitives));
 	}
 
 	private JSONObject getNested() throws Exception {
-		String str = ResourceUtils.readRawResource(getContext(), R.raw.nested);
-		return new JSONObject(str);
+		return new JSONObject(getJSONString(R.raw.nested));
 	}
 
 	private JSONArray getAlbums() throws Exception {
-		String str = ResourceUtils.readRawResource(getContext(), R.raw.albums);
-		return new JSONArray(str);
+		return new JSONArray(getJSONString(R.raw.albums_json));
+	}
+
+	private String getJSONString(int resId) {
+		return ResourceUtils.readRawResource(getContext(), resId);
 	}
 
 }

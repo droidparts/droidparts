@@ -15,36 +15,33 @@
  */
 package org.droidparts.test.model;
 
-import org.droidparts.annotation.serialize.JSON;
-import org.droidparts.annotation.serialize.XML;
-import org.droidparts.annotation.sql.Column;
-import org.droidparts.annotation.sql.Table;
-import org.droidparts.model.Entity;
-import org.droidparts.test.persist.DB;
+import java.util.ArrayList;
 
-@Table(name = DB.Table.ALBUMS)
-public class Album extends Entity {
+import org.droidparts.annotation.serialize.XML;
+import org.droidparts.model.Entity;
+
+public class Album2 extends Entity {
 	private static final long serialVersionUID = 1L;
 
-	@JSON
-	@XML
-	@Column(name = DB.Column.YEAR)
+	@XML(tag = "info" + XML.SUB + "data" + XML.SUB + "year")
 	public int year;
 
-	@JSON
-	@XML
-	@Column(name = DB.Column.NAME, unique = true)
+	@XML(tag = "info" + XML.SUB + "data", attribute = "name")
 	public String name;
 
-	@Column(name = DB.Column.COMMENT, nullable = true)
-	public String comment;
+	@XML(tag = "info" + XML.SUB + "albums")
+	public Album[] albumArr;
 
-	public Album() {
-	}
+	@XML(tag = "info" + XML.SUB + "albums")
+	public ArrayList<Album> albumList;
 
-	public Album(String name, int year) {
-		this.name = name;
-		this.year = year;
-	}
+	@XML(tag = "info" + XML.SUB + "ints")
+	public int[] ints;
+	@XML(tag = "info" + XML.SUB + "ints")
+	public ArrayList<Integer> integers;
+	@XML(tag = "info" + XML.SUB + "ints", attribute = "int")
+	public ArrayList<Integer> integersHinted;
+	@XML(tag = "info" + XML.SUB + "ints", attribute = "wtf")
+	public ArrayList<Integer> integersHintedWrong;
 
 }

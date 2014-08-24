@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<info>
+    <data name="Iris">
+        <year>2009</year>
+    </data>
+    
+    <albums>
+    	<album
+        	name="Diamond"
+        	year="2007" />
+    	<album>
+        	<name>Iris</name>
+        	<year>2009</year>
+    	</album>
+	</albums>
+	
+    <ints>
+        <int>1</int>
+        <int>5</int>
+        <int>100500</int>
+    </ints>
+</info>

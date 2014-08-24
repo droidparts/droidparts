@@ -15,8 +15,9 @@
  */
 package org.droidparts.model;
 
-import static org.droidparts.inner.ClassSpecRegistry.getJsonKeySpecs;
+import static org.droidparts.inner.ClassSpecRegistry.getJSONSpecs;
 import static org.droidparts.inner.ClassSpecRegistry.getTableColumnSpecs;
+import static org.droidparts.inner.ClassSpecRegistry.getXMLSpecs;
 import static org.droidparts.inner.ReflectionUtils.getFieldVal;
 import static org.droidparts.util.Strings.join;
 
@@ -26,7 +27,8 @@ import java.util.ArrayList;
 import java.util.LinkedHashSet;
 
 import org.droidparts.inner.ann.FieldSpec;
-import org.droidparts.inner.ann.json.KeyAnn;
+import org.droidparts.inner.ann.serialize.JSONAnn;
+import org.droidparts.inner.ann.serialize.XMLAnn;
 import org.droidparts.inner.ann.sql.ColumnAnn;
 
 public abstract class Model implements Serializable {
@@ -57,7 +59,10 @@ public abstract class Model implements Serializable {
 	@Override
 	public String toString() {
 		LinkedHashSet<Field> fields = new LinkedHashSet<Field>();
-		for (FieldSpec<KeyAnn> spec : getJsonKeySpecs(getClass())) {
+		for (FieldSpec<JSONAnn> spec : getJSONSpecs(getClass())) {
+			fields.add(spec.field);
+		}
+		for (FieldSpec<XMLAnn> spec : getXMLSpecs(getClass())) {
 			fields.add(spec.field);
 		}
 		if (this instanceof Entity) {

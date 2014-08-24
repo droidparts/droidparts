@@ -13,25 +13,29 @@
  * See the License for the specific language governing permissions and
  * limitations under the License. 
  */
-package org.droidparts.sample.model;
+package org.droidparts.inner.ann.serialize;
 
-import java.util.Date;
+import org.droidparts.annotation.serialize.XML;
+import org.droidparts.inner.ann.Ann;
 
-import org.droidparts.annotation.serialize.JSON;
-import org.droidparts.annotation.sql.Column;
-import org.droidparts.annotation.sql.Table;
-import org.droidparts.model.Entity;
+public final class XMLAnn extends Ann<XML> {
 
-@Table(name = "entries")
-public class Entry extends Entity {
-	private static final long serialVersionUID = 1L;
+	public String tag;
+	public String attribute;
+	public final boolean optional;
 
-	@JSON(key = "date_created")
-	@Column
-	public Date created;
-
-	@JSON
-	@Column
-	public String name;
+	public XMLAnn(XML annotation) {
+		super(annotation);
+		if (hackSuccess()) {
+			tag = (String) getElement(TAG);
+			attribute = (String) getElement(ATTRIBUTE);
+			optional = (Boolean) getElement(OPTIONAL);
+			cleanup();
+		} else {
+			tag = annotation.tag();
+			attribute = annotation.attribute();
+			optional = annotation.optional();
+		}
+	}
 
 }
