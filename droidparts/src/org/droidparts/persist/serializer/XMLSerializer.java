@@ -20,7 +20,6 @@ import static org.droidparts.inner.ReflectionUtils.setFieldVal;
 import static org.droidparts.util.Strings.isNotEmpty;
 
 import java.util.ArrayList;
-import java.util.Collection;
 
 import org.droidparts.inner.ClassSpecRegistry;
 import org.droidparts.inner.ConverterRegistry;
@@ -64,21 +63,12 @@ public class XMLSerializer<ModelType extends Model> extends
 		return list;
 	}
 
-	public void serialize(Node parent, ModelType item) throws Exception {
-		throw new UnsupportedOperationException();
-	}
-
-	public void serializeList(Node parent, Collection<ModelType> items)
-			throws Exception {
-		throw new UnsupportedOperationException();
-	}
-
 	private void readFromXMLAndSetFieldVal(Object obj, FieldSpec<XMLAnn> spec,
 			Node node, String tag, String attribute) throws Exception {
 		Pair<String, String> keyParts = getNestedKeyParts(tag);
 		if (keyParts != null) {
 			String subKey = keyParts.first;
-			Node childTag = getChildTag(node, subKey);
+			Node childTag = getChildNode(node, subKey);
 			if (childTag != null) {
 				readFromXMLAndSetFieldVal(obj, spec, childTag, keyParts.second,
 						attribute);
@@ -90,7 +80,7 @@ public class XMLSerializer<ModelType extends Model> extends
 					|| tag.equals(node.getNodeName());
 			if (spec.componentType == null && isNotEmpty(attribute)) {
 				if (!tag.equals(node.getNodeName())) {
-					Node child = getChildTag(node, tag);
+					Node child = getChildNode(node, tag);
 					if (child != null) {
 						node = child;
 					} else if (!defaultOrSameTag) {
@@ -100,7 +90,7 @@ public class XMLSerializer<ModelType extends Model> extends
 			}
 			Node attrNode = gotAttributeNode(node,
 					isNotEmpty(attribute) ? attribute : tag);
-			Node tagNode = getTagNode(node.getChildNodes(), tag);
+			Node tagNode = getChildNode(node, tag);
 			if (tagNode == null && defaultOrSameTag) {
 				tagNode = node;
 			}
@@ -135,17 +125,8 @@ public class XMLSerializer<ModelType extends Model> extends
 		return converter.readFromXML(valType, componentType, node, attribute);
 	}
 
-	private static void throwIfNotOptional(FieldSpec<XMLAnn> spec)
-			throws IllegalArgumentException {
-		if (!spec.ann.optional) {
-			throw new IllegalArgumentException(String.format(
-					"Required tag '%s' or attribute '%s' not present.",
-					spec.ann.tag, spec.ann.attribute));
-		}
-	}
-
-	private static Node gotAttributeNode(Node node, String name) {
-		NamedNodeMap attrs = node.getAttributes();
+	private static Node gotAttributeNode(Node tagNode, String name) {
+		NamedNodeMap attrs = tagNode.getAttributes();
 		if (attrs != null) {
 			for (int i = 0; i < attrs.getLength(); i++) {
 				Node attr = attrs.item(i);
@@ -157,24 +138,23 @@ public class XMLSerializer<ModelType extends Model> extends
 		return null;
 	}
 
-	private static Node getTagNode(NodeList tags, String name) {
-		for (int i = 0; i < tags.getLength(); i++) {
-			Node tag = tags.item(i);
-			if (name.equals(tag.getNodeName())) {
-				return tag;
+	private static Node getChildNode(Node tagNode, String name) {
+		NodeList childTags = tagNode.getChildNodes();
+		for (int i = 0; i < childTags.getLength(); i++) {
+			Node childTag = childTags.item(i);
+			if (name.equals(childTag.getNodeName())) {
+				return childTag;
 			}
 		}
 		return null;
 	}
 
-	private static Node getChildTag(Node tag, String childName) {
-		NodeList childTags = tag.getChildNodes();
-		for (int i = 0; i < childTags.getLength(); i++) {
-			Node childTag = childTags.item(i);
-			if (childName.equals(childTag.getNodeName())) {
-				return childTag;
-			}
+	private static void throwIfNotOptional(FieldSpec<XMLAnn> spec)
+			throws IllegalArgumentException {
+		if (!spec.ann.optional) {
+			throw new IllegalArgumentException(String.format(
+					"Required tag '%s' or attribute '%s' not present.",
+					spec.ann.tag, spec.ann.attribute));
 		}
-		return null;
 	}
 }
