@@ -16,7 +16,6 @@
 package org.droidparts.inner.converter;
 
 import org.droidparts.inner.TypeHelper;
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.content.ContentValues;
@@ -36,7 +35,7 @@ public class LongConverter extends Converter<Long> {
 
 	@Override
 	public <V> Long readFromJSON(Class<Long> valType, Class<V> componentType,
-			JSONObject obj, String key) throws JSONException {
+			JSONObject obj, String key) throws Exception {
 		return obj.getLong(key);
 	}
 

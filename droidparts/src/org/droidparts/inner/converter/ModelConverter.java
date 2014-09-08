@@ -15,6 +15,11 @@
  */
 package org.droidparts.inner.converter;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+
 import org.droidparts.inner.TypeHelper;
 import org.droidparts.model.Model;
 import org.droidparts.persist.serializer.JSONSerializer;
@@ -34,19 +39,32 @@ public class ModelConverter extends Converter<Model> {
 
 	@Override
 	public String getDBColumnType() {
-		throw new UnsupportedOperationException();
+		return BLOB;
 	}
 
 	@Override
 	public <V> void putToContentValues(Class<Model> valueType,
-			Class<V> componentType, ContentValues cv, String key, Model val) {
-		throw new UnsupportedOperationException();
+			Class<V> componentType, ContentValues cv, String key, Model val)
+			throws Exception {
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		ObjectOutputStream oos = new ObjectOutputStream(baos);
+		oos.writeObject(val);
+		byte[] arr = baos.toByteArray();
+		cv.put(key, arr);
 	}
 
 	@Override
 	public <V> Model readFromCursor(Class<Model> valType,
-			Class<V> componentType, Cursor cursor, int columnIndex) {
-		throw new UnsupportedOperationException();
+			Class<V> componentType, Cursor cursor, int columnIndex)
+			throws Exception {
+		Model model = null;
+		byte[] arr = cursor.getBlob(columnIndex);
+		if (arr != null) {
+			ByteArrayInputStream bais = new ByteArrayInputStream(arr);
+			ObjectInputStream ois = new ObjectInputStream(bais);
+			model = (Model) ois.readObject();
+		}
+		return model;
 	}
 
 	@Override
@@ -73,13 +91,9 @@ public class ModelConverter extends Converter<Model> {
 
 	@Override
 	protected <V> Model parseFromString(Class<Model> valType,
-			Class<V> componentType, String str) {
-		try {
-			return new JSONSerializer<Model>(valType, null)
-					.deserialize(new JSONObject(str));
-		} catch (Exception e) {
-			throw new IllegalArgumentException(e);
-		}
+			Class<V> componentType, String str) throws Exception {
+		return new JSONSerializer<Model>(valType, null)
+				.deserialize(new JSONObject(str));
 	}
 
 }

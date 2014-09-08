@@ -72,7 +72,11 @@ public abstract class AbstractDBOpenHelper extends SQLiteOpenHelper implements
 			Class<? extends Entity>... entityClasses) {
 		ArrayList<String> statements = new ArrayList<String>();
 		for (Class<? extends Entity> cls : entityClasses) {
-			statements.addAll(PersistUtils.getAddMissingColumns(db, cls));
+			try {
+				statements.addAll(PersistUtils.getAddMissingColumns(db, cls));
+			} catch (Exception e) {
+				throw new RuntimeException(e);
+			}
 		}
 		return executeStatements(db, statements);
 	}

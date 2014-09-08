@@ -36,7 +36,6 @@ import org.droidparts.persist.serializer.XMLSerializer;
 import org.droidparts.util.Arrays2;
 import org.droidparts.util.Strings;
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -62,7 +61,7 @@ public class ArrayCollectionConverter extends Converter<Object> {
 	@Override
 	public <V> Object readFromJSON(Class<Object> valType,
 			Class<V> componentType, JSONObject obj, String key)
-			throws JSONException {
+			throws Exception {
 		Wrapper w = new Wrapper(obj.getJSONArray(key), null);
 		return readFromWrapper(valType, componentType, w);
 	}
@@ -110,7 +109,7 @@ public class ArrayCollectionConverter extends Converter<Object> {
 	//
 	@SuppressWarnings("unchecked")
 	protected <V> Object readFromWrapper(Class<Object> valType,
-			Class<V> componentType, Wrapper wrapper) {
+			Class<V> componentType, Wrapper wrapper) throws Exception {
 		boolean isArr = isArray(valType);
 		boolean isModel = isModel(componentType);
 		Collection<Object> items;
@@ -137,7 +136,7 @@ public class ArrayCollectionConverter extends Converter<Object> {
 				items.add(item);
 			} catch (Exception e) {
 				if (wrapper.isJSON()) {
-					throw new IllegalArgumentException(e);
+					throw e;
 				} else {
 					// TODO log?
 				}
@@ -214,7 +213,7 @@ public class ArrayCollectionConverter extends Converter<Object> {
 	@Override
 	public <V> void putToContentValues(Class<Object> valueType,
 			Class<V> componentType, ContentValues cv, String key, Object val)
-			throws IllegalArgumentException {
+			throws Exception {
 		Converter<V> converter = ConverterRegistry.getConverter(componentType);
 		ArrayList<V> list = arrOrCollToList(valueType, componentType, val);
 		ArrayList<Object> vals = new ArrayList<Object>();
@@ -230,7 +229,8 @@ public class ArrayCollectionConverter extends Converter<Object> {
 
 	@Override
 	public <V> Object readFromCursor(Class<Object> valType,
-			Class<V> componentType, Cursor cursor, int columnIndex) {
+			Class<V> componentType, Cursor cursor, int columnIndex)
+			throws Exception {
 		Converter<V> converter = ConverterRegistry.getConverter(componentType);
 		String str = cursor.getString(columnIndex);
 		String[] parts = (str.length() > 0) ? str.split("\\" + SEP)
@@ -256,7 +256,7 @@ public class ArrayCollectionConverter extends Converter<Object> {
 
 	// say hello to arrays of primitives
 	private final <T> Object parseTypeArr(Converter<T> converter,
-			Class<T> valType, String[] arr) {
+			Class<T> valType, String[] arr) throws Exception {
 		Object objArr = Array.newInstance(valType, arr.length);
 		for (int i = 0; i < arr.length; i++) {
 			T item = converter.parseFromString(valType, null, arr[i]);
@@ -266,7 +266,8 @@ public class ArrayCollectionConverter extends Converter<Object> {
 	}
 
 	private final <T> Collection<T> parseTypeColl(Converter<T> converter,
-			Class<Object> collType, Class<T> componentType, String[] arr) {
+			Class<Object> collType, Class<T> componentType, String[] arr)
+			throws Exception {
 		@SuppressWarnings("unchecked")
 		Collection<T> coll = (Collection<T>) newInstance(collType);
 		for (int i = 0; i < arr.length; i++) {

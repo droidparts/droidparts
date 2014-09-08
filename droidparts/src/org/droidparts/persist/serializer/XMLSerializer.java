@@ -19,7 +19,12 @@ import static org.droidparts.inner.ReflectionUtils.newInstance;
 import static org.droidparts.inner.ReflectionUtils.setFieldVal;
 import static org.droidparts.util.Strings.isNotEmpty;
 
+import java.io.IOException;
+import java.io.StringReader;
 import java.util.ArrayList;
+
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 
 import org.droidparts.inner.ClassSpecRegistry;
 import org.droidparts.inner.ConverterRegistry;
@@ -28,15 +33,24 @@ import org.droidparts.inner.ann.serialize.XMLAnn;
 import org.droidparts.inner.converter.Converter;
 import org.droidparts.model.Model;
 import org.droidparts.util.L;
+import org.w3c.dom.Document;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
 
 import android.content.Context;
 import android.util.Pair;
 
 public class XMLSerializer<ModelType extends Model> extends
 		AbstractSerializer<ModelType, Node, NodeList> {
+
+	public static Document parseDocument(String xml) throws IOException,
+			ParserConfigurationException, SAXException {
+		return DocumentBuilderFactory.newInstance().newDocumentBuilder()
+				.parse(new InputSource(new StringReader(xml)));
+	}
 
 	public XMLSerializer(Class<ModelType> cls, Context ctx) {
 		super(cls, ctx);

@@ -39,6 +39,12 @@ public class Album extends Entity {
 	@Column(name = DB.Column.COMMENT, nullable = true)
 	public String comment;
 
+	@Column(nullable = true)
+	public Nested nullNested;
+
+	@Column
+	public Nested nested = new Nested();
+
 	public Album() {
 	}
 

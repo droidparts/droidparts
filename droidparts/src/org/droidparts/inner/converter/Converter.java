@@ -30,7 +30,7 @@ public abstract class Converter<T> implements SQL.DDL {
 	public abstract String getDBColumnType();
 
 	protected abstract <V> T parseFromString(Class<T> valType,
-			Class<V> componentType, String str);
+			Class<V> componentType, String str) throws Exception;
 
 	public <V> void putToJSON(Class<T> valType, Class<V> componentType,
 			JSONObject obj, String key, T val) throws Exception {
@@ -48,9 +48,11 @@ public abstract class Converter<T> implements SQL.DDL {
 	}
 
 	public abstract <V> void putToContentValues(Class<T> valueType,
-			Class<V> componentType, ContentValues cv, String key, T val);
+			Class<V> componentType, ContentValues cv, String key, T val)
+			throws Exception;
 
 	public abstract <V> T readFromCursor(Class<T> valType,
-			Class<V> componentType, Cursor cursor, int columnIndex);
+			Class<V> componentType, Cursor cursor, int columnIndex)
+			throws Exception;
 
 }

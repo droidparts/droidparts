@@ -37,7 +37,7 @@ public class BooleanConverter extends Converter<Boolean> {
 	@Override
 	public <V> Boolean readFromJSON(Class<Boolean> valType,
 			Class<V> componentType, JSONObject obj, String key)
-			throws JSONException {
+			throws Exception {
 		try {
 			return obj.getBoolean(key);
 		} catch (JSONException e) {

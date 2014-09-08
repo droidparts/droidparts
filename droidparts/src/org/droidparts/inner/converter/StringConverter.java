@@ -16,7 +16,6 @@
 package org.droidparts.inner.converter;
 
 import org.droidparts.inner.TypeHelper;
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.content.ContentValues;
@@ -37,7 +36,7 @@ public class StringConverter extends Converter<String> {
 	@Override
 	public <V> String readFromJSON(Class<String> valType,
 			Class<V> componentType, JSONObject obj, String key)
-			throws JSONException {
+			throws Exception {
 		return obj.getString(key);
 	}
 
