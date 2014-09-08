@@ -16,7 +16,6 @@
 package org.droidparts.inner.converter;
 
 import org.droidparts.inner.TypeHelper;
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.content.ContentValues;
@@ -37,7 +36,7 @@ public class DoubleConverter extends Converter<Double> {
 	@Override
 	public <V> Double readFromJSON(Class<Double> valType,
 			Class<V> componentType, JSONObject obj, String key)
-			throws JSONException {
+			throws Exception {
 		return obj.getDouble(key);
 	}
 

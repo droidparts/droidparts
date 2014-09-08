@@ -18,7 +18,6 @@ package org.droidparts.inner.converter;
 import java.util.UUID;
 
 import org.droidparts.inner.TypeHelper;
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.content.ContentValues;
@@ -38,13 +37,13 @@ public class UUIDConverter extends Converter<UUID> {
 
 	@Override
 	public <V> void putToJSON(Class<UUID> valType, Class<V> componentType,
-			JSONObject obj, String key, UUID val) throws JSONException {
+			JSONObject obj, String key, UUID val) throws Exception {
 		obj.put(key, val.toString());
 	}
 
 	@Override
 	public <V> UUID readFromJSON(Class<UUID> valType, Class<V> componentType,
-			JSONObject obj, String key) throws JSONException {
+			JSONObject obj, String key) throws Exception {
 		return parseFromString(valType, componentType, obj.getString(key));
 	}
 

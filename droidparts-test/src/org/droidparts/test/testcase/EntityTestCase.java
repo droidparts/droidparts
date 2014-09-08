@@ -133,6 +133,14 @@ public class EntityTestCase extends AndroidTestCase implements DB {
 		cursor.close();
 	}
 
+	public void testModel() {
+		Album album = createAlbum();
+		album.nested.str = "str";
+		albumManager.update(album);
+		album = albumManager.read(album.id);
+		assertEquals("str", album.nested.str);
+	}
+
 	public void testDate() {
 		long now = System.currentTimeMillis();
 		Primitives pri = new Primitives();

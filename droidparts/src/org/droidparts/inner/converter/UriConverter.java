@@ -16,7 +16,6 @@
 package org.droidparts.inner.converter;
 
 import org.droidparts.inner.TypeHelper;
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.content.ContentValues;
@@ -37,13 +36,13 @@ public class UriConverter extends Converter<Uri> {
 
 	@Override
 	public <V> void putToJSON(Class<Uri> valType, Class<V> componentType,
-			JSONObject obj, String key, Uri val) throws JSONException {
+			JSONObject obj, String key, Uri val) throws Exception {
 		obj.put(key, val.toString());
 	}
 
 	@Override
 	public <V> Uri readFromJSON(Class<Uri> valType, Class<V> componentType,
-			JSONObject obj, String key) throws JSONException {
+			JSONObject obj, String key) throws Exception {
 		return parseFromString(valType, componentType, obj.getString(key));
 	}
 

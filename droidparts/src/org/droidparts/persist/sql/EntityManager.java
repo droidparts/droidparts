@@ -71,10 +71,14 @@ public class EntityManager<EntityType extends Entity> extends
 		for (FieldSpec<ColumnAnn> spec : columnSpecs) {
 			int colIdx = cursor.getColumnIndex(spec.ann.name);
 			if (colIdx >= 0) {
-				Object columnVal = readFromCursor(cursor, colIdx,
-						spec.field.getType(), spec.componentType);
-				if (columnVal != null || spec.ann.nullable) {
-					setFieldVal(entity, spec.field, columnVal);
+				try {
+					Object columnVal = readFromCursor(cursor, colIdx,
+							spec.field.getType(), spec.componentType);
+					if (columnVal != null || spec.ann.nullable) {
+						setFieldVal(entity, spec.field, columnVal);
+					}
+				} catch (Exception e) {
+					throw new RuntimeException(e);
 				}
 			}
 		}
@@ -148,8 +152,12 @@ public class EntityManager<EntityType extends Entity> extends
 				.getTableColumnSpecs(cls);
 		for (FieldSpec<ColumnAnn> spec : columnSpecs) {
 			Object columnVal = getFieldVal(item, spec.field);
-			putToContentValues(cv, spec.ann.name, spec.field.getType(),
-					spec.componentType, columnVal);
+			try {
+				putToContentValues(cv, spec.ann.name, spec.field.getType(),
+						spec.componentType, columnVal);
+			} catch (Exception e) {
+				throw new RuntimeException(e);
+			}
 		}
 		return cv;
 	}
@@ -224,7 +232,7 @@ public class EntityManager<EntityType extends Entity> extends
 	@SuppressWarnings("unchecked")
 	protected <T, V> void putToContentValues(ContentValues cv, String key,
 			Class<T> valueType, Class<V> componentType, Object value)
-			throws IllegalArgumentException {
+			throws Exception {
 		if (value == null) {
 			cv.putNull(key);
 		} else {
@@ -235,8 +243,7 @@ public class EntityManager<EntityType extends Entity> extends
 	}
 
 	protected <T, V> Object readFromCursor(Cursor cursor, int columnIndex,
-			Class<T> valType, Class<V> componentType)
-			throws IllegalArgumentException {
+			Class<T> valType, Class<V> componentType) throws Exception {
 		if (cursor.isNull(columnIndex)) {
 			return null;
 		} else {

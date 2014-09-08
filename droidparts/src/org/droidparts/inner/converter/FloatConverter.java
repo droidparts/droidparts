@@ -16,7 +16,6 @@
 package org.droidparts.inner.converter;
 
 import org.droidparts.inner.TypeHelper;
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.content.ContentValues;
@@ -36,7 +35,7 @@ public class FloatConverter extends Converter<Float> {
 
 	@Override
 	public <V> Float readFromJSON(Class<Float> valType, Class<V> componentType,
-			JSONObject obj, String key) throws JSONException {
+			JSONObject obj, String key) throws Exception {
 		return (float) obj.getDouble(key);
 	}
 

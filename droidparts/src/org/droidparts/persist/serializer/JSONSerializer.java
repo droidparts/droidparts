@@ -64,8 +64,7 @@ public class JSONSerializer<ModelType extends Model> extends
 		return model;
 	}
 
-	public JSONArray serializeAll(Collection<ModelType> items)
-			throws Exception {
+	public JSONArray serializeAll(Collection<ModelType> items) throws Exception {
 		JSONArray arr = new JSONArray();
 		for (ModelType item : items) {
 			arr.put(serialize(item));

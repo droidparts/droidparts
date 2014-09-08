@@ -16,7 +16,6 @@
 package org.droidparts.inner.converter;
 
 import org.droidparts.inner.TypeHelper;
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.content.ContentValues;
@@ -36,7 +35,7 @@ public class ShortConverter extends Converter<Short> {
 
 	@Override
 	public <V> Short readFromJSON(Class<Short> valType, Class<V> componentType,
-			JSONObject obj, String key) throws JSONException {
+			JSONObject obj, String key) throws Exception {
 		return parseFromString(valType, componentType, obj.getString(key));
 	}
 

@@ -16,7 +16,6 @@
 package org.droidparts.inner.converter;
 
 import org.droidparts.inner.TypeHelper;
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.content.ContentValues;
@@ -37,25 +36,21 @@ public class JSONObjectConverter extends Converter<JSONObject> {
 	@Override
 	public <V> void putToJSON(Class<JSONObject> valType,
 			Class<V> componentType, JSONObject obj, String key, JSONObject val)
-			throws JSONException {
+			throws Exception {
 		obj.put(key, val.toString());
 	}
 
 	@Override
 	public <V> JSONObject readFromJSON(Class<JSONObject> valType,
 			Class<V> componentType, JSONObject obj, String key)
-			throws JSONException {
+			throws Exception {
 		return parseFromString(valType, componentType, obj.getString(key));
 	}
 
 	@Override
 	protected <V> JSONObject parseFromString(Class<JSONObject> valType,
-			Class<V> componentType, String str) {
-		try {
-			return new JSONObject(str);
-		} catch (JSONException e) {
-			throw new IllegalArgumentException(e);
-		}
+			Class<V> componentType, String str) throws Exception {
+		return new JSONObject(str);
 	}
 
 	@Override
@@ -66,12 +61,9 @@ public class JSONObjectConverter extends Converter<JSONObject> {
 
 	@Override
 	public <V> JSONObject readFromCursor(Class<JSONObject> valType,
-			Class<V> componentType, Cursor cursor, int columnIndex) {
-		try {
-			return new JSONObject(cursor.getString(columnIndex));
-		} catch (JSONException e) {
-			throw new IllegalArgumentException(e);
-		}
+			Class<V> componentType, Cursor cursor, int columnIndex)
+			throws Exception {
+		return new JSONObject(cursor.getString(columnIndex));
 	}
 
 }

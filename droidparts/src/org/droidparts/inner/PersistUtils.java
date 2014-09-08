@@ -200,7 +200,7 @@ public final class PersistUtils implements SQL.DDL {
 
 	@SuppressWarnings("unchecked")
 	public static <T> ArrayList<String> getAddMissingColumns(SQLiteDatabase db,
-			Class<? extends Entity> cls) {
+			Class<? extends Entity> cls) throws Exception {
 		String tableName = getTableName(cls);
 		FieldSpec<ColumnAnn>[] columnSpecs = ClassSpecRegistry
 				.getTableColumnSpecs(cls);
@@ -220,10 +220,12 @@ public final class PersistUtils implements SQL.DDL {
 					.getConverter(spec.field.getType());
 			Object defaultVal = ReflectionUtils.getFieldVal(entity, spec.field);
 			//
-			ContentValues cv = new ContentValues();
-			converter.putToContentValues((Class<T>) spec.field.getType(),
-					spec.componentType, cv, "key", (T) defaultVal);
-			defaultVal = cv.get("key");
+			if (defaultVal != null) {
+				ContentValues cv = new ContentValues();
+				converter.putToContentValues((Class<T>) spec.field.getType(),
+						spec.componentType, cv, DEFAULT, (T) defaultVal);
+				defaultVal = cv.get(DEFAULT);
+			}
 			//
 			String statement = getAddColumn(tableName, spec.ann.name,
 					converter.getDBColumnType(), spec.ann.nullable, defaultVal);

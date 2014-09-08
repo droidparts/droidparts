@@ -18,7 +18,6 @@ package org.droidparts.inner.converter;
 import java.util.Date;
 
 import org.droidparts.inner.TypeHelper;
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.content.ContentValues;
@@ -38,13 +37,13 @@ public class DateConverter extends Converter<Date> {
 
 	@Override
 	public <V> void putToJSON(Class<Date> valType, Class<V> componentType,
-			JSONObject obj, String key, Date val) throws JSONException {
+			JSONObject obj, String key, Date val) throws Exception {
 		obj.put(key, val.getTime());
 	}
 
 	@Override
 	public <V> Date readFromJSON(Class<Date> valType, Class<V> componentType,
-			JSONObject obj, String key) throws JSONException {
+			JSONObject obj, String key) throws Exception {
 		try {
 			return new Date(obj.getLong(key));
 		} catch (Exception e) {

@@ -53,7 +53,7 @@ public class EntityConverter extends ModelConverter {
 
 	@Override
 	protected <V> Model parseFromString(Class<Model> valType,
-			Class<V> componentType, String str) {
+			Class<V> componentType, String str) throws Exception {
 		if (str.startsWith("{")) {
 			// XXX it's a JSON Object
 			return super.parseFromString(valType, componentType, str);
