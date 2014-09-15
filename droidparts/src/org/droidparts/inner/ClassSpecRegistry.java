@@ -252,7 +252,9 @@ public final class ClassSpecRegistry {
 					spec.ann.nullable = false;
 				}
 			} else if (spec.ann.eager) {
-				if (!isEntity(fieldType) && !isEntity(spec.componentType)) {
+				boolean entity = isEntity(fieldType)
+						|| ((isArray(fieldType) || isCollection(fieldType)) && isEntity(spec.componentType));
+				if (!entity) {
 					L.w("%s can't be eager.", fieldType.getSimpleName());
 					spec.ann.eager = false;
 				}
