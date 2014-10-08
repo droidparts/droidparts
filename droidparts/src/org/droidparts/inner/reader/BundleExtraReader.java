@@ -31,7 +31,7 @@ public class BundleExtraReader {
 		} else {
 			data = FragmentsReader.getFragmentArguments(obj);
 		}
-		Object val = data.get(key);
+		Object val = data != null ? data.get(key) : null;
 		if (val == null && !optional) {
 			throw new Exception("Bundle missing required key: " + key);
 		} else {
