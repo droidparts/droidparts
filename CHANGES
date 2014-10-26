@@ -1,3 +1,6 @@
+2.6.2 /2014-10-26/:
+    *  Removed excessive logging /kudos to @plzen/.
+
 2.6.1 /2014-10-01/:
     *  @Column: fixed 'eager=true' on a non-Entity field crash.
 
