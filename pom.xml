@@ -80,14 +80,14 @@
 			<dependency>
 				<groupId>com.google.android</groupId>
 				<artifactId>android-support-v4</artifactId>
-				<version>20</version>
+				<version>21</version>
 				<scope>system</scope>
 				<systemPath>${project.basedir}/libs/android-support-v4.jar</systemPath>
 			</dependency>
 			<dependency>
 				<groupId>com.google.android</groupId>
 				<artifactId>android-support-v7-appcompat</artifactId>
-				<version>20</version>
+				<version>21</version>
 				<scope>system</scope>
 				<systemPath>${project.basedir}/libs/android-support-v7-appcompat.jar</systemPath>
 			</dependency>
@@ -96,38 +96,38 @@
 
 	<build>
 		<sourceDirectory>src</sourceDirectory>
-		<pluginManagement>
-			<plugins>
-				<plugin>
-					<groupId>org.apache.maven.plugins</groupId>
-					<artifactId>maven-compiler-plugin</artifactId>
-					<configuration>
-						<source>1.6</source>
-						<target>1.6</target>
-					</configuration>
-				</plugin>
-				<plugin>
-					<groupId>com.jayway.maven.plugins.android.generation2</groupId>
-					<artifactId>android-maven-plugin</artifactId>
-					<version>3.8.2</version>
-					<extensions>true</extensions>
-					<configuration>
-						<undeployBeforeDeploy>true</undeployBeforeDeploy>
-						<sdk>
-							<platform>14</platform>
-						</sdk>
-					</configuration>
-				</plugin>
-				<plugin>
-					<groupId>org.apache.maven.plugins</groupId>
-					<artifactId>maven-release-plugin</artifactId>
-					<configuration>
-						<tagNameFormat>@{project.version}</tagNameFormat>
-						<autoVersionSubmodules>true</autoVersionSubmodules>
-					</configuration>
-				</plugin>
-			</plugins>
-		</pluginManagement>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<configuration>
+					<source>1.6</source>
+					<target>1.6</target>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>com.simpligility.maven.plugins</groupId>
+				<artifactId>android-maven-plugin</artifactId>
+				<extensions>true</extensions>
+				<configuration>
+					<undeployBeforeDeploy>true</undeployBeforeDeploy>
+					<sdk>
+						<platform>14</platform>
+					</sdk>
+					<androidManifestFile>AndroidManifest.xml</androidManifestFile>
+					<assetsDirectory>assets</assetsDirectory>
+					<resourceDirectory>res</resourceDirectory>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-release-plugin</artifactId>
+				<configuration>
+					<tagNameFormat>@{project.version}</tagNameFormat>
+					<autoVersionSubmodules>true</autoVersionSubmodules>
+				</configuration>
+			</plugin>
+		</plugins>
 	</build>
 
 </project>
