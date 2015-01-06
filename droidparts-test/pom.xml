@@ -5,7 +5,7 @@
 	<parent>
 		<groupId>org.droidparts</groupId>
 		<artifactId>droidparts-parent</artifactId>
-		<version>2.6.2</version>
+		<version>2.6.3</version>
 	</parent>
 
 	<artifactId>droidparts-test</artifactId>
@@ -40,14 +40,5 @@
 			<type>jar</type>
 		</dependency>
 	</dependencies>
-
-	<build>
-		<plugins>
-			<plugin>
-				<groupId>com.jayway.maven.plugins.android.generation2</groupId>
-				<artifactId>android-maven-plugin</artifactId>
-			</plugin>
-		</plugins>
-	</build>
 
 </project>
