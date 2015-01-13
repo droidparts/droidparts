@@ -33,6 +33,7 @@ import org.droidparts.inner.ann.serialize.XMLAnn;
 import org.droidparts.inner.converter.Converter;
 import org.droidparts.model.Model;
 import org.droidparts.util.L;
+import org.w3c.dom.Document;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -45,10 +46,10 @@ import android.util.Pair;
 public class XMLSerializer<ModelType extends Model> extends
 		AbstractSerializer<ModelType, Node, NodeList> {
 
-	public static Node parseDocument(String xml) throws IOException,
+	public static Document parseDocument(String xml) throws IOException,
 			ParserConfigurationException, SAXException {
 		return DocumentBuilderFactory.newInstance().newDocumentBuilder()
-				.parse(new InputSource(new StringReader(xml))).getFirstChild();
+				.parse(new InputSource(new StringReader(xml)));
 	}
 
 	public XMLSerializer(Class<ModelType> cls, Context ctx) {
