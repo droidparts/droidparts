@@ -1,3 +1,7 @@
+2.6.4 /2015-01-14/:
+    * XMLSerializer: fixed Exception not thrown if deserialization a required array/collection element fails.
+    * XMLSerializer: reverted parseDocument(String xml) to return Document.
+
 2.6.3 /2015-01-06/:
     * XMLSerializer: changed parseDocument(String xml) to return the root child.
     * Updated pom.xml.
