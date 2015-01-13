@@ -23,6 +23,7 @@ import org.droidparts.annotation.serialize.JSON;
 import org.droidparts.persist.serializer.JSONSerializer;
 import org.droidparts.test.R;
 import org.droidparts.test.model.Album;
+import org.droidparts.test.model.Collections;
 import org.droidparts.test.model.Nested;
 import org.droidparts.test.model.Primitives;
 import org.droidparts.util.ResourceUtils;
@@ -30,6 +31,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import android.test.AndroidTestCase;
+import android.test.AssertionFailedError;
 
 public class JSONTestCase extends AndroidTestCase {
 
@@ -74,6 +76,21 @@ public class JSONTestCase extends AndroidTestCase {
 	}
 
 	//
+
+	public void testCollectionsFail() throws Exception {
+		try {
+			JSONSerializer<Collections> ser = new JSONSerializer<Collections>(
+					Collections.class, getContext());
+			ser.deserialize(new JSONObject(
+					getJSONString(R.raw.collections_fail_json)));
+		} catch (Exception e) {
+			assertTrue(e instanceof IllegalArgumentException);
+			return;
+		}
+		throw new AssertionFailedError();
+	}
+
+	//
 	private JSONObject getPrimitives() throws Exception {
 		return new JSONObject(getJSONString(R.raw.primitives));
 	}
@@ -89,5 +106,7 @@ public class JSONTestCase extends AndroidTestCase {
 	private String getJSONString(int resId) {
 		return ResourceUtils.readRawResource(getContext(), resId);
 	}
+
+	//
 
 }

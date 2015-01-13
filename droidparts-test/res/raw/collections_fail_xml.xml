@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<albums>
+
+    <album
+        name="Diamond"/>
+    <album>
+        <year>2009</year>
+    </album>
+
+</albums>

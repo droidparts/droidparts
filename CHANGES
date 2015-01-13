@@ -1,12 +1,16 @@
+2.6.4 /2015-01-14/:
+    * XMLSerializer: fixed Exception not thrown if deserialization a required array/collection element fails.
+    * XMLSerializer: reverted parseDocument(String xml) to return Document.
+
 2.6.3 /2015-01-06/:
-    *  XMLSerializer: changed parseDocument(String xml) to return the root child.
+    * XMLSerializer: changed parseDocument(String xml) to return the root child.
     * Updated pom.xml.
 
 2.6.2 /2014-10-26/:
-    *  Removed excessive logging /kudos to @plzen/.
+    * Removed excessive logging /kudos to @plzen/.
 
 2.6.1 /2014-10-01/:
-    *  @Column: fixed 'eager=true' on a non-Entity field crash.
+    * @Column: fixed 'eager=true' on a non-Entity field crash.
 
 2.6.0 /2014-09-09/:
     * DB Model persistence.

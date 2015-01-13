@@ -7,7 +7,8 @@
     <albums>
     	<album
         	name="Diamond"
-        	year="2007" />
+        	year="2007">
+    	</album>
     	<album>
         	<name>Iris</name>
         	<year>2009</year>
