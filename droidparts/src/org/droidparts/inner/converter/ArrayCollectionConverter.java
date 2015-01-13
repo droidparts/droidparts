@@ -71,18 +71,20 @@ public class ArrayCollectionConverter extends Converter<Object> {
 			Class<V> componentType, Node node, String nodeListItemTagHint)
 			throws Exception {
 		NodeList nl = node.getChildNodes();
-		ArrayList<Node> nodes = new ArrayList<Node>();
+		ArrayList<Node> elementNodes = new ArrayList<Node>();
 		for (int i = 0; i < nl.getLength(); i++) {
 			Node n = nl.item(i);
-			if (isNotEmpty(nodeListItemTagHint)) {
-				if (nodeListItemTagHint.equals(n.getNodeName())) {
-					nodes.add(n);
+			if (n.getNodeType() == Node.ELEMENT_NODE) {
+				if (isNotEmpty(nodeListItemTagHint)) {
+					if (nodeListItemTagHint.equals(n.getNodeName())) {
+						elementNodes.add(n);
+					}
+				} else {
+					elementNodes.add(n);
 				}
-			} else {
-				nodes.add(n);
 			}
 		}
-		Wrapper w = new Wrapper(null, nodes);
+		Wrapper w = new Wrapper(null, elementNodes);
 		return readFromWrapper(valType, componentType, w);
 	}
 
@@ -124,23 +126,14 @@ public class ArrayCollectionConverter extends Converter<Object> {
 					.makeSerializer((Class<Model>) componentType);
 		}
 		Converter<V> converter = ConverterRegistry.getConverter(componentType);
-		for (int i = 0; i < wrapper.length(); i++) {
-			Object item;
-			try {
-				if (isModel) {
-					item = serializer.deserialize(wrapper.get(i));
-				} else {
-					item = wrapper.convert(wrapper.get(i), converter,
-							componentType);
-				}
-				items.add(item);
-			} catch (Exception e) {
-				if (wrapper.isJSON()) {
-					throw e;
-				} else {
-					// TODO log?
-				}
+		for (int i = 0; i < wrapper.size(); i++) {
+			Object item = wrapper.get(i);
+			if (isModel) {
+				item = serializer.deserialize(item);
+			} else {
+				item = wrapper.convert(item, converter, componentType);
 			}
+			items.add(item);
 		}
 		if (isArr) {
 			Object[] arr = items.toArray();
@@ -161,54 +154,6 @@ public class ArrayCollectionConverter extends Converter<Object> {
 			return items;
 		}
 	}
-
-	private static class Wrapper {
-		private final JSONArray arr;
-		private final ArrayList<Node> nodes;
-
-		Wrapper(JSONArray arr, ArrayList<Node> nodes) {
-			this.arr = arr;
-			this.nodes = nodes;
-		}
-
-		public int length() {
-			return isJSON() ? arr.length() : nodes.size();
-		}
-
-		public <V> Object get(int i) throws Exception {
-			if (isJSON()) {
-				return arr.get(i);
-			} else {
-				return nodes.get(i);
-			}
-		}
-
-		public <V> Object convert(Object item, Converter<V> conv,
-				Class<V> valType) throws Exception {
-			if (isJSON()) {
-				return item;
-			} else {
-				Node n = (Node) item;
-				String txt = PersistUtils.getNodeText(n);
-				return conv.parseFromString(valType, null, txt);
-			}
-		}
-
-		public <M extends Model> AbstractSerializer<M, ?, ?> makeSerializer(
-				Class<M> componentType) {
-			if (isJSON()) {
-				return new JSONSerializer<M>(componentType, null);
-			} else {
-				return new XMLSerializer<M>(componentType, null);
-			}
-		}
-
-		public boolean isJSON() {
-			return (arr != null);
-		}
-	}
-
-	//
 
 	@Override
 	public <V> void putToContentValues(Class<Object> valueType,
@@ -275,6 +220,55 @@ public class ArrayCollectionConverter extends Converter<Object> {
 			coll.add(item);
 		}
 		return coll;
+	}
+
+	//
+
+	private static class Wrapper {
+		private final JSONArray arr;
+		private final ArrayList<Node> nodes;
+
+		Wrapper(JSONArray arr, ArrayList<Node> nodes) {
+			this.arr = arr;
+			this.nodes = nodes;
+		}
+
+		int size() {
+			return isJSON() ? arr.length() : nodes.size();
+		}
+
+		<V> Object get(int i) throws Exception {
+			if (isJSON()) {
+				return arr.get(i);
+			} else {
+				return nodes.get(i);
+			}
+		}
+
+		<V> Object convert(Object item, Converter<V> conv, Class<V> valType)
+				throws Exception {
+			if (isJSON()) {
+				return item;
+			} else {
+				Node n = (Node) item;
+				String txt = PersistUtils.getNodeText(n);
+				return conv.parseFromString(valType, null, txt);
+			}
+		}
+
+		<M extends Model> AbstractSerializer<M, ?, ?> makeSerializer(
+				Class<M> componentType) {
+			if (isJSON()) {
+				return new JSONSerializer<M>(componentType, null);
+			} else {
+				return new XMLSerializer<M>(componentType, null);
+			}
+		}
+
+		private boolean isJSON() {
+			return (arr != null);
+		}
+
 	}
 
 }

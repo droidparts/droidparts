@@ -17,19 +17,18 @@ package org.droidparts.test.testcase.serialize;
 
 import java.util.ArrayList;
 
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-
 import org.droidparts.persist.serializer.XMLSerializer;
 import org.droidparts.test.R;
 import org.droidparts.test.model.Album;
 import org.droidparts.test.model.Album2;
 import org.droidparts.test.model.AlbumFail;
+import org.droidparts.test.model.Collections;
+import org.droidparts.util.IOUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
-import org.xml.sax.InputSource;
 
 import android.test.AndroidTestCase;
+import android.test.AssertionFailedError;
 
 public class XMLTestCase extends AndroidTestCase {
 
@@ -73,12 +72,27 @@ public class XMLTestCase extends AndroidTestCase {
 		}
 	}
 
+	//
+
+	public void testCollectionsFail() throws Exception {
+		try {
+			Document doc = getXMLDocument(R.raw.collections_fail_xml);
+			XMLSerializer<Collections> ser = new XMLSerializer<Collections>(
+					Collections.class, getContext());
+			ser.deserialize(doc);
+		} catch (Exception e) {
+			assertTrue(e instanceof IllegalArgumentException);
+			return;
+		}
+		throw new AssertionFailedError();
+	}
+
+	//
+
 	private Document getXMLDocument(int resId) throws Exception {
-		DocumentBuilder db = DocumentBuilderFactory.newInstance()
-				.newDocumentBuilder();
-		Document doc = db.parse(new InputSource(getContext().getResources()
-				.openRawResource(resId)));
-		return doc;
+		String xml = IOUtils.readToString(getContext().getResources()
+				.openRawResource(resId));
+		return XMLSerializer.parseDocument(xml);
 	}
 
 }
