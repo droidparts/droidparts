@@ -1,3 +1,6 @@
+2.6.5 /2015-01-23/:
+    * Strings: fixed calculation of SHA-1 hashes beginning with 0.
+
 2.6.4 /2015-01-14/:
     * XMLSerializer: fixed Exception not thrown if deserialization a required array/collection element fails.
     * XMLSerializer: reverted parseDocument(String xml) to return Document.
