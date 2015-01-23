@@ -83,7 +83,7 @@ public class Strings {
 
 	public static String getMD5(String str) {
 		try {
-			return getHash(str, MD5);
+			return getHash(str, MD5, 32);
 		} catch (Exception e) {
 			L.w(e);
 			return null;
@@ -92,21 +92,21 @@ public class Strings {
 
 	public static String getSHA1(String str) {
 		try {
-			return getHash(str, SHA1);
+			return getHash(str, SHA1, 40);
 		} catch (Exception e) {
 			L.w(e);
 			return null;
 		}
 	}
 
-	public static String getHash(String str, String algorithm)
+	public static String getHash(String str, String algorithm, int length)
 			throws UnsupportedEncodingException, NoSuchAlgorithmException {
 		byte[] bytes = str.getBytes(UTF8);
 		MessageDigest md = MessageDigest.getInstance(algorithm);
 		byte[] digest = md.digest(bytes);
 		BigInteger bigInt = new BigInteger(1, digest);
 		String hash = bigInt.toString(16);
-		while (hash.length() < 32) {
+		while (hash.length() < length) {
 			hash = "0" + hash;
 		}
 		return hash;
