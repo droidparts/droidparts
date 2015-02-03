@@ -33,6 +33,7 @@ import android.os.Looper;
 public class EventBus {
 
 	private static final String ALL = "__all__";
+	private static final Object NULL = new Object();
 
 	private static final ConcurrentHashMap<String, ConcurrentHashMap<EventReceiver<Object>, Boolean>> eventNameToReceivers = new ConcurrentHashMap<String, ConcurrentHashMap<EventReceiver<Object>, Boolean>>();
 	private static final ConcurrentHashMap<String, Object> stickyEvents = new ConcurrentHashMap<String, Object>();
@@ -50,7 +51,7 @@ public class EventBus {
 	}
 
 	public static void postEventSticky(String name, Object data) {
-		stickyEvents.put(name, data);
+		stickyEvents.put(name, (data == null) ? NULL : data);
 		postEvent(name, data);
 	}
 
@@ -77,14 +78,15 @@ public class EventBus {
 		boolean allEvents = (eventNames.length == 0);
 		if (allEvents) {
 			for (String name : stickyEvents.keySet()) {
-				notifyReceiver(rec, name, stickyEvents.get(name));
+				Object data = stickyEvents.get(name);
+				notifyReceiver(rec, name, (data == NULL) ? null : data);
 			}
 			receiversForEventName(ALL).put(rec, Boolean.FALSE);
 		} else {
 			for (String name : eventNames) {
 				Object data = stickyEvents.get(name);
 				if (data != null) {
-					notifyReceiver(rec, name, data);
+					notifyReceiver(rec, name, (data == NULL) ? null : data);
 				}
 			}
 			for (String action : eventNames) {
