@@ -132,6 +132,9 @@ public class ClearableEditText extends EditText implements OnTouchListener,
 	}
 
 	protected void setClearIconVisible(boolean visible) {
+		boolean wasVisible = getCompoundDrawables()[2] != null;
+        	if(wasVisible == visible) return;
+        	
 		Drawable x = visible ? xD : null;
 		setCompoundDrawables(getCompoundDrawables()[0],
 				getCompoundDrawables()[1], x, getCompoundDrawables()[3]);
