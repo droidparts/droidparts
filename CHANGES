@@ -1,3 +1,7 @@
+2.6.6 /2015-02-10/:
+    * EventBus: fixed posting sticky events with null data.
+    * ClearableEditText: fixed setClearIconVisible() causing an eternal loop of onFocusChanged-events /kudos to @KennethKr/.
+
 2.6.5 /2015-01-23/:
     * Strings: fixed calculation of SHA-1 hashes beginning with 0.
 
