@@ -55,7 +55,7 @@ public class ArrayCollectionConverter extends Converter<Object> {
 
 	@Override
 	public String getDBColumnType() {
-		return TEXT;
+		return BLOB;
 	}
 
 	@Override
@@ -160,16 +160,21 @@ public class ArrayCollectionConverter extends Converter<Object> {
 			Class<V> componentType, ContentValues cv, String key, Object val)
 			throws Exception {
 		Converter<V> converter = ConverterRegistry.getConverter(componentType);
-		ArrayList<V> list = arrOrCollToList(valueType, componentType, val);
-		ArrayList<Object> vals = new ArrayList<Object>();
-		ContentValues tmpCV = new ContentValues();
-		for (V obj : list) {
-			converter
-					.putToContentValues(componentType, null, tmpCV, "key", obj);
-			vals.add(tmpCV.get("key"));
+		if (converter.getDBColumnType() == BLOB) {
+			byte[] bytes = PersistUtils.toBytes(val);
+			cv.put(key, bytes);
+		} else {
+			ArrayList<V> list = arrOrCollToList(valueType, componentType, val);
+			ArrayList<Object> vals = new ArrayList<Object>();
+			ContentValues tmpCV = new ContentValues();
+			for (V obj : list) {
+				converter.putToContentValues(componentType, null, tmpCV, "key",
+						obj);
+				vals.add(tmpCV.get("key"));
+			}
+			String strVal = Strings.join(vals, SEP);
+			cv.put(key, strVal);
 		}
-		String strVal = Strings.join(vals, SEP);
-		cv.put(key, strVal);
 	}
 
 	@Override
@@ -177,13 +182,18 @@ public class ArrayCollectionConverter extends Converter<Object> {
 			Class<V> componentType, Cursor cursor, int columnIndex)
 			throws Exception {
 		Converter<V> converter = ConverterRegistry.getConverter(componentType);
-		String str = cursor.getString(columnIndex);
-		String[] parts = (str.length() > 0) ? str.split("\\" + SEP)
-				: new String[0];
-		if (isArray(valType)) {
-			return parseTypeArr(converter, componentType, parts);
+		if (converter.getDBColumnType() == BLOB) {
+			byte[] arr = cursor.getBlob(columnIndex);
+			return (arr != null) ? PersistUtils.fromBytes(arr) : null;
 		} else {
-			return parseTypeColl(converter, valType, componentType, parts);
+			String str = cursor.getString(columnIndex);
+			String[] parts = (str.length() > 0) ? str.split("\\" + SEP)
+					: new String[0];
+			if (isArray(valType)) {
+				return parseTypeArr(converter, componentType, parts);
+			} else {
+				return parseTypeColl(converter, valType, componentType, parts);
+			}
 		}
 	}
 

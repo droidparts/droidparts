@@ -15,6 +15,8 @@
  */
 package org.droidparts.test.model;
 
+import java.util.ArrayList;
+
 import org.droidparts.annotation.serialize.JSON;
 import org.droidparts.annotation.serialize.XML;
 import org.droidparts.annotation.sql.Column;
@@ -44,6 +46,12 @@ public class Album extends Entity {
 
 	@Column
 	public Nested nested = new Nested();
+
+	@Column
+	public ArrayList<Nested> nestedList = new ArrayList<Nested>();
+
+	@Column
+	public Nested[] nestedArr = new Nested[0];
 
 	public Album() {
 	}

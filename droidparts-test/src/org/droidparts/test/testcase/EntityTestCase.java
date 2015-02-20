@@ -23,6 +23,7 @@ import org.droidparts.persist.sql.EntityManager;
 import org.droidparts.persist.sql.stmt.Is;
 import org.droidparts.test.model.Album;
 import org.droidparts.test.model.AlbumToTag;
+import org.droidparts.test.model.Nested;
 import org.droidparts.test.model.Primitives;
 import org.droidparts.test.model.Primitives.En;
 import org.droidparts.test.model.Tag;
@@ -136,9 +137,18 @@ public class EntityTestCase extends AndroidTestCase implements DB {
 	public void testModel() {
 		Album album = createAlbum();
 		album.nested.str = "str";
+		for (String str : TRACKS) {
+			Nested n = new Nested();
+			n.str = str;
+			album.nestedList.add(n);
+		}
+		album.nestedArr = album.nestedList.toArray(new Nested[album.nestedList
+				.size()]);
 		albumManager.update(album);
 		album = albumManager.read(album.id);
 		assertEquals("str", album.nested.str);
+		assertEquals(TRACKS.length, album.nestedList.size());
+		assertEquals(TRACKS.length, album.nestedArr.length);
 	}
 
 	public void testDate() {
