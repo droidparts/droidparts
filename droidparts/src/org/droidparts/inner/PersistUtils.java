@@ -21,6 +21,10 @@ import static org.droidparts.inner.TypeHelper.isEntity;
 import static org.droidparts.util.Strings.join;
 import static org.json.JSONObject.NULL;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
@@ -45,6 +49,22 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteQueryBuilder;
 
 public final class PersistUtils implements SQL.DDL {
+
+	//
+
+	public static byte[] toBytes(Object obj) throws Exception {
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		ObjectOutputStream oos = new ObjectOutputStream(baos);
+		oos.writeObject(obj);
+		byte[] arr = baos.toByteArray();
+		return arr;
+	}
+
+	public static Object fromBytes(byte[] arr) throws Exception {
+		ByteArrayInputStream bais = new ByteArrayInputStream(arr);
+		ObjectInputStream ois = new ObjectInputStream(bais);
+		return ois.readObject();
+	}
 
 	// JSON
 

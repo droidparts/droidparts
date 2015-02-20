@@ -15,11 +15,7 @@
  */
 package org.droidparts.inner.converter;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-
+import org.droidparts.inner.PersistUtils;
 import org.droidparts.inner.TypeHelper;
 import org.droidparts.model.Model;
 import org.droidparts.persist.serializer.JSONSerializer;
@@ -46,10 +42,7 @@ public class ModelConverter extends Converter<Model> {
 	public <V> void putToContentValues(Class<Model> valueType,
 			Class<V> componentType, ContentValues cv, String key, Model val)
 			throws Exception {
-		ByteArrayOutputStream baos = new ByteArrayOutputStream();
-		ObjectOutputStream oos = new ObjectOutputStream(baos);
-		oos.writeObject(val);
-		byte[] arr = baos.toByteArray();
+		byte[] arr = PersistUtils.toBytes(val);
 		cv.put(key, arr);
 	}
 
@@ -60,9 +53,7 @@ public class ModelConverter extends Converter<Model> {
 		Model model = null;
 		byte[] arr = cursor.getBlob(columnIndex);
 		if (arr != null) {
-			ByteArrayInputStream bais = new ByteArrayInputStream(arr);
-			ObjectInputStream ois = new ObjectInputStream(bais);
-			model = (Model) ois.readObject();
+			model = (Model) PersistUtils.fromBytes(arr);
 		}
 		return model;
 	}
