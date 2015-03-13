@@ -171,7 +171,7 @@ public class JSONSerializer<ModelType extends Model> extends
 	}
 
 	private static void handleParseException(boolean optional, String key,
-			Exception e) throws ParseException {
+			Exception e) throws SerializerException {
 		logOrThrow(optional, String.format("key '%s'", key), e);
 	}
 

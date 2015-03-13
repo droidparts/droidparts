@@ -160,12 +160,12 @@ public class XMLSerializer<ModelType extends Model> extends
 	}
 
 	private static void handleParseException(boolean optional, String tag,
-			String attribute, Exception e) throws ParseException {
+			String attribute, Exception e) throws SerializerException {
 		StringBuilder sb = new StringBuilder();
 		if (isNotEmpty(tag)) {
 			sb.append(String.format("tag '%s'", tag));
 		}
-		if (isNotEmpty(tag)) {
+		if (isNotEmpty(attribute)) {
 			sb.append(String.format(" attribute '%s'", attribute));
 		}
 		logOrThrow(optional, sb.toString(), e);

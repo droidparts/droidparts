@@ -17,7 +17,7 @@ package org.droidparts.persist.serializer;
 
 import org.droidparts.util.Strings;
 
-public class ParseException extends Exception {
+public class SerializerException extends Exception {
 	private static final long serialVersionUID = 1L;
 
 	public static String createMessage(String[] parts) {
@@ -27,7 +27,7 @@ public class ParseException extends Exception {
 
 	private final String[] parts;
 
-	public ParseException(String[] parts) {
+	public SerializerException(String[] parts) {
 		super(createMessage(parts));
 		this.parts = parts;
 	}

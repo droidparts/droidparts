@@ -63,19 +63,19 @@ public abstract class AbstractSerializer<ModelType extends Model, Obj, Arr> {
 	}
 
 	protected static void logOrThrow(boolean optional, String part, Exception e)
-			throws ParseException {
+			throws SerializerException {
 		ArrayList<String> parts = new ArrayList<String>();
-		if (e instanceof ParseException) {
-			parts.addAll(Arrays.asList(((ParseException) e).getParts()));
+		if (e instanceof SerializerException) {
+			parts.addAll(Arrays.asList(((SerializerException) e).getParts()));
 		} else {
 			parts.add(e.getMessage());
 		}
 		parts.add(0, part);
 		String[] arr = parts.toArray(new String[parts.size()]);
 		if (optional) {
-			L.d(ParseException.createMessage(arr));
+			L.d(SerializerException.createMessage(arr));
 		} else {
-			throw new ParseException(arr);
+			throw new SerializerException(arr);
 		}
 	}
 
