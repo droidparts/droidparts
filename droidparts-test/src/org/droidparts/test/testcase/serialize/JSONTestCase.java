@@ -21,6 +21,7 @@ import java.util.ArrayList;
 
 import org.droidparts.annotation.serialize.JSON;
 import org.droidparts.persist.serializer.JSONSerializer;
+import org.droidparts.persist.serializer.ParseException;
 import org.droidparts.test.R;
 import org.droidparts.test.model.Album;
 import org.droidparts.test.model.Collections;
@@ -84,7 +85,7 @@ public class JSONTestCase extends AndroidTestCase {
 			ser.deserialize(new JSONObject(
 					getJSONString(R.raw.collections_fail_json)));
 		} catch (Exception e) {
-			assertTrue(e instanceof IllegalArgumentException);
+			assertTrue(e instanceof ParseException);
 			return;
 		}
 		throw new AssertionFailedError();

@@ -32,7 +32,6 @@ import org.droidparts.inner.ann.FieldSpec;
 import org.droidparts.inner.ann.serialize.XMLAnn;
 import org.droidparts.inner.converter.Converter;
 import org.droidparts.model.Model;
-import org.droidparts.util.L;
 import org.w3c.dom.Document;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
@@ -82,12 +81,12 @@ public class XMLSerializer<ModelType extends Model> extends
 		Pair<String, String> keyParts = getNestedKeyParts(tag);
 		if (keyParts != null) {
 			String subKey = keyParts.first;
-			Node childTag = getChildNode(node, subKey);
-			if (childTag != null) {
+			try {
+				Node childTag = getChildNode(node, subKey);
 				readFromXMLAndSetFieldVal(obj, spec, childTag, keyParts.second,
 						attribute);
-			} else {
-				throwIfNotOptional(spec);
+			} catch (Exception e) {
+				handleParseException(spec.ann.optional, subKey, attribute, e);
 			}
 		} else {
 			boolean defaultOrSameTag = tag.equals(spec.field.getName())
@@ -98,7 +97,8 @@ public class XMLSerializer<ModelType extends Model> extends
 					if (child != null) {
 						node = child;
 					} else if (!defaultOrSameTag) {
-						throwIfNotOptional(spec);
+						handleParseException(spec.ann.optional, tag, attribute,
+								new IllegalArgumentException("No node."));
 					}
 				}
 			}
@@ -108,25 +108,21 @@ public class XMLSerializer<ModelType extends Model> extends
 			if (tagNode == null && defaultOrSameTag) {
 				tagNode = node;
 			}
-			if (attrNode != null || tagNode != null) {
-				try {
-					if (attrNode != null) {
-						Object attrVal = getNodeVal(spec.field.getType(),
-								spec.componentType, attrNode, attribute);
-						setFieldVal(obj, spec.field, attrVal);
-					} else if (tagNode != null) {
-						Object tagVal = getNodeVal(spec.field.getType(),
-								spec.componentType, tagNode, attribute);
-						setFieldVal(obj, spec.field, tagVal);
-					}
-				} catch (Exception e) {
-					// XXX tag or attribute
-					L.w("Failed to deserialize '%s': %s.", spec.ann.tag,
-							e.getMessage());
-					throwIfNotOptional(spec);
+			try {
+				if (attrNode != null) {
+					Object attrVal = getNodeVal(spec.field.getType(),
+							spec.componentType, attrNode, attribute);
+					setFieldVal(obj, spec.field, attrVal);
+				} else if (tagNode != null) {
+					Object tagVal = getNodeVal(spec.field.getType(),
+							spec.componentType, tagNode, attribute);
+					setFieldVal(obj, spec.field, tagVal);
+				} else {
+					throw new IllegalArgumentException(
+							"Tag or attribute not found.");
 				}
-			} else {
-				throwIfNotOptional(spec);
+			} catch (Exception e) {
+				handleParseException(spec.ann.optional, tag, attribute, e);
 			}
 		}
 
@@ -163,12 +159,15 @@ public class XMLSerializer<ModelType extends Model> extends
 		return null;
 	}
 
-	private static void throwIfNotOptional(FieldSpec<XMLAnn> spec)
-			throws IllegalArgumentException {
-		if (!spec.ann.optional) {
-			throw new IllegalArgumentException(String.format(
-					"Required tag '%s' or attribute '%s' not present.",
-					spec.ann.tag, spec.ann.attribute));
+	private static void handleParseException(boolean optional, String tag,
+			String attribute, Exception e) throws ParseException {
+		StringBuilder sb = new StringBuilder();
+		if (isNotEmpty(tag)) {
+			sb.append(String.format("tag '%s'", tag));
 		}
+		if (isNotEmpty(tag)) {
+			sb.append(String.format(" attribute '%s'", attribute));
+		}
+		logOrThrow(optional, sb.toString(), e);
 	}
 }

@@ -126,31 +126,24 @@ public class JSONSerializer<ModelType extends Model> extends
 		Pair<String, String> keyParts = getNestedKeyParts(key);
 		if (keyParts != null) {
 			String subKey = keyParts.first;
-			if (hasNonNull(obj, subKey)) {
+			try {
 				JSONObject subObj = obj.getJSONObject(subKey);
 				readFromJSONAndSetFieldVal(model, spec, subObj, keyParts.second);
-			} else {
-				throwIfNotOptional(spec);
+			} catch (Exception e) {
+				handleParseException(spec.ann.optional, subKey, e);
 			}
-		} else if (obj.has(key)) {
+		} else {
 			try {
 				Object val = readFromJSON(spec.field.getType(),
 						spec.componentType, obj, key);
 				if (!NULL.equals(val)) {
 					setFieldVal(model, spec.field, val);
 				} else {
-					L.i("Received NULL '%s', skipping.", spec.ann.key);
+					L.d("Received NULL '%s', skipping.", spec.ann.key);
 				}
 			} catch (Exception e) {
-				if (spec.ann.optional) {
-					L.w("Failed to deserialize '%s': %s.", spec.ann.key,
-							e.getMessage());
-				} else {
-					throw e;
-				}
+				handleParseException(spec.ann.optional, key, e);
 			}
-		} else {
-			throwIfNotOptional(spec);
 		}
 	}
 
@@ -177,12 +170,9 @@ public class JSONSerializer<ModelType extends Model> extends
 		}
 	}
 
-	private static void throwIfNotOptional(FieldSpec<JSONAnn> spec)
-			throws IllegalArgumentException {
-		if (!spec.ann.optional) {
-			throw new IllegalArgumentException(String.format(
-					"Required key '%s' not present.", spec.ann.key));
-		}
+	private static void handleParseException(boolean optional, String key,
+			Exception e) throws ParseException {
+		logOrThrow(optional, String.format("key '%s'", key), e);
 	}
 
 }

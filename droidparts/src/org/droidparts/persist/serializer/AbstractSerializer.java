@@ -16,9 +16,11 @@
 package org.droidparts.persist.serializer;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import org.droidparts.Injector;
 import org.droidparts.model.Model;
+import org.droidparts.util.L;
 
 import android.content.Context;
 import android.util.Pair;
@@ -57,6 +59,23 @@ public abstract class AbstractSerializer<ModelType extends Model, Obj, Arr> {
 			return pair;
 		} else {
 			return null;
+		}
+	}
+
+	protected static void logOrThrow(boolean optional, String part, Exception e)
+			throws ParseException {
+		ArrayList<String> parts = new ArrayList<String>();
+		if (e instanceof ParseException) {
+			parts.addAll(Arrays.asList(((ParseException) e).getParts()));
+		} else {
+			parts.add(e.getMessage());
+		}
+		parts.add(0, part);
+		String[] arr = parts.toArray(new String[parts.size()]);
+		if (optional) {
+			L.d(ParseException.createMessage(arr));
+		} else {
+			throw new ParseException(arr);
 		}
 	}
 

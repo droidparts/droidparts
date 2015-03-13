@@ -17,6 +17,7 @@ package org.droidparts.test.testcase.serialize;
 
 import java.util.ArrayList;
 
+import org.droidparts.persist.serializer.ParseException;
 import org.droidparts.persist.serializer.XMLSerializer;
 import org.droidparts.test.R;
 import org.droidparts.test.model.Album;
@@ -68,7 +69,7 @@ public class XMLTestCase extends AndroidTestCase {
 			serializer.deserialize(albumDoc);
 			assertTrue(false);
 		} catch (Exception e) {
-			assertTrue(e instanceof IllegalArgumentException);
+			assertTrue(e instanceof ParseException);
 		}
 	}
 
@@ -81,7 +82,7 @@ public class XMLTestCase extends AndroidTestCase {
 					Collections.class, getContext());
 			ser.deserialize(doc);
 		} catch (Exception e) {
-			assertTrue(e instanceof IllegalArgumentException);
+			assertTrue(e instanceof ParseException);
 			return;
 		}
 		throw new AssertionFailedError();
