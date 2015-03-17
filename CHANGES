@@ -1,3 +1,7 @@
+2.6.8 /2015-03-17/:
+    * Serializers: improved logging.
+    * Updated Support Library to v.22.
+
 2.6.7 /2015-02-20/:
     * SQL: correctly persist arrays & collections of objects that don't convert to string.
 
