@@ -1,5 +1,5 @@
 /**
- * Copyright 2014 Alex Yanchenko
+ * Copyright 2015 Alex Yanchenko
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,6 +17,7 @@ package org.droidparts.test.testcase.serialize;
 
 import java.util.ArrayList;
 
+import org.droidparts.persist.serializer.SerializerException;
 import org.droidparts.persist.serializer.XMLSerializer;
 import org.droidparts.test.R;
 import org.droidparts.test.model.Album;
@@ -68,7 +69,7 @@ public class XMLTestCase extends AndroidTestCase {
 			serializer.deserialize(albumDoc);
 			assertTrue(false);
 		} catch (Exception e) {
-			assertTrue(e instanceof IllegalArgumentException);
+			assertTrue(e instanceof SerializerException);
 		}
 	}
 
@@ -81,7 +82,7 @@ public class XMLTestCase extends AndroidTestCase {
 					Collections.class, getContext());
 			ser.deserialize(doc);
 		} catch (Exception e) {
-			assertTrue(e instanceof IllegalArgumentException);
+			assertTrue(e instanceof SerializerException);
 			return;
 		}
 		throw new AssertionFailedError();

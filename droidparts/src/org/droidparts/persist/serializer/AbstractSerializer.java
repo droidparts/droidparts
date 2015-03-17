@@ -1,5 +1,5 @@
 /**
- * Copyright 2014 Alex Yanchenko
+ * Copyright 2015 Alex Yanchenko
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,9 +16,11 @@
 package org.droidparts.persist.serializer;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import org.droidparts.Injector;
 import org.droidparts.model.Model;
+import org.droidparts.util.L;
 
 import android.content.Context;
 import android.util.Pair;
@@ -57,6 +59,23 @@ public abstract class AbstractSerializer<ModelType extends Model, Obj, Arr> {
 			return pair;
 		} else {
 			return null;
+		}
+	}
+
+	protected static void logOrThrow(boolean optional, String part, Exception e)
+			throws SerializerException {
+		ArrayList<String> parts = new ArrayList<String>();
+		if (e instanceof SerializerException) {
+			parts.addAll(Arrays.asList(((SerializerException) e).getParts()));
+		} else {
+			parts.add(e.getMessage());
+		}
+		parts.add(0, part);
+		String[] arr = parts.toArray(new String[parts.size()]);
+		if (optional) {
+			L.d(SerializerException.createMessage(arr));
+		} else {
+			throw new SerializerException(arr);
 		}
 	}
 

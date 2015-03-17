@@ -1,5 +1,5 @@
 /**
- * Copyright 2014 Alex Yanchenko
+ * Copyright 2015 Alex Yanchenko
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,6 +21,7 @@ import java.util.ArrayList;
 
 import org.droidparts.annotation.serialize.JSON;
 import org.droidparts.persist.serializer.JSONSerializer;
+import org.droidparts.persist.serializer.SerializerException;
 import org.droidparts.test.R;
 import org.droidparts.test.model.Album;
 import org.droidparts.test.model.Collections;
@@ -84,7 +85,7 @@ public class JSONTestCase extends AndroidTestCase {
 			ser.deserialize(new JSONObject(
 					getJSONString(R.raw.collections_fail_json)));
 		} catch (Exception e) {
-			assertTrue(e instanceof IllegalArgumentException);
+			assertTrue(e instanceof SerializerException);
 			return;
 		}
 		throw new AssertionFailedError();

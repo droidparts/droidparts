@@ -13,26 +13,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License. 
  */
-package org.droidparts.adapter.widget;
+package org.droidparts.persist.serializer;
 
-import java.util.Arrays;
-import java.util.List;
+import org.droidparts.util.Strings;
 
-import android.widget.Spinner;
+public class SerializerException extends Exception {
+	private static final long serialVersionUID = 1L;
 
-public class StringSpinnerAdapter extends SpinnerAdapter<String> {
-
-	public StringSpinnerAdapter(Spinner spinner, int stringArrResId) {
-		this(spinner, spinner.getContext().getResources()
-				.getStringArray(stringArrResId));
+	public static String createMessage(String[] parts) {
+		return String.format("Missing or invalid %s.",
+				Strings.join(parts, " | "));
 	}
 
-	public StringSpinnerAdapter(Spinner spinner, String[] arr) {
-		this(spinner, Arrays.asList(arr));
+	private final String[] parts;
+
+	public SerializerException(String[] parts) {
+		super(createMessage(parts));
+		this.parts = parts;
 	}
 
-	public StringSpinnerAdapter(Spinner spinner, List<String> list) {
-		super(spinner, list);
+	public String[] getParts() {
+		return parts;
 	}
 
 }
