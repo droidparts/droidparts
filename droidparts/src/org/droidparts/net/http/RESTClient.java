@@ -146,6 +146,30 @@ public class RESTClient {
 		return postMultipart(uri, name, null, file);
 	}
 
+    public HTTPResponse postMultipart(String uri, String name, String filename, byte[] file)
+            throws HTTPException {
+        return postMultipart(uri, name, null, filename, file);
+    }
+
+    public HTTPResponse postMultipart(String uri, String name,
+                                      String contentType, String filename, byte[] file) throws HTTPException {
+        L.i("POST on '%s', file: '%s' .", uri, filename);
+        HTTPResponse response;
+        if (httpURLConnectionWorker != null) {
+            HttpURLConnection conn = httpURLConnectionWorker.getConnection(uri,
+                    Method.POST);
+            HttpURLConnectionWorker
+                    .postMultipart(conn, name, contentType, filename, file);
+            response = HttpURLConnectionWorker.getResponse(conn, true);
+        } else {
+            HttpPost req = new HttpPost(uri);
+            req.setEntity(HttpClientWorker.buildMultipartEntity(name,
+                    contentType, filename, file));
+            response = httpClientWorker.getResponse(req, true);
+        }
+        return response;
+    }
+
 	public HTTPResponse postMultipart(String uri, String name,
 			String contentType, File file) throws HTTPException {
 		L.i("POST on '%s', file: '%s' .", uri, file.getPath());
