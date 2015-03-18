@@ -156,6 +156,42 @@ public class HttpURLConnectionWorker extends HTTPWorker {
 		}
 	}
 
+    public static void postMultipart(HttpURLConnection conn, String name,
+                                     String contentType, String filename, byte[] file) throws HTTPException {
+        conn.setDoOutput(true);
+        conn.setRequestProperty(CACHE_CONTROL, NO_CACHE);
+        conn.setRequestProperty(CONNECTION, KEEP_ALIVE);
+        conn.setRequestProperty(CONTENT_TYPE, MULTIPART + ";boundary="
+                + BOUNDARY);
+        DataOutputStream request = null;
+        try {
+            request = new DataOutputStream(conn.getOutputStream());
+
+            request.writeBytes(TWO_HYPHENS + BOUNDARY + CRLF);
+            request.writeBytes("Content-Disposition: form-data; name=\"" + name
+                    + "\";filename=\"" + filename + "\"" + CRLF);
+            if (contentType != null) {
+                request.writeBytes("Content-Type: " + contentType + CRLF);
+            }
+            request.writeBytes(CRLF);
+            //
+            if(file!=null){
+                request.write(file);
+            }
+            //
+            request.writeBytes(CRLF);
+            request.writeBytes(TWO_HYPHENS + BOUNDARY + TWO_HYPHENS + CRLF);
+
+            request.flush();
+        } catch (Exception e) {
+            throwIfNetworkOnMainThreadException(e);
+            throw new HTTPException(e);
+        } finally {
+            silentlyClose(request);
+        }
+    }
+
+
 	public static HTTPResponse getResponse(HttpURLConnection conn, boolean body)
 			throws HTTPException {
 		HTTPResponse response = new HTTPResponse();

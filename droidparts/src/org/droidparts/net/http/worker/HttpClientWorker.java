@@ -100,6 +100,18 @@ public class HttpClientWorker extends HTTPWorker {
 		}
 	}
 
+    public static HttpEntity buildMultipartEntity(String name,
+                                                  String contentType, String filename, byte[] file) {
+        try {
+            return HttpMimeWrapper
+                    .buildMultipartEntity(name, contentType, filename, file);
+        } catch (Exception e) {
+            throw new IllegalStateException(
+                    "You have to add Apache HttpMime dependency in order to use multipart entities.",
+                    e);
+        }
+    }
+
 	public HTTPResponse getResponse(HttpUriRequest req, boolean body)
 			throws HTTPException {
 		HTTPResponse response = new HTTPResponse();
