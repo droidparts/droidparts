@@ -20,7 +20,8 @@ import static org.droidparts.contract.Constants.BUFFER_SIZE;
 import static org.droidparts.contract.Constants.UTF8;
 import static org.droidparts.contract.HTTP.Header.ACCEPT_ENCODING;
 
-import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -89,14 +90,13 @@ public class HttpClientWorker extends HTTPWorker {
 	}
 
 	public static HttpEntity buildMultipartEntity(String name,
-			String contentType, File file, String fileName, byte[] fileBytes) {
+			String contentType, String fileName, InputStream is)
+			throws HTTPException {
 		try {
 			return HttpMimeWrapper.buildMultipartEntity(name, contentType,
-					file, fileName, fileBytes);
-		} catch (Exception e) {
-			throw new IllegalStateException(
-					"You have to add Apache HttpMime dependency in order to use multipart entities.",
-					e);
+					fileName, is);
+		} catch (IOException e) {
+			throw new HTTPException(e);
 		}
 	}
 

@@ -25,12 +25,10 @@ import static org.droidparts.contract.HTTP.Header.CONTENT_TYPE;
 import static org.droidparts.contract.HTTP.Header.KEEP_ALIVE;
 import static org.droidparts.contract.HTTP.Header.NO_CACHE;
 import static org.droidparts.contract.HTTP.Header.USER_AGENT;
-import static org.droidparts.util.IOUtils.readToByteArray;
 import static org.droidparts.util.IOUtils.silentlyClose;
 
 import java.io.DataOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.CookieHandler;
 import java.net.HttpURLConnection;
@@ -41,6 +39,7 @@ import org.droidparts.contract.HTTP.Method;
 import org.droidparts.net.http.CookieJar;
 import org.droidparts.net.http.HTTPException;
 import org.droidparts.net.http.HTTPResponse;
+import org.droidparts.util.IOUtils;
 
 import android.content.Context;
 
@@ -118,16 +117,13 @@ public class HttpURLConnectionWorker extends HTTPWorker {
 	}
 
 	public static void postMultipart(HttpURLConnection conn, String name,
-			String contentType, File file, String fileName, byte[] fileBytes)
+			String contentType, String fileName, InputStream is)
 			throws HTTPException {
 		conn.setDoOutput(true);
 		conn.setRequestProperty(CACHE_CONTROL, NO_CACHE);
 		conn.setRequestProperty(CONNECTION, KEEP_ALIVE);
 		conn.setRequestProperty(CONTENT_TYPE, MULTIPART + ";boundary="
 				+ BOUNDARY);
-		if (file != null) {
-			fileName = file.getName();
-		}
 		DataOutputStream request = null;
 		try {
 			request = new DataOutputStream(conn.getOutputStream());
@@ -139,18 +135,11 @@ public class HttpURLConnectionWorker extends HTTPWorker {
 				request.writeBytes("Content-Type: " + contentType + CRLF);
 			}
 			request.writeBytes(CRLF);
-			//
-			if (file != null) {
-				FileInputStream fis = null;
-				try {
-					fis = new FileInputStream(file);
-					fileBytes = readToByteArray(fis);
-				} finally {
-					silentlyClose(fis);
-				}
+			try {
+				IOUtils.copy(is, request);
+			} finally {
+				silentlyClose(is);
 			}
-			request.write(fileBytes);
-			//
 			request.writeBytes(CRLF);
 			request.writeBytes(TWO_HYPHENS + BOUNDARY + TWO_HYPHENS + CRLF);
 

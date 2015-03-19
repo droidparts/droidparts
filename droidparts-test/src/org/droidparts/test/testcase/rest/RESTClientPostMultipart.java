@@ -23,7 +23,6 @@ import java.util.regex.Pattern;
 
 import org.droidparts.net.http.HTTPException;
 import org.droidparts.net.http.HTTPResponse;
-import org.droidparts.net.http.RESTClient;
 import org.droidparts.net.http.RESTClient2;
 import org.droidparts.net.http.UserAgent;
 import org.droidparts.net.http.worker.HTTPWorker;
@@ -57,7 +56,7 @@ public class RESTClientPostMultipart extends AndroidTestCase {
 	//
 
 	private void testPostMultipartFile(HTTPWorker worker) throws Exception {
-		RESTClient client = new RESTClient(getContext(), worker);
+		RESTClient2 client = new RESTClient2(getContext(), worker);
 		File file = writeTestFile(FILE_BODY);
 		// Without content type
 		HTTPResponse resp = client.postMultipart(URL, FILE_NAME, file);
@@ -68,7 +67,7 @@ public class RESTClientPostMultipart extends AndroidTestCase {
 	}
 
 	private void testPostMultipartBytes(HTTPWorker worker) throws Exception {
-		RESTClient client = new RESTClient(getContext(), worker);
+		RESTClient2 client = new RESTClient2(getContext(), worker);
 		byte[] fileBytes = FILE_BODY.getBytes();
 		// Without content type
 		HTTPResponse resp = client.postMultipart(URL, FILE_NAME, FILE_NAME,
