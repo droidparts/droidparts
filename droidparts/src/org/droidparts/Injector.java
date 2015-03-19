@@ -30,7 +30,7 @@ import android.app.Service;
 import android.content.Context;
 import android.view.View;
 
-/**
+/*
  * <meta-data android:name="droidparts_dependency_provider"
  * android:value="com.yanchenko.android.sample.DependencyProvider" />
  */
