@@ -15,7 +15,7 @@
  */
 package org.droidparts.net.http;
 
-import java.io.File;
+import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.util.Date;
 
@@ -141,25 +141,21 @@ public class RESTClient {
 		return response;
 	}
 
-	public HTTPResponse postMultipart(String uri, String name, File file)
-			throws HTTPException {
-		return postMultipart(uri, name, null, file);
-	}
-
 	public HTTPResponse postMultipart(String uri, String name,
-			String contentType, File file) throws HTTPException {
-		L.i("POST on '%s', file: '%s' .", uri, file.getPath());
+			String contentType, String fileName, InputStream is)
+			throws HTTPException {
+		L.i("POST on '%s', name: '%s', file: '%s' .", uri, name, fileName);
 		HTTPResponse response;
 		if (httpURLConnectionWorker != null) {
 			HttpURLConnection conn = httpURLConnectionWorker.getConnection(uri,
 					Method.POST);
-			HttpURLConnectionWorker
-					.postMultipart(conn, name, contentType, file);
+			HttpURLConnectionWorker.postMultipart(conn, name, contentType,
+					fileName, is);
 			response = HttpURLConnectionWorker.getResponse(conn, true);
 		} else {
 			HttpPost req = new HttpPost(uri);
 			req.setEntity(HttpClientWorker.buildMultipartEntity(name,
-					contentType, file));
+					contentType, fileName, is));
 			response = httpClientWorker.getResponse(req, true);
 		}
 		return response;

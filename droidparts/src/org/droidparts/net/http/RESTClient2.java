@@ -15,6 +15,10 @@
  */
 package org.droidparts.net.http;
 
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.util.Map;
 
 import org.droidparts.contract.HTTP.ContentType;
@@ -91,6 +95,33 @@ public class RESTClient2 extends RESTClient {
 		}
 		String query = builder.build().getQuery();
 		return post(uri, ContentType.APPLICATION_FORM_DATA, query);
+	}
+
+	public HTTPResponse postMultipart(String uri, String name, File file)
+			throws HTTPException {
+		return postMultipart(uri, name, null, file);
+	}
+
+	public HTTPResponse postMultipart(String uri, String name,
+			String contentType, File file) throws HTTPException {
+		try {
+			return postMultipart(uri, name, contentType, file.getName(),
+					new FileInputStream(file));
+		} catch (FileNotFoundException e) {
+			throw new HTTPException(e);
+		}
+	}
+
+	public HTTPResponse postMultipart(String uri, String name, String fileName,
+			byte[] fileBytes) throws HTTPException {
+		return postMultipart(uri, name, null, fileName, fileBytes);
+	}
+
+	public HTTPResponse postMultipart(String uri, String name,
+			String contentType, String fileName, byte[] fileBytes)
+			throws HTTPException {
+		return postMultipart(uri, name, contentType, fileName,
+				new ByteArrayInputStream(fileBytes));
 	}
 
 }

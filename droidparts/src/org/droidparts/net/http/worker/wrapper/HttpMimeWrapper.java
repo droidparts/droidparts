@@ -15,26 +15,28 @@
  */
 package org.droidparts.net.http.worker.wrapper;
 
-import static org.droidparts.contract.Constants.UTF8;
-
-import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.entity.mime.MultipartEntity;
+import org.apache.http.entity.mime.content.ByteArrayBody;
 import org.apache.http.entity.mime.content.ContentBody;
-import org.apache.http.entity.mime.content.FileBody;
+import org.droidparts.util.IOUtils;
 
 public class HttpMimeWrapper {
 
 	public static HttpEntity buildMultipartEntity(String name,
-			String contentType, File file) {
-		MultipartEntity entity = new MultipartEntity();
+			String contentType, String fileName, InputStream is)
+			throws IOException {
+		byte[] data = IOUtils.readToByteArray(is);
 		ContentBody contentBody;
 		if (contentType != null) {
-			contentBody = new FileBody(file, contentType, UTF8);
+			contentBody = new ByteArrayBody(data, contentType, fileName);
 		} else {
-			contentBody = new FileBody(file);
+			contentBody = new ByteArrayBody(data, fileName);
 		}
+		MultipartEntity entity = new MultipartEntity();
 		entity.addPart(name, contentBody);
 		return entity;
 	}

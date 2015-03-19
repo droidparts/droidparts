@@ -53,12 +53,11 @@ public class IOUtils {
 
 	public static byte[] readToByteArray(InputStream is) throws IOException {
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
-		readToStream(is, baos);
+		copy(is, baos);
 		return baos.toByteArray();
 	}
 
-	public static void readToStream(InputStream is, OutputStream os)
-			throws IOException {
+	public static void copy(InputStream is, OutputStream os) throws IOException {
 		byte[] buffer = new byte[BUFFER_SIZE];
 		int len;
 		while ((len = is.read(buffer)) != -1) {
@@ -105,7 +104,6 @@ public class IOUtils {
 		} finally {
 			silentlyClose(src, dst);
 		}
-
 	}
 
 	public static void dumpDBToCacheDir(Context ctx, SQLiteDatabase db) {
