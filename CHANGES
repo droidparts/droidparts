@@ -1,3 +1,8 @@
+2.7.0 /2015-03-19/:
+    * RESTClient: changed postMultipart() to accept InputStream.
+    * RESTClient2: added postMultipart() for File & byte[] /kudos to @Atrinax/.
+    * IoUtils: readToStream(InputStream is, OutputStream os) => copy(InputStream is, OutputStream os).
+
 2.6.8 /2015-03-17/:
     * Serializers: improved logging.
     * Updated Support Library to v.22.
