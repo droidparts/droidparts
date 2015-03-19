@@ -21,20 +21,29 @@ import java.io.File;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.entity.mime.MultipartEntity;
+import org.apache.http.entity.mime.content.ByteArrayBody;
 import org.apache.http.entity.mime.content.ContentBody;
 import org.apache.http.entity.mime.content.FileBody;
 
 public class HttpMimeWrapper {
 
 	public static HttpEntity buildMultipartEntity(String name,
-			String contentType, File file) {
-		MultipartEntity entity = new MultipartEntity();
+			String contentType, File file, String fileName, byte[] fileBytes) {
 		ContentBody contentBody;
-		if (contentType != null) {
-			contentBody = new FileBody(file, contentType, UTF8);
+		if (file != null) {
+			if (contentType != null) {
+				contentBody = new FileBody(file, contentType, UTF8);
+			} else {
+				contentBody = new FileBody(file);
+			}
 		} else {
-			contentBody = new FileBody(file);
+			if (contentType != null) {
+				contentBody = new ByteArrayBody(fileBytes, contentType, UTF8);
+			} else {
+				contentBody = new ByteArrayBody(fileBytes, fileName);
+			}
 		}
+		MultipartEntity entity = new MultipartEntity();
 		entity.addPart(name, contentBody);
 		return entity;
 	}

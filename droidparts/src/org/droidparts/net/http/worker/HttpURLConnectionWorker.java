@@ -118,31 +118,38 @@ public class HttpURLConnectionWorker extends HTTPWorker {
 	}
 
 	public static void postMultipart(HttpURLConnection conn, String name,
-			String contentType, File file) throws HTTPException {
+			String contentType, File file, String fileName, byte[] fileBytes)
+			throws HTTPException {
 		conn.setDoOutput(true);
 		conn.setRequestProperty(CACHE_CONTROL, NO_CACHE);
 		conn.setRequestProperty(CONNECTION, KEEP_ALIVE);
 		conn.setRequestProperty(CONTENT_TYPE, MULTIPART + ";boundary="
 				+ BOUNDARY);
+		if (file != null) {
+			fileName = file.getName();
+		}
 		DataOutputStream request = null;
 		try {
 			request = new DataOutputStream(conn.getOutputStream());
 
 			request.writeBytes(TWO_HYPHENS + BOUNDARY + CRLF);
 			request.writeBytes("Content-Disposition: form-data; name=\"" + name
-					+ "\";filename=\"" + file.getName() + "\"" + CRLF);
+					+ "\";filename=\"" + fileName + "\"" + CRLF);
 			if (contentType != null) {
 				request.writeBytes("Content-Type: " + contentType + CRLF);
 			}
 			request.writeBytes(CRLF);
 			//
-			FileInputStream fis = null;
-			try {
-				fis = new FileInputStream(file);
-				request.write(readToByteArray(fis));
-			} finally {
-				silentlyClose(fis);
+			if (file != null) {
+				FileInputStream fis = null;
+				try {
+					fis = new FileInputStream(file);
+					fileBytes = readToByteArray(fis);
+				} finally {
+					silentlyClose(fis);
+				}
 			}
+			request.write(fileBytes);
 			//
 			request.writeBytes(CRLF);
 			request.writeBytes(TWO_HYPHENS + BOUNDARY + TWO_HYPHENS + CRLF);
