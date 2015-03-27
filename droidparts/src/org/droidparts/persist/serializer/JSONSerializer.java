@@ -105,17 +105,10 @@ public class JSONSerializer<ModelType extends Model> extends
 			}
 			readFromModelAndPutToJSON(item, spec, subObj, keyParts.second);
 		} else {
-			Object columnVal = getFieldVal(item, spec.field);
-			try {
+			Object val = getFieldVal(item, spec.field);
+			if (val != null || !spec.ann.optional) {
 				putToJSON(obj, key, spec.field.getType(), spec.componentType,
-						columnVal);
-			} catch (Exception e) {
-				if (spec.ann.optional) {
-					L.w("Failded to serialize %s.%s: %s.", cls.getSimpleName(),
-							spec.field.getName(), e.getMessage());
-				} else {
-					throw e;
-				}
+						val);
 			}
 		}
 	}
