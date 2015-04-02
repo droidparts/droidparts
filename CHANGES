@@ -1,3 +1,10 @@
+2.7.2 /2015-04-03/:
+    * JSONSerializer: don't include null fields with 'optional = true', changed putToJSON(...) to allow overriding the mentioned behavior.
+    * Added build.gradle to DroidPartsGram.
+
+2.7.1 /2015-03-23/:
+    * Rebuilt with Java 7.
+
 2.7.0 /2015-03-19/:
     * RESTClient: changed postMultipart() to accept InputStream.
     * RESTClient2: added postMultipart() for File & byte[] /kudos to @Atrinax/.
