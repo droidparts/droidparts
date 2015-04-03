@@ -151,10 +151,10 @@ public class EntityManager<EntityType extends Entity> extends
 		FieldSpec<ColumnAnn>[] columnSpecs = ClassSpecRegistry
 				.getTableColumnSpecs(cls);
 		for (FieldSpec<ColumnAnn> spec : columnSpecs) {
-			Object columnVal = getFieldVal(item, spec.field);
+			Object val = getFieldVal(item, spec.field);
 			try {
 				putToContentValues(cv, spec.ann.name, spec.field.getType(),
-						spec.componentType, columnVal);
+						spec.componentType, val);
 			} catch (Exception e) {
 				throw new RuntimeException(e);
 			}

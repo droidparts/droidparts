@@ -105,18 +105,9 @@ public class JSONSerializer<ModelType extends Model> extends
 			}
 			readFromModelAndPutToJSON(item, spec, subObj, keyParts.second);
 		} else {
-			Object columnVal = getFieldVal(item, spec.field);
-			try {
-				putToJSON(obj, key, spec.field.getType(), spec.componentType,
-						columnVal);
-			} catch (Exception e) {
-				if (spec.ann.optional) {
-					L.w("Failded to serialize %s.%s: %s.", cls.getSimpleName(),
-							spec.field.getName(), e.getMessage());
-				} else {
-					throw e;
-				}
-			}
+			Object val = getFieldVal(item, spec.field);
+			putToJSON(obj, key, spec.ann.optional, spec.field.getType(),
+					spec.componentType, val);
 		}
 	}
 
@@ -160,10 +151,13 @@ public class JSONSerializer<ModelType extends Model> extends
 	}
 
 	@SuppressWarnings("unchecked")
-	protected <T> void putToJSON(JSONObject obj, String key, Class<T> valType,
-			Class<?> componentType, Object val) throws Exception {
+	protected <T> void putToJSON(JSONObject obj, String key, boolean optional,
+			Class<T> valType, Class<?> componentType, Object val)
+			throws Exception {
 		if (val == null) {
-			obj.put(key, NULL);
+			if (!optional) {
+				obj.put(key, NULL);
+			}
 		} else {
 			Converter<T> converter = ConverterRegistry.getConverter(valType);
 			converter.putToJSON(valType, componentType, obj, key, (T) val);
