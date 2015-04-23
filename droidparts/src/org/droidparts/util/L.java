@@ -30,6 +30,10 @@ import android.util.Log;
 
 public class L {
 
+	public interface Listener {
+		void onMessageLogged(int priority, String tag, String msg);
+	}
+
 	public static void v(Object obj) {
 		if (isLoggable(VERBOSE)) {
 			log(VERBOSE, obj);
@@ -120,6 +124,12 @@ public class L {
 	public static final int ASSERT = Log.ASSERT;
 	private static final int DISABLE = 1024;
 
+	public static void setListener(Listener listener) {
+		L.listener = listener;
+	}
+
+	private static Listener listener;
+
 	private static final String TAG = "DroidParts";
 
 	private static void log(int priority, Object obj) {
@@ -139,8 +149,12 @@ public class L {
 
 	private static void log(int priority, String format, Object... args) {
 		try {
+			String tag = getTag(isDebug());
 			String msg = String.format(format, args);
-			Log.println(priority, getTag(isDebug()), msg);
+			Log.println(priority, tag, msg);
+			if (listener != null) {
+				listener.onMessageLogged(priority, tag, msg);
+			}
 		} catch (Exception e) {
 			e(e);
 		}
@@ -161,7 +175,7 @@ public class L {
 			Context ctx = Injector.getApplicationContext();
 			if (ctx != null) {
 				String logLevelStr = ManifestMetaData.get(ctx, LOG_LEVEL);
-				if (LogLevel.VERBOSE.equals(logLevelStr)) {
+				if (LogLevel.VERBOSE.equalsIgnoreCase(logLevelStr)) {
 					_logLevel = VERBOSE;
 				} else if (LogLevel.DEBUG.equalsIgnoreCase(logLevelStr)) {
 					_logLevel = DEBUG;
