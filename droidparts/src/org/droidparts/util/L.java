@@ -160,26 +160,20 @@ public class L {
 		if (_logLevel == 0) {
 			Context ctx = Injector.getApplicationContext();
 			if (ctx != null) {
-				String logLevelStr = null;
-				try {
-					logLevelStr = ManifestMetaData.get(ctx, LOG_LEVEL)
-							.toLowerCase();
-				} catch (Exception e) {
-					// pass
-				}
+				String logLevelStr = ManifestMetaData.get(ctx, LOG_LEVEL);
 				if (LogLevel.VERBOSE.equals(logLevelStr)) {
 					_logLevel = VERBOSE;
-				} else if (LogLevel.DEBUG.equals(logLevelStr)) {
+				} else if (LogLevel.DEBUG.equalsIgnoreCase(logLevelStr)) {
 					_logLevel = DEBUG;
-				} else if (LogLevel.INFO.equals(logLevelStr)) {
+				} else if (LogLevel.INFO.equalsIgnoreCase(logLevelStr)) {
 					_logLevel = INFO;
-				} else if (LogLevel.WARN.equals(logLevelStr)) {
+				} else if (LogLevel.WARN.equalsIgnoreCase(logLevelStr)) {
 					_logLevel = WARN;
-				} else if (LogLevel.ERROR.equals(logLevelStr)) {
+				} else if (LogLevel.ERROR.equalsIgnoreCase(logLevelStr)) {
 					_logLevel = ERROR;
-				} else if (LogLevel.ASSERT.equals(logLevelStr)) {
+				} else if (LogLevel.ASSERT.equalsIgnoreCase(logLevelStr)) {
 					_logLevel = ASSERT;
-				} else if (LogLevel.DISABLE.equals(logLevelStr)) {
+				} else if (LogLevel.DISABLE.equalsIgnoreCase(logLevelStr)) {
 					_logLevel = DISABLE;
 				} else {
 					_logLevel = VERBOSE;

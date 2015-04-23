@@ -17,9 +17,6 @@ package org.droidparts.inner;
 
 import static android.content.pm.PackageManager.GET_META_DATA;
 import android.content.Context;
-import android.content.pm.PackageManager;
-import android.content.pm.PackageManager.NameNotFoundException;
-import android.os.Bundle;
 
 public class ManifestMetaData {
 
@@ -38,12 +35,14 @@ public class ManifestMetaData {
 
 	}
 
-	public static String get(Context ctx, String key)
-			throws NameNotFoundException {
-		PackageManager pm = ctx.getPackageManager();
-		Bundle metaData = pm.getApplicationInfo(ctx.getPackageName(),
-				GET_META_DATA).metaData;
-		return metaData.getString(key);
+	public static String get(Context ctx, String key) {
+		try {
+			return ctx.getPackageManager().getApplicationInfo(
+					ctx.getPackageName(), GET_META_DATA).metaData
+					.getString(key);
+		} catch (Exception e) {
+			return null;
+		}
 	}
 
 	private ManifestMetaData() {
