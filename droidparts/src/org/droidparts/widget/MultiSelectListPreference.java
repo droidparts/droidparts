@@ -82,6 +82,12 @@ public class MultiSelectListPreference extends ListPreference {
 	}
 
 	@Override
+	public void setEntryValues(CharSequence[] entryValues) {
+		super.setEntryValues(entryValues);
+		updateCheckedEntryIndexes();
+	}
+
+	@Override
 	public void setValue(String value) {
 		super.setValue(value);
 		updateCheckedEntryIndexes();

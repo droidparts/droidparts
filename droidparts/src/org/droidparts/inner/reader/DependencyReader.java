@@ -87,29 +87,27 @@ public class DependencyReader {
 	}
 
 	private static AbstractDependencyProvider getDependencyProvider(Context ctx) {
-		String className;
-		try {
-			className = ManifestMetaData.get(ctx, DEPENDENCY_PROVIDER);
-		} catch (Exception e) {
-			L.d(e);
+		String className = ManifestMetaData.get(ctx, DEPENDENCY_PROVIDER);
+		if (className == null) {
 			L.e("No <meta-data android:name=\"%s\" android:value=\"...\"/> in AndroidManifest.xml.",
 					ManifestMetaData.DEPENDENCY_PROVIDER);
-			return null;
+		} else {
+			if (className.startsWith(".")) {
+				className = ctx.getPackageName() + className;
+			}
+			try {
+				Class<?> cls = Class.forName(className);
+				Constructor<?> constr = cls.getConstructor(Context.class);
+				AbstractDependencyProvider adp = (AbstractDependencyProvider) constr
+						.newInstance(ctx.getApplicationContext());
+				return adp;
+			} catch (Exception e) {
+				L.e("Not a valid DroidParts dependency provider: %s.",
+						className);
+				L.d(e);
+			}
 		}
-		if (className.startsWith(".")) {
-			className = ctx.getPackageName() + className;
-		}
-		try {
-			Class<?> cls = Class.forName(className);
-			Constructor<?> constr = cls.getConstructor(Context.class);
-			AbstractDependencyProvider adp = (AbstractDependencyProvider) constr
-					.newInstance(ctx.getApplicationContext());
-			return adp;
-		} catch (Exception e) {
-			L.e("Not a valid DroidParts dependency provider: %s.", className);
-			L.d(e);
-			return null;
-		}
+		return null;
 	}
 
 }
