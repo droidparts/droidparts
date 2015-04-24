@@ -40,7 +40,7 @@ public class IntentHelper {
 	}
 
 	public static void startActivityOrWarn(Context ctx, Intent intent) {
-		startActivityOrWarn(ctx, intent, AbstractDialogFactory.ERROR);
+		startActivityOrWarn(ctx, intent, null);
 	}
 
 	public static void startActivityOrWarn(Context ctx, Intent intent,
@@ -49,7 +49,9 @@ public class IntentHelper {
 			ctx.startActivity(intent);
 		} catch (ActivityNotFoundException e) {
 			L.w(e);
-			new AbstractDialogFactory(ctx).showToast(errorMessage);
+			new AbstractDialogFactory(ctx)
+					.showToast((errorMessage != null) ? errorMessage : e
+							.getMessage());
 		}
 	}
 
