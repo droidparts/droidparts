@@ -1,6 +1,6 @@
 2.7.4 /2015-05-26/:
     * RESTClient: added getHeaders().
-    * AbstractDependencyProvider:  	AbstractDependencyProvider: made getDBOpenHelper() non-abstract & removed getDB().
+    * AbstractDependencyProvider: made getDBOpenHelper() non-abstract & removed getDB().
     * AbstractDialogFactory: removed showErrorToast().
 
 2.7.3 /2015-04-24/:
