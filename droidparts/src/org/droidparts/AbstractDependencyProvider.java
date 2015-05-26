@@ -18,7 +18,6 @@ package org.droidparts;
 import org.droidparts.persist.sql.AbstractDBOpenHelper;
 
 import android.content.Context;
-import android.database.sqlite.SQLiteDatabase;
 
 public abstract class AbstractDependencyProvider {
 
@@ -32,10 +31,8 @@ public abstract class AbstractDependencyProvider {
 		return ctx;
 	}
 
-	public final SQLiteDatabase getDB() {
-		return getDBOpenHelper().getWritableDatabase();
+	public AbstractDBOpenHelper getDBOpenHelper() {
+		return null;
 	}
-
-	public abstract AbstractDBOpenHelper getDBOpenHelper();
 
 }

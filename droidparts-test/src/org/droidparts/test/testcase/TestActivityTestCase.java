@@ -16,11 +16,11 @@
 package org.droidparts.test.testcase;
 
 import org.droidparts.Injector;
+import org.droidparts.persist.sql.AbstractDBOpenHelper;
 import org.droidparts.test.R;
 import org.droidparts.test.activity.TestActivity;
 
 import android.content.Context;
-import android.database.sqlite.SQLiteDatabase;
 import android.test.ActivityInstrumentationTestCase2;
 
 public class TestActivityTestCase extends
@@ -41,8 +41,9 @@ public class TestActivityTestCase extends
 	}
 
 	public void testInjection2() {
-		Class<SQLiteDatabase> cls = SQLiteDatabase.class;
-		SQLiteDatabase dependency = Injector.getDependency(getActivity(), cls);
+		Class<AbstractDBOpenHelper> cls = AbstractDBOpenHelper.class;
+		AbstractDBOpenHelper dependency = Injector.getDependency(getActivity(),
+				cls);
 		assertNotNull(dependency);
 		assertTrue(cls.isAssignableFrom(dependency.getClass()));
 	}

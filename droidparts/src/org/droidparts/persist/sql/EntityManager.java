@@ -33,6 +33,7 @@ import org.droidparts.inner.ConverterRegistry;
 import org.droidparts.inner.ann.FieldSpec;
 import org.droidparts.inner.ann.sql.ColumnAnn;
 import org.droidparts.inner.converter.Converter;
+import org.droidparts.inner.reader.DependencyReader;
 import org.droidparts.model.Entity;
 
 import android.content.ContentValues;
@@ -48,7 +49,7 @@ public class EntityManager<EntityType extends Entity> extends
 	private final SQLiteDatabase db;
 
 	public EntityManager(Class<EntityType> cls, Context ctx) {
-		this(cls, ctx, Injector.getDependency(ctx, SQLiteDatabase.class));
+		this(cls, ctx, DependencyReader.getDB(ctx));
 	}
 
 	protected EntityManager(Class<EntityType> cls, Context ctx,
