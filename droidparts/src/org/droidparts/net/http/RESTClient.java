@@ -18,6 +18,7 @@ package org.droidparts.net.http;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.util.Date;
+import java.util.Map;
 
 import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpGet;
@@ -77,6 +78,10 @@ public class RESTClient {
 
 	public void setHeader(String key, String value) {
 		getWorker().setHeader(key, value);
+	}
+
+	public Map<String, String> getHeaders() {
+		return getWorker().headers;
 	}
 
 	public void authenticateBasic(String username, String password) {

@@ -26,9 +26,11 @@ import org.droidparts.AbstractDependencyProvider;
 import org.droidparts.inner.ManifestMetaData;
 import org.droidparts.inner.ann.Ann;
 import org.droidparts.inner.ann.MethodSpec;
+import org.droidparts.persist.sql.AbstractDBOpenHelper;
 import org.droidparts.util.L;
 
 import android.content.Context;
+import android.database.sqlite.SQLiteDatabase;
 
 public class DependencyReader {
 
@@ -40,7 +42,7 @@ public class DependencyReader {
 		if (!inited) {
 			synchronized (DependencyReader.class) {
 				if (!inited) {
-					dependencyProvider = getDependencyProvider(ctx);
+					dependencyProvider = createDependencyProvider(ctx);
 					if (dependencyProvider != null) {
 						Method[] methods = dependencyProvider.getClass()
 								.getMethods();
@@ -58,7 +60,10 @@ public class DependencyReader {
 
 	public static void tearDown() {
 		if (dependencyProvider != null) {
-			dependencyProvider.getDB().close();
+			SQLiteDatabase db = getDB(null);
+			if (db != null) {
+				db.close();
+			}
 		}
 		dependencyProvider = null;
 	}
@@ -86,7 +91,19 @@ public class DependencyReader {
 		return val;
 	}
 
-	private static AbstractDependencyProvider getDependencyProvider(Context ctx) {
+	public static SQLiteDatabase getDB(Context ctx) {
+		init(ctx);
+		if (dependencyProvider != null) {
+			AbstractDBOpenHelper helper = dependencyProvider.getDBOpenHelper();
+			if (helper != null) {
+				return helper.getWritableDatabase();
+			}
+		}
+		return null;
+	}
+
+	private static AbstractDependencyProvider createDependencyProvider(
+			Context ctx) {
 		String className = ManifestMetaData.get(ctx, DEPENDENCY_PROVIDER);
 		if (className == null) {
 			L.e("No <meta-data android:name=\"%s\" android:value=\"...\"/> in AndroidManifest.xml.",
