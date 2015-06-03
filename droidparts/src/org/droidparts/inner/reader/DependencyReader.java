@@ -66,6 +66,7 @@ public class DependencyReader {
 			}
 		}
 		dependencyProvider = null;
+		inited = false;
 	}
 
 	@SuppressWarnings("unchecked")
