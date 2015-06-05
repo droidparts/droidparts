@@ -100,7 +100,7 @@ public class RESTClient {
 
 	public HTTPResponse get(String uri, long ifModifiedSince, String etag,
 			boolean body) throws HTTPException {
-		L.i("GET on '%s', If-Modified-Since: '%d', ETag: '%s', body: '%b'.",
+		L.d("HTTP GET '%s', If-Modified-Since: '%d', ETag: '%s', body: '%b'.",
 				uri, ifModifiedSince, etag, body);
 		HTTPResponse response;
 		if (httpURLConnectionWorker != null) {
@@ -130,7 +130,7 @@ public class RESTClient {
 
 	public HTTPResponse post(String uri, String contentType, String data)
 			throws HTTPException {
-		L.i("POST on '%s', data: '%s'.", uri, data);
+		L.d("HTTP POST '%s', data: '%s'.", uri, data);
 		HTTPResponse response;
 		if (httpURLConnectionWorker != null) {
 			HttpURLConnection conn = httpURLConnectionWorker.getConnection(uri,
@@ -149,7 +149,7 @@ public class RESTClient {
 	public HTTPResponse postMultipart(String uri, String name,
 			String contentType, String fileName, InputStream is)
 			throws HTTPException {
-		L.i("POST on '%s', name: '%s', file: '%s' .", uri, name, fileName);
+		L.d("HTTP POST, name: '%s', file: '%s' .", uri, name, fileName);
 		HTTPResponse response;
 		if (httpURLConnectionWorker != null) {
 			HttpURLConnection conn = httpURLConnectionWorker.getConnection(uri,
@@ -168,7 +168,7 @@ public class RESTClient {
 
 	public HTTPResponse put(String uri, String contentType, String data)
 			throws HTTPException {
-		L.i("PUT on '%s', data: '%s'.", uri, data);
+		L.d("HTTP PUT '%s', data: '%s'.", uri, data);
 		HTTPResponse response;
 		if (httpURLConnectionWorker != null) {
 			HttpURLConnection conn = httpURLConnectionWorker.getConnection(uri,
@@ -185,7 +185,7 @@ public class RESTClient {
 	}
 
 	public HTTPResponse delete(String uri) throws HTTPException {
-		L.i("DELETE on '%s'.", uri);
+		L.d("HTTP DELETE '%s'.", uri);
 		HTTPResponse response;
 		if (httpURLConnectionWorker != null) {
 			HttpURLConnection conn = httpURLConnectionWorker.getConnection(uri,
