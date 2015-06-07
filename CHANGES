@@ -1,3 +1,7 @@
+2.7.5 /2015-06-07/:
+    * DependencyReader: correctly init after tearDown() /kudos to @vovan888/.
+    * RESTClient: improved log messages.
+
 2.7.4 /2015-05-26/:
     * RESTClient: added getHeaders().
     * AbstractDependencyProvider: made getDBOpenHelper() non-abstract & removed getDB().
