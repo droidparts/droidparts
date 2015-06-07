@@ -86,7 +86,7 @@ public class HTTPResponse {
 
 	@Override
 	public String toString() {
-		return "Response code: " + code + ", body: " + body;
+		return "HTTP RESPONSE " + code + ", body: '" + body + "'.";
 	}
 
 }
