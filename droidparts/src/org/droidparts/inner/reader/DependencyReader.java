@@ -100,7 +100,7 @@ public class DependencyReader {
 	private static AbstractDependencyProvider createDependencyProvider(Context ctx) {
 		String className = ManifestMetaData.get(ctx, DEPENDENCY_PROVIDER);
 		if (className == null) {
-			L.e("No <meta-data android:name=\"%s\" android:value=\"...\"/> in AndroidManifest.xml.",
+			L.w("No <meta-data android:name=\"%s\" android:value=\"...\"/> in AndroidManifest.xml.",
 					ManifestMetaData.DEPENDENCY_PROVIDER);
 		} else {
 			if (className.startsWith(".")) {
