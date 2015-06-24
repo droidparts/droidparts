@@ -37,8 +37,7 @@ public class ManifestMetaData {
 
 	public static String get(Context ctx, String key) {
 		try {
-			return ctx.getPackageManager().getApplicationInfo(
-					ctx.getPackageName(), GET_META_DATA).metaData
+			return ctx.getPackageManager().getApplicationInfo(ctx.getPackageName(), GET_META_DATA).metaData
 					.getString(key);
 		} catch (Exception e) {
 			return null;

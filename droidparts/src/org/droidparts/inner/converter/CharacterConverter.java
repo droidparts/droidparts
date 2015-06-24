@@ -34,27 +34,25 @@ public class CharacterConverter extends Converter<Character> {
 	}
 
 	@Override
-	public <V> Character readFromJSON(Class<Character> valType,
-			Class<V> componentType, JSONObject obj, String key)
+	public <V> Character readFromJSON(Class<Character> valType, Class<V> componentType, JSONObject obj, String key)
 			throws Exception {
 		return parseFromString(valType, componentType, obj.getString(key));
 	}
 
 	@Override
-	protected <V> Character parseFromString(Class<Character> valType,
-			Class<V> componentType, String str) {
+	protected <V> Character parseFromString(Class<Character> valType, Class<V> componentType, String str) {
 		return Character.valueOf((str.length() == 0) ? ' ' : str.charAt(0));
 	}
 
 	@Override
-	public <V> void putToContentValues(Class<Character> valueType,
-			Class<V> componentType, ContentValues cv, String key, Character val) {
+	public <V> void putToContentValues(Class<Character> valueType, Class<V> componentType, ContentValues cv, String key,
+			Character val) {
 		cv.put(key, String.valueOf(val));
 	}
 
 	@Override
-	public <V> Character readFromCursor(Class<Character> valType,
-			Class<V> componentType, Cursor cursor, int columnIndex) {
+	public <V> Character readFromCursor(Class<Character> valType, Class<V> componentType, Cursor cursor,
+			int columnIndex) {
 		return parseFromString(valType, null, cursor.getString(columnIndex));
 	}
 

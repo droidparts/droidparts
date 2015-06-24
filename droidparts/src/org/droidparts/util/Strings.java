@@ -43,10 +43,8 @@ public class Strings {
 		return join(arr, separator, null);
 	}
 
-	public static <T> String join(Collection<T> coll, String separator,
-			String terminator) {
-		return join(coll.toArray(new Object[coll.size()]), separator,
-				terminator);
+	public static <T> String join(Collection<T> coll, String separator, String terminator) {
+		return join(coll.toArray(new Object[coll.size()]), separator, terminator);
 	}
 
 	public static String join(Object[] arr, String separator, String terminator) {

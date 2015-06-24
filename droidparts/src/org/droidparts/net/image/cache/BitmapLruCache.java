@@ -18,8 +18,7 @@ package org.droidparts.net.image.cache;
 import android.graphics.Bitmap;
 import android.util.LruCache;
 
-public class BitmapLruCache extends LruCache<String, Bitmap> implements
-		BitmapMemoryCache.Delegate {
+public class BitmapLruCache extends LruCache<String, Bitmap>implements BitmapMemoryCache.Delegate {
 
 	public BitmapLruCache(int maxSize) {
 		super(maxSize);

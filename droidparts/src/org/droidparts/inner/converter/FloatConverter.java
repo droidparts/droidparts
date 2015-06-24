@@ -34,26 +34,24 @@ public class FloatConverter extends Converter<Float> {
 	}
 
 	@Override
-	public <V> Float readFromJSON(Class<Float> valType, Class<V> componentType,
-			JSONObject obj, String key) throws Exception {
+	public <V> Float readFromJSON(Class<Float> valType, Class<V> componentType, JSONObject obj, String key)
+			throws Exception {
 		return (float) obj.getDouble(key);
 	}
 
 	@Override
-	protected <V> Float parseFromString(Class<Float> valType,
-			Class<V> componentType, String str) {
+	protected <V> Float parseFromString(Class<Float> valType, Class<V> componentType, String str) {
 		return Float.valueOf(str);
 	}
 
 	@Override
-	public <V> void putToContentValues(Class<Float> valueType,
-			Class<V> componentType, ContentValues cv, String key, Float val) {
+	public <V> void putToContentValues(Class<Float> valueType, Class<V> componentType, ContentValues cv, String key,
+			Float val) {
 		cv.put(key, val);
 	}
 
 	@Override
-	public <V> Float readFromCursor(Class<Float> valType,
-			Class<V> componentType, Cursor cursor, int columnIndex) {
+	public <V> Float readFromCursor(Class<Float> valType, Class<V> componentType, Cursor cursor, int columnIndex) {
 		return cursor.getFloat(columnIndex);
 	}
 

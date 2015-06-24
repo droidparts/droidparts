@@ -23,8 +23,7 @@ import org.droidparts.test.activity.TestActivity;
 import android.content.Context;
 import android.test.ActivityInstrumentationTestCase2;
 
-public class TestActivityTestCase extends
-		ActivityInstrumentationTestCase2<TestActivity> {
+public class TestActivityTestCase extends ActivityInstrumentationTestCase2<TestActivity> {
 
 	public TestActivityTestCase() {
 		super(TestActivity.class);
@@ -42,8 +41,7 @@ public class TestActivityTestCase extends
 
 	public void testInjection2() {
 		Class<AbstractDBOpenHelper> cls = AbstractDBOpenHelper.class;
-		AbstractDBOpenHelper dependency = Injector.getDependency(getActivity(),
-				cls);
+		AbstractDBOpenHelper dependency = Injector.getDependency(getActivity(), cls);
 		assertNotNull(dependency);
 		assertTrue(cls.isAssignableFrom(dependency.getClass()));
 	}

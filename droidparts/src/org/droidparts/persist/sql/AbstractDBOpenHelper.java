@@ -28,8 +28,7 @@ import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
-public abstract class AbstractDBOpenHelper extends SQLiteOpenHelper implements
-		SQL.DDL {
+public abstract class AbstractDBOpenHelper extends SQLiteOpenHelper implements SQL.DDL {
 
 	private final Context ctx;
 
@@ -49,27 +48,23 @@ public abstract class AbstractDBOpenHelper extends SQLiteOpenHelper implements
 
 	// helpers
 
-	protected final boolean createIndex(SQLiteDatabase db, String table,
-			boolean unique, String firstColumn, String... otherColumns) {
+	protected final boolean createIndex(SQLiteDatabase db, String table, boolean unique, String firstColumn,
+			String... otherColumns) {
 		ArrayList<String> statements = new ArrayList<String>();
-		statements.add(PersistUtils.getCreateIndex(table, unique, firstColumn,
-				otherColumns));
+		statements.add(PersistUtils.getCreateIndex(table, unique, firstColumn, otherColumns));
 		return executeStatements(db, statements);
 	}
 
-	protected final boolean createTables(SQLiteDatabase db,
-			Class<? extends Entity>... entityClasses) {
+	protected final boolean createTables(SQLiteDatabase db, Class<? extends Entity>... entityClasses) {
 		ArrayList<String> statements = new ArrayList<String>();
 		for (Class<? extends Entity> cls : entityClasses) {
-			String query = PersistUtils.getSQLCreate(getTableName(cls),
-					getTableColumnSpecs(cls));
+			String query = PersistUtils.getSQLCreate(getTableName(cls), getTableColumnSpecs(cls));
 			statements.add(query);
 		}
 		return executeStatements(db, statements);
 	}
 
-	protected final boolean addMissingColumns(SQLiteDatabase db,
-			Class<? extends Entity>... entityClasses) {
+	protected final boolean addMissingColumns(SQLiteDatabase db, Class<? extends Entity>... entityClasses) {
 		ArrayList<String> statements = new ArrayList<String>();
 		for (Class<? extends Entity> cls : entityClasses) {
 			try {
@@ -81,15 +76,12 @@ public abstract class AbstractDBOpenHelper extends SQLiteOpenHelper implements
 		return executeStatements(db, statements);
 	}
 
-	protected final boolean dropTables(SQLiteDatabase db,
-			String... optionalTableNames) {
-		ArrayList<String> statements = PersistUtils.getDropTables(db,
-				optionalTableNames);
+	protected final boolean dropTables(SQLiteDatabase db, String... optionalTableNames) {
+		ArrayList<String> statements = PersistUtils.getDropTables(db, optionalTableNames);
 		return executeStatements(db, statements);
 	}
 
-	protected final boolean executeStatements(SQLiteDatabase db,
-			ArrayList<String> statements) {
+	protected final boolean executeStatements(SQLiteDatabase db, ArrayList<String> statements) {
 		return PersistUtils.executeStatements(db, statements);
 	}
 

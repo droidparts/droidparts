@@ -33,8 +33,7 @@ public class IntentHelper {
 		startChooserOrWarn(ctx, intent, null);
 	}
 
-	public static void startChooserOrWarn(Context ctx, Intent intent,
-			String title) {
+	public static void startChooserOrWarn(Context ctx, Intent intent, String title) {
 		Intent choooserIntent = Intent.createChooser(intent, title);
 		startActivityOrWarn(ctx, choooserIntent);
 	}
@@ -43,15 +42,12 @@ public class IntentHelper {
 		startActivityOrWarn(ctx, intent, null);
 	}
 
-	public static void startActivityOrWarn(Context ctx, Intent intent,
-			String errorMessage) {
+	public static void startActivityOrWarn(Context ctx, Intent intent, String errorMessage) {
 		try {
 			ctx.startActivity(intent);
 		} catch (ActivityNotFoundException e) {
 			L.w(e);
-			new AbstractDialogFactory(ctx)
-					.showToast((errorMessage != null) ? errorMessage : e
-							.getMessage());
+			new AbstractDialogFactory(ctx).showToast((errorMessage != null) ? errorMessage : e.getMessage());
 		}
 	}
 
@@ -60,8 +56,7 @@ public class IntentHelper {
 	}
 
 	public static ActivityInfo[] getIntentHandlers(Context ctx, Intent intent) {
-		List<ResolveInfo> list = ctx.getPackageManager().queryIntentActivities(
-				intent, 0);
+		List<ResolveInfo> list = ctx.getPackageManager().queryIntentActivities(intent, 0);
 		ArrayList<ActivityInfo> activities = new ArrayList<ActivityInfo>();
 		if (list != null) {
 			for (ResolveInfo ri : list) {

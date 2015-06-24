@@ -146,8 +146,7 @@ public class Where implements SQL {
 		final Is operator;
 		final Object[] columnValue;
 
-		WhereSpec(boolean and, String columnName, Is operator,
-				Object... columnValue) {
+		WhereSpec(boolean and, String columnName, Is operator, Object... columnValue) {
 			this.and = and;
 			this.columnName = columnName;
 			this.operator = operator;

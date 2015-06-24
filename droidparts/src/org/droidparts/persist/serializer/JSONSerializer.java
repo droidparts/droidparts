@@ -38,8 +38,7 @@ import org.json.JSONObject;
 import android.content.Context;
 import android.util.Pair;
 
-public class JSONSerializer<ModelType extends Model> extends
-		AbstractSerializer<ModelType, JSONObject, JSONArray> {
+public class JSONSerializer<ModelType extends Model> extends AbstractSerializer<ModelType, JSONObject, JSONArray> {
 
 	public JSONSerializer(Class<ModelType> cls, Context ctx) {
 		super(cls, ctx);
@@ -83,15 +82,13 @@ public class JSONSerializer<ModelType extends Model> extends
 
 	//
 
-	protected final boolean hasNonNull(JSONObject obj, String key)
-			throws JSONException {
+	protected final boolean hasNonNull(JSONObject obj, String key) throws JSONException {
 		return PersistUtils.hasNonNull(obj, key);
 	}
 
 	//
 
-	private void readFromModelAndPutToJSON(ModelType item,
-			FieldSpec<JSONAnn> spec, JSONObject obj, String key)
+	private void readFromModelAndPutToJSON(ModelType item, FieldSpec<JSONAnn> spec, JSONObject obj, String key)
 			throws Exception {
 		Pair<String, String> keyParts = getNestedKeyParts(key);
 		if (keyParts != null) {
@@ -106,13 +103,11 @@ public class JSONSerializer<ModelType extends Model> extends
 			readFromModelAndPutToJSON(item, spec, subObj, keyParts.second);
 		} else {
 			Object val = getFieldVal(item, spec.field);
-			putToJSON(obj, key, spec.ann.optional, spec.field.getType(),
-					spec.componentType, val);
+			putToJSON(obj, key, spec.ann.optional, spec.field.getType(), spec.componentType, val);
 		}
 	}
 
-	private void readFromJSONAndSetFieldVal(ModelType model,
-			FieldSpec<JSONAnn> spec, JSONObject obj, String key)
+	private void readFromJSONAndSetFieldVal(ModelType model, FieldSpec<JSONAnn> spec, JSONObject obj, String key)
 			throws Exception {
 		Pair<String, String> keyParts = getNestedKeyParts(key);
 		if (keyParts != null) {
@@ -125,8 +120,7 @@ public class JSONSerializer<ModelType extends Model> extends
 			}
 		} else {
 			try {
-				Object val = readFromJSON(spec.field.getType(),
-						spec.componentType, obj, key);
+				Object val = readFromJSON(spec.field.getType(), spec.componentType, obj, key);
 				if (!NULL.equals(val)) {
 					setFieldVal(model, spec.field, val);
 				} else {
@@ -138,8 +132,7 @@ public class JSONSerializer<ModelType extends Model> extends
 		}
 	}
 
-	protected <T, V> Object readFromJSON(Class<T> valType,
-			Class<V> componentType, JSONObject obj, String key)
+	protected <T, V> Object readFromJSON(Class<T> valType, Class<V> componentType, JSONObject obj, String key)
 			throws Exception {
 		Object jsonVal = obj.get(key);
 		if (NULL.equals(jsonVal)) {
@@ -151,9 +144,8 @@ public class JSONSerializer<ModelType extends Model> extends
 	}
 
 	@SuppressWarnings("unchecked")
-	protected <T> void putToJSON(JSONObject obj, String key, boolean optional,
-			Class<T> valType, Class<?> componentType, Object val)
-			throws Exception {
+	protected <T> void putToJSON(JSONObject obj, String key, boolean optional, Class<T> valType, Class<?> componentType,
+			Object val) throws Exception {
 		if (val == null) {
 			if (!optional) {
 				obj.put(key, NULL);
@@ -164,8 +156,7 @@ public class JSONSerializer<ModelType extends Model> extends
 		}
 	}
 
-	private static void handleParseException(boolean optional, String key,
-			Exception e) throws SerializerException {
+	private static void handleParseException(boolean optional, String key, Exception e) throws SerializerException {
 		logOrThrow(optional, String.format("key '%s'", key), e);
 	}
 

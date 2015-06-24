@@ -25,8 +25,7 @@ import android.content.res.Resources;
 
 public class ResourceReader {
 
-	static Object readVal(Context ctx, int resId, Class<?> valType)
-			throws Exception {
+	static Object readVal(Context ctx, int resId, Class<?> valType) throws Exception {
 		Resources res = ctx.getResources();
 		Object val = null;
 		if (isBoolean(valType, true)) {
@@ -46,8 +45,7 @@ public class ResourceReader {
 			}
 		}
 		if (val == null) {
-			throw new Exception("Unsupported resource type '"
-					+ valType.getName() + "'.");
+			throw new Exception("Unsupported resource type '" + valType.getName() + "'.");
 		} else {
 			return val;
 		}

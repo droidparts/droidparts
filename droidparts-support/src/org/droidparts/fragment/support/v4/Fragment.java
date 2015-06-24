@@ -27,16 +27,14 @@ public class Fragment extends android.support.v4.app.Fragment {
 	private boolean injected;
 
 	@Override
-	public final View onCreateView(LayoutInflater inflater,
-			ViewGroup container, Bundle savedInstanceState) {
+	public final View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		View view = onCreateView(savedInstanceState, inflater, container);
 		Injector.inject(view, this);
 		injected = true;
 		return view;
 	}
 
-	public View onCreateView(Bundle savedInstanceState,
-			LayoutInflater inflater, ViewGroup container) {
+	public View onCreateView(Bundle savedInstanceState, LayoutInflater inflater, ViewGroup container) {
 		return super.onCreateView(inflater, container, savedInstanceState);
 	}
 

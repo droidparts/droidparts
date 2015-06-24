@@ -23,8 +23,7 @@ import java.util.concurrent.TimeUnit;
 public class BackgroundThreadExecutor extends ThreadPoolExecutor {
 
 	public BackgroundThreadExecutor(int nThreads, String name) {
-		super(nThreads, nThreads, 0L, TimeUnit.MILLISECONDS,
-				new LinkedBlockingQueue<Runnable>(),
+		super(nThreads, nThreads, 0L, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<Runnable>(),
 				new BackgroundThreadFactory(name));
 	}
 

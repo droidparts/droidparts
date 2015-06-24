@@ -44,12 +44,9 @@ public class DependencyReader {
 				if (!inited) {
 					dependencyProvider = createDependencyProvider(ctx);
 					if (dependencyProvider != null) {
-						Method[] methods = dependencyProvider.getClass()
-								.getMethods();
+						Method[] methods = dependencyProvider.getClass().getMethods();
 						for (Method method : methods) {
-							methodRegistry.put(method.getReturnType(),
-									new MethodSpec<Ann<Annotation>>(method,
-											null));
+							methodRegistry.put(method.getReturnType(), new MethodSpec<Ann<Annotation>>(method, null));
 						}
 					}
 					inited = true;
@@ -70,8 +67,7 @@ public class DependencyReader {
 	}
 
 	@SuppressWarnings("unchecked")
-	public static <T> T readVal(Context ctx, Class<T> valType)
-			throws RuntimeException {
+	public static <T> T readVal(Context ctx, Class<T> valType) throws RuntimeException {
 		init(ctx);
 		T val = null;
 		if (dependencyProvider != null) {
@@ -84,9 +80,7 @@ public class DependencyReader {
 					val = (T) spec.method.invoke(dependencyProvider, ctx);
 				}
 			} catch (Exception e) {
-				throw new RuntimeException(
-						"No valid DependencyProvider method for "
-								+ valType.getName() + ".", e);
+				throw new RuntimeException("No valid DependencyProvider method for " + valType.getName() + ".", e);
 			}
 		}
 		return val;
@@ -103,8 +97,7 @@ public class DependencyReader {
 		return null;
 	}
 
-	private static AbstractDependencyProvider createDependencyProvider(
-			Context ctx) {
+	private static AbstractDependencyProvider createDependencyProvider(Context ctx) {
 		String className = ManifestMetaData.get(ctx, DEPENDENCY_PROVIDER);
 		if (className == null) {
 			L.e("No <meta-data android:name=\"%s\" android:value=\"...\"/> in AndroidManifest.xml.",
@@ -120,8 +113,7 @@ public class DependencyReader {
 						.newInstance(ctx.getApplicationContext());
 				return adp;
 			} catch (Exception e) {
-				L.e("Not a valid DroidParts dependency provider: %s.",
-						className);
+				L.e("Not a valid DroidParts dependency provider: %s.", className);
 				L.d(e);
 			}
 		}

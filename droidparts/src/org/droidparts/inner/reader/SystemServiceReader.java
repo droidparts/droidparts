@@ -25,10 +25,8 @@ import android.content.Context;
 
 public class SystemServiceReader {
 
-	static Object readVal(Context ctx, String serviceName, Class<?> valType)
-			throws Exception {
-		String name = isEmpty(serviceName) ? serviceRegistry.get(valType)
-				: serviceName;
+	static Object readVal(Context ctx, String serviceName, Class<?> valType) throws Exception {
+		String name = isEmpty(serviceName) ? serviceRegistry.get(valType) : serviceName;
 		if (name == null) {
 			throw new Exception("Unknown service: " + name);
 		} else {
@@ -47,8 +45,7 @@ public class SystemServiceReader {
 		map.put("activity", "android.app.ActivityManager");
 		map.put("alarm", "android.app.AlarmManager");
 		map.put("notification", "android.app.NotificationManager");
-		map.put("accessibility",
-				"android.view.accessibility.AccessibilityManager");
+		map.put("accessibility", "android.view.accessibility.AccessibilityManager");
 		map.put("keyguard", "android.app.KeyguardManager");
 		map.put("location", "android.location.LocationManager");
 		map.put("country_detector", "android.location.CountryDetector");

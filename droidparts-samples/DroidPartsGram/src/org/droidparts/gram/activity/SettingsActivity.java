@@ -29,8 +29,7 @@ import android.preference.Preference;
 import android.preference.Preference.OnPreferenceChangeListener;
 import android.view.MenuItem;
 
-public class SettingsActivity extends PreferenceActivity implements
-		OnPreferenceChangeListener {
+public class SettingsActivity extends PreferenceActivity implements OnPreferenceChangeListener {
 
 	public static Intent getIntent(Context ctx) {
 		return new Intent(ctx, SettingsActivity.class);

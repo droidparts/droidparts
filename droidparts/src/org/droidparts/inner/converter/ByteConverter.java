@@ -34,26 +34,24 @@ public class ByteConverter extends Converter<Byte> {
 	}
 
 	@Override
-	public <V> Byte readFromJSON(Class<Byte> valType, Class<V> componentType,
-			JSONObject obj, String key) throws Exception {
+	public <V> Byte readFromJSON(Class<Byte> valType, Class<V> componentType, JSONObject obj, String key)
+			throws Exception {
 		return parseFromString(valType, componentType, obj.getString(key));
 	}
 
 	@Override
-	protected <V> Byte parseFromString(Class<Byte> valType,
-			Class<V> componentType, String str) {
+	protected <V> Byte parseFromString(Class<Byte> valType, Class<V> componentType, String str) {
 		return Byte.valueOf(str);
 	}
 
 	@Override
-	public <V> void putToContentValues(Class<Byte> valueType,
-			Class<V> componentType, ContentValues cv, String key, Byte val) {
+	public <V> void putToContentValues(Class<Byte> valueType, Class<V> componentType, ContentValues cv, String key,
+			Byte val) {
 		cv.put(key, val);
 	}
 
 	@Override
-	public <V> Byte readFromCursor(Class<Byte> valType, Class<V> componentType,
-			Cursor cursor, int columnIndex) {
+	public <V> Byte readFromCursor(Class<Byte> valType, Class<V> componentType, Cursor cursor, int columnIndex) {
 		return Byte.valueOf(cursor.getString(columnIndex));
 	}
 

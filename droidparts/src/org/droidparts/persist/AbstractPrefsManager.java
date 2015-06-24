@@ -62,26 +62,22 @@ public abstract class AbstractPrefsManager {
 		}
 	}
 
-	protected void onUpgrade(SharedPreferences prefs, int oldVersion,
-			int newVersion) {
+	protected void onUpgrade(SharedPreferences prefs, int oldVersion, int newVersion) {
 		prefs.edit().clear().commit();
 	}
 
 	// shortcuts
 
 	protected boolean readBoolean(int keyResId, int defValueResId) {
-		return prefs.getBoolean(ctx.getString(keyResId), getContext()
-				.getResources().getBoolean(defValueResId));
+		return prefs.getBoolean(ctx.getString(keyResId), getContext().getResources().getBoolean(defValueResId));
 	}
 
 	protected int readInt(int keyResId, int defValueResId) {
-		return prefs.getInt(ctx.getString(keyResId), getContext()
-				.getResources().getInteger(defValueResId));
+		return prefs.getInt(ctx.getString(keyResId), getContext().getResources().getInteger(defValueResId));
 	}
 
 	protected String readString(int keyResId, int defValueResId) {
-		return prefs.getString(ctx.getString(keyResId),
-				ctx.getString(defValueResId));
+		return prefs.getString(ctx.getString(keyResId), ctx.getString(defValueResId));
 	}
 
 	protected boolean saveBoolean(String key, boolean val) {

@@ -22,8 +22,7 @@ public interface ImageFetchListener {
 
 	void onFetchAdded(ImageView imageView, String imgUrl);
 
-	void onFetchProgressChanged(ImageView imageView, String imgUrl,
-			int kBTotal, int kBReceived);
+	void onFetchProgressChanged(ImageView imageView, String imgUrl, int kBTotal, int kBReceived);
 
 	void onFetchFailed(ImageView imageView, String imgUrl, Exception e);
 

@@ -26,8 +26,7 @@ import org.droidparts.contract.AlterableContent;
 import android.content.Context;
 import android.view.LayoutInflater;
 
-public class ArrayAdapter<T> extends android.widget.ArrayAdapter<T> implements
-		AlterableContent<Collection<T>> {
+public class ArrayAdapter<T> extends android.widget.ArrayAdapter<T>implements AlterableContent<Collection<T>> {
 
 	@InjectSystemService
 	private LayoutInflater layoutInflater;
@@ -44,8 +43,7 @@ public class ArrayAdapter<T> extends android.widget.ArrayAdapter<T> implements
 		this(ctx, rowResId, android.R.id.text1, objects);
 	}
 
-	public ArrayAdapter(Context ctx, int rowResId, int textViewResId,
-			List<T> objects) {
+	public ArrayAdapter(Context ctx, int rowResId, int textViewResId, List<T> objects) {
 		super(ctx, rowResId, textViewResId, objects);
 		Injector.inject(ctx, this);
 	}

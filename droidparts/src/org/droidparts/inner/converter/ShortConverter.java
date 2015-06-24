@@ -34,26 +34,24 @@ public class ShortConverter extends Converter<Short> {
 	}
 
 	@Override
-	public <V> Short readFromJSON(Class<Short> valType, Class<V> componentType,
-			JSONObject obj, String key) throws Exception {
+	public <V> Short readFromJSON(Class<Short> valType, Class<V> componentType, JSONObject obj, String key)
+			throws Exception {
 		return parseFromString(valType, componentType, obj.getString(key));
 	}
 
 	@Override
-	protected <V> Short parseFromString(Class<Short> valType,
-			Class<V> componentType, String str) {
+	protected <V> Short parseFromString(Class<Short> valType, Class<V> componentType, String str) {
 		return Short.valueOf(str);
 	}
 
 	@Override
-	public <V> void putToContentValues(Class<Short> valueType,
-			Class<V> componentType, ContentValues cv, String key, Short val) {
+	public <V> void putToContentValues(Class<Short> valueType, Class<V> componentType, ContentValues cv, String key,
+			Short val) {
 		cv.put(key, val);
 	}
 
 	@Override
-	public <V> Short readFromCursor(Class<Short> valType,
-			Class<V> componentType, Cursor cursor, int columnIndex) {
+	public <V> Short readFromCursor(Class<Short> valType, Class<V> componentType, Cursor cursor, int columnIndex) {
 		return cursor.getShort(columnIndex);
 	}
 }

@@ -20,8 +20,7 @@ import org.droidparts.model.Entity;
 import android.database.Cursor;
 import android.database.MergeCursor;
 
-public class MergeSelect<EntityType extends Entity> implements
-		AbstractSelect<EntityType> {
+public class MergeSelect<EntityType extends Entity> implements AbstractSelect<EntityType> {
 
 	private final Select<EntityType>[] selects;
 

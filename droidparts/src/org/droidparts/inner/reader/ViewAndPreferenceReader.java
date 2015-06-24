@@ -28,14 +28,12 @@ import android.view.View;
 
 public class ViewAndPreferenceReader {
 
-	static Object readVal(Context ctx, View rootView, int viewOrPrefId,
-			boolean click, Object target, Class<?> valType, String valName)
-			throws Exception {
+	static Object readVal(Context ctx, View rootView, int viewOrPrefId, boolean click, Object target, Class<?> valType,
+			String valName) throws Exception {
 		boolean isView = TypeHelper.isView(valType);
 		boolean isPreference = TypeHelper.isPreference(valType);
 		if (!isView && !isPreference) {
-			throw new Exception("Not a View or Preference '"
-					+ valType.getName() + "'.");
+			throw new Exception("Not a View or Preference '" + valType.getName() + "'.");
 		}
 		if (viewOrPrefId == 0) {
 			if (isView) {
@@ -53,8 +51,7 @@ public class ViewAndPreferenceReader {
 		} else {
 			String prefKey = ctx.getString(viewOrPrefId);
 			if (target instanceof PreferenceActivity) {
-				viewOrPref = ((PreferenceActivity) target)
-						.findPreference(prefKey);
+				viewOrPref = ((PreferenceActivity) target).findPreference(prefKey);
 			} else {
 				viewOrPref = findPreferenceInFragment(target, prefKey);
 			}
@@ -67,8 +64,7 @@ public class ViewAndPreferenceReader {
 						L.w("Failed to set OnClickListener");
 					}
 				} else {
-					boolean success = setListener((Preference) viewOrPref,
-							target);
+					boolean success = setListener((Preference) viewOrPref, target);
 					if (!success) {
 						L.w("Failed to set OnPreferenceClickListener or OnPreferenceChangeListener.");
 					}
@@ -80,15 +76,12 @@ public class ViewAndPreferenceReader {
 		}
 	}
 
-	private static Preference findPreferenceInFragment(Object prefFragment,
-			String prefKey) {
+	private static Preference findPreferenceInFragment(Object prefFragment, String prefKey) {
 		try {
 			if (findPreferenceMethod == null) {
-				findPreferenceMethod = prefFragment.getClass().getMethod(
-						"findPreference", CharSequence.class);
+				findPreferenceMethod = prefFragment.getClass().getMethod("findPreference", CharSequence.class);
 			}
-			return (Preference) findPreferenceMethod.invoke(prefFragment,
-					prefKey);
+			return (Preference) findPreferenceMethod.invoke(prefFragment, prefKey);
 		} catch (Exception e) {
 			L.d(e);
 			return null;

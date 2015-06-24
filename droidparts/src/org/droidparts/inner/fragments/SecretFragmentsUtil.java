@@ -29,7 +29,8 @@ import android.widget.ProgressBar;
 public class SecretFragmentsUtil {
 
 	public static View fragmentActivityBuildLoadingIndicator(Context ctx) {
-		boolean large = (ctx.getResources().getConfiguration().screenLayout & Configuration.SCREENLAYOUT_SIZE_MASK) > Configuration.SCREENLAYOUT_SIZE_NORMAL;
+		boolean large = (ctx.getResources().getConfiguration().screenLayout
+				& Configuration.SCREENLAYOUT_SIZE_MASK) > Configuration.SCREENLAYOUT_SIZE_NORMAL;
 		boolean fresh = Build.VERSION.SDK_INT > Build.VERSION_CODES.GINGERBREAD_MR1;
 		int px = (large && fresh) ? 64 : 56;
 		FrameLayout fl = new FrameLayout(ctx);
@@ -44,8 +45,7 @@ public class SecretFragmentsUtil {
 
 	public static void singleFragmentActivitySetContentView(Activity activity) {
 		FrameLayout fl = new FrameLayout(activity);
-		fl.setLayoutParams(new LayoutParams(LayoutParams.FILL_PARENT,
-				LayoutParams.FILL_PARENT));
+		fl.setLayoutParams(new LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.FILL_PARENT));
 		fl.setId(CONTENT_VIEW_ID);
 		activity.setContentView(fl);
 	}

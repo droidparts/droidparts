@@ -36,33 +36,30 @@ public class EnumConverter extends Converter<Enum<?>> {
 	}
 
 	@Override
-	public <V> void putToJSON(Class<Enum<?>> valType, Class<V> componentType,
-			JSONObject obj, String key, Enum<?> val) throws Exception {
+	public <V> void putToJSON(Class<Enum<?>> valType, Class<V> componentType, JSONObject obj, String key, Enum<?> val)
+			throws Exception {
 		obj.put(key, val.toString());
 	}
 
 	@Override
-	public <V> Enum<?> readFromJSON(Class<Enum<?>> valType,
-			Class<V> componentType, JSONObject obj, String key)
+	public <V> Enum<?> readFromJSON(Class<Enum<?>> valType, Class<V> componentType, JSONObject obj, String key)
 			throws Exception {
 		return parseFromString(valType, componentType, obj.getString(key));
 	}
 
 	@Override
-	protected <V> Enum<?> parseFromString(Class<Enum<?>> valType,
-			Class<V> componentType, String str) {
+	protected <V> Enum<?> parseFromString(Class<Enum<?>> valType, Class<V> componentType, String str) {
 		return newEnum(valType, str);
 	}
 
 	@Override
-	public <V> void putToContentValues(Class<Enum<?>> valueType,
-			Class<V> componentType, ContentValues cv, String key, Enum<?> val) {
+	public <V> void putToContentValues(Class<Enum<?>> valueType, Class<V> componentType, ContentValues cv, String key,
+			Enum<?> val) {
 		cv.put(key, val.toString());
 	}
 
 	@Override
-	public <V> Enum<?> readFromCursor(Class<Enum<?>> valType,
-			Class<V> componentType, Cursor cursor, int columnIndex) {
+	public <V> Enum<?> readFromCursor(Class<Enum<?>> valType, Class<V> componentType, Cursor cursor, int columnIndex) {
 		return newEnum(valType, cursor.getString(columnIndex));
 	}
 

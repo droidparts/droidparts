@@ -21,11 +21,9 @@ import android.util.Pair;
 public abstract class AbstractImageReshaper implements ImageReshaper {
 
 	// slow, supports transparency
-	public static final Pair<Bitmap.CompressFormat, Integer> PNG = Pair.create(
-			Bitmap.CompressFormat.PNG, 100);
+	public static final Pair<Bitmap.CompressFormat, Integer> PNG = Pair.create(Bitmap.CompressFormat.PNG, 100);
 	// fast
-	public static final Pair<Bitmap.CompressFormat, Integer> JPEG = Pair
-			.create(Bitmap.CompressFormat.JPEG, 80);
+	public static final Pair<Bitmap.CompressFormat, Integer> JPEG = Pair.create(Bitmap.CompressFormat.JPEG, 80);
 
 	@Override
 	public Pair<Bitmap.CompressFormat, Integer> getCacheFormat(String mimeType) {

@@ -24,8 +24,8 @@ import android.content.Context;
 import android.database.Cursor;
 import android.view.View;
 
-public abstract class EntityCursorAdapter<EntityType extends Entity> extends
-		CursorAdapter implements AlterableContent<AbstractSelect<EntityType>> {
+public abstract class EntityCursorAdapter<EntityType extends Entity> extends CursorAdapter
+		implements AlterableContent<AbstractSelect<EntityType>> {
 
 	protected final EntityManager<EntityType> entityManager;
 
@@ -33,13 +33,11 @@ public abstract class EntityCursorAdapter<EntityType extends Entity> extends
 		this(ctx, entityCls, null);
 	}
 
-	public EntityCursorAdapter(Context ctx, Class<EntityType> entityCls,
-			AbstractSelect<EntityType> select) {
+	public EntityCursorAdapter(Context ctx, Class<EntityType> entityCls, AbstractSelect<EntityType> select) {
 		this(ctx, new EntityManager<EntityType>(entityCls, ctx), select);
 	}
 
-	public EntityCursorAdapter(Context ctx,
-			EntityManager<EntityType> entityManager,
+	public EntityCursorAdapter(Context ctx, EntityManager<EntityType> entityManager,
 			AbstractSelect<EntityType> select) {
 		super(ctx, (select != null) ? select.execute() : null);
 		this.entityManager = entityManager;

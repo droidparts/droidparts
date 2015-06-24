@@ -25,8 +25,7 @@ import android.support.v4.app.Fragment;
 import android.view.MenuItem;
 import android.view.View;
 
-public abstract class ActionBarActivity extends
-		android.support.v7.app.ActionBarActivity implements Injectable {
+public abstract class ActionBarActivity extends android.support.v7.app.ActionBarActivity implements Injectable {
 
 	private MenuItem reloadMenuItem;
 	private View loadingIndicator;
@@ -68,15 +67,13 @@ public abstract class ActionBarActivity extends
 	public final void setActionBarReloadMenuItem(MenuItem menuItem) {
 		this.reloadMenuItem = menuItem;
 		if (menuItem != null && loadingIndicator == null) {
-			loadingIndicator = SecretFragmentsSupportUtil
-					.fragmentActivityBuildLoadingIndicator(this);
+			loadingIndicator = SecretFragmentsSupportUtil.fragmentActivityBuildLoadingIndicator(this);
 		}
 		setActionBarLoadingIndicatorVisible(isLoading);
 	}
 
 	public void setFragmentVisible(boolean visible, Fragment... fragments) {
-		SecretFragmentsSupportUtil.fragmentActivitySetFragmentVisible(this,
-				visible, fragments);
+		SecretFragmentsSupportUtil.fragmentActivitySetFragmentVisible(this, visible, fragments);
 	}
 
 }

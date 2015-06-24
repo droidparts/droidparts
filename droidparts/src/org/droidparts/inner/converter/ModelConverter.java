@@ -39,16 +39,14 @@ public class ModelConverter extends Converter<Model> {
 	}
 
 	@Override
-	public <V> void putToContentValues(Class<Model> valueType,
-			Class<V> componentType, ContentValues cv, String key, Model val)
-			throws Exception {
+	public <V> void putToContentValues(Class<Model> valueType, Class<V> componentType, ContentValues cv, String key,
+			Model val) throws Exception {
 		byte[] arr = PersistUtils.toBytes(val);
 		cv.put(key, arr);
 	}
 
 	@Override
-	public <V> Model readFromCursor(Class<Model> valType,
-			Class<V> componentType, Cursor cursor, int columnIndex)
+	public <V> Model readFromCursor(Class<Model> valType, Class<V> componentType, Cursor cursor, int columnIndex)
 			throws Exception {
 		Model model = null;
 		byte[] arr = cursor.getBlob(columnIndex);
@@ -59,8 +57,8 @@ public class ModelConverter extends Converter<Model> {
 	}
 
 	@Override
-	public <V> void putToJSON(Class<Model> valType, Class<V> componentType,
-			JSONObject obj, String key, Model val) throws Exception {
+	public <V> void putToJSON(Class<Model> valType, Class<V> componentType, JSONObject obj, String key, Model val)
+			throws Exception {
 		@SuppressWarnings("unchecked")
 		Class<Model> cls = (Class<Model>) val.getClass();
 		JSONObject valStr = new JSONSerializer<Model>(cls, null).serialize(val);
@@ -68,23 +66,20 @@ public class ModelConverter extends Converter<Model> {
 	}
 
 	@Override
-	public <V> Model readFromJSON(Class<Model> valType, Class<V> componentType,
-			JSONObject obj, String key) throws Exception {
-		return new JSONSerializer<Model>(valType, null).deserialize(obj
-				.getJSONObject(key));
+	public <V> Model readFromJSON(Class<Model> valType, Class<V> componentType, JSONObject obj, String key)
+			throws Exception {
+		return new JSONSerializer<Model>(valType, null).deserialize(obj.getJSONObject(key));
 	}
 
 	@Override
-	public <V> Model readFromXML(Class<Model> valType, Class<V> componentType,
-			Node node, String nodeListItemTagHint) throws Exception {
+	public <V> Model readFromXML(Class<Model> valType, Class<V> componentType, Node node, String nodeListItemTagHint)
+			throws Exception {
 		return new XMLSerializer<Model>(valType, null).deserialize(node);
 	}
 
 	@Override
-	protected <V> Model parseFromString(Class<Model> valType,
-			Class<V> componentType, String str) throws Exception {
-		return new JSONSerializer<Model>(valType, null)
-				.deserialize(new JSONObject(str));
+	protected <V> Model parseFromString(Class<Model> valType, Class<V> componentType, String str) throws Exception {
+		return new JSONSerializer<Model>(valType, null).deserialize(new JSONObject(str));
 	}
 
 }

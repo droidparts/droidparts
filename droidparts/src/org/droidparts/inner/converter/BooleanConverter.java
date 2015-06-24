@@ -35,8 +35,7 @@ public class BooleanConverter extends Converter<Boolean> {
 	}
 
 	@Override
-	public <V> Boolean readFromJSON(Class<Boolean> valType,
-			Class<V> componentType, JSONObject obj, String key)
+	public <V> Boolean readFromJSON(Class<Boolean> valType, Class<V> componentType, JSONObject obj, String key)
 			throws Exception {
 		try {
 			return obj.getBoolean(key);
@@ -46,8 +45,7 @@ public class BooleanConverter extends Converter<Boolean> {
 	}
 
 	@Override
-	protected <V> Boolean parseFromString(Class<Boolean> valType,
-			Class<V> componentType, String str) {
+	protected <V> Boolean parseFromString(Class<Boolean> valType, Class<V> componentType, String str) {
 		if ("1".equals(str)) {
 			str = "true";
 		}
@@ -55,14 +53,13 @@ public class BooleanConverter extends Converter<Boolean> {
 	}
 
 	@Override
-	public <V> void putToContentValues(Class<Boolean> valueType,
-			Class<V> componentType, ContentValues cv, String key, Boolean val) {
+	public <V> void putToContentValues(Class<Boolean> valueType, Class<V> componentType, ContentValues cv, String key,
+			Boolean val) {
 		cv.put(key, val);
 	}
 
 	@Override
-	public <V> Boolean readFromCursor(Class<Boolean> valType,
-			Class<V> componentType, Cursor cursor, int columnIndex) {
+	public <V> Boolean readFromCursor(Class<Boolean> valType, Class<V> componentType, Cursor cursor, int columnIndex) {
 		return (cursor.getInt(columnIndex) == 1);
 	}
 

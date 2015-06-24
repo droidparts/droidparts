@@ -78,8 +78,7 @@ public abstract class TabbedActionBarActivity extends ActionBarActivity {
 		addTab(fragmentsOnTab.size(), tab, tabFragments);
 	}
 
-	public void addTab(int position, ActionBar.Tab tab,
-			Fragment... tabFragments) {
+	public void addTab(int position, ActionBar.Tab tab, Fragment... tabFragments) {
 		tab.setTabListener(tabListener);
 		getSupportActionBar().addTab(tab, position);
 		fragmentsOnTab.add(position, tabFragments);
@@ -111,8 +110,7 @@ public abstract class TabbedActionBarActivity extends ActionBarActivity {
 		for (Fragment fragment : fragments) {
 			if (visible) {
 				manuallyHiddenFragments.remove(fragment);
-				Fragment[] currTabFragments = fragmentsOnTab
-						.get(getCurrentTab());
+				Fragment[] currTabFragments = fragmentsOnTab.get(getCurrentTab());
 				for (Fragment currTabFragment : currTabFragments) {
 					if (fragment == currTabFragment) {
 						super.setFragmentVisible(true, fragment);

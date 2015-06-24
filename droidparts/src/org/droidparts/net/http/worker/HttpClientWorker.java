@@ -56,8 +56,7 @@ public class HttpClientWorker extends HTTPWorker {
 		}
 		HttpConnectionParams.setStaleCheckingEnabled(params, false);
 		setFollowRedirects(followRedirects);
-		HttpConnectionParams.setConnectionTimeout(params,
-				SOCKET_OPERATION_TIMEOUT);
+		HttpConnectionParams.setConnectionTimeout(params, SOCKET_OPERATION_TIMEOUT);
 		HttpConnectionParams.setSoTimeout(params, SOCKET_OPERATION_TIMEOUT);
 		HttpConnectionParams.setSocketBufferSize(params, BUFFER_SIZE);
 		HttpClientParams.setCookiePolicy(params, BROWSER_COMPATIBILITY);
@@ -65,8 +64,7 @@ public class HttpClientWorker extends HTTPWorker {
 
 	@Override
 	public void setFollowRedirects(boolean follow) {
-		HttpClientParams
-				.setRedirecting(httpClient.getParams(), followRedirects);
+		HttpClientParams.setRedirecting(httpClient.getParams(), followRedirects);
 	}
 
 	@Override
@@ -78,8 +76,7 @@ public class HttpClientWorker extends HTTPWorker {
 		return httpClient;
 	}
 
-	public static StringEntity buildStringEntity(String contentType, String data)
-			throws HTTPException {
+	public static StringEntity buildStringEntity(String contentType, String data) throws HTTPException {
 		try {
 			StringEntity entity = new StringEntity(data, UTF8);
 			entity.setContentType(contentType);
@@ -89,19 +86,16 @@ public class HttpClientWorker extends HTTPWorker {
 		}
 	}
 
-	public static HttpEntity buildMultipartEntity(String name,
-			String contentType, String fileName, InputStream is)
+	public static HttpEntity buildMultipartEntity(String name, String contentType, String fileName, InputStream is)
 			throws HTTPException {
 		try {
-			return HttpMimeWrapper.buildMultipartEntity(name, contentType,
-					fileName, is);
+			return HttpMimeWrapper.buildMultipartEntity(name, contentType, fileName, is);
 		} catch (IOException e) {
 			throw new HTTPException(e);
 		}
 	}
 
-	public HTTPResponse getResponse(HttpUriRequest req, boolean body)
-			throws HTTPException {
+	public HTTPResponse getResponse(HttpUriRequest req, boolean body) throws HTTPException {
 		HTTPResponse response = new HTTPResponse();
 		HttpResponse resp = getHttpResponse(req);
 		response.code = getResponseCodeOrThrow(resp);
@@ -115,8 +109,7 @@ public class HttpClientWorker extends HTTPWorker {
 		return response;
 	}
 
-	private HttpResponse getHttpResponse(HttpUriRequest req)
-			throws HTTPException {
+	private HttpResponse getHttpResponse(HttpUriRequest req) throws HTTPException {
 		for (String key : headers.keySet()) {
 			req.addHeader(key, headers.get(key));
 		}
@@ -129,8 +122,7 @@ public class HttpClientWorker extends HTTPWorker {
 		}
 	}
 
-	private static int getResponseCodeOrThrow(HttpResponse resp)
-			throws HTTPException {
+	private static int getResponseCodeOrThrow(HttpResponse resp) throws HTTPException {
 		int respCode = resp.getStatusLine().getStatusCode();
 		if (isErrorResponseCode(respCode)) {
 			String respBody = HTTPInputStream.getInstance(resp).readAndClose();

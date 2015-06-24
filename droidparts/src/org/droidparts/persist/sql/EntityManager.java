@@ -41,8 +41,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
-public class EntityManager<EntityType extends Entity> extends
-		AbstractEntityManager<EntityType> {
+public class EntityManager<EntityType extends Entity> extends AbstractEntityManager<EntityType> {
 
 	private final Class<EntityType> cls;
 	private final Context ctx;
@@ -52,8 +51,7 @@ public class EntityManager<EntityType extends Entity> extends
 		this(cls, ctx, DependencyReader.getDB(ctx));
 	}
 
-	protected EntityManager(Class<EntityType> cls, Context ctx,
-			SQLiteDatabase db) {
+	protected EntityManager(Class<EntityType> cls, Context ctx, SQLiteDatabase db) {
 		this.cls = cls;
 		this.ctx = ctx.getApplicationContext();
 		this.db = db;
@@ -67,14 +65,12 @@ public class EntityManager<EntityType extends Entity> extends
 	@Override
 	public EntityType readRow(Cursor cursor) {
 		EntityType entity = newInstance(cls);
-		FieldSpec<ColumnAnn>[] columnSpecs = ClassSpecRegistry
-				.getTableColumnSpecs(cls);
+		FieldSpec<ColumnAnn>[] columnSpecs = ClassSpecRegistry.getTableColumnSpecs(cls);
 		for (FieldSpec<ColumnAnn> spec : columnSpecs) {
 			int colIdx = cursor.getColumnIndex(spec.ann.name);
 			if (colIdx >= 0) {
 				try {
-					Object columnVal = readFromCursor(cursor, colIdx,
-							spec.field.getType(), spec.componentType);
+					Object columnVal = readFromCursor(cursor, colIdx, spec.field.getType(), spec.componentType);
 					if (columnVal != null || spec.ann.nullable) {
 						setFieldVal(entity, spec.field, columnVal);
 					}
@@ -90,21 +86,18 @@ public class EntityManager<EntityType extends Entity> extends
 	public void fillForeignKeys(EntityType item, String... columnNames) {
 		HashSet<String> columnNameSet = new HashSet<String>(asList(columnNames));
 		boolean fillAll = columnNameSet.isEmpty();
-		FieldSpec<ColumnAnn>[] columnSpecs = ClassSpecRegistry
-				.getTableColumnSpecs(cls);
+		FieldSpec<ColumnAnn>[] columnSpecs = ClassSpecRegistry.getTableColumnSpecs(cls);
 		for (FieldSpec<ColumnAnn> spec : columnSpecs) {
 			if (fillAll || columnNameSet.contains(spec.ann.name)) {
 				Class<?> fieldType = spec.field.getType();
 				if (isEntity(fieldType)) {
 					Entity foreignEntity = getFieldVal(item, spec.field);
 					if (foreignEntity != null) {
-						EntityManager<Entity> manager = subManager(spec.field
-								.getType());
+						EntityManager<Entity> manager = subManager(spec.field.getType());
 						Object obj = manager.read(foreignEntity.id);
 						setFieldVal(item, spec.field, obj);
 					}
-				} else if ((isArray(fieldType) || isCollection(fieldType))
-						&& isEntity(spec.componentType)) {
+				} else if ((isArray(fieldType) || isCollection(fieldType)) && isEntity(spec.componentType)) {
 					EntityManager<Entity> manager = subManager(spec.componentType);
 					if (isArray(fieldType)) {
 						Entity[] arr = getFieldVal(item, spec.field);
@@ -119,8 +112,7 @@ public class EntityManager<EntityType extends Entity> extends
 					} else {
 						Collection<Entity> coll = getFieldVal(item, spec.field);
 						if (coll != null) {
-							ArrayList<Entity> entities = new ArrayList<Entity>(
-									coll.size());
+							ArrayList<Entity> entities = new ArrayList<Entity>(coll.size());
 							for (Entity ent : coll) {
 								if (ent != null) {
 									entities.add(manager.read(ent.id));
@@ -149,13 +141,11 @@ public class EntityManager<EntityType extends Entity> extends
 	@Override
 	protected ContentValues toContentValues(EntityType item) {
 		ContentValues cv = new ContentValues();
-		FieldSpec<ColumnAnn>[] columnSpecs = ClassSpecRegistry
-				.getTableColumnSpecs(cls);
+		FieldSpec<ColumnAnn>[] columnSpecs = ClassSpecRegistry.getTableColumnSpecs(cls);
 		for (FieldSpec<ColumnAnn> spec : columnSpecs) {
 			Object val = getFieldVal(item, spec.field);
 			try {
-				putToContentValues(cv, spec.ann.name, spec.field.getType(),
-						spec.componentType, val);
+				putToContentValues(cv, spec.ann.name, spec.field.getType(), spec.componentType, val);
 			} catch (Exception e) {
 				throw new RuntimeException(e);
 			}
@@ -165,8 +155,7 @@ public class EntityManager<EntityType extends Entity> extends
 
 	@Override
 	protected void createForeignKeys(EntityType item) {
-		FieldSpec<ColumnAnn>[] columnSpecs = ClassSpecRegistry
-				.getTableColumnSpecs(cls);
+		FieldSpec<ColumnAnn>[] columnSpecs = ClassSpecRegistry.getTableColumnSpecs(cls);
 		for (FieldSpec<ColumnAnn> spec : columnSpecs) {
 			Class<?> fieldType = spec.field.getType();
 			if (isEntity(fieldType)) {
@@ -174,8 +163,7 @@ public class EntityManager<EntityType extends Entity> extends
 				if (foreignEntity != null && foreignEntity.id == 0) {
 					subManager(spec.field.getType()).create(foreignEntity);
 				}
-			} else if ((isArray(fieldType) || isCollection(fieldType))
-					&& isEntity(spec.componentType)) {
+			} else if ((isArray(fieldType) || isCollection(fieldType)) && isEntity(spec.componentType)) {
 				ArrayList<Entity> toCreate = new ArrayList<Entity>();
 				if (isArray(fieldType)) {
 					Entity[] arr = getFieldVal(item, spec.field);
@@ -215,15 +203,13 @@ public class EntityManager<EntityType extends Entity> extends
 	protected String[] getEagerForeignKeyColumnNames() {
 		if (eagerForeignKeyColumnNames == null) {
 			HashSet<String> eagerColumnNames = new HashSet<String>();
-			FieldSpec<ColumnAnn>[] columnSpecs = ClassSpecRegistry
-					.getTableColumnSpecs(cls);
+			FieldSpec<ColumnAnn>[] columnSpecs = ClassSpecRegistry.getTableColumnSpecs(cls);
 			for (FieldSpec<ColumnAnn> spec : columnSpecs) {
 				if (spec.ann.eager) {
 					eagerColumnNames.add(spec.ann.name);
 				}
 			}
-			eagerForeignKeyColumnNames = eagerColumnNames
-					.toArray(new String[eagerColumnNames.size()]);
+			eagerForeignKeyColumnNames = eagerColumnNames.toArray(new String[eagerColumnNames.size()]);
 		}
 		return eagerForeignKeyColumnNames;
 	}
@@ -231,26 +217,23 @@ public class EntityManager<EntityType extends Entity> extends
 	private String[] eagerForeignKeyColumnNames;
 
 	@SuppressWarnings("unchecked")
-	protected <T, V> void putToContentValues(ContentValues cv, String key,
-			Class<T> valueType, Class<V> componentType, Object value)
-			throws Exception {
+	protected <T, V> void putToContentValues(ContentValues cv, String key, Class<T> valueType, Class<V> componentType,
+			Object value) throws Exception {
 		if (value == null) {
 			cv.putNull(key);
 		} else {
 			Converter<T> converter = ConverterRegistry.getConverter(valueType);
-			converter.putToContentValues(valueType, componentType, cv, key,
-					(T) value);
+			converter.putToContentValues(valueType, componentType, cv, key, (T) value);
 		}
 	}
 
-	protected <T, V> Object readFromCursor(Cursor cursor, int columnIndex,
-			Class<T> valType, Class<V> componentType) throws Exception {
+	protected <T, V> Object readFromCursor(Cursor cursor, int columnIndex, Class<T> valType, Class<V> componentType)
+			throws Exception {
 		if (cursor.isNull(columnIndex)) {
 			return null;
 		} else {
 			Converter<T> converter = ConverterRegistry.getConverter(valType);
-			return converter.readFromCursor(valType, componentType, cursor,
-					columnIndex);
+			return converter.readFromCursor(valType, componentType, cursor, columnIndex);
 		}
 	}
 

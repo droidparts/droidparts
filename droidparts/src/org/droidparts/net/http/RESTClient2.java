@@ -86,8 +86,7 @@ public class RESTClient2 extends RESTClient {
 		return post(uri, ContentType.APPLICATION_JSON, data.toString());
 	}
 
-	public HTTPResponse post(String uri, Map<String, String> formData)
-			throws HTTPException {
+	public HTTPResponse post(String uri, Map<String, String> formData) throws HTTPException {
 		Uri.Builder builder = new Uri.Builder();
 		for (String key : formData.keySet()) {
 			String val = formData.get(key);
@@ -97,31 +96,25 @@ public class RESTClient2 extends RESTClient {
 		return post(uri, ContentType.APPLICATION_FORM_DATA, query);
 	}
 
-	public HTTPResponse postMultipart(String uri, String name, File file)
-			throws HTTPException {
+	public HTTPResponse postMultipart(String uri, String name, File file) throws HTTPException {
 		return postMultipart(uri, name, null, file);
 	}
 
-	public HTTPResponse postMultipart(String uri, String name,
-			String contentType, File file) throws HTTPException {
+	public HTTPResponse postMultipart(String uri, String name, String contentType, File file) throws HTTPException {
 		try {
-			return postMultipart(uri, name, contentType, file.getName(),
-					new FileInputStream(file));
+			return postMultipart(uri, name, contentType, file.getName(), new FileInputStream(file));
 		} catch (FileNotFoundException e) {
 			throw new HTTPException(e);
 		}
 	}
 
-	public HTTPResponse postMultipart(String uri, String name, String fileName,
-			byte[] fileBytes) throws HTTPException {
+	public HTTPResponse postMultipart(String uri, String name, String fileName, byte[] fileBytes) throws HTTPException {
 		return postMultipart(uri, name, null, fileName, fileBytes);
 	}
 
-	public HTTPResponse postMultipart(String uri, String name,
-			String contentType, String fileName, byte[] fileBytes)
+	public HTTPResponse postMultipart(String uri, String name, String contentType, String fileName, byte[] fileBytes)
 			throws HTTPException {
-		return postMultipart(uri, name, contentType, fileName,
-				new ByteArrayInputStream(fileBytes));
+		return postMultipart(uri, name, contentType, fileName, new ByteArrayInputStream(fileBytes));
 	}
 
 }

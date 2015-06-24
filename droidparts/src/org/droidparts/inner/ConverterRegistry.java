@@ -74,8 +74,7 @@ public class ConverterRegistry {
 	}
 
 	@SuppressWarnings("unchecked")
-	public static <T> Converter<T> getConverter(Class<T> cls)
-			throws IllegalArgumentException {
+	public static <T> Converter<T> getConverter(Class<T> cls) throws IllegalArgumentException {
 		Converter<?> converter = map.get(cls);
 		if (converter == null) {
 			for (Converter<?> conv : converters) {
@@ -89,8 +88,7 @@ public class ConverterRegistry {
 		if (converter != null) {
 			return (Converter<T>) converter;
 		} else {
-			throw new IllegalArgumentException("No converter for '"
-					+ cls.getName() + "'.");
+			throw new IllegalArgumentException("No converter for '" + cls.getName() + "'.");
 		}
 	}
 

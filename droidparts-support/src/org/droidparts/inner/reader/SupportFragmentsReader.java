@@ -37,14 +37,12 @@ public class SupportFragmentsReader implements ISupportFragmentsReader {
 	}
 
 	@Override
-	public Fragment getFragment(Object fragmentActivityObj, int fragmentId,
-			String valName) {
+	public Fragment getFragment(Object fragmentActivityObj, int fragmentId, String valName) {
 		FragmentActivity fragmentActivity = (FragmentActivity) fragmentActivityObj;
 		if (fragmentId == 0) {
 			fragmentId = ResourceUtils.getResourceId(fragmentActivity, valName);
 		}
-		return fragmentActivity.getSupportFragmentManager().findFragmentById(
-				fragmentId);
+		return fragmentActivity.getSupportFragmentManager().findFragmentById(fragmentId);
 	}
 
 	@Override

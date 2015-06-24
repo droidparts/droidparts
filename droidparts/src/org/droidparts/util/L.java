@@ -191,10 +191,8 @@ public class L {
 					_logLevel = DISABLE;
 				} else {
 					_logLevel = VERBOSE;
-					Log.i(TAG,
-							"No valid <meta-data android:name=\""
-									+ ManifestMetaData.LOG_LEVEL
-									+ "\" android:value=\"...\"/> in AndroidManifest.xml.");
+					Log.i(TAG, "No valid <meta-data android:name=\"" + ManifestMetaData.LOG_LEVEL
+							+ "\" android:value=\"...\"/> in AndroidManifest.xml.");
 				}
 			}
 		}

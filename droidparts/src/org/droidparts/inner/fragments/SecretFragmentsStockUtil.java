@@ -23,8 +23,8 @@ import android.app.FragmentTransaction;
 
 public class SecretFragmentsStockUtil extends SecretFragmentsUtil {
 
-	public static void fragmentActivitySetFragmentVisible(
-			Activity fragmentActivity, boolean visible, Fragment... fragments) {
+	public static void fragmentActivitySetFragmentVisible(Activity fragmentActivity, boolean visible,
+			Fragment... fragments) {
 		FragmentManager fm = fragmentActivity.getFragmentManager();
 		FragmentTransaction ft = fm.beginTransaction();
 		for (Fragment fragment : fragments) {
@@ -37,16 +37,14 @@ public class SecretFragmentsStockUtil extends SecretFragmentsUtil {
 		ft.commit();
 	}
 
-	public static void singleFragmentActivityAddFragmentToContentView(
-			Activity fragmentActivity, Fragment fragment) {
+	public static void singleFragmentActivityAddFragmentToContentView(Activity fragmentActivity, Fragment fragment) {
 		FragmentManager fm = fragmentActivity.getFragmentManager();
 		FragmentTransaction ft = fm.beginTransaction();
 		ft.add(CONTENT_VIEW_ID, fragment);
 		ft.commit();
 	}
 
-	public static void dialogFragmentShowDialogFragment(
-			Activity fragmentActivity, DialogFragment dialogFragment) {
+	public static void dialogFragmentShowDialogFragment(Activity fragmentActivity, DialogFragment dialogFragment) {
 		FragmentManager fm = fragmentActivity.getFragmentManager();
 		String tag = dialogFragment.getClass().getName();
 		FragmentTransaction ft = fm.beginTransaction();

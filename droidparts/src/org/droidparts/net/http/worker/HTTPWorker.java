@@ -26,8 +26,7 @@ import android.util.Base64;
 public abstract class HTTPWorker {
 
 	public static void throwIfNetworkOnMainThreadException(Exception e) {
-		if (e.getClass().getName()
-				.equals("android.os.NetworkOnMainThreadException")) {
+		if (e.getClass().getName().equals("android.os.NetworkOnMainThreadException")) {
 			throw (RuntimeException) e;
 		}
 	}
@@ -40,8 +39,7 @@ public abstract class HTTPWorker {
 	public final void authenticateBasic(String user, String password) {
 		String val = null;
 		if (user != null && password != null) {
-			String userPass = Base64.encodeToString(
-					(user + ":" + password).getBytes(), NO_WRAP);
+			String userPass = Base64.encodeToString((user + ":" + password).getBytes(), NO_WRAP);
 			val = "Basic " + userPass;
 		}
 		setHeader("Authorization", val);

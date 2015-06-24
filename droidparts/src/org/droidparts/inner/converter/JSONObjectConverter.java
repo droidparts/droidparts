@@ -34,35 +34,32 @@ public class JSONObjectConverter extends Converter<JSONObject> {
 	}
 
 	@Override
-	public <V> void putToJSON(Class<JSONObject> valType,
-			Class<V> componentType, JSONObject obj, String key, JSONObject val)
-			throws Exception {
+	public <V> void putToJSON(Class<JSONObject> valType, Class<V> componentType, JSONObject obj, String key,
+			JSONObject val) throws Exception {
 		obj.put(key, val.toString());
 	}
 
 	@Override
-	public <V> JSONObject readFromJSON(Class<JSONObject> valType,
-			Class<V> componentType, JSONObject obj, String key)
+	public <V> JSONObject readFromJSON(Class<JSONObject> valType, Class<V> componentType, JSONObject obj, String key)
 			throws Exception {
 		return parseFromString(valType, componentType, obj.getString(key));
 	}
 
 	@Override
-	protected <V> JSONObject parseFromString(Class<JSONObject> valType,
-			Class<V> componentType, String str) throws Exception {
+	protected <V> JSONObject parseFromString(Class<JSONObject> valType, Class<V> componentType, String str)
+			throws Exception {
 		return new JSONObject(str);
 	}
 
 	@Override
-	public <V> void putToContentValues(Class<JSONObject> valueType,
-			Class<V> componentType, ContentValues cv, String key, JSONObject val) {
+	public <V> void putToContentValues(Class<JSONObject> valueType, Class<V> componentType, ContentValues cv,
+			String key, JSONObject val) {
 		cv.put(key, val.toString());
 	}
 
 	@Override
-	public <V> JSONObject readFromCursor(Class<JSONObject> valType,
-			Class<V> componentType, Cursor cursor, int columnIndex)
-			throws Exception {
+	public <V> JSONObject readFromCursor(Class<JSONObject> valType, Class<V> componentType, Cursor cursor,
+			int columnIndex) throws Exception {
 		return new JSONObject(cursor.getString(columnIndex));
 	}
 

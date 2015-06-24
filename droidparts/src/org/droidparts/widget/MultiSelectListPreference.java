@@ -96,15 +96,13 @@ public class MultiSelectListPreference extends ListPreference {
 	@Override
 	protected void onPrepareDialogBuilder(Builder builder) {
 		updateCheckedEntryIndexes();
-		builder.setMultiChoiceItems(getEntries(), checkedEntryIndexes,
-				new OnMultiChoiceClickListener() {
+		builder.setMultiChoiceItems(getEntries(), checkedEntryIndexes, new OnMultiChoiceClickListener() {
 
-					@Override
-					public void onClick(DialogInterface dialog, int which,
-							boolean isChecked) {
-						checkedEntryIndexes[which] = isChecked;
-					}
-				});
+			@Override
+			public void onClick(DialogInterface dialog, int which, boolean isChecked) {
+				checkedEntryIndexes[which] = isChecked;
+			}
+		});
 	}
 
 	@Override
@@ -117,8 +115,7 @@ public class MultiSelectListPreference extends ListPreference {
 					checkedVals.add(entryVals[i]);
 				}
 			}
-			String val = toPersistedPreferenceValue(checkedVals
-					.toArray(new CharSequence[checkedVals.size()]));
+			String val = toPersistedPreferenceValue(checkedVals.toArray(new CharSequence[checkedVals.size()]));
 			if (callChangeListener(val)) {
 				setValue(val);
 			}
@@ -130,11 +127,9 @@ public class MultiSelectListPreference extends ListPreference {
 		checkedEntryIndexes = new boolean[entryVals.length];
 		String val = getValue();
 		if (val != null) {
-			HashSet<String> checkedEntryVals = new HashSet<String>(
-					Arrays.asList(fromPersistedPreferenceValue(val)));
+			HashSet<String> checkedEntryVals = new HashSet<String>(Arrays.asList(fromPersistedPreferenceValue(val)));
 			for (int i = 0; i < entryVals.length; i++) {
-				checkedEntryIndexes[i] = checkedEntryVals
-						.contains(entryVals[i]);
+				checkedEntryIndexes[i] = checkedEntryVals.contains(entryVals[i]);
 			}
 		}
 	}

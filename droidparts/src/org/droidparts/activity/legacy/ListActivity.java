@@ -21,8 +21,7 @@ import org.droidparts.contract.Injectable;
 
 import android.os.Bundle;
 
-public abstract class ListActivity extends android.app.ListActivity implements
-		Injectable {
+public abstract class ListActivity extends android.app.ListActivity implements Injectable {
 
 	@Override
 	public void onPreInject() {

@@ -56,8 +56,7 @@ public class BitmapDiskCache {
 		cacheDir.mkdirs();
 	}
 
-	public boolean put(String key, Bitmap bm,
-			Pair<CompressFormat, Integer> cacheFormat) {
+	public boolean put(String key, Bitmap bm, Pair<CompressFormat, Integer> cacheFormat) {
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		try {
 			bm.compress(cacheFormat.first, cacheFormat.second, baos);
@@ -74,8 +73,7 @@ public class BitmapDiskCache {
 		File file = getCachedFile(key);
 		BufferedOutputStream bos = null;
 		try {
-			bos = new BufferedOutputStream(new FileOutputStream(file),
-					BUFFER_SIZE);
+			bos = new BufferedOutputStream(new FileOutputStream(file), BUFFER_SIZE);
 			bos.write(bmArr);
 			return true;
 		} catch (Exception e) {
@@ -86,8 +84,8 @@ public class BitmapDiskCache {
 		}
 	}
 
-	public Pair<Bitmap, BitmapFactory.Options> get(String key, int reqWidth,
-			int reqHeight, Bitmap.Config config, Bitmap inBitmap) {
+	public Pair<Bitmap, BitmapFactory.Options> get(String key, int reqWidth, int reqHeight, Bitmap.Config config,
+			Bitmap inBitmap) {
 		Pair<Bitmap, BitmapFactory.Options> bmData = null;
 		File file = getCachedFile(key);
 		if (file.exists()) {
@@ -95,8 +93,7 @@ public class BitmapDiskCache {
 			try {
 				fis = new FileInputStream(file);
 				byte[] data = readToByteArray(fis);
-				bmData = BitmapFactoryUtils.decodeScaled(data, reqWidth,
-						reqHeight, config, inBitmap);
+				bmData = BitmapFactoryUtils.decodeScaled(data, reqWidth, reqHeight, config, inBitmap);
 				file.setLastModified(System.currentTimeMillis());
 			} catch (Exception e) {
 				L.w(e);
@@ -104,8 +101,7 @@ public class BitmapDiskCache {
 				silentlyClose(fis);
 			}
 		}
-		L.v("DiskCache " + ((bmData == null) ? "miss" : "hit") + " for '%s'.",
-				key);
+		L.v("DiskCache " + ((bmData == null) ? "miss" : "hit") + " for '%s'.", key);
 		return bmData;
 	}
 

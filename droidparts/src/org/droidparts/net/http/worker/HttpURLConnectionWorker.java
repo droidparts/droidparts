@@ -66,8 +66,7 @@ public class HttpURLConnectionWorker extends HTTPWorker {
 		this.proxy = proxy;
 	}
 
-	public HttpURLConnection getConnection(String urlStr, String requestMethod)
-			throws HTTPException {
+	public HttpURLConnection getConnection(String urlStr, String requestMethod) throws HTTPException {
 		try {
 			URL url = new URL(urlStr);
 			HttpURLConnection conn = openConnection(url);
@@ -80,8 +79,7 @@ public class HttpURLConnectionWorker extends HTTPWorker {
 			conn.setRequestProperty(ACCEPT_ENCODING, "gzip,deflate");
 			conn.setRequestMethod(requestMethod);
 			conn.setInstanceFollowRedirects(followRedirects);
-			if (Method.PUT.equals(requestMethod)
-					|| Method.POST.equals(requestMethod)) {
+			if (Method.PUT.equals(requestMethod) || Method.POST.equals(requestMethod)) {
 				conn.setDoOutput(true);
 			}
 			return conn;
@@ -100,8 +98,7 @@ public class HttpURLConnectionWorker extends HTTPWorker {
 		}
 	}
 
-	public static void postOrPut(HttpURLConnection conn, String contentType,
-			String data) throws HTTPException {
+	public static void postOrPut(HttpURLConnection conn, String contentType, String data) throws HTTPException {
 		conn.setRequestProperty(ACCEPT_CHARSET, UTF8);
 		conn.setRequestProperty(CONTENT_TYPE, contentType);
 		OutputStream os = null;
@@ -116,21 +113,19 @@ public class HttpURLConnectionWorker extends HTTPWorker {
 		}
 	}
 
-	public static void postMultipart(HttpURLConnection conn, String name,
-			String contentType, String fileName, InputStream is)
-			throws HTTPException {
+	public static void postMultipart(HttpURLConnection conn, String name, String contentType, String fileName,
+			InputStream is) throws HTTPException {
 		conn.setDoOutput(true);
 		conn.setRequestProperty(CACHE_CONTROL, NO_CACHE);
 		conn.setRequestProperty(CONNECTION, KEEP_ALIVE);
-		conn.setRequestProperty(CONTENT_TYPE, MULTIPART + ";boundary="
-				+ BOUNDARY);
+		conn.setRequestProperty(CONTENT_TYPE, MULTIPART + ";boundary=" + BOUNDARY);
 		DataOutputStream request = null;
 		try {
 			request = new DataOutputStream(conn.getOutputStream());
 
 			request.writeBytes(TWO_HYPHENS + BOUNDARY + CRLF);
-			request.writeBytes("Content-Disposition: form-data; name=\"" + name
-					+ "\";filename=\"" + fileName + "\"" + CRLF);
+			request.writeBytes(
+					"Content-Disposition: form-data; name=\"" + name + "\";filename=\"" + fileName + "\"" + CRLF);
 			if (contentType != null) {
 				request.writeBytes("Content-Type: " + contentType + CRLF);
 			}
@@ -152,8 +147,7 @@ public class HttpURLConnectionWorker extends HTTPWorker {
 		}
 	}
 
-	public static HTTPResponse getResponse(HttpURLConnection conn, boolean body)
-			throws HTTPException {
+	public static HTTPResponse getResponse(HttpURLConnection conn, boolean body) throws HTTPException {
 		HTTPResponse response = new HTTPResponse();
 		response.code = connectAndGetResponseCodeOrThrow(conn);
 		response.headers = conn.getHeaderFields();
@@ -166,14 +160,12 @@ public class HttpURLConnectionWorker extends HTTPWorker {
 		return response;
 	}
 
-	private static int connectAndGetResponseCodeOrThrow(HttpURLConnection conn)
-			throws HTTPException {
+	private static int connectAndGetResponseCodeOrThrow(HttpURLConnection conn) throws HTTPException {
 		try {
 			conn.connect();
 			int respCode = conn.getResponseCode();
 			if (isErrorResponseCode(respCode)) {
-				HTTPInputStream is = HTTPInputStream.getInstance(conn,
-						(conn.getErrorStream() != null));
+				HTTPInputStream is = HTTPInputStream.getInstance(conn, (conn.getErrorStream() != null));
 				throw new HTTPException(respCode, is.readAndClose());
 			}
 			return respCode;

@@ -41,8 +41,7 @@ public class RESTClientPostMultipart extends AndroidTestCase {
 	private static final String CONTENT_TYPE = "text/plain";
 
 	public void testPostMultipartURLConnection() throws Exception {
-		HTTPWorker worker = new HttpURLConnectionWorker(getContext(),
-				UserAgent.getDefault());
+		HTTPWorker worker = new HttpURLConnectionWorker(getContext(), UserAgent.getDefault());
 		testPostMultipartFile(worker);
 		testPostMultipartBytes(worker);
 	}
@@ -70,12 +69,10 @@ public class RESTClientPostMultipart extends AndroidTestCase {
 		RESTClient2 client = new RESTClient2(getContext(), worker);
 		byte[] fileBytes = FILE_BODY.getBytes();
 		// Without content type
-		HTTPResponse resp = client.postMultipart(URL, FILE_NAME, FILE_NAME,
-				fileBytes);
+		HTTPResponse resp = client.postMultipart(URL, FILE_NAME, FILE_NAME, fileBytes);
 		assertPostMultipartResponse(resp);
 		// With content type
-		resp = client.postMultipart(URL, FILE_NAME, CONTENT_TYPE, FILE_NAME,
-				fileBytes);
+		resp = client.postMultipart(URL, FILE_NAME, CONTENT_TYPE, FILE_NAME, fileBytes);
 		assertPostMultipartResponse(resp);
 	}
 
@@ -87,8 +84,7 @@ public class RESTClientPostMultipart extends AndroidTestCase {
 		return file;
 	}
 
-	private void assertPostMultipartResponse(HTTPResponse response)
-			throws HTTPException {
+	private void assertPostMultipartResponse(HTTPResponse response) throws HTTPException {
 		assertNotNull(response);
 		String body = response.body;
 

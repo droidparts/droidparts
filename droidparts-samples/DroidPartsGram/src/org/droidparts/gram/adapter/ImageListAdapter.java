@@ -35,8 +35,7 @@ import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.AbsListView.OnScrollListener;
 
-public class ImageListAdapter extends EntityCursorAdapter<Image> implements
-		OnScrollListener {
+public class ImageListAdapter extends EntityCursorAdapter<Image>implements OnScrollListener {
 
 	@InjectDependency
 	private ImageFetcher imageFetcher;
@@ -88,8 +87,7 @@ public class ImageListAdapter extends EntityCursorAdapter<Image> implements
 	}
 
 	@Override
-	public void onScroll(AbsListView view, int firstVisibleItem,
-			int visibleItemCount, int totalItemCount) {
+	public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
 		// n/a
 	}
 

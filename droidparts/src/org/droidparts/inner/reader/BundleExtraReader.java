@@ -20,13 +20,11 @@ import android.os.Bundle;
 
 public class BundleExtraReader {
 
-	static Object readVal(Object obj, String key, boolean optional)
-			throws Exception {
+	static Object readVal(Object obj, String key, boolean optional) throws Exception {
 		Bundle data;
 		if (obj instanceof Activity) {
 			data = ((Activity) obj).getIntent().getExtras();
-		} else if (LegacyReader.isSupportAvaliable()
-				&& LegacyReader.isSupportObject(obj)) {
+		} else if (LegacyReader.isSupportAvaliable() && LegacyReader.isSupportObject(obj)) {
 			data = LegacyReader.getFragmentArguments(obj);
 		} else {
 			data = FragmentsReader.getFragmentArguments(obj);

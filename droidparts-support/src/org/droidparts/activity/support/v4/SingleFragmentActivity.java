@@ -20,8 +20,7 @@ import org.droidparts.inner.fragments.SecretFragmentsSupportUtil;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 
-public abstract class SingleFragmentActivity<F extends Fragment> extends
-		FragmentActivity {
+public abstract class SingleFragmentActivity<F extends Fragment> extends FragmentActivity {
 
 	private F fragment;
 
@@ -34,8 +33,7 @@ public abstract class SingleFragmentActivity<F extends Fragment> extends
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		fragment = onCreateFragment();
-		SecretFragmentsSupportUtil
-				.singleFragmentActivityAddFragmentToContentView(this, fragment);
+		SecretFragmentsSupportUtil.singleFragmentActivityAddFragmentToContentView(this, fragment);
 	}
 
 	protected F getFragment() {

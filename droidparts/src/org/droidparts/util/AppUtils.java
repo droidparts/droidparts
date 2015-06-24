@@ -46,8 +46,7 @@ public class AppUtils {
 
 	public static String getVersionName(Context ctx, boolean withVersionCode) {
 		try {
-			PackageInfo pi = ctx.getPackageManager().getPackageInfo(
-					ctx.getPackageName(), 0);
+			PackageInfo pi = ctx.getPackageManager().getPackageInfo(ctx.getPackageName(), 0);
 			if (withVersionCode) {
 				return pi.versionName + " (" + pi.versionCode + ")";
 			} else {
@@ -69,12 +68,10 @@ public class AppUtils {
 		}
 	}
 
-	public static void setComponentEnabled(Context ctx,
-			Class<? extends Context> component, boolean enabled) {
+	public static void setComponentEnabled(Context ctx, Class<? extends Context> component, boolean enabled) {
 		PackageManager pm = ctx.getPackageManager();
 		ComponentName componentName = new ComponentName(ctx, component);
-		int state = enabled ? COMPONENT_ENABLED_STATE_ENABLED
-				: COMPONENT_ENABLED_STATE_DISABLED;
+		int state = enabled ? COMPONENT_ENABLED_STATE_ENABLED : COMPONENT_ENABLED_STATE_DISABLED;
 		pm.setComponentEnabledSetting(componentName, state, DONT_KILL_APP);
 	}
 
@@ -84,31 +81,24 @@ public class AppUtils {
 		return Secure.getString(ctx.getContentResolver(), ANDROID_ID);
 	}
 
-	public static String getSignature(Context ctx, String pkgName)
-			throws NameNotFoundException {
-		PackageInfo pi = ctx.getPackageManager().getPackageInfo(pkgName,
-				GET_SIGNATURES);
+	public static String getSignature(Context ctx, String pkgName) throws NameNotFoundException {
+		PackageInfo pi = ctx.getPackageManager().getPackageInfo(pkgName, GET_SIGNATURES);
 		String signature = pi.signatures[0].toCharsString();
 		return signature;
 	}
 
-	public static boolean doSignaturesMatch(Context ctx, String pkg1,
-			String pkg2) {
+	public static boolean doSignaturesMatch(Context ctx, String pkg1, String pkg2) {
 		boolean match = ctx.getPackageManager().checkSignatures(pkg1, pkg2) == SIGNATURE_MATCH;
 		return match;
 	}
 
 	public static boolean canInstallNonMarketApps(Context ctx) {
-		return Secure.getInt(ctx.getContentResolver(),
-				Secure.INSTALL_NON_MARKET_APPS, 0) != 0;
+		return Secure.getInt(ctx.getContentResolver(), Secure.INSTALL_NON_MARKET_APPS, 0) != 0;
 	}
 
-	public static boolean isInstalledFromMarket(Context ctx, String pkgName)
-			throws NameNotFoundException {
-		String installerPkg = ctx.getPackageManager().getInstallerPackageName(
-				pkgName);
-		boolean installedFromMarket = "com.google.android.feedback"
-				.equals(installerPkg);
+	public static boolean isInstalledFromMarket(Context ctx, String pkgName) throws NameNotFoundException {
+		String installerPkg = ctx.getPackageManager().getInstallerPackageName(pkgName);
+		boolean installedFromMarket = "com.google.android.feedback".equals(installerPkg);
 		return installedFromMarket;
 	}
 

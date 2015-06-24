@@ -35,11 +35,9 @@ import org.droidparts.util.L;
 
 public class HTTPInputStream extends BufferedInputStream {
 
-	public static HTTPInputStream getInstance(HttpURLConnection conn,
-			boolean useErrorStream) throws HTTPException {
+	public static HTTPInputStream getInstance(HttpURLConnection conn, boolean useErrorStream) throws HTTPException {
 		try {
-			InputStream is = useErrorStream ? conn.getErrorStream() : conn
-					.getInputStream();
+			InputStream is = useErrorStream ? conn.getErrorStream() : conn.getInputStream();
 			is = getUnpackedInputStream(conn.getContentEncoding(), is);
 			return new HTTPInputStream(is, conn, null);
 		} catch (Exception e) {
@@ -47,8 +45,7 @@ public class HTTPInputStream extends BufferedInputStream {
 		}
 	}
 
-	public static HTTPInputStream getInstance(HttpResponse resp)
-			throws HTTPException {
+	public static HTTPInputStream getInstance(HttpResponse resp) throws HTTPException {
 		HttpEntity entity = resp.getEntity();
 		try {
 			InputStream is = entity.getContent();
@@ -60,8 +57,7 @@ public class HTTPInputStream extends BufferedInputStream {
 		}
 	}
 
-	private static InputStream getUnpackedInputStream(String contentEncoding,
-			InputStream is) throws IOException {
+	private static InputStream getUnpackedInputStream(String contentEncoding, InputStream is) throws IOException {
 		L.d("Content-Encoding: %s.", contentEncoding);
 		if (isNotEmpty(contentEncoding)) {
 			contentEncoding = contentEncoding.toLowerCase();
@@ -77,8 +73,7 @@ public class HTTPInputStream extends BufferedInputStream {
 	private final HttpURLConnection conn;
 	private final HttpEntity entity;
 
-	private HTTPInputStream(InputStream is, HttpURLConnection conn,
-			HttpEntity entity) throws HTTPException {
+	private HTTPInputStream(InputStream is, HttpURLConnection conn, HttpEntity entity) throws HTTPException {
 		super(is, BUFFER_SIZE);
 		this.conn = conn;
 		this.entity = entity;

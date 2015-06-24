@@ -33,43 +33,35 @@ import android.view.View;
 public final class TypeHelper {
 
 	public static boolean isBoolean(Class<?> cls, boolean orWrapper) {
-		return (cls == boolean.class) ? true
-				: orWrapper ? (cls == Boolean.class) : false;
+		return (cls == boolean.class) ? true : orWrapper ? (cls == Boolean.class) : false;
 	}
 
 	public static boolean isInteger(Class<?> cls, boolean orWrapper) {
-		return (cls == int.class) ? true : orWrapper ? (cls == Integer.class)
-				: false;
+		return (cls == int.class) ? true : orWrapper ? (cls == Integer.class) : false;
 	}
 
 	public static boolean isLong(Class<?> cls, boolean orWrapper) {
-		return (cls == long.class) ? true : orWrapper ? (cls == Long.class)
-				: false;
+		return (cls == long.class) ? true : orWrapper ? (cls == Long.class) : false;
 	}
 
 	public static boolean isFloat(Class<?> cls, boolean orWrapper) {
-		return (cls == float.class) ? true : orWrapper ? (cls == Float.class)
-				: false;
+		return (cls == float.class) ? true : orWrapper ? (cls == Float.class) : false;
 	}
 
 	public static boolean isDouble(Class<?> cls, boolean orWrapper) {
-		return (cls == double.class) ? true : orWrapper ? (cls == Double.class)
-				: false;
+		return (cls == double.class) ? true : orWrapper ? (cls == Double.class) : false;
 	}
 
 	public static boolean isByte(Class<?> cls, boolean orWrapper) {
-		return (cls == byte.class) ? true : orWrapper ? (cls == Byte.class)
-				: false;
+		return (cls == byte.class) ? true : orWrapper ? (cls == Byte.class) : false;
 	}
 
 	public static boolean isShort(Class<?> cls, boolean orWrapper) {
-		return (cls == short.class) ? true : orWrapper ? (cls == Short.class)
-				: false;
+		return (cls == short.class) ? true : orWrapper ? (cls == Short.class) : false;
 	}
 
 	public static boolean isCharacter(Class<?> cls, boolean orWrapper) {
-		return (cls == char.class) ? true
-				: orWrapper ? (cls == Character.class) : false;
+		return (cls == char.class) ? true : orWrapper ? (cls == Character.class) : false;
 	}
 
 	//
