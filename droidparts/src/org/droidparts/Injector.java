@@ -16,6 +16,7 @@
 package org.droidparts;
 
 import static org.droidparts.inner.ReflectionUtils.setFieldVal;
+import static org.droidparts.util.ui.ViewUtils.getRootView;
 
 import org.droidparts.inner.ClassSpecRegistry;
 import org.droidparts.inner.ann.FieldSpec;
@@ -31,15 +32,14 @@ import android.content.Context;
 import android.view.View;
 
 /**
- * <meta-data android:name="droidparts_dependency_provider"
- * android:value="com.yanchenko.android.sample.DependencyProvider" />
+ * <meta-data android:name="droidparts_dependency_provider" android:value=
+ * "com.yanchenko.android.sample.DependencyProvider" />
  */
 public class Injector {
 
 	public static void inject(Activity act) {
 		setContext(act);
-		View root = act.findViewById(android.R.id.content).getRootView();
-		inject(act, root, act);
+		inject(act, getRootView(act.getWindow()), act);
 	}
 
 	public static void inject(Service serv) {
@@ -53,8 +53,7 @@ public class Injector {
 	}
 
 	public static void inject(Dialog dialog, Object target) {
-		View root = dialog.findViewById(android.R.id.content).getRootView();
-		inject(root, target);
+		inject(getRootView(dialog.getWindow()), target);
 	}
 
 	public static void inject(View view, Object target) {
@@ -63,8 +62,7 @@ public class Injector {
 		inject(ctx, view, target);
 	}
 
-	public static <T> T getDependency(Context ctx, Class<T> cls)
-			throws RuntimeException {
+	public static <T> T getDependency(Context ctx, Class<T> cls) throws RuntimeException {
 		setContext(ctx);
 		return DependencyReader.readVal(ctx, cls);
 	}
@@ -102,13 +100,11 @@ public class Injector {
 					setFieldVal(target, spec.field, val);
 				}
 			} catch (Throwable e) {
-				L.w("Failed to inject %s#%s: %s.", cls.getSimpleName(),
-						spec.field.getName(), e.getMessage());
+				L.w("Failed to inject %s#%s: %s.", cls.getSimpleName(), spec.field.getName(), e.getMessage());
 				L.d(e);
 			}
 		}
-		L.i("Injected into %s in %d ms.", cls.getSimpleName(),
-				(System.currentTimeMillis() - start));
+		L.i("Injected into %s in %d ms.", cls.getSimpleName(), (System.currentTimeMillis() - start));
 	}
 
 	private Injector() {
