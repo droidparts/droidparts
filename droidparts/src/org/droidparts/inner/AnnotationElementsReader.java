@@ -28,8 +28,7 @@ public class AnnotationElementsReader {
 	private static Field nameField;
 	private static Method validateValueMethod;
 
-	public static HashMap<String, Object> getElements(Annotation annotation)
-			throws Exception {
+	public static HashMap<String, Object> getElements(Annotation annotation) throws Exception {
 		HashMap<String, Object> map = new HashMap<String, Object>();
 		InvocationHandler handler = Proxy.getInvocationHandler(annotation);
 		if (elementsField == null) {

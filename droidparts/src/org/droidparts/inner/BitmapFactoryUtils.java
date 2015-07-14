@@ -37,9 +37,8 @@ public class BitmapFactoryUtils {
 		return p;
 	}
 
-	public static Pair<Bitmap, BitmapFactory.Options> decodeScaled(byte[] data,
-			int reqWidth, int reqHeight, Bitmap.Config config, Bitmap inBitmap)
-			throws Exception {
+	public static Pair<Bitmap, BitmapFactory.Options> decodeScaled(byte[] data, int reqWidth, int reqHeight,
+			Bitmap.Config config, Bitmap inBitmap) throws Exception {
 		BitmapFactory.Options opts = new BitmapFactory.Options();
 		boolean gotSizeHint = (reqWidth > 0) || (reqHeight > 0);
 		boolean gotConfig = (config != null);
@@ -65,8 +64,7 @@ public class BitmapFactoryUtils {
 			if (inBitmapSupported() && inBitmap != null) {
 				opts.inBitmap = null;
 				try {
-					bm = BitmapFactory.decodeByteArray(data, 0, data.length,
-							opts);
+					bm = BitmapFactory.decodeByteArray(data, 0, data.length, opts);
 					L.w(t);
 				} catch (Throwable th) {
 					System.gc();
@@ -79,8 +77,7 @@ public class BitmapFactoryUtils {
 		if (bm == null) {
 			throw new IOException("BitmapFactory returned null.");
 		} else if (bm.getWidth() <= 0 || bm.getHeight() <= 0) {
-			throw new IOException(String.format("Invalid Bitmap: w:%d, h:%d.",
-					bm.getWidth(), bm.getHeight()));
+			throw new IOException(String.format("Invalid Bitmap: w:%d, h:%d.", bm.getWidth(), bm.getHeight()));
 		}
 		return Pair.create(bm, opts);
 	}
@@ -89,8 +86,7 @@ public class BitmapFactoryUtils {
 		return Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB;
 	}
 
-	private static int calcInSampleSize(BitmapFactory.Options opts,
-			int reqWidth, int reqHeight) {
+	private static int calcInSampleSize(BitmapFactory.Options opts, int reqWidth, int reqHeight) {
 		int height = opts.outHeight;
 		int width = opts.outWidth;
 		int inSampleSize = 1;
@@ -103,8 +99,7 @@ public class BitmapFactoryUtils {
 			if (reqWidth > 0) {
 				widthRatio = Math.round((float) width / (float) reqWidth);
 			}
-			inSampleSize = (heightRatio < widthRatio) ? heightRatio
-					: widthRatio;
+			inSampleSize = (heightRatio < widthRatio) ? heightRatio : widthRatio;
 		}
 		return inSampleSize;
 	}

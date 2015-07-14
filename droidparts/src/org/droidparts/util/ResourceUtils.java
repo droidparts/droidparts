@@ -25,20 +25,18 @@ import android.util.TypedValue;
 public final class ResourceUtils {
 
 	public static int dpToPx(Context ctx, int val) {
-		return (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,
-				val, ctx.getResources().getDisplayMetrics());
+		return (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, val,
+				ctx.getResources().getDisplayMetrics());
 	}
 
-	public static String valueForKey(Context ctx, int keysArrId,
-			int valuesArrId, String key) {
+	public static String valueForKey(Context ctx, int keysArrId, int valuesArrId, String key) {
 		String[] keysArr = ctx.getResources().getStringArray(keysArrId);
 		String[] valuesArr = ctx.getResources().getStringArray(valuesArrId);
 		int idx = Arrays.asList(keysArr).indexOf(key);
 		return (idx != -1) ? valuesArr[idx] : null;
 	}
 
-	public static String readRawResource(Context ctx, int resId)
-			throws IllegalArgumentException {
+	public static String readRawResource(Context ctx, int resId) throws IllegalArgumentException {
 		InputStream is = null;
 		try {
 			is = ctx.getResources().openRawResource(resId);
@@ -59,8 +57,7 @@ public final class ResourceUtils {
 	}
 
 	private static int getId(Context ctx, String type, String name) {
-		return ctx.getResources().getIdentifier(name, type,
-				ctx.getPackageName());
+		return ctx.getResources().getIdentifier(name, type, ctx.getPackageName());
 	}
 
 }

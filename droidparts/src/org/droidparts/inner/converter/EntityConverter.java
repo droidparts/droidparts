@@ -37,14 +37,13 @@ public class EntityConverter extends ModelConverter {
 	}
 
 	@Override
-	public <V> void putToContentValues(Class<Model> valueType,
-			Class<V> componentType, ContentValues cv, String key, Model val) {
+	public <V> void putToContentValues(Class<Model> valueType, Class<V> componentType, ContentValues cv, String key,
+			Model val) {
 		cv.put(key, ((Entity) val).id);
 	}
 
 	@Override
-	public <V> Entity readFromCursor(Class<Model> valType,
-			Class<V> componentType, Cursor cursor, int columnIndex) {
+	public <V> Entity readFromCursor(Class<Model> valType, Class<V> componentType, Cursor cursor, int columnIndex) {
 		long id = cursor.getLong(columnIndex);
 		Entity entity = (Entity) newInstance(valType);
 		entity.id = id;
@@ -52,8 +51,7 @@ public class EntityConverter extends ModelConverter {
 	}
 
 	@Override
-	protected <V> Model parseFromString(Class<Model> valType,
-			Class<V> componentType, String str) throws Exception {
+	protected <V> Model parseFromString(Class<Model> valType, Class<V> componentType, String str) throws Exception {
 		if (str.startsWith("{")) {
 			// XXX it's a JSON Object
 			return super.parseFromString(valType, componentType, str);

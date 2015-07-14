@@ -30,8 +30,7 @@ import android.view.View;
 
 public class ValueReader {
 
-	public static Object getVal(Context ctx, View root, Object target,
-			FieldSpec<InjectAnn<?>> spec) throws Exception {
+	public static Object getVal(Context ctx, View root, Object target, FieldSpec<InjectAnn<?>> spec) throws Exception {
 		Class<?> annType = spec.ann.getClass();
 		Class<?> fieldType = spec.field.getType();
 		String fieldName = spec.field.getName();
@@ -50,19 +49,16 @@ public class ValueReader {
 			val = SystemServiceReader.readVal(ctx, ann2.name, fieldType);
 		} else if (annType == InjectViewAnn.class) {
 			InjectViewAnn ann2 = (InjectViewAnn) spec.ann;
-			val = ViewAndPreferenceReader.readVal(ctx, root, ann2.id,
-					ann2.click, target, fieldType, fieldName);
+			val = ViewAndPreferenceReader.readVal(ctx, root, ann2.id, ann2.click, target, fieldType, fieldName);
 		} else if (annType == InjectFragmentAnn.class) {
 			InjectFragmentAnn ann2 = (InjectFragmentAnn) spec.ann;
-			if (LegacyReader.isSupportAvaliable()
-					&& LegacyReader.isSupportObject(target)) {
+			if (LegacyReader.isSupportAvaliable() && LegacyReader.isSupportObject(target)) {
 				val = LegacyReader.getFragment(target, ann2.id, fieldName);
 			} else {
 				val = FragmentsReader.getFragment(target, ann2.id, fieldName);
 			}
 		} else if (annType == InjectParentActivityAnn.class) {
-			if (LegacyReader.isSupportAvaliable()
-					&& LegacyReader.isSupportObject(target)) {
+			if (LegacyReader.isSupportAvaliable() && LegacyReader.isSupportObject(target)) {
 				val = LegacyReader.getParentActivity(target);
 			} else {
 				val = FragmentsReader.getParentActivity(target);

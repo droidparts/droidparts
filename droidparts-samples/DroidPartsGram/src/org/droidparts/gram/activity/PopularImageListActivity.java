@@ -31,9 +31,8 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 
-public class PopularImageListActivity extends
-		SingleFragmentActivity<ImageListFragment> implements
-		ImageListFragment.Listener {
+public class PopularImageListActivity extends SingleFragmentActivity<ImageListFragment>
+		implements ImageListFragment.Listener {
 
 	@InjectDependency
 	private ImageEntityManager imageEntityManager;
@@ -64,8 +63,7 @@ public class PopularImageListActivity extends
 		switch (item.getItemId()) {
 		case R.id.menu_refresh:
 			setActionBarLoadingIndicatorVisible(true);
-			intent = ImageIntentService.getUpdatePicsIntent(this,
-					refreshResultReceiver);
+			intent = ImageIntentService.getUpdatePicsIntent(this, refreshResultReceiver);
 			startService(intent);
 			return true;
 		case R.id.menu_settings:

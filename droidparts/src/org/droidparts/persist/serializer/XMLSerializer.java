@@ -42,13 +42,10 @@ import org.xml.sax.SAXException;
 import android.content.Context;
 import android.util.Pair;
 
-public class XMLSerializer<ModelType extends Model> extends
-		AbstractSerializer<ModelType, Node, NodeList> {
+public class XMLSerializer<ModelType extends Model> extends AbstractSerializer<ModelType, Node, NodeList> {
 
-	public static Document parseDocument(String xml) throws IOException,
-			ParserConfigurationException, SAXException {
-		return DocumentBuilderFactory.newInstance().newDocumentBuilder()
-				.parse(new InputSource(new StringReader(xml)));
+	public static Document parseDocument(String xml) throws IOException, ParserConfigurationException, SAXException {
+		return DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(new InputSource(new StringReader(xml)));
 	}
 
 	public XMLSerializer(Class<ModelType> cls, Context ctx) {
@@ -60,15 +57,13 @@ public class XMLSerializer<ModelType extends Model> extends
 		ModelType model = newInstance(cls);
 		FieldSpec<XMLAnn>[] xmlSpecs = ClassSpecRegistry.getXMLSpecs(cls);
 		for (FieldSpec<XMLAnn> spec : xmlSpecs) {
-			readFromXMLAndSetFieldVal(model, spec, node, spec.ann.tag,
-					spec.ann.attribute);
+			readFromXMLAndSetFieldVal(model, spec, node, spec.ann.tag, spec.ann.attribute);
 		}
 		return model;
 	}
 
 	@Override
-	public ArrayList<ModelType> deserializeAll(NodeList nodeList)
-			throws Exception {
+	public ArrayList<ModelType> deserializeAll(NodeList nodeList) throws Exception {
 		ArrayList<ModelType> list = new ArrayList<ModelType>();
 		for (int i = 0; i < nodeList.getLength(); i++) {
 			list.add(deserialize(nodeList.item(i)));
@@ -76,21 +71,19 @@ public class XMLSerializer<ModelType extends Model> extends
 		return list;
 	}
 
-	private void readFromXMLAndSetFieldVal(Object obj, FieldSpec<XMLAnn> spec,
-			Node node, String tag, String attribute) throws Exception {
+	private void readFromXMLAndSetFieldVal(Object obj, FieldSpec<XMLAnn> spec, Node node, String tag, String attribute)
+			throws Exception {
 		Pair<String, String> keyParts = getNestedKeyParts(tag);
 		if (keyParts != null) {
 			String subKey = keyParts.first;
 			try {
 				Node childTag = getChildNode(node, subKey);
-				readFromXMLAndSetFieldVal(obj, spec, childTag, keyParts.second,
-						attribute);
+				readFromXMLAndSetFieldVal(obj, spec, childTag, keyParts.second, attribute);
 			} catch (Exception e) {
 				handleParseException(spec.ann.optional, subKey, attribute, e);
 			}
 		} else {
-			boolean defaultOrSameTag = tag.equals(spec.field.getName())
-					|| tag.equals(node.getNodeName());
+			boolean defaultOrSameTag = tag.equals(spec.field.getName()) || tag.equals(node.getNodeName());
 			if (spec.componentType == null && isNotEmpty(attribute)) {
 				if (!tag.equals(node.getNodeName())) {
 					Node child = getChildNode(node, tag);
@@ -102,24 +95,20 @@ public class XMLSerializer<ModelType extends Model> extends
 					}
 				}
 			}
-			Node attrNode = gotAttributeNode(node,
-					isNotEmpty(attribute) ? attribute : tag);
+			Node attrNode = gotAttributeNode(node, isNotEmpty(attribute) ? attribute : tag);
 			Node tagNode = getChildNode(node, tag);
 			if (tagNode == null && defaultOrSameTag) {
 				tagNode = node;
 			}
 			try {
 				if (attrNode != null) {
-					Object attrVal = getNodeVal(spec.field.getType(),
-							spec.componentType, attrNode, attribute);
+					Object attrVal = getNodeVal(spec.field.getType(), spec.componentType, attrNode, attribute);
 					setFieldVal(obj, spec.field, attrVal);
 				} else if (tagNode != null) {
-					Object tagVal = getNodeVal(spec.field.getType(),
-							spec.componentType, tagNode, attribute);
+					Object tagVal = getNodeVal(spec.field.getType(), spec.componentType, tagNode, attribute);
 					setFieldVal(obj, spec.field, tagVal);
 				} else {
-					throw new IllegalArgumentException(
-							"Tag or attribute not found.");
+					throw new IllegalArgumentException("Tag or attribute not found.");
 				}
 			} catch (Exception e) {
 				handleParseException(spec.ann.optional, tag, attribute, e);
@@ -128,8 +117,7 @@ public class XMLSerializer<ModelType extends Model> extends
 
 	}
 
-	protected <T, V> Object getNodeVal(Class<T> valType,
-			Class<V> componentType, Node node, String attribute)
+	protected <T, V> Object getNodeVal(Class<T> valType, Class<V> componentType, Node node, String attribute)
 			throws Exception {
 		Converter<T> converter = ConverterRegistry.getConverter(valType);
 		return converter.readFromXML(valType, componentType, node, attribute);
@@ -159,8 +147,8 @@ public class XMLSerializer<ModelType extends Model> extends
 		return null;
 	}
 
-	private static void handleParseException(boolean optional, String tag,
-			String attribute, Exception e) throws SerializerException {
+	private static void handleParseException(boolean optional, String tag, String attribute, Exception e)
+			throws SerializerException {
 		StringBuilder sb = new StringBuilder();
 		if (isNotEmpty(tag)) {
 			sb.append(String.format("tag '%s'", tag));

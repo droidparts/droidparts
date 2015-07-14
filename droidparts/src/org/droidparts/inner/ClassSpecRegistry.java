@@ -80,8 +80,7 @@ public final class ClassSpecRegistry {
 	// Bus
 
 	@SuppressWarnings("unchecked")
-	public static MethodSpec<ReceiveEventsAnn>[] getReceiveEventsSpecs(
-			Class<?> cls) {
+	public static MethodSpec<ReceiveEventsAnn>[] getReceiveEventsSpecs(Class<?> cls) {
 		MethodSpec<ReceiveEventsAnn>[] specs = RECEIVE_EVENTS_SPECS.get(cls);
 		if (specs == null) {
 			ArrayList<MethodSpec<ReceiveEventsAnn>> list = new ArrayList<MethodSpec<ReceiveEventsAnn>>();
@@ -117,8 +116,7 @@ public final class ClassSpecRegistry {
 	}
 
 	@SuppressWarnings("unchecked")
-	public static FieldSpec<ColumnAnn>[] getTableColumnSpecs(
-			Class<? extends Entity> cls) {
+	public static FieldSpec<ColumnAnn>[] getTableColumnSpecs(Class<? extends Entity> cls) {
 		FieldSpec<ColumnAnn>[] specs = COLUMN_SPECS.get(cls);
 		if (specs == null) {
 			ArrayList<FieldSpec<ColumnAnn>> list = new ArrayList<FieldSpec<ColumnAnn>>();
@@ -128,8 +126,7 @@ public final class ClassSpecRegistry {
 					if (ann != null) {
 						Class<?> componentType = getComponentType(field);
 						ann.name = getColumnName(ann, field);
-						list.add(new FieldSpec<ColumnAnn>(field, componentType,
-								ann));
+						list.add(new FieldSpec<ColumnAnn>(field, componentType, ann));
 					}
 				}
 			}
@@ -152,8 +149,7 @@ public final class ClassSpecRegistry {
 					if (ann != null) {
 						Class<?> componentType = getComponentType(field);
 						ann.key = getName(ann.key, field);
-						list.add(new FieldSpec<JSONAnn>(field, componentType,
-								ann));
+						list.add(new FieldSpec<JSONAnn>(field, componentType, ann));
 					}
 				}
 			}
@@ -175,8 +171,7 @@ public final class ClassSpecRegistry {
 					if (ann != null) {
 						Class<?> componentType = getComponentType(field);
 						ann.tag = getName(ann.tag, field);
-						list.add(new FieldSpec<XMLAnn>(field, componentType,
-								ann));
+						list.add(new FieldSpec<XMLAnn>(field, componentType, ann));
 					}
 				}
 			}
@@ -206,8 +201,7 @@ public final class ClassSpecRegistry {
 			componentType = getArrayComponentType(fieldType);
 		} else if (isCollection(fieldType)) {
 			Class<?>[] genericArgs = getFieldGenericArgs(field);
-			componentType = (genericArgs.length > 0) ? genericArgs[0]
-					: Object.class;
+			componentType = (genericArgs.length > 0) ? genericArgs[0] : Object.class;
 		}
 		return componentType;
 	}
@@ -236,18 +230,13 @@ public final class ClassSpecRegistry {
 
 	private static final String ID_AFFIX = "_id";
 
-	private static void sanitizeSpecs(
-			ArrayList<FieldSpec<ColumnAnn>> columnSpecs) {
+	private static void sanitizeSpecs(ArrayList<FieldSpec<ColumnAnn>> columnSpecs) {
 		for (FieldSpec<ColumnAnn> spec : columnSpecs) {
 			Class<?> fieldType = spec.field.getType();
 			if (spec.ann.nullable) {
-				if (isBoolean(fieldType, false) || isInteger(fieldType, false)
-						|| isLong(fieldType, false)
-						|| isFloat(fieldType, false)
-						|| isDouble(fieldType, false)
-						|| isByte(fieldType, false)
-						|| isShort(fieldType, false)
-						|| isCharacter(fieldType, false)) {
+				if (isBoolean(fieldType, false) || isInteger(fieldType, false) || isLong(fieldType, false)
+						|| isFloat(fieldType, false) || isDouble(fieldType, false) || isByte(fieldType, false)
+						|| isShort(fieldType, false) || isCharacter(fieldType, false)) {
 					L.w("%s can't be null.", fieldType.getSimpleName());
 					spec.ann.nullable = false;
 				}

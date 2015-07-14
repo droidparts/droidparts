@@ -48,14 +48,13 @@ public class RESTClient {
 	}
 
 	public RESTClient(Context ctx, String userAgent) {
-		this(ctx, (Build.VERSION.SDK_INT >= 10) ? new HttpURLConnectionWorker(
-				ctx, userAgent) : new HttpClientWorker(userAgent));
+		this(ctx, (Build.VERSION.SDK_INT >= 10) ? new HttpURLConnectionWorker(ctx, userAgent)
+				: new HttpClientWorker(userAgent));
 	}
 
 	public RESTClient(Context ctx, HTTPWorker worker) {
 		this.ctx = ctx.getApplicationContext();
-		this.httpClientWorker = (worker instanceof HttpClientWorker) ? (HttpClientWorker) worker
-				: null;
+		this.httpClientWorker = (worker instanceof HttpClientWorker) ? (HttpClientWorker) worker : null;
 		this.httpURLConnectionWorker = (worker instanceof HttpURLConnectionWorker) ? (HttpURLConnectionWorker) worker
 				: null;
 		if (cookieJar == null) {
@@ -98,14 +97,11 @@ public class RESTClient {
 		return get(uri, -1, null, false);
 	}
 
-	public HTTPResponse get(String uri, long ifModifiedSince, String etag,
-			boolean body) throws HTTPException {
-		L.d("HTTP GET '%s', If-Modified-Since: '%d', ETag: '%s', body: '%b'.",
-				uri, ifModifiedSince, etag, body);
+	public HTTPResponse get(String uri, long ifModifiedSince, String etag, boolean body) throws HTTPException {
+		L.d("HTTP GET '%s', If-Modified-Since: '%d', ETag: '%s', body: '%b'.", uri, ifModifiedSince, etag, body);
 		HTTPResponse response;
 		if (httpURLConnectionWorker != null) {
-			HttpURLConnection conn = httpURLConnectionWorker.getConnection(uri,
-					Method.GET);
+			HttpURLConnection conn = httpURLConnectionWorker.getConnection(uri, Method.GET);
 			if (ifModifiedSince > 0) {
 				conn.setIfModifiedSince(ifModifiedSince);
 			}
@@ -116,8 +112,7 @@ public class RESTClient {
 		} else {
 			HttpGet req = new HttpGet(uri);
 			if (ifModifiedSince > 0) {
-				req.addHeader(Header.IF_MODIFIED_SINCE, new Date(
-						ifModifiedSince).toGMTString());
+				req.addHeader(Header.IF_MODIFIED_SINCE, new Date(ifModifiedSince).toGMTString());
 			}
 			if (etag != null) {
 				req.addHeader(Header.IF_NONE_MATCH, etag);
@@ -128,13 +123,11 @@ public class RESTClient {
 		return response;
 	}
 
-	public HTTPResponse post(String uri, String contentType, String data)
-			throws HTTPException {
+	public HTTPResponse post(String uri, String contentType, String data) throws HTTPException {
 		L.d("HTTP POST '%s', data: '%s'.", uri, data);
 		HTTPResponse response;
 		if (httpURLConnectionWorker != null) {
-			HttpURLConnection conn = httpURLConnectionWorker.getConnection(uri,
-					Method.POST);
+			HttpURLConnection conn = httpURLConnectionWorker.getConnection(uri, Method.POST);
 			HttpURLConnectionWorker.postOrPut(conn, contentType, data);
 			response = HttpURLConnectionWorker.getResponse(conn, true);
 		} else {
@@ -146,33 +139,27 @@ public class RESTClient {
 		return response;
 	}
 
-	public HTTPResponse postMultipart(String uri, String name,
-			String contentType, String fileName, InputStream is)
+	public HTTPResponse postMultipart(String uri, String name, String contentType, String fileName, InputStream is)
 			throws HTTPException {
 		L.d("HTTP POST, name: '%s', file: '%s' .", uri, name, fileName);
 		HTTPResponse response;
 		if (httpURLConnectionWorker != null) {
-			HttpURLConnection conn = httpURLConnectionWorker.getConnection(uri,
-					Method.POST);
-			HttpURLConnectionWorker.postMultipart(conn, name, contentType,
-					fileName, is);
+			HttpURLConnection conn = httpURLConnectionWorker.getConnection(uri, Method.POST);
+			HttpURLConnectionWorker.postMultipart(conn, name, contentType, fileName, is);
 			response = HttpURLConnectionWorker.getResponse(conn, true);
 		} else {
 			HttpPost req = new HttpPost(uri);
-			req.setEntity(HttpClientWorker.buildMultipartEntity(name,
-					contentType, fileName, is));
+			req.setEntity(HttpClientWorker.buildMultipartEntity(name, contentType, fileName, is));
 			response = httpClientWorker.getResponse(req, true);
 		}
 		return response;
 	}
 
-	public HTTPResponse put(String uri, String contentType, String data)
-			throws HTTPException {
+	public HTTPResponse put(String uri, String contentType, String data) throws HTTPException {
 		L.d("HTTP PUT '%s', data: '%s'.", uri, data);
 		HTTPResponse response;
 		if (httpURLConnectionWorker != null) {
-			HttpURLConnection conn = httpURLConnectionWorker.getConnection(uri,
-					Method.PUT);
+			HttpURLConnection conn = httpURLConnectionWorker.getConnection(uri, Method.PUT);
 			HttpURLConnectionWorker.postOrPut(conn, contentType, data);
 			response = HttpURLConnectionWorker.getResponse(conn, true);
 		} else {
@@ -188,8 +175,7 @@ public class RESTClient {
 		L.d("HTTP DELETE '%s'.", uri);
 		HTTPResponse response;
 		if (httpURLConnectionWorker != null) {
-			HttpURLConnection conn = httpURLConnectionWorker.getConnection(uri,
-					Method.DELETE);
+			HttpURLConnection conn = httpURLConnectionWorker.getConnection(uri, Method.DELETE);
 			response = HttpURLConnectionWorker.getResponse(conn, true);
 		} else {
 			HttpDelete req = new HttpDelete(uri);
@@ -200,8 +186,7 @@ public class RESTClient {
 	}
 
 	protected final HTTPWorker getWorker() {
-		HTTPWorker worker = (httpClientWorker != null) ? httpClientWorker
-				: httpURLConnectionWorker;
+		HTTPWorker worker = (httpClientWorker != null) ? httpClientWorker : httpURLConnectionWorker;
 		return worker;
 	}
 

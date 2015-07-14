@@ -19,15 +19,21 @@ import static android.content.Context.INPUT_METHOD_SERVICE;
 import static android.view.View.GONE;
 import static android.view.View.INVISIBLE;
 import static android.view.View.VISIBLE;
+
 import android.app.Activity;
 import android.os.Handler;
 import android.os.Looper;
 import android.view.View;
 import android.view.ViewTreeObserver.OnGlobalLayoutListener;
+import android.view.Window;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 
 public class ViewUtils {
+
+	public static View getRootView(Window w) {
+		return w.findViewById(android.R.id.content).getRootView();
+	}
 
 	public static <T extends View> T findViewById(View view, int id) {
 		@SuppressWarnings("unchecked")
@@ -88,8 +94,7 @@ public class ViewUtils {
 	}
 
 	public static void setKeyboardVisible(View view, boolean visible) {
-		InputMethodManager imm = (InputMethodManager) view.getContext()
-				.getSystemService(INPUT_METHOD_SERVICE);
+		InputMethodManager imm = (InputMethodManager) view.getContext().getSystemService(INPUT_METHOD_SERVICE);
 		if (visible) {
 			imm.showSoftInput(view, 0);
 		} else {

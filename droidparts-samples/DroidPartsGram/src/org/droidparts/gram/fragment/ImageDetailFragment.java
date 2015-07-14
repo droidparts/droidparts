@@ -37,8 +37,7 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-public class ImageDetailFragment extends DialogFragment implements
-		ImageFetchListener {
+public class ImageDetailFragment extends DialogFragment implements ImageFetchListener {
 
 	private static final String EXTRA_IMAGE = "img";
 
@@ -67,8 +66,7 @@ public class ImageDetailFragment extends DialogFragment implements
 	private TextView tagsView;
 
 	@Override
-	public View onCreateView(Bundle savedInstanceState,
-			LayoutInflater inflater, ViewGroup container) {
+	public View onCreateView(Bundle savedInstanceState, LayoutInflater inflater, ViewGroup container) {
 		return inflater.inflate(R.layout.dialog_image, null);
 	}
 
@@ -93,8 +91,7 @@ public class ImageDetailFragment extends DialogFragment implements
 	}
 
 	@Override
-	public void onFetchProgressChanged(ImageView imageView, String imgUrl,
-			int kBTotal, int kBReceived) {
+	public void onFetchProgressChanged(ImageView imageView, String imgUrl, int kBTotal, int kBReceived) {
 		int progress = (int) ((float) kBReceived / kBTotal * 100);
 		progressBarView.setProgress(progress);
 	}

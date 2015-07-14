@@ -37,10 +37,8 @@ public class Update<EntityType extends Entity> extends Statement<EntityType> {
 	}
 
 	@Override
-	public Update<EntityType> where(String columnName, Is operator,
-			Object... columnValue) {
-		return (Update<EntityType>) super.where(columnName, operator,
-				columnValue);
+	public Update<EntityType> where(String columnName, Is operator, Object... columnValue) {
+		return (Update<EntityType>) super.where(columnName, operator, columnValue);
 	}
 
 	@Override
@@ -63,8 +61,7 @@ public class Update<EntityType extends Entity> extends Statement<EntityType> {
 		L.d(toString());
 		int rowCount = 0;
 		try {
-			rowCount = db.update(tableName, contentValues, selection.first,
-					selection.second);
+			rowCount = db.update(tableName, contentValues, selection.first, selection.second);
 		} catch (SQLException e) {
 			L.e(e.getMessage());
 			L.d(e);
@@ -74,7 +71,6 @@ public class Update<EntityType extends Entity> extends Statement<EntityType> {
 
 	@Override
 	public String toString() {
-		return "UPDATE" + super.toString() + ", contentValues: '"
-				+ contentValues + "'.";
+		return "UPDATE" + super.toString() + ", contentValues: '" + contentValues + "'.";
 	}
 }

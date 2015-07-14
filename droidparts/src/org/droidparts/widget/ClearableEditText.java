@@ -36,8 +36,7 @@ import android.widget.EditText;
  * android:drawableRight="@drawable/custom_icon"
  * </pre>
  */
-public class ClearableEditText extends EditText implements OnTouchListener,
-		OnFocusChangeListener, TextWatcherListener {
+public class ClearableEditText extends EditText implements OnTouchListener, OnFocusChangeListener, TextWatcherListener {
 
 	public interface Listener {
 		void didClearText();
@@ -81,8 +80,7 @@ public class ClearableEditText extends EditText implements OnTouchListener,
 	@Override
 	public boolean onTouch(View v, MotionEvent event) {
 		if (getCompoundDrawables()[2] != null) {
-			boolean tappedX = event.getX() > (getWidth() - getPaddingRight() - xD
-					.getIntrinsicWidth());
+			boolean tappedX = event.getX() > (getWidth() - getPaddingRight() - xD.getIntrinsicWidth());
 			if (tappedX) {
 				if (event.getAction() == MotionEvent.ACTION_UP) {
 					setText("");
@@ -121,8 +119,7 @@ public class ClearableEditText extends EditText implements OnTouchListener,
 	private void init() {
 		xD = getCompoundDrawables()[2];
 		if (xD == null) {
-			xD = getResources()
-					.getDrawable(android.R.drawable.presence_offline);
+			xD = getResources().getDrawable(android.R.drawable.presence_offline);
 		}
 		xD.setBounds(0, 0, xD.getIntrinsicWidth(), xD.getIntrinsicHeight());
 		setClearIconVisible(false);
@@ -135,8 +132,7 @@ public class ClearableEditText extends EditText implements OnTouchListener,
 		boolean wasVisible = (getCompoundDrawables()[2] != null);
 		if (visible != wasVisible) {
 			Drawable x = visible ? xD : null;
-			setCompoundDrawables(getCompoundDrawables()[0],
-					getCompoundDrawables()[1], x, getCompoundDrawables()[3]);
+			setCompoundDrawables(getCompoundDrawables()[0], getCompoundDrawables()[1], x, getCompoundDrawables()[3]);
 		}
 	}
 }

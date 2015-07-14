@@ -34,10 +34,8 @@ public class DBOpenHelper extends AbstractDBOpenHelper implements DB {
 	@SuppressWarnings("unchecked")
 	@Override
 	protected void onCreateTables(SQLiteDatabase db) {
-		createTables(db, Primitives.class, Tag.class, Album.class, Track.class,
-				AlbumToTag.class);
-		createIndex(db, Table.ALBUM_TO_TAG, true, Column.ALBUM_ID,
-				Column.TAG_ID);
+		createTables(db, Primitives.class, Tag.class, Album.class, Track.class, AlbumToTag.class);
+		createIndex(db, Table.ALBUM_TO_TAG, true, Column.ALBUM_ID, Column.TAG_ID);
 	}
 
 	@Override

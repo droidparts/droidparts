@@ -23,8 +23,7 @@ import android.support.v4.app.FragmentTransaction;
 
 public class SecretFragmentsSupportUtil extends SecretFragmentsUtil {
 
-	public static void fragmentActivitySetFragmentVisible(
-			FragmentActivity fragmentActivity, boolean visible,
+	public static void fragmentActivitySetFragmentVisible(FragmentActivity fragmentActivity, boolean visible,
 			Fragment... fragments) {
 		FragmentManager fm = fragmentActivity.getSupportFragmentManager();
 		FragmentTransaction ft = fm.beginTransaction();
@@ -38,16 +37,16 @@ public class SecretFragmentsSupportUtil extends SecretFragmentsUtil {
 		ft.commit();
 	}
 
-	public static void singleFragmentActivityAddFragmentToContentView(
-			FragmentActivity fragmentActivity, Fragment fragment) {
+	public static void singleFragmentActivityAddFragmentToContentView(FragmentActivity fragmentActivity,
+			Fragment fragment) {
 		FragmentManager fm = fragmentActivity.getSupportFragmentManager();
 		FragmentTransaction ft = fm.beginTransaction();
 		ft.add(CONTENT_VIEW_ID, fragment);
 		ft.commit();
 	}
 
-	public static void dialogFragmentShowDialogFragment(
-			FragmentActivity fragmentActivity, DialogFragment dialogFragment) {
+	public static void dialogFragmentShowDialogFragment(FragmentActivity fragmentActivity,
+			DialogFragment dialogFragment) {
 		FragmentManager fm = fragmentActivity.getSupportFragmentManager();
 		String tag = dialogFragment.getClass().getName();
 		FragmentTransaction ft = fm.beginTransaction();

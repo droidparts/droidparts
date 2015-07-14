@@ -58,8 +58,8 @@ public class IntentFactory {
 		return intent;
 	}
 
-	public static Intent getSendEmailIntent(String mailTo, String mailCC,
-			String subject, CharSequence body, File attachment) {
+	public static Intent getSendEmailIntent(String mailTo, String mailCC, String subject, CharSequence body,
+			File attachment) {
 		Intent intent = new Intent(ACTION_SENDTO);
 		// intent.setType("text/plain");
 		intent.setType("message/rfc822");

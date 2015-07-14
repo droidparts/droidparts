@@ -21,8 +21,7 @@ import org.droidparts.contract.Injectable;
 
 import android.os.Bundle;
 
-public abstract class PreferenceActivity extends
-		android.preference.PreferenceActivity implements Injectable {
+public abstract class PreferenceActivity extends android.preference.PreferenceActivity implements Injectable {
 
 	@Override
 	public void onPreInject() {

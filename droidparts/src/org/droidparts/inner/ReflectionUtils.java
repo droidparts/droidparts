@@ -36,8 +36,7 @@ import org.droidparts.util.L;
 public final class ReflectionUtils {
 
 	@SuppressWarnings("unchecked")
-	public static <T> T getFieldVal(Object obj, Field field)
-			throws IllegalArgumentException {
+	public static <T> T getFieldVal(Object obj, Field field) throws IllegalArgumentException {
 		Class<?> ft = field.getType();
 		Object val;
 		try {
@@ -66,8 +65,7 @@ public final class ReflectionUtils {
 		}
 	}
 
-	public static void setFieldVal(Object obj, Field field, Object val)
-			throws IllegalArgumentException {
+	public static void setFieldVal(Object obj, Field field, Object val) throws IllegalArgumentException {
 		Class<?> ft = field.getType();
 		try {
 			if (isBoolean(ft, false)) {
@@ -90,17 +88,14 @@ public final class ReflectionUtils {
 				field.set(obj, val);
 			}
 		} catch (Exception e) {
-			String valClsName = (val != null) ? val.getClass().getSimpleName()
-					: "?";
-			L.w("Error assigning <%s> %s to (%s) field %s#%s: %s.", valClsName,
-					val, field.getType().getSimpleName(), obj.getClass()
-							.getSimpleName(), field.getName(), e.getMessage());
+			String valClsName = (val != null) ? val.getClass().getSimpleName() : "?";
+			L.w("Error assigning <%s> %s to (%s) field %s#%s: %s.", valClsName, val, field.getType().getSimpleName(),
+					obj.getClass().getSimpleName(), field.getName(), e.getMessage());
 			throw new IllegalArgumentException(e);
 		}
 	}
 
-	public static Class<?> classForName(String clsName)
-			throws IllegalArgumentException {
+	public static Class<?> classForName(String clsName) throws IllegalArgumentException {
 		try {
 			return Class.forName(clsName);
 		} catch (ClassNotFoundException e) {
@@ -108,8 +103,7 @@ public final class ReflectionUtils {
 		}
 	}
 
-	public static <T> T newInstance(Class<T> cls)
-			throws IllegalArgumentException {
+	public static <T> T newInstance(Class<T> cls) throws IllegalArgumentException {
 		try {
 			return cls.newInstance();
 		} catch (Exception e) {
@@ -167,8 +161,7 @@ public final class ReflectionUtils {
 	public static Class<?>[] getFieldGenericArgs(Field field) {
 		Type genericType = field.getGenericType();
 		if (genericType instanceof ParameterizedType) {
-			Type[] typeArr = ((ParameterizedType) genericType)
-					.getActualTypeArguments();
+			Type[] typeArr = ((ParameterizedType) genericType).getActualTypeArguments();
 			Class<?>[] argsArr = new Class<?>[typeArr.length];
 			for (int i = 0; i < typeArr.length; i++) {
 				// class java.lang.String

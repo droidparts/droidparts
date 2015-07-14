@@ -65,8 +65,7 @@ public class IOUtils {
 		}
 	}
 
-	public static ArrayList<File> getFileList(File dir,
-			String... fileExtensions) {
+	public static ArrayList<File> getFileList(File dir, String... fileExtensions) {
 		final ArrayList<File> files = new ArrayList<File>();
 		final File[] fileList = dir.listFiles();
 		if (fileList != null) {
@@ -108,8 +107,7 @@ public class IOUtils {
 
 	public static void dumpDBToCacheDir(Context ctx, SQLiteDatabase db) {
 		String dbFilePath = db.getPath();
-		String dbFileName = dbFilePath.substring(dbFilePath.lastIndexOf('/',
-				dbFilePath.length()));
+		String dbFileName = dbFilePath.substring(dbFilePath.lastIndexOf('/', dbFilePath.length()));
 		File fileTo = new File(ctx.getExternalCacheDir(), dbFileName);
 		try {
 			IOUtils.copy(new File(dbFilePath), fileTo);

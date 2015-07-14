@@ -59,16 +59,14 @@ public class ArrayCollectionConverter extends Converter<Object> {
 	}
 
 	@Override
-	public <V> Object readFromJSON(Class<Object> valType,
-			Class<V> componentType, JSONObject obj, String key)
+	public <V> Object readFromJSON(Class<Object> valType, Class<V> componentType, JSONObject obj, String key)
 			throws Exception {
 		Wrapper w = new Wrapper(obj.getJSONArray(key), null);
 		return readFromWrapper(valType, componentType, w);
 	}
 
 	@Override
-	public <V> Object readFromXML(Class<Object> valType,
-			Class<V> componentType, Node node, String nodeListItemTagHint)
+	public <V> Object readFromXML(Class<Object> valType, Class<V> componentType, Node node, String nodeListItemTagHint)
 			throws Exception {
 		NodeList nl = node.getChildNodes();
 		ArrayList<Node> elementNodes = new ArrayList<Node>();
@@ -89,8 +87,8 @@ public class ArrayCollectionConverter extends Converter<Object> {
 	}
 
 	@Override
-	public <V> void putToJSON(Class<Object> valType, Class<V> componentType,
-			JSONObject obj, String key, Object val) throws Exception {
+	public <V> void putToJSON(Class<Object> valType, Class<V> componentType, JSONObject obj, String key, Object val)
+			throws Exception {
 		Converter<V> converter = ConverterRegistry.getConverter(componentType);
 		ArrayList<V> list = arrOrCollToList(valType, componentType, val);
 		JSONArray vals = new JSONArray();
@@ -103,15 +101,14 @@ public class ArrayCollectionConverter extends Converter<Object> {
 	}
 
 	@Override
-	protected <V> Object parseFromString(Class<Object> valType,
-			Class<V> componentType, String str) {
+	protected <V> Object parseFromString(Class<Object> valType, Class<V> componentType, String str) {
 		throw new UnsupportedOperationException();
 	}
 
 	//
 	@SuppressWarnings("unchecked")
-	protected <V> Object readFromWrapper(Class<Object> valType,
-			Class<V> componentType, Wrapper wrapper) throws Exception {
+	protected <V> Object readFromWrapper(Class<Object> valType, Class<V> componentType, Wrapper wrapper)
+			throws Exception {
 		boolean isArr = isArray(valType);
 		boolean isModel = isModel(componentType);
 		Collection<Object> items;
@@ -156,9 +153,8 @@ public class ArrayCollectionConverter extends Converter<Object> {
 	}
 
 	@Override
-	public <V> void putToContentValues(Class<Object> valueType,
-			Class<V> componentType, ContentValues cv, String key, Object val)
-			throws Exception {
+	public <V> void putToContentValues(Class<Object> valueType, Class<V> componentType, ContentValues cv, String key,
+			Object val) throws Exception {
 		Converter<V> converter = ConverterRegistry.getConverter(componentType);
 		if (converter.getDBColumnType() == BLOB) {
 			byte[] bytes = PersistUtils.toBytes(val);
@@ -168,8 +164,7 @@ public class ArrayCollectionConverter extends Converter<Object> {
 			ArrayList<Object> vals = new ArrayList<Object>();
 			ContentValues tmpCV = new ContentValues();
 			for (V obj : list) {
-				converter.putToContentValues(componentType, null, tmpCV, "key",
-						obj);
+				converter.putToContentValues(componentType, null, tmpCV, "key", obj);
 				vals.add(tmpCV.get("key"));
 			}
 			String strVal = Strings.join(vals, SEP);
@@ -178,8 +173,7 @@ public class ArrayCollectionConverter extends Converter<Object> {
 	}
 
 	@Override
-	public <V> Object readFromCursor(Class<Object> valType,
-			Class<V> componentType, Cursor cursor, int columnIndex)
+	public <V> Object readFromCursor(Class<Object> valType, Class<V> componentType, Cursor cursor, int columnIndex)
 			throws Exception {
 		Converter<V> converter = ConverterRegistry.getConverter(componentType);
 		if (converter.getDBColumnType() == BLOB) {
@@ -187,8 +181,7 @@ public class ArrayCollectionConverter extends Converter<Object> {
 			return (arr != null) ? PersistUtils.fromBytes(arr) : null;
 		} else {
 			String str = cursor.getString(columnIndex);
-			String[] parts = (str.length() > 0) ? str.split("\\" + SEP)
-					: new String[0];
+			String[] parts = (str.length() > 0) ? str.split("\\" + SEP) : new String[0];
 			if (isArray(valType)) {
 				return parseTypeArr(converter, componentType, parts);
 			} else {
@@ -198,8 +191,7 @@ public class ArrayCollectionConverter extends Converter<Object> {
 	}
 
 	@SuppressWarnings("unchecked")
-	private <T> ArrayList<T> arrOrCollToList(Class<?> valType,
-			Class<T> componentType, Object val) {
+	private <T> ArrayList<T> arrOrCollToList(Class<?> valType, Class<T> componentType, Object val) {
 		ArrayList<T> list = new ArrayList<T>();
 		if (isArray(valType)) {
 			list.addAll((List<T>) Arrays.asList(Arrays2.toObjectArray(val)));
@@ -210,8 +202,7 @@ public class ArrayCollectionConverter extends Converter<Object> {
 	}
 
 	// say hello to arrays of primitives
-	private final <T> Object parseTypeArr(Converter<T> converter,
-			Class<T> valType, String[] arr) throws Exception {
+	private final <T> Object parseTypeArr(Converter<T> converter, Class<T> valType, String[] arr) throws Exception {
 		Object objArr = Array.newInstance(valType, arr.length);
 		for (int i = 0; i < arr.length; i++) {
 			T item = converter.parseFromString(valType, null, arr[i]);
@@ -220,9 +211,8 @@ public class ArrayCollectionConverter extends Converter<Object> {
 		return objArr;
 	}
 
-	private final <T> Collection<T> parseTypeColl(Converter<T> converter,
-			Class<Object> collType, Class<T> componentType, String[] arr)
-			throws Exception {
+	private final <T> Collection<T> parseTypeColl(Converter<T> converter, Class<Object> collType,
+			Class<T> componentType, String[] arr) throws Exception {
 		@SuppressWarnings("unchecked")
 		Collection<T> coll = (Collection<T>) newInstance(collType);
 		for (int i = 0; i < arr.length; i++) {
@@ -255,8 +245,7 @@ public class ArrayCollectionConverter extends Converter<Object> {
 			}
 		}
 
-		<V> Object convert(Object item, Converter<V> conv, Class<V> valType)
-				throws Exception {
+		<V> Object convert(Object item, Converter<V> conv, Class<V> valType) throws Exception {
 			if (isJSON()) {
 				return item;
 			} else {
@@ -266,8 +255,7 @@ public class ArrayCollectionConverter extends Converter<Object> {
 			}
 		}
 
-		<M extends Model> AbstractSerializer<M, ?, ?> makeSerializer(
-				Class<M> componentType) {
+		<M extends Model> AbstractSerializer<M, ?, ?> makeSerializer(Class<M> componentType) {
 			if (isJSON()) {
 				return new JSONSerializer<M>(componentType, null);
 			} else {

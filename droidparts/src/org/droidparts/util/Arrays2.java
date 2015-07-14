@@ -106,8 +106,7 @@ public class Arrays2 {
 		return (Character[]) convertArray(Character.class, arr.length, arr);
 	}
 
-	private static Object convertArray(Class<?> componentType, int size,
-			Object arr) {
+	private static Object convertArray(Class<?> componentType, int size, Object arr) {
 		Object arr2 = Array.newInstance(componentType, size);
 		for (int i = 0; i < size; i++) {
 			Object val = Array.get(arr, i);

@@ -21,8 +21,8 @@ import org.droidparts.util.L;
 import android.content.Context;
 import android.util.Pair;
 
-public abstract class AsyncTask<Params, Progress, Result> extends
-		android.os.AsyncTask<Params, Progress, Pair<Exception, Result>> {
+public abstract class AsyncTask<Params, Progress, Result>
+		extends android.os.AsyncTask<Params, Progress, Pair<Exception, Result>> {
 
 	private final Context ctx;
 	private final AsyncTaskResultListener<Result> resultListener;
@@ -48,8 +48,7 @@ public abstract class AsyncTask<Params, Progress, Result> extends
 		try {
 			long start = System.currentTimeMillis();
 			res = onExecute(params);
-			L.i("Executed %s in %d ms.", getClass().getSimpleName(),
-					(System.currentTimeMillis() - start));
+			L.i("Executed %s in %d ms.", getClass().getSimpleName(), (System.currentTimeMillis() - start));
 		} catch (Exception e) {
 			L.d(e);
 			ex = e;

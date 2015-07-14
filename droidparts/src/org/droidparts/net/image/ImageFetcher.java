@@ -70,19 +70,15 @@ public class ImageFetcher {
 	private volatile boolean paused;
 
 	public ImageFetcher(Context ctx) {
-		this(ctx, BitmapMemoryCache.getDefaultInstance(ctx), BitmapDiskCache
-				.getDefaultInstance(ctx));
+		this(ctx, BitmapMemoryCache.getDefaultInstance(ctx), BitmapDiskCache.getDefaultInstance(ctx));
 	}
 
-	public ImageFetcher(Context ctx, BitmapMemoryCache memoryCache,
-			BitmapDiskCache diskCache) {
-		this(ctx, new BackgroundThreadExecutor(2, "ImageFetcher-Fetch"),
-				new RESTClient(ctx), memoryCache, diskCache);
+	public ImageFetcher(Context ctx, BitmapMemoryCache memoryCache, BitmapDiskCache diskCache) {
+		this(ctx, new BackgroundThreadExecutor(2, "ImageFetcher-Fetch"), new RESTClient(ctx), memoryCache, diskCache);
 	}
 
-	protected ImageFetcher(Context ctx, ThreadPoolExecutor fetchExecutor,
-			RESTClient restClient, BitmapMemoryCache memoryCache,
-			BitmapDiskCache diskCache) {
+	protected ImageFetcher(Context ctx, ThreadPoolExecutor fetchExecutor, RESTClient restClient,
+			BitmapMemoryCache memoryCache, BitmapDiskCache diskCache) {
 		this.fetchExecutor = fetchExecutor;
 		this.restClient = restClient;
 		this.memoryCache = memoryCache;
@@ -102,8 +98,7 @@ public class ImageFetcher {
 			for (ImageViewSpec spec : pending) {
 				ImageView imgView = spec.imgViewRef.get();
 				if (imgView != null) {
-					attachImage(spec.imgUrl, imgView, spec.reshaper,
-							spec.crossFadeMillis, spec.listener,
+					attachImage(spec.imgUrl, imgView, spec.reshaper, spec.crossFadeMillis, spec.listener,
 							spec.inBitmapRef.get());
 				}
 			}
@@ -117,28 +112,22 @@ public class ImageFetcher {
 		attachImage(imgUrl, imageView, 0);
 	}
 
-	public void attachImage(String imgUrl, ImageView imageView,
-			int crossFadeMillis) {
+	public void attachImage(String imgUrl, ImageView imageView, int crossFadeMillis) {
 		attachImage(imgUrl, imageView, null, crossFadeMillis);
 	}
 
-	public void attachImage(String imgUrl, ImageView imageView,
-			ImageReshaper reshaper, int crossFadeMillis) {
+	public void attachImage(String imgUrl, ImageView imageView, ImageReshaper reshaper, int crossFadeMillis) {
 		attachImage(imgUrl, imageView, reshaper, crossFadeMillis, null);
 	}
 
-	public void attachImage(String imgUrl, ImageView imageView,
-			ImageReshaper reshaper, int crossFadeMillis,
+	public void attachImage(String imgUrl, ImageView imageView, ImageReshaper reshaper, int crossFadeMillis,
 			ImageFetchListener listener) {
-		attachImage(imgUrl, imageView, reshaper, crossFadeMillis, listener,
-				null);
+		attachImage(imgUrl, imageView, reshaper, crossFadeMillis, listener, null);
 	}
 
-	public void attachImage(String imgUrl, ImageView imageView,
-			ImageReshaper reshaper, int crossFadeMillis,
+	public void attachImage(String imgUrl, ImageView imageView, ImageReshaper reshaper, int crossFadeMillis,
 			ImageFetchListener listener, Bitmap inBitmap) {
-		ImageViewSpec spec = new ImageViewSpec(imageView, imgUrl, inBitmap,
-				crossFadeMillis, reshaper, listener);
+		ImageViewSpec spec = new ImageViewSpec(imageView, imgUrl, inBitmap, crossFadeMillis, reshaper, listener);
 		long submitted = System.nanoTime();
 		wip.put(spec, submitted);
 		if (paused) {
@@ -165,10 +154,8 @@ public class ImageFetcher {
 		return getImage(imgUrl, mockImageView, null);
 	}
 
-	public Bitmap getImage(String imgUrl, ImageView hintImageView,
-			ImageReshaper reshaper) throws Exception {
-		ImageViewSpec spec = new ImageViewSpec(hintImageView, imgUrl, null, 0,
-				reshaper, null);
+	public Bitmap getImage(String imgUrl, ImageView hintImageView, ImageReshaper reshaper) throws Exception {
+		ImageViewSpec spec = new ImageViewSpec(hintImageView, imgUrl, null, 0, reshaper, null);
 		Bitmap bm = readCached(spec);
 		if (bm == null) {
 			Pair<byte[], Pair<Bitmap, BitmapFactory.Options>> bmData = fetchAndDecode(spec);
@@ -182,8 +169,7 @@ public class ImageFetcher {
 
 	public void clearCacheOlderThan(int hours) {
 		if (diskCache != null) {
-			final long timestamp = System.currentTimeMillis() - hours * 60 * 60
-					* 1000;
+			final long timestamp = System.currentTimeMillis() - hours * 60 * 60 * 1000;
 			cacheExecutor.execute(new Runnable() {
 
 				@Override
@@ -198,8 +184,7 @@ public class ImageFetcher {
 
 	//
 
-	Pair<byte[], Pair<Bitmap, BitmapFactory.Options>> fetchAndDecode(
-			final ImageViewSpec spec) throws Exception {
+	Pair<byte[], Pair<Bitmap, BitmapFactory.Options>> fetchAndDecode(final ImageViewSpec spec) throws Exception {
 		final ImageView imgView = spec.imgViewRef.get();
 		if (imgView == null) {
 			throw new IllegalStateException("ImageView is null.");
@@ -222,16 +207,14 @@ public class ImageFetcher {
 
 						@Override
 						public void run() {
-							spec.listener.onFetchProgressChanged(imgView,
-									spec.imgUrl, kBTotal, kBReceived);
+							spec.listener.onFetchProgressChanged(imgView, spec.imgUrl, kBTotal, kBReceived);
 						}
 					});
 				}
 			}
 			byte[] data = baos.toByteArray();
-			Pair<Bitmap, BitmapFactory.Options> bm = BitmapFactoryUtils
-					.decodeScaled(data, spec.widthHint, spec.heightHint,
-							spec.configHint, spec.inBitmapRef.get());
+			Pair<Bitmap, BitmapFactory.Options> bm = BitmapFactoryUtils.decodeScaled(data, spec.widthHint,
+					spec.heightHint, spec.configHint, spec.inBitmapRef.get());
 			return Pair.create(data, bm);
 		} finally {
 			silentlyClose(bis, baos);
@@ -244,8 +227,7 @@ public class ImageFetcher {
 			bm = memoryCache.get(spec.cacheKey);
 		}
 		if (bm == null && diskCache != null) {
-			Pair<Bitmap, BitmapFactory.Options> bmData = diskCache.get(
-					spec.cacheKey, spec.widthHint, spec.heightHint,
+			Pair<Bitmap, BitmapFactory.Options> bmData = diskCache.get(spec.cacheKey, spec.widthHint, spec.heightHint,
 					spec.configHint, spec.inBitmapRef.get());
 			if (bmData != null) {
 				bm = bmData.first;
@@ -253,8 +235,7 @@ public class ImageFetcher {
 					memoryCache.put(spec.cacheKey, bm);
 				}
 			} else {
-				bmData = diskCache.get(spec.imgUrl, spec.widthHint,
-						spec.heightHint, spec.configHint,
+				bmData = diskCache.get(spec.imgUrl, spec.widthHint, spec.heightHint, spec.configHint,
 						spec.inBitmapRef.get());
 				if (bmData != null) {
 					bm = reshapeAndCache(spec, bmData);
@@ -270,8 +251,7 @@ public class ImageFetcher {
 		}
 	}
 
-	Bitmap reshapeAndCache(ImageViewSpec spec,
-			Pair<Bitmap, BitmapFactory.Options> bmData) {
+	Bitmap reshapeAndCache(ImageViewSpec spec, Pair<Bitmap, BitmapFactory.Options> bmData) {
 		Bitmap bm = bmData.first;
 		if (spec.reshaper != null) {
 			Bitmap reshapedBm = spec.reshaper.reshape(bm);
@@ -284,8 +264,7 @@ public class ImageFetcher {
 			memoryCache.put(spec.cacheKey, bm);
 		}
 		if (diskCache != null && spec.reshaper != null) {
-			Pair<CompressFormat, Integer> cacheFormat = spec.reshaper
-					.getCacheFormat(bmData.second.outMimeType);
+			Pair<CompressFormat, Integer> cacheFormat = spec.reshaper.getCacheFormat(bmData.second.outMimeType);
 			diskCache.put(spec.cacheKey, bm, cacheFormat);
 		}
 		return bm;
@@ -329,9 +308,8 @@ public class ImageFetcher {
 
 		private final int imgViewHash;
 
-		public ImageViewSpec(ImageView imgView, String imgUrl, Bitmap inBitmap,
-				int crossFadeMillis, ImageReshaper reshaper,
-				ImageFetchListener listener) {
+		public ImageViewSpec(ImageView imgView, String imgUrl, Bitmap inBitmap, int crossFadeMillis,
+				ImageReshaper reshaper, ImageFetchListener listener) {
 			imgViewRef = new WeakReference<ImageView>(imgView);
 			this.imgUrl = imgUrl;
 			inBitmapRef = new WeakReference<Bitmap>(inBitmap);
@@ -435,8 +413,7 @@ public class ImageFetcher {
 		public void run() {
 			Bitmap bm = readCached(spec);
 			if (bm == null) {
-				FetchAndCacheRunnable r = new FetchAndCacheRunnable(spec,
-						submitted);
+				FetchAndCacheRunnable r = new FetchAndCacheRunnable(spec, submitted);
 				fetchExecutor.execute(r);
 			} else {
 				attachIfMostRecent(spec, submitted, bm);
@@ -468,8 +445,7 @@ public class ImageFetcher {
 
 						@Override
 						public void run() {
-							spec.listener
-									.onFetchFailed(imgView, spec.imgUrl, e);
+							spec.listener.onFetchFailed(imgView, spec.imgUrl, e);
 						}
 					});
 				}
@@ -498,8 +474,7 @@ public class ImageFetcher {
 					if (prevDrawable == null) {
 						prevDrawable = new ColorDrawable(TRANSPARENT);
 					}
-					Drawable nextDrawable = new BitmapDrawable(
-							imgView.getResources(), bitmap);
+					Drawable nextDrawable = new BitmapDrawable(imgView.getResources(), bitmap);
 					TransitionDrawable transitionDrawable = new TransitionDrawable(
 							new Drawable[] { prevDrawable, nextDrawable });
 					imgView.setImageDrawable(transitionDrawable);
@@ -508,8 +483,7 @@ public class ImageFetcher {
 					imgView.setImageBitmap(bitmap);
 				}
 				if (spec.listener != null) {
-					spec.listener
-							.onFetchCompleted(imgView, spec.imgUrl, bitmap);
+					spec.listener.onFetchCompleted(imgView, spec.imgUrl, bitmap);
 				}
 			}
 		}

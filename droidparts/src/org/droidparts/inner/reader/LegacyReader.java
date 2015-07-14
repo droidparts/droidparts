@@ -28,9 +28,8 @@ public class LegacyReader {
 
 	static {
 		try {
-			supportFragmentsReader = (ISupportFragmentsReader) Class.forName(
-					"org.droidparts.inner.reader.SupportFragmentsReader")
-					.newInstance();
+			supportFragmentsReader = (ISupportFragmentsReader) Class
+					.forName("org.droidparts.inner.reader.SupportFragmentsReader").newInstance();
 		} catch (Exception e) {
 			L.i("Legacy package not available.");
 		}
@@ -48,10 +47,8 @@ public class LegacyReader {
 		return supportFragmentsReader.getParentActivity(fragmentObj);
 	}
 
-	static Object getFragment(Object fragmentActivityObj, int fragmentId,
-			String valName) {
-		return supportFragmentsReader.getFragment(fragmentActivityObj,
-				fragmentId, valName);
+	static Object getFragment(Object fragmentActivityObj, int fragmentId, String valName) {
+		return supportFragmentsReader.getFragment(fragmentActivityObj, fragmentId, valName);
 	}
 
 	static Bundle getFragmentArguments(Object fragmentObj) {
@@ -64,8 +61,7 @@ public class LegacyReader {
 
 		Activity getParentActivity(Object fragmentObj);
 
-		Object getFragment(Object fragmentActivityObj, int fragmentId,
-				String valName);
+		Object getFragment(Object fragmentActivityObj, int fragmentId, String valName);
 
 		Bundle getFragmentArguments(Object fragmentObj);
 

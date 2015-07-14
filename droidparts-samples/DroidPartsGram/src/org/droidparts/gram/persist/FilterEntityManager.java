@@ -32,8 +32,7 @@ public class FilterEntityManager extends EntityManager<Filter> {
 	}
 
 	public void setIdOrCreateForName(Filter filter) {
-		Select<Filter> select = select().columns(ID).where(NAME, Is.EQUAL,
-				filter.name);
+		Select<Filter> select = select().columns(ID).where(NAME, Is.EQUAL, filter.name);
 		if (select.count() == 1) {
 			filter.id = readFirst(select).id;
 		} else {

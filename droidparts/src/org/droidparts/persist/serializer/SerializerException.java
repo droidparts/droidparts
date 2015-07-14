@@ -21,8 +21,7 @@ public class SerializerException extends Exception {
 	private static final long serialVersionUID = 1L;
 
 	public static String createMessage(String[] parts) {
-		return String.format("Missing or invalid %s.",
-				Strings.join(parts, " | "));
+		return String.format("Missing or invalid %s.", Strings.join(parts, " | "));
 	}
 
 	private final String[] parts;

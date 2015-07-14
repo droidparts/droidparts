@@ -17,8 +17,7 @@ package org.droidparts.inner.ann.inject;
 
 import org.droidparts.annotation.inject.InjectSystemService;
 
-public final class InjectSystemServiceAnn extends
-		InjectAnn<InjectSystemService> {
+public final class InjectSystemServiceAnn extends InjectAnn<InjectSystemService> {
 
 	public final String name;
 

@@ -60,8 +60,7 @@ public class EventBus {
 		if (allEvents) {
 			stickyEvents.clear();
 		} else {
-			HashSet<String> nameSet = new HashSet<String>(
-					Arrays.asList(eventNames));
+			HashSet<String> nameSet = new HashSet<String>(Arrays.asList(eventNames));
 			for (String eventName : stickyEvents.keySet()) {
 				if (nameSet.contains(eventName)) {
 					stickyEvents.remove(eventName);
@@ -71,8 +70,7 @@ public class EventBus {
 		}
 	}
 
-	public static void registerReceiver(EventReceiver<?> receiver,
-			String... eventNames) {
+	public static void registerReceiver(EventReceiver<?> receiver, String... eventNames) {
 		@SuppressWarnings("unchecked")
 		EventReceiver<Object> rec = (EventReceiver<Object>) receiver;
 		boolean allEvents = (eventNames.length == 0);
@@ -98,8 +96,7 @@ public class EventBus {
 	public static void unregisterReceiver(EventReceiver<?> receiver) {
 		receiversForEventName(ALL).remove(receiver);
 		for (String eventName : eventNameToReceivers.keySet()) {
-			ConcurrentHashMap<EventReceiver<Object>, Boolean> receivers = eventNameToReceivers
-					.get(eventName);
+			ConcurrentHashMap<EventReceiver<Object>, Boolean> receivers = eventNameToReceivers.get(eventName);
 			receivers.remove(receiver);
 			if (receivers.isEmpty()) {
 				eventNameToReceivers.remove(eventName);
@@ -108,16 +105,14 @@ public class EventBus {
 	}
 
 	public static void registerAnnotatedReceiver(Object obj) {
-		MethodSpec<ReceiveEventsAnn>[] specs = getReceiveEventsSpecs(obj
-				.getClass());
+		MethodSpec<ReceiveEventsAnn>[] specs = getReceiveEventsSpecs(obj.getClass());
 		for (MethodSpec<ReceiveEventsAnn> spec : specs) {
 			registerReceiver(new ReflectiveReceiver(obj, spec), spec.ann.names);
 		}
 	}
 
 	public static void unregisterAnnotatedReceiver(Object obj) {
-		for (ConcurrentHashMap<EventReceiver<Object>, Boolean> receivers : eventNameToReceivers
-				.values()) {
+		for (ConcurrentHashMap<EventReceiver<Object>, Boolean> receivers : eventNameToReceivers.values()) {
 			for (EventReceiver<Object> receiver : receivers.keySet()) {
 				if (receiver instanceof ReflectiveReceiver) {
 					if (obj == ((ReflectiveReceiver) receiver).objectRef.get()) {
@@ -128,10 +123,8 @@ public class EventBus {
 		}
 	}
 
-	private static ConcurrentHashMap<EventReceiver<Object>, Boolean> receiversForEventName(
-			String name) {
-		ConcurrentHashMap<EventReceiver<Object>, Boolean> map = eventNameToReceivers
-				.get(name);
+	private static ConcurrentHashMap<EventReceiver<Object>, Boolean> receiversForEventName(String name) {
+		ConcurrentHashMap<EventReceiver<Object>, Boolean> map = eventNameToReceivers.get(name);
 		if (map == null) {
 			map = new ConcurrentHashMap<EventReceiver<Object>, Boolean>();
 			eventNameToReceivers.put(name, map);
@@ -139,13 +132,11 @@ public class EventBus {
 		return map;
 	}
 
-	private static void notifyReceiver(EventReceiver<Object> receiver,
-			String event, Object data) {
+	private static void notifyReceiver(EventReceiver<Object> receiver, String event, Object data) {
 		try {
 			receiver.onEvent(event, data);
 		} catch (IllegalArgumentException e) {
-			L.w(format("Failed to deliver event %s to %s: %s.", event, receiver
-					.getClass().getName(), e.getMessage()));
+			L.w(format("Failed to deliver event %s to %s: %s.", event, receiver.getClass().getName(), e.getMessage()));
 		} catch (Exception e) {
 			L.w(e);
 			L.w("Receiver unregistered.");

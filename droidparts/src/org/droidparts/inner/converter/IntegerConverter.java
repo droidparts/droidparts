@@ -34,27 +34,24 @@ public class IntegerConverter extends Converter<Integer> {
 	}
 
 	@Override
-	public <V> Integer readFromJSON(Class<Integer> valType,
-			Class<V> componentType, JSONObject obj, String key)
+	public <V> Integer readFromJSON(Class<Integer> valType, Class<V> componentType, JSONObject obj, String key)
 			throws Exception {
 		return obj.getInt(key);
 	}
 
 	@Override
-	protected <V> Integer parseFromString(Class<Integer> valType,
-			Class<V> componentType, String str) {
+	protected <V> Integer parseFromString(Class<Integer> valType, Class<V> componentType, String str) {
 		return Integer.valueOf(str);
 	}
 
 	@Override
-	public <V> void putToContentValues(Class<Integer> valueType,
-			Class<V> componentType, ContentValues cv, String key, Integer val) {
+	public <V> void putToContentValues(Class<Integer> valueType, Class<V> componentType, ContentValues cv, String key,
+			Integer val) {
 		cv.put(key, val);
 	}
 
 	@Override
-	public <V> Integer readFromCursor(Class<Integer> valType,
-			Class<V> componentType, Cursor cursor, int columnIndex) {
+	public <V> Integer readFromCursor(Class<Integer> valType, Class<V> componentType, Cursor cursor, int columnIndex) {
 		return cursor.getInt(columnIndex);
 	}
 

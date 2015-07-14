@@ -28,14 +28,12 @@ public class FragmentsReader {
 		return fragment.getActivity();
 	}
 
-	static Fragment getFragment(Object fragmentActivityObj, int fragmentId,
-			String valName) {
+	static Fragment getFragment(Object fragmentActivityObj, int fragmentId, String valName) {
 		Activity fragmentActivity = (Activity) fragmentActivityObj;
 		if (fragmentId == 0) {
 			fragmentId = ResourceUtils.getResourceId(fragmentActivity, valName);
 		}
-		return fragmentActivity.getFragmentManager().findFragmentById(
-				fragmentId);
+		return fragmentActivity.getFragmentManager().findFragmentById(fragmentId);
 	}
 
 	static Bundle getFragmentArguments(Object fragmentObj) {

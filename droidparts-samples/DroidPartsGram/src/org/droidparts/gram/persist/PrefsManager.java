@@ -33,20 +33,16 @@ public class PrefsManager extends AbstractPrefsManager {
 	}
 
 	public boolean isShowDetailFilter() {
-		return getShowDetailVaules().contains(
-				getContext().getString(R.string.pref_filter));
+		return getShowDetailVaules().contains(getContext().getString(R.string.pref_filter));
 	}
 
 	public boolean isShowDetailTags() {
-		return getShowDetailVaules().contains(
-				getContext().getString(R.string.pref_tags));
+		return getShowDetailVaules().contains(getContext().getString(R.string.pref_tags));
 	}
 
 	private HashSet<String> getShowDetailVaules() {
-		String str = readString(R.string.pref_show_detail,
-				R.string.pref_show_detail);
-		String[] arr = MultiSelectListPreference
-				.fromPersistedPreferenceValue(str);
+		String str = readString(R.string.pref_show_detail, R.string.pref_show_detail);
+		String[] arr = MultiSelectListPreference.fromPersistedPreferenceValue(str);
 		return new HashSet<String>(Arrays.asList(arr));
 	}
 

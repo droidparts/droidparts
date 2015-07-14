@@ -39,15 +39,13 @@ public abstract class IntentService extends android.app.IntentService {
 	public static final String EXTRA_ACTION = "__action__";
 	public static final String EXTRA_EXCEPTION = "__exception__";
 
-	public static final Intent getIntent(Context ctx,
-			Class<? extends IntentService> cls, String action) {
+	public static final Intent getIntent(Context ctx, Class<? extends IntentService> cls, String action) {
 		Intent intent = new Intent(ctx, cls);
 		intent.setAction(action);
 		return intent;
 	}
 
-	public static final Intent getIntent(Context ctx,
-			Class<? extends IntentService> cls, String action,
+	public static final Intent getIntent(Context ctx, Class<? extends IntentService> cls, String action,
 			ResultReceiver resultReceiver) {
 		Intent intent = getIntent(ctx, cls, action);
 		intent.putExtra(EXTRA_RESULT_RECEIVER, resultReceiver);
@@ -71,8 +69,7 @@ public abstract class IntentService extends android.app.IntentService {
 		if (data == null) {
 			data = new Bundle();
 		}
-		ResultReceiver resultReceiver = data
-				.getParcelable(EXTRA_RESULT_RECEIVER);
+		ResultReceiver resultReceiver = data.getParcelable(EXTRA_RESULT_RECEIVER);
 		data.putString(EXTRA_ACTION, action);
 		try {
 			data = onExecute(action, data);
@@ -95,8 +92,7 @@ public abstract class IntentService extends android.app.IntentService {
 		}
 	}
 
-	protected abstract Bundle onExecute(String action, Bundle data)
-			throws Exception;
+	protected abstract Bundle onExecute(String action, Bundle data) throws Exception;
 
 	//
 
@@ -104,8 +100,7 @@ public abstract class IntentService extends android.app.IntentService {
 		Handler handler = null;
 		try {
 			if (mServiceHandlerField == null) {
-				mServiceHandlerField = android.app.IntentService.class
-						.getDeclaredField("mServiceHandler");
+				mServiceHandlerField = android.app.IntentService.class.getDeclaredField("mServiceHandler");
 				mServiceHandlerField.setAccessible(true);
 			}
 			handler = (Handler) mServiceHandlerField.get(this);

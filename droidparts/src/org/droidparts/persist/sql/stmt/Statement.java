@@ -49,8 +49,7 @@ public abstract class Statement<EntityType extends Entity> implements SQL {
 		}
 	}
 
-	protected Statement<EntityType> where(String columnName, Is operator,
-			Object... columnValue) {
+	protected Statement<EntityType> where(String columnName, Is operator, Object... columnValue) {
 		return where(new Where(columnName, operator, columnValue));
 	}
 
@@ -64,8 +63,7 @@ public abstract class Statement<EntityType extends Entity> implements SQL {
 		return this;
 	}
 
-	protected Statement<EntityType> where(String selection,
-			Object... selectionArgs) {
+	protected Statement<EntityType> where(String selection, Object... selectionArgs) {
 		where = null;
 		this.selection = selection;
 		this.selectionArgs = toWhereArgs(selectionArgs);
@@ -84,8 +82,8 @@ public abstract class Statement<EntityType extends Entity> implements SQL {
 	@Override
 	public String toString() {
 		Pair<String, String[]> sel = getSelection();
-		return " on table '" + tableName + "', selection: '" + sel.first
-				+ "', selectionArgs: '" + Arrays.toString(sel.second) + "'";
+		return " on table '" + tableName + "', selection: '" + sel.first + "', selectionArgs: '"
+				+ Arrays.toString(sel.second) + "'";
 	}
 
 }

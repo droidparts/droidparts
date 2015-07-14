@@ -24,9 +24,8 @@ public class UserAgent {
 	}
 
 	public static String get(String nameHint) {
-		return ((nameHint != null) ? nameHint : " DroidParts.org")
-				+ " (Android " + Build.VERSION.RELEASE + "; " + Build.MODEL
-				+ " Build/" + Build.ID + ")";
+		return ((nameHint != null) ? nameHint : " DroidParts.org") + " (Android " + Build.VERSION.RELEASE + "; "
+				+ Build.MODEL + " Build/" + Build.ID + ")";
 	}
 
 	private UserAgent() {

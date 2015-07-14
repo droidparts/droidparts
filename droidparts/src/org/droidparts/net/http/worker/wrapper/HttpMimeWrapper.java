@@ -26,8 +26,7 @@ import org.droidparts.util.IOUtils;
 
 public class HttpMimeWrapper {
 
-	public static HttpEntity buildMultipartEntity(String name,
-			String contentType, String fileName, InputStream is)
+	public static HttpEntity buildMultipartEntity(String name, String contentType, String fileName, InputStream is)
 			throws IOException {
 		byte[] data = IOUtils.readToByteArray(is);
 		ContentBody contentBody;

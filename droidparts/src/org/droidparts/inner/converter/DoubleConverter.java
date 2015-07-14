@@ -34,27 +34,24 @@ public class DoubleConverter extends Converter<Double> {
 	}
 
 	@Override
-	public <V> Double readFromJSON(Class<Double> valType,
-			Class<V> componentType, JSONObject obj, String key)
+	public <V> Double readFromJSON(Class<Double> valType, Class<V> componentType, JSONObject obj, String key)
 			throws Exception {
 		return obj.getDouble(key);
 	}
 
 	@Override
-	protected <V> Double parseFromString(Class<Double> valType,
-			Class<V> componentType, String str) {
+	protected <V> Double parseFromString(Class<Double> valType, Class<V> componentType, String str) {
 		return Double.valueOf(str);
 	}
 
 	@Override
-	public <V> void putToContentValues(Class<Double> valueType,
-			Class<V> componentType, ContentValues cv, String key, Double val) {
+	public <V> void putToContentValues(Class<Double> valueType, Class<V> componentType, ContentValues cv, String key,
+			Double val) {
 		cv.put(key, val);
 	}
 
 	@Override
-	public <V> Double readFromCursor(Class<Double> valType,
-			Class<V> componentType, Cursor cursor, int columnIndex) {
+	public <V> Double readFromCursor(Class<Double> valType, Class<V> componentType, Cursor cursor, int columnIndex) {
 		return cursor.getDouble(columnIndex);
 	}
 

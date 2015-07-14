@@ -47,8 +47,7 @@ public abstract class AbstractSerializer<ModelType extends Model, Obj, Arr> {
 
 	public abstract ModelType deserialize(Obj obj) throws Exception;
 
-	public abstract ArrayList<ModelType> deserializeAll(Arr obj)
-			throws Exception;
+	public abstract ArrayList<ModelType> deserializeAll(Arr obj) throws Exception;
 
 	protected static Pair<String, String> getNestedKeyParts(String key) {
 		int firstSep = key.indexOf(SUB);
@@ -62,8 +61,7 @@ public abstract class AbstractSerializer<ModelType extends Model, Obj, Arr> {
 		}
 	}
 
-	protected static void logOrThrow(boolean optional, String part, Exception e)
-			throws SerializerException {
+	protected static void logOrThrow(boolean optional, String part, Exception e) throws SerializerException {
 		ArrayList<String> parts = new ArrayList<String>();
 		if (e instanceof SerializerException) {
 			parts.addAll(Arrays.asList(((SerializerException) e).getParts()));

@@ -23,8 +23,7 @@ import org.droidparts.gram.adapter.ImageListAdapter;
 import android.view.View;
 import android.widget.ListView;
 
-public class ImageListFragment extends ListFragment implements
-		AlterableContent<ImageListAdapter> {
+public class ImageListFragment extends ListFragment implements AlterableContent<ImageListAdapter> {
 
 	public interface Listener {
 

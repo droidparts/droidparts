@@ -1,3 +1,7 @@
+2.7.6 /2015-07-14/:
+    * ViewUtils: getRootView(Window w).
+    * Minor stuff.
+
 2.7.5 /2015-06-07/:
     * DependencyReader: correctly init after tearDown() /kudos to @vovan888/.
     * RESTClient: improved log messages.

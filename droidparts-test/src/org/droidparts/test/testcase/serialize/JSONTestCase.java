@@ -37,8 +37,7 @@ import android.test.AssertionFailedError;
 public class JSONTestCase extends AndroidTestCase {
 
 	public void testPrimitives() throws Exception {
-		JSONSerializer<Primitives> serializer = new JSONSerializer<Primitives>(
-				Primitives.class, getContext());
+		JSONSerializer<Primitives> serializer = new JSONSerializer<Primitives>(Primitives.class, getContext());
 		Primitives primitives = serializer.deserialize(getPrimitives());
 		assertNotNull(primitives.strArr);
 		//
@@ -58,8 +57,7 @@ public class JSONTestCase extends AndroidTestCase {
 	}
 
 	public void testAlbums() throws Exception {
-		JSONSerializer<Album> serializer = new JSONSerializer<Album>(
-				Album.class, getContext());
+		JSONSerializer<Album> serializer = new JSONSerializer<Album>(Album.class, getContext());
 		ArrayList<Album> albums = serializer.deserializeAll(getAlbums());
 		assertEquals(2, albums.size());
 		assertEquals("Diamond", albums.get(0).name);
@@ -68,8 +66,7 @@ public class JSONTestCase extends AndroidTestCase {
 
 	public void testNestedKeys() throws Exception {
 		assertEquals("obj->key", join(new String[] { "obj", "key" }, JSON.SUB));
-		JSONSerializer<Nested> serializer = new JSONSerializer<Nested>(
-				Nested.class, getContext());
+		JSONSerializer<Nested> serializer = new JSONSerializer<Nested>(Nested.class, getContext());
 		Nested model = serializer.deserialize(getNested());
 		assertEquals("str", model.str);
 		JSONObject obj = serializer.serialize(model);
@@ -80,10 +77,8 @@ public class JSONTestCase extends AndroidTestCase {
 
 	public void testCollectionsFail() throws Exception {
 		try {
-			JSONSerializer<Collections> ser = new JSONSerializer<Collections>(
-					Collections.class, getContext());
-			ser.deserialize(new JSONObject(
-					getJSONString(R.raw.collections_fail_json)));
+			JSONSerializer<Collections> ser = new JSONSerializer<Collections>(Collections.class, getContext());
+			ser.deserialize(new JSONObject(getJSONString(R.raw.collections_fail_json)));
 		} catch (Exception e) {
 			assertTrue(e instanceof SerializerException);
 			return;

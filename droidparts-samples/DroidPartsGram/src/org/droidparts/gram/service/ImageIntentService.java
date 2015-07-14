@@ -38,10 +38,8 @@ public class ImageIntentService extends IntentService {
 
 	private static final String ACTION_REFRESH = "refresh";
 
-	public static Intent getUpdatePicsIntent(Context ctx,
-			ResultReceiver resultReceiver) {
-		return getIntent(ctx, ImageIntentService.class, ACTION_REFRESH,
-				resultReceiver);
+	public static Intent getUpdatePicsIntent(Context ctx, ResultReceiver resultReceiver) {
+		return getIntent(ctx, ImageIntentService.class, ACTION_REFRESH, resultReceiver);
 	}
 
 	private final Uri refreshUri;
@@ -53,11 +51,8 @@ public class ImageIntentService extends IntentService {
 
 	public ImageIntentService() {
 		super(ImageIntentService.class.getSimpleName());
-		refreshUri = Uri
-				.parse(Instagram.Url.POPULAR_MEDIA)
-				.buildUpon()
-				.appendQueryParameter(Instagram.Param.CLIENT_ID,
-						Instagram.CLIENT_ID).build();
+		refreshUri = Uri.parse(Instagram.Url.POPULAR_MEDIA).buildUpon()
+				.appendQueryParameter(Instagram.Param.CLIENT_ID, Instagram.CLIENT_ID).build();
 	}
 
 	@Override

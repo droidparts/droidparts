@@ -29,23 +29,18 @@ public class EditTextValidator {
 	// <item
 	// name="android:textColorPrimaryInverse">@android:color/primary_text_light</item>
 
-	public static String getText(EditText editText, int minLen,
-			int errMsgResId, Object... errMsgFormatArgs)
+	public static String getText(EditText editText, int minLen, int errMsgResId, Object... errMsgFormatArgs)
 			throws ValidationException {
-		return getText(editText, minLen,
-				editText.getContext().getString(errMsgResId, errMsgFormatArgs));
+		return getText(editText, minLen, editText.getContext().getString(errMsgResId, errMsgFormatArgs));
 
 	}
 
-	public static String getText(EditText editText, Pattern pattern,
-			int errMsgResId, Object... errMsgFormatArgs)
+	public static String getText(EditText editText, Pattern pattern, int errMsgResId, Object... errMsgFormatArgs)
 			throws ValidationException {
-		return getText(editText, pattern,
-				editText.getContext().getString(errMsgResId, errMsgFormatArgs));
+		return getText(editText, pattern, editText.getContext().getString(errMsgResId, errMsgFormatArgs));
 	}
 
-	public static String getText(EditText editText, int minLen, String errMsg)
-			throws ValidationException {
+	public static String getText(EditText editText, int minLen, String errMsg) throws ValidationException {
 		String txt = getTrimmedText(editText);
 		if (txt.length() < minLen) {
 			throw new ValidationException(editText, errMsg);
@@ -53,8 +48,7 @@ public class EditTextValidator {
 		return txt;
 	}
 
-	public static String getText(EditText editText, Pattern pattern,
-			String errMsg) throws ValidationException {
+	public static String getText(EditText editText, Pattern pattern, String errMsg) throws ValidationException {
 		String txt = getTrimmedText(editText);
 		if (!pattern.matcher(txt).matches()) {
 			throw new ValidationException(editText, errMsg);

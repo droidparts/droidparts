@@ -23,8 +23,7 @@ import android.widget.Spinner;
 public class StringSpinnerAdapter extends SpinnerAdapter<String> {
 
 	public StringSpinnerAdapter(Spinner spinner, int stringArrResId) {
-		this(spinner, spinner.getContext().getResources()
-				.getStringArray(stringArrResId));
+		this(spinner, spinner.getContext().getResources().getStringArray(stringArrResId));
 	}
 
 	public StringSpinnerAdapter(Spinner spinner, String[] arr) {

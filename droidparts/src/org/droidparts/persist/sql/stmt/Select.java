@@ -29,8 +29,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Pair;
 
-public class Select<EntityType extends Entity> extends Statement<EntityType>
-		implements AbstractSelect<EntityType> {
+public class Select<EntityType extends Entity> extends Statement<EntityType>implements AbstractSelect<EntityType> {
 
 	private String[] columns = null;
 	private boolean distinct = false;
@@ -50,10 +49,8 @@ public class Select<EntityType extends Entity> extends Statement<EntityType>
 	}
 
 	@Override
-	public Select<EntityType> where(String columnName, Is operator,
-			Object... columnValue) {
-		return (Select<EntityType>) super.where(columnName, operator,
-				columnValue);
+	public Select<EntityType> where(String columnName, Is operator, Object... columnValue) {
+		return (Select<EntityType>) super.where(columnName, operator, columnValue);
 	}
 
 	@Override
@@ -105,16 +102,16 @@ public class Select<EntityType extends Entity> extends Statement<EntityType>
 	public Cursor execute() {
 		buildArgs();
 		L.d(describe("SELECT"));
-		return db.query(distinct, tableName, columns, selection.first,
-				selection.second, groupByStr, having, orderByStr, limitStr);
+		return db.query(distinct, tableName, columns, selection.first, selection.second, groupByStr, having, orderByStr,
+				limitStr);
 	}
 
 	@Override
 	public int count() {
 		buildArgs();
 		L.d(describe("COUNT"));
-		return getRowCount(db, distinct, tableName, columns, selection.first,
-				selection.second, groupByStr, having, orderByStr, limitStr);
+		return getRowCount(db, distinct, tableName, columns, selection.first, selection.second, groupByStr, having,
+				orderByStr, limitStr);
 	}
 
 	private Pair<String, String[]> selection;
@@ -152,10 +149,9 @@ public class Select<EntityType extends Entity> extends Statement<EntityType>
 	}
 
 	private String describe(String prefix) {
-		return prefix + super.toString() + ", columns: '"
-				+ Arrays.toString(columns) + "', orderBy: '" + orderByStr
-				+ "', groupBy: '" + groupByStr + "', having: '" + having
-				+ "', distinct: '" + distinct + "', limit: '" + limitStr + "'.";
+		return prefix + super.toString() + ", columns: '" + Arrays.toString(columns) + "', orderBy: '" + orderByStr
+				+ "', groupBy: '" + groupByStr + "', having: '" + having + "', distinct: '" + distinct + "', limit: '"
+				+ limitStr + "'.";
 	}
 
 	@Override

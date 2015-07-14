@@ -34,26 +34,23 @@ public class ByteArrayConverter extends Converter<byte[]> {
 	}
 
 	@Override
-	public <V> byte[] readFromJSON(Class<byte[]> valType,
-			Class<V> componentType, JSONObject obj, String key) {
+	public <V> byte[] readFromJSON(Class<byte[]> valType, Class<V> componentType, JSONObject obj, String key) {
 		throw new UnsupportedOperationException();
 	}
 
 	@Override
-	protected <V> byte[] parseFromString(Class<byte[]> valType,
-			Class<V> componentType, String str) {
+	protected <V> byte[] parseFromString(Class<byte[]> valType, Class<V> componentType, String str) {
 		throw new UnsupportedOperationException();
 	}
 
 	@Override
-	public <V> void putToContentValues(Class<byte[]> valueType,
-			Class<V> componentType, ContentValues cv, String key, byte[] val) {
+	public <V> void putToContentValues(Class<byte[]> valueType, Class<V> componentType, ContentValues cv, String key,
+			byte[] val) {
 		cv.put(key, val);
 	}
 
 	@Override
-	public <V> byte[] readFromCursor(Class<byte[]> valType,
-			Class<V> componentType, Cursor cursor, int columnIndex) {
+	public <V> byte[] readFromCursor(Class<byte[]> valType, Class<V> componentType, Cursor cursor, int columnIndex) {
 		return cursor.getBlob(columnIndex);
 	}
 

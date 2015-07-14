@@ -34,10 +34,8 @@ public class Delete<EntityType extends Entity> extends Statement<EntityType> {
 	}
 
 	@Override
-	public Delete<EntityType> where(String columnName, Is operator,
-			Object... columnValue) {
-		return (Delete<EntityType>) super.where(columnName, operator,
-				columnValue);
+	public Delete<EntityType> where(String columnName, Is operator, Object... columnValue) {
+		return (Delete<EntityType>) super.where(columnName, operator, columnValue);
 	}
 
 	@Override
