@@ -41,21 +41,21 @@ public final class ReflectionUtils {
 		Object val;
 		try {
 			if (isBoolean(ft, false)) {
-				val = Boolean.valueOf(field.getBoolean(obj));
+				val = field.getBoolean(obj);
 			} else if (isInteger(ft, false)) {
-				val = Integer.valueOf(field.getInt(obj));
+				val = field.getInt(obj);
 			} else if (isLong(ft, false)) {
-				val = Long.valueOf(field.getLong(obj));
+				val = field.getLong(obj);
 			} else if (isFloat(ft, false)) {
-				val = Float.valueOf(field.getFloat(obj));
+				val = field.getFloat(obj);
 			} else if (isDouble(ft, false)) {
-				val = Double.valueOf(field.getDouble(obj));
+				val = field.getDouble(obj);
 			} else if (isByte(ft, false)) {
-				val = Byte.valueOf(field.getByte(obj));
+				val = field.getByte(obj);
 			} else if (isShort(ft, false)) {
-				val = Short.valueOf(field.getShort(obj));
+				val = field.getShort(obj);
 			} else if (isCharacter(ft, false)) {
-				val = Character.valueOf(field.getChar(obj));
+				val = field.getChar(obj);
 			} else {
 				val = field.get(obj);
 			}
