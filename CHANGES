@@ -1,3 +1,6 @@
+2.7.7 /2015-08-06/:
+    *  SQL: escape default value when adding columns /kudos to @Atrinax/.
+
 2.7.6 /2015-07-14/:
     * ViewUtils: getRootView(Window w).
     * Minor stuff.
