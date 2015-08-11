@@ -58,21 +58,16 @@ public abstract class AsyncTask<Params, Progress, Result>
 
 	@Override
 	protected final void onPostExecute(Pair<Exception, Result> result) {
-		// try-catch to avoid lifecycle-related crashes
-		try {
-			if (result.first != null) {
-				onPostExecuteFailure(result.first);
-				if (resultListener != null) {
-					resultListener.onAsyncTaskFailure(result.first);
-				}
-			} else {
-				onPostExecuteSuccess(result.second);
-				if (resultListener != null) {
-					resultListener.onAsyncTaskSuccess(result.second);
-				}
+		if (result.first != null) {
+			onPostExecuteFailure(result.first);
+			if (resultListener != null) {
+				resultListener.onAsyncTaskFailure(result.first);
 			}
-		} catch (Throwable t) {
-			L.d(t);
+		} else {
+			onPostExecuteSuccess(result.second);
+			if (resultListener != null) {
+				resultListener.onAsyncTaskSuccess(result.second);
+			}
 		}
 	}
 
