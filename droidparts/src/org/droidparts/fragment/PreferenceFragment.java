@@ -28,11 +28,6 @@ public class PreferenceFragment extends android.preference.PreferenceFragment {
 	private boolean injected;
 
 	@Override
-	public void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-	}
-
-	@Override
 	public final View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		View view = onCreateView(savedInstanceState, inflater, container);
 		Injector.inject(view, this);
