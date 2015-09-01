@@ -21,6 +21,7 @@ import org.droidparts.test.R;
 import org.droidparts.test.activity.TestActivity;
 
 import android.content.Context;
+import android.os.Bundle;
 import android.test.ActivityInstrumentationTestCase2;
 
 public class TestActivityTestCase extends ActivityInstrumentationTestCase2<TestActivity> {
@@ -44,6 +45,23 @@ public class TestActivityTestCase extends ActivityInstrumentationTestCase2<TestA
 		AbstractDBOpenHelper dependency = Injector.getDependency(getActivity(), cls);
 		assertNotNull(dependency);
 		assertTrue(cls.isAssignableFrom(dependency.getClass()));
+	}
+
+	public void testSaveInstanceState() {
+		final TestActivity activity = getActivity();
+		final String data = "data";
+		final Bundle b = new Bundle();
+		activity.runOnUiThread(new Runnable() {
+
+			@Override
+			public void run() {
+				activity.data = data;
+				activity.onSaveInstanceState(b);
+				activity.data = null;
+				activity.onCreate(b);
+				assertEquals(data, activity.data);
+			}
+		});
 	}
 
 }

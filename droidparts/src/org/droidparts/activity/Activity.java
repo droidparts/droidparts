@@ -18,6 +18,7 @@ package org.droidparts.activity;
 import org.droidparts.Injector;
 import org.droidparts.bus.EventBus;
 import org.droidparts.contract.Injectable;
+import org.droidparts.inner.InstanceStateSaver;
 import org.droidparts.inner.fragments.SecretFragmentsStockUtil;
 
 import android.app.Fragment;
@@ -41,6 +42,7 @@ public abstract class Activity extends android.app.Activity implements Injectabl
 		super.onCreate(savedInstanceState);
 		onPreInject();
 		Injector.inject(this);
+		InstanceStateSaver.onCreate(this, savedInstanceState);
 	}
 
 	@Override
@@ -53,6 +55,12 @@ public abstract class Activity extends android.app.Activity implements Injectabl
 	protected void onPause() {
 		super.onPause();
 		EventBus.unregisterAnnotatedReceiver(this);
+	}
+
+	@Override
+	protected void onSaveInstanceState(Bundle outState) {
+		super.onSaveInstanceState(outState);
+		InstanceStateSaver.onSaveInstanceState(this, outState);
 	}
 
 	public final void setActionBarLoadingIndicatorVisible(boolean visible) {

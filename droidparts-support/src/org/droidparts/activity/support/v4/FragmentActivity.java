@@ -18,6 +18,7 @@ package org.droidparts.activity.support.v4;
 import org.droidparts.Injector;
 import org.droidparts.bus.EventBus;
 import org.droidparts.contract.Injectable;
+import org.droidparts.inner.InstanceStateSaver;
 import org.droidparts.inner.fragments.SecretFragmentsSupportUtil;
 
 import android.os.Bundle;
@@ -34,6 +35,7 @@ public abstract class FragmentActivity extends android.support.v4.app.FragmentAc
 		super.onCreate(savedInstanceState);
 		onPreInject();
 		Injector.inject(this);
+		InstanceStateSaver.onCreate(this, savedInstanceState);
 	}
 
 	@Override
@@ -46,6 +48,12 @@ public abstract class FragmentActivity extends android.support.v4.app.FragmentAc
 	protected void onPause() {
 		super.onPause();
 		EventBus.unregisterAnnotatedReceiver(this);
+	}
+
+	@Override
+	protected void onSaveInstanceState(Bundle outState) {
+		super.onSaveInstanceState(outState);
+		InstanceStateSaver.onSaveInstanceState(this, outState);
 	}
 
 	public void setFragmentVisible(boolean visible, Fragment... fragments) {

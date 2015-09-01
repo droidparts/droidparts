@@ -16,6 +16,7 @@
 package org.droidparts.fragment.support.v4;
 
 import org.droidparts.Injector;
+import org.droidparts.inner.InstanceStateSaver;
 import org.droidparts.inner.fragments.SecretFragmentsSupportUtil;
 
 import android.os.Bundle;
@@ -36,8 +37,15 @@ public class DialogFragment extends android.support.v4.app.DialogFragment {
 		} else {
 			Injector.inject(getDialog(), this);
 		}
+		InstanceStateSaver.onCreate(this, savedInstanceState);
 		injected = true;
 		return view;
+	}
+
+	@Override
+	public void onSaveInstanceState(Bundle outState) {
+		super.onSaveInstanceState(outState);
+		InstanceStateSaver.onSaveInstanceState(this, outState);
 	}
 
 	public View onCreateView(Bundle savedInstanceState, LayoutInflater inflater, ViewGroup container) {

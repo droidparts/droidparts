@@ -47,6 +47,7 @@ import org.droidparts.inner.ann.MethodSpec;
 import org.droidparts.inner.ann.bus.ReceiveEventsAnn;
 import org.droidparts.inner.ann.inject.InjectAnn;
 import org.droidparts.inner.ann.serialize.JSONAnn;
+import org.droidparts.inner.ann.serialize.SaveInstanceStateAnn;
 import org.droidparts.inner.ann.serialize.XMLAnn;
 import org.droidparts.inner.ann.sql.ColumnAnn;
 import org.droidparts.inner.ann.sql.TableAnn;
@@ -73,6 +74,27 @@ public final class ClassSpecRegistry {
 			}
 			specs = list.toArray(new FieldSpec[list.size()]);
 			INJECT_SPECS.put(cls, specs);
+		}
+		return specs;
+	}
+
+	// SavevInstanceState
+
+	@SuppressWarnings("unchecked")
+	public static FieldSpec<SaveInstanceStateAnn>[] getSaveInstanceSpecs(Class<?> cls) {
+		FieldSpec<SaveInstanceStateAnn>[] specs = SAVE_INSTANCE_SPECS.get(cls);
+		if (specs == null) {
+			ArrayList<FieldSpec<SaveInstanceStateAnn>> list = new ArrayList<FieldSpec<SaveInstanceStateAnn>>();
+			for (Class<?> cl : buildClassHierarchy(cls)) {
+				for (Field field : cl.getDeclaredFields()) {
+					SaveInstanceStateAnn ann = AnnBuilder.getSaveInstanceStateAnn(field);
+					if (ann != null) {
+						list.add(new FieldSpec<SaveInstanceStateAnn>(field, null, ann));
+					}
+				}
+			}
+			specs = list.toArray(new FieldSpec[list.size()]);
+			SAVE_INSTANCE_SPECS.put(cls, specs);
 		}
 		return specs;
 	}
@@ -184,6 +206,7 @@ public final class ClassSpecRegistry {
 	// caches
 
 	private static final ConcurrentHashMap<Class<?>, FieldSpec<InjectAnn<?>>[]> INJECT_SPECS = new ConcurrentHashMap<Class<?>, FieldSpec<InjectAnn<?>>[]>();
+	private static final ConcurrentHashMap<Class<?>, FieldSpec<SaveInstanceStateAnn>[]> SAVE_INSTANCE_SPECS = new ConcurrentHashMap<Class<?>, FieldSpec<SaveInstanceStateAnn>[]>();
 	private static final ConcurrentHashMap<Class<?>, MethodSpec<ReceiveEventsAnn>[]> RECEIVE_EVENTS_SPECS = new ConcurrentHashMap<Class<?>, MethodSpec<ReceiveEventsAnn>[]>();
 
 	private static final ConcurrentHashMap<Class<? extends Entity>, String> TABLE_NAMES = new ConcurrentHashMap<Class<? extends Entity>, String>();

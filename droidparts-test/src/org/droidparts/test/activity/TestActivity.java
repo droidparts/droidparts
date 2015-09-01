@@ -18,8 +18,10 @@ package org.droidparts.test.activity;
 import org.droidparts.activity.legacy.Activity;
 import org.droidparts.annotation.inject.InjectResource;
 import org.droidparts.annotation.inject.InjectView;
+import org.droidparts.annotation.serialize.SaveInstanceState;
 import org.droidparts.test.R;
 
+import android.os.Bundle;
 import android.widget.TextView;
 
 public class TestActivity extends Activity {
@@ -30,9 +32,22 @@ public class TestActivity extends Activity {
 	@InjectView(id = R.id.view_text)
 	public TextView textView;
 
+	@SaveInstanceState
+	public String data;
+
 	@Override
 	public void onPreInject() {
 		setContentView(R.layout.activity_test);
+	}
+
+	@Override
+	public void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+	}
+
+	@Override
+	public void onSaveInstanceState(Bundle outState) {
+		super.onSaveInstanceState(outState);
 	}
 
 }
