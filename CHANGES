@@ -1,3 +1,6 @@
+2.8.0 /2015-00-01/:
+    *  @SaveInstanceState for Activities & Fragments.
+
 2.7.8 /2015-08-11/:
     *  AsyncTask: don't swallow exceptions in onPostExecute().
 
