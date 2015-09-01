@@ -16,6 +16,7 @@
 package org.droidparts.fragment;
 
 import org.droidparts.Injector;
+import org.droidparts.inner.InstanceStateSaver;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -27,11 +28,23 @@ public class PreferenceFragment extends android.preference.PreferenceFragment {
 	private boolean injected;
 
 	@Override
+	public void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+	}
+
+	@Override
 	public final View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		View view = onCreateView(savedInstanceState, inflater, container);
 		Injector.inject(view, this);
 		injected = true;
+		InstanceStateSaver.onCreate(this, savedInstanceState);
 		return view;
+	}
+
+	@Override
+	public void onSaveInstanceState(Bundle outState) {
+		super.onSaveInstanceState(outState);
+		InstanceStateSaver.onSaveInstanceState(this, outState);
 	}
 
 	public View onCreateView(Bundle savedInstanceState, LayoutInflater inflater, ViewGroup container) {

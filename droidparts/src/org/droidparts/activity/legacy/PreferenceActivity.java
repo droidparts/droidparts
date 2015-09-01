@@ -18,6 +18,7 @@ package org.droidparts.activity.legacy;
 import org.droidparts.Injector;
 import org.droidparts.bus.EventBus;
 import org.droidparts.contract.Injectable;
+import org.droidparts.inner.InstanceStateSaver;
 
 import android.os.Bundle;
 
@@ -32,6 +33,7 @@ public abstract class PreferenceActivity extends android.preference.PreferenceAc
 		super.onCreate(savedInstanceState);
 		onPreInject();
 		Injector.inject(this);
+		InstanceStateSaver.onCreate(this, savedInstanceState);
 	}
 
 	@Override
@@ -44,6 +46,12 @@ public abstract class PreferenceActivity extends android.preference.PreferenceAc
 	protected void onPause() {
 		super.onPause();
 		EventBus.unregisterAnnotatedReceiver(this);
+	}
+
+	@Override
+	protected void onSaveInstanceState(Bundle outState) {
+		super.onSaveInstanceState(outState);
+		InstanceStateSaver.onSaveInstanceState(this, outState);
 	}
 
 }

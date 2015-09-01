@@ -28,6 +28,7 @@ import org.droidparts.annotation.inject.InjectResource;
 import org.droidparts.annotation.inject.InjectSystemService;
 import org.droidparts.annotation.inject.InjectView;
 import org.droidparts.annotation.serialize.JSON;
+import org.droidparts.annotation.serialize.SaveInstanceState;
 import org.droidparts.annotation.serialize.XML;
 import org.droidparts.annotation.sql.Column;
 import org.droidparts.annotation.sql.Table;
@@ -41,21 +42,12 @@ import org.droidparts.inner.ann.inject.InjectResourceAnn;
 import org.droidparts.inner.ann.inject.InjectSystemServiceAnn;
 import org.droidparts.inner.ann.inject.InjectViewAnn;
 import org.droidparts.inner.ann.serialize.JSONAnn;
+import org.droidparts.inner.ann.serialize.SaveInstanceStateAnn;
 import org.droidparts.inner.ann.serialize.XMLAnn;
 import org.droidparts.inner.ann.sql.ColumnAnn;
 import org.droidparts.inner.ann.sql.TableAnn;
 
 public final class AnnBuilder {
-
-	static TableAnn getTableAnn(Class<?> c) {
-		for (Annotation a : c.getDeclaredAnnotations()) {
-			Class<?> at = a.annotationType();
-			if (Table.class == at) {
-				return new TableAnn((Table) a);
-			}
-		}
-		return null;
-	}
 
 	static InjectAnn<?> getInjectAnn(Field f) {
 		for (Annotation a : f.getDeclaredAnnotations()) {
@@ -74,6 +66,26 @@ public final class AnnBuilder {
 				return new InjectResourceAnn((InjectResource) a);
 			} else if (InjectSystemService.class == at) {
 				return new InjectSystemServiceAnn((InjectSystemService) a);
+			}
+		}
+		return null;
+	}
+
+	static SaveInstanceStateAnn getSaveInstanceStateAnn(Field f) {
+		for (Annotation a : f.getDeclaredAnnotations()) {
+			Class<?> at = a.annotationType();
+			if (SaveInstanceState.class == at) {
+				return new SaveInstanceStateAnn((SaveInstanceState) a);
+			}
+		}
+		return null;
+	}
+
+	static ReceiveEventsAnn getReceiveEventsAnn(Method m) {
+		for (Annotation a : m.getDeclaredAnnotations()) {
+			Class<?> at = a.annotationType();
+			if (ReceiveEvents.class == at) {
+				return new ReceiveEventsAnn((ReceiveEvents) a);
 			}
 		}
 		return null;
@@ -99,6 +111,16 @@ public final class AnnBuilder {
 		return null;
 	}
 
+	static TableAnn getTableAnn(Class<?> c) {
+		for (Annotation a : c.getDeclaredAnnotations()) {
+			Class<?> at = a.annotationType();
+			if (Table.class == at) {
+				return new TableAnn((Table) a);
+			}
+		}
+		return null;
+	}
+
 	static ColumnAnn getColumnAnn(Field f) {
 		for (Annotation a : f.getDeclaredAnnotations()) {
 			Class<?> at = a.annotationType();
@@ -109,13 +131,4 @@ public final class AnnBuilder {
 		return null;
 	}
 
-	static ReceiveEventsAnn getReceiveEventsAnn(Method m) {
-		for (Annotation a : m.getDeclaredAnnotations()) {
-			Class<?> at = a.annotationType();
-			if (ReceiveEvents.class == at) {
-				return new ReceiveEventsAnn((ReceiveEvents) a);
-			}
-		}
-		return null;
-	}
 }
