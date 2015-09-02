@@ -19,6 +19,7 @@ import static org.droidparts.inner.AnnBuilder.getColumnAnn;
 import static org.droidparts.inner.AnnBuilder.getInjectAnn;
 import static org.droidparts.inner.AnnBuilder.getJSONAnn;
 import static org.droidparts.inner.AnnBuilder.getReceiveEventsAnn;
+import static org.droidparts.inner.AnnBuilder.getSaveInstanceStateAnn;
 import static org.droidparts.inner.AnnBuilder.getTableAnn;
 import static org.droidparts.inner.AnnBuilder.getXMLAnn;
 import static org.droidparts.inner.ReflectionUtils.buildClassHierarchy;
@@ -40,6 +41,7 @@ import static org.droidparts.util.Strings.isEmpty;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.droidparts.inner.ann.FieldSpec;
@@ -64,12 +66,10 @@ public final class ClassSpecRegistry {
 		FieldSpec<InjectAnn<?>>[] specs = INJECT_SPECS.get(cls);
 		if (specs == null) {
 			ArrayList<FieldSpec<InjectAnn<?>>> list = new ArrayList<FieldSpec<InjectAnn<?>>>();
-			for (Class<?> cl : buildClassHierarchy(cls)) {
-				for (Field field : cl.getDeclaredFields()) {
-					InjectAnn<?> ann = getInjectAnn(field);
-					if (ann != null) {
-						list.add(new FieldSpec<InjectAnn<?>>(field, null, ann));
-					}
+			for (Field field : getFieldHierarchy(cls)) {
+				InjectAnn<?> ann = getInjectAnn(field);
+				if (ann != null) {
+					list.add(new FieldSpec<InjectAnn<?>>(field, null, ann));
 				}
 			}
 			specs = list.toArray(new FieldSpec[list.size()]);
@@ -85,12 +85,10 @@ public final class ClassSpecRegistry {
 		FieldSpec<SaveInstanceStateAnn>[] specs = SAVE_INSTANCE_SPECS.get(cls);
 		if (specs == null) {
 			ArrayList<FieldSpec<SaveInstanceStateAnn>> list = new ArrayList<FieldSpec<SaveInstanceStateAnn>>();
-			for (Class<?> cl : buildClassHierarchy(cls)) {
-				for (Field field : cl.getDeclaredFields()) {
-					SaveInstanceStateAnn ann = AnnBuilder.getSaveInstanceStateAnn(field);
-					if (ann != null) {
-						list.add(new FieldSpec<SaveInstanceStateAnn>(field, null, ann));
-					}
+			for (Field field : getFieldHierarchy(cls)) {
+				SaveInstanceStateAnn ann = getSaveInstanceStateAnn(field);
+				if (ann != null) {
+					list.add(new FieldSpec<SaveInstanceStateAnn>(field, null, ann));
 				}
 			}
 			specs = list.toArray(new FieldSpec[list.size()]);
@@ -106,12 +104,10 @@ public final class ClassSpecRegistry {
 		MethodSpec<ReceiveEventsAnn>[] specs = RECEIVE_EVENTS_SPECS.get(cls);
 		if (specs == null) {
 			ArrayList<MethodSpec<ReceiveEventsAnn>> list = new ArrayList<MethodSpec<ReceiveEventsAnn>>();
-			for (Class<?> cl : buildClassHierarchy(cls)) {
-				for (Method method : cl.getDeclaredMethods()) {
-					ReceiveEventsAnn ann = getReceiveEventsAnn(method);
-					if (ann != null) {
-						list.add(new MethodSpec<ReceiveEventsAnn>(method, ann));
-					}
+			for (Method method : getMethodHierarchy(cls)) {
+				ReceiveEventsAnn ann = getReceiveEventsAnn(method);
+				if (ann != null) {
+					list.add(new MethodSpec<ReceiveEventsAnn>(method, ann));
 				}
 			}
 			specs = list.toArray(new MethodSpec[list.size()]);
@@ -142,14 +138,12 @@ public final class ClassSpecRegistry {
 		FieldSpec<ColumnAnn>[] specs = COLUMN_SPECS.get(cls);
 		if (specs == null) {
 			ArrayList<FieldSpec<ColumnAnn>> list = new ArrayList<FieldSpec<ColumnAnn>>();
-			for (Class<?> cl : buildClassHierarchy(cls)) {
-				for (Field field : cl.getDeclaredFields()) {
-					ColumnAnn ann = getColumnAnn(field);
-					if (ann != null) {
-						Class<?> componentType = getComponentType(field);
-						ann.name = getColumnName(ann, field);
-						list.add(new FieldSpec<ColumnAnn>(field, componentType, ann));
-					}
+			for (Field field : getFieldHierarchy(cls)) {
+				ColumnAnn ann = getColumnAnn(field);
+				if (ann != null) {
+					Class<?> componentType = getComponentType(field);
+					ann.name = getColumnName(ann, field);
+					list.add(new FieldSpec<ColumnAnn>(field, componentType, ann));
 				}
 			}
 			sanitizeSpecs(list);
@@ -165,14 +159,12 @@ public final class ClassSpecRegistry {
 		FieldSpec<JSONAnn>[] specs = JSON_SPECS.get(cls);
 		if (specs == null) {
 			ArrayList<FieldSpec<JSONAnn>> list = new ArrayList<FieldSpec<JSONAnn>>();
-			for (Class<?> cl : buildClassHierarchy(cls)) {
-				for (Field field : cl.getDeclaredFields()) {
-					JSONAnn ann = getJSONAnn(field);
-					if (ann != null) {
-						Class<?> componentType = getComponentType(field);
-						ann.key = getName(ann.key, field);
-						list.add(new FieldSpec<JSONAnn>(field, componentType, ann));
-					}
+			for (Field field : getFieldHierarchy(cls)) {
+				JSONAnn ann = getJSONAnn(field);
+				if (ann != null) {
+					Class<?> componentType = getComponentType(field);
+					ann.key = getName(ann.key, field);
+					list.add(new FieldSpec<JSONAnn>(field, componentType, ann));
 				}
 			}
 			specs = list.toArray(new FieldSpec[list.size()]);
@@ -187,20 +179,34 @@ public final class ClassSpecRegistry {
 		FieldSpec<XMLAnn>[] specs = XML_SPECS.get(cls);
 		if (specs == null) {
 			ArrayList<FieldSpec<XMLAnn>> list = new ArrayList<FieldSpec<XMLAnn>>();
-			for (Class<?> cl : buildClassHierarchy(cls)) {
-				for (Field field : cl.getDeclaredFields()) {
-					XMLAnn ann = getXMLAnn(field);
-					if (ann != null) {
-						Class<?> componentType = getComponentType(field);
-						ann.tag = getName(ann.tag, field);
-						list.add(new FieldSpec<XMLAnn>(field, componentType, ann));
-					}
+			for (Field field : getFieldHierarchy(cls)) {
+				XMLAnn ann = getXMLAnn(field);
+				if (ann != null) {
+					Class<?> componentType = getComponentType(field);
+					ann.tag = getName(ann.tag, field);
+					list.add(new FieldSpec<XMLAnn>(field, componentType, ann));
 				}
 			}
 			specs = list.toArray(new FieldSpec[list.size()]);
 			XML_SPECS.put(cls, specs);
 		}
 		return specs;
+	}
+
+	private static ArrayList<Field> getFieldHierarchy(Class<?> cls) {
+		ArrayList<Field> list = new ArrayList<Field>();
+		for (Class<?> cl : buildClassHierarchy(cls)) {
+			list.addAll(Arrays.asList(cl.getDeclaredFields()));
+		}
+		return list;
+	}
+
+	private static ArrayList<Method> getMethodHierarchy(Class<?> cls) {
+		ArrayList<Method> list = new ArrayList<Method>();
+		for (Class<?> cl : buildClassHierarchy(cls)) {
+			list.addAll(Arrays.asList(cl.getDeclaredMethods()));
+		}
+		return list;
 	}
 
 	// caches
