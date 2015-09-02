@@ -39,7 +39,9 @@ public class ListFragment extends android.app.ListFragment {
 	@Override
 	public void onSaveInstanceState(Bundle outState) {
 		super.onSaveInstanceState(outState);
-		InstanceStateSaver.onSaveInstanceState(this, outState);
+		if (injected) {
+			InstanceStateSaver.onSaveInstanceState(this, outState);
+		}
 	}
 
 	public View onCreateView(Bundle savedInstanceState, LayoutInflater inflater, ViewGroup container) {

@@ -22,6 +22,7 @@ import org.droidparts.inner.ann.FieldSpec;
 import org.droidparts.inner.ann.serialize.SaveInstanceStateAnn;
 
 import android.os.Bundle;
+import android.os.Parcelable;
 
 public class InstanceStateSaver {
 
@@ -29,8 +30,11 @@ public class InstanceStateSaver {
 		if (savedInstanceState != null) {
 			FieldSpec<SaveInstanceStateAnn>[] specs = ClassSpecRegistry.getSaveInstanceSpecs(obj.getClass());
 			for (FieldSpec<SaveInstanceStateAnn> spec : specs) {
-				Object val = savedInstanceState.get(getKey(spec.field));
-				ReflectionUtils.setFieldVal(obj, spec.field, val);
+				String key = getKey(spec.field);
+				if (savedInstanceState.containsKey(key)) {
+					Object val = savedInstanceState.get(key);
+					ReflectionUtils.setFieldVal(obj, spec.field, val);
+				}
 			}
 		}
 	}
@@ -38,8 +42,13 @@ public class InstanceStateSaver {
 	public static void onSaveInstanceState(Object obj, Bundle outState) {
 		FieldSpec<SaveInstanceStateAnn>[] specs = ClassSpecRegistry.getSaveInstanceSpecs(obj.getClass());
 		for (FieldSpec<SaveInstanceStateAnn> spec : specs) {
+			String key = getKey(spec.field);
 			Object val = ReflectionUtils.getFieldVal(obj, spec.field);
-			outState.putSerializable(getKey(spec.field), (Serializable) val);
+			if (val instanceof Parcelable) {
+				outState.putParcelable(key, (Parcelable) val);
+			} else {
+				outState.putSerializable(key, (Serializable) val);
+			}
 		}
 	}
 
