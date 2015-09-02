@@ -1,3 +1,6 @@
+2.8.1 /2015-09-02/:
+    *  InstanceStateSaver: Fragment tweaks.
+
 2.8.0 /2015-09-01/:
     *  @SaveInstanceState for Activities & Fragments.
 
