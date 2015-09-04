@@ -113,7 +113,7 @@ public class JSONSerializer<ModelType extends Model> extends AbstractSerializer<
 		if (keyParts != null) {
 			String subKey = keyParts.first;
 			try {
-				JSONObject subObj = obj.getJSONObject(subKey);
+				JSONObject subObj = (JSONObject) readFromJSON(JSONObject.class, null, obj, subKey);
 				readFromJSONAndSetFieldVal(model, spec, subObj, keyParts.second);
 			} catch (Exception e) {
 				handleParseException(spec.ann.optional, subKey, e);

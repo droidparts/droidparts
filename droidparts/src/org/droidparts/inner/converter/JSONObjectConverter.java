@@ -42,7 +42,11 @@ public class JSONObjectConverter extends Converter<JSONObject> {
 	@Override
 	public <V> JSONObject readFromJSON(Class<JSONObject> valType, Class<V> componentType, JSONObject obj, String key)
 			throws Exception {
-		return parseFromString(valType, componentType, obj.getString(key));
+		try {
+			return obj.getJSONObject(key);
+		} catch (Exception e) {
+			return parseFromString(valType, componentType, obj.getString(key));
+		}
 	}
 
 	@Override

@@ -55,10 +55,4 @@ public class IntegerConverter extends Converter<Integer> {
 		return cursor.getInt(columnIndex);
 	}
 
-	// @Override
-	// public Object parseTypeArr(Class<Integer> valType, String[] arr) {
-	// Integer[] tArr = (Integer[]) super.parseTypeArr(valType, arr);
-	// return (valType == int.class) ? toPrimitive(tArr) : tArr;
-	// }
-
 }

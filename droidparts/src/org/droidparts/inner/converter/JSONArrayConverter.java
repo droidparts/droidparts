@@ -43,7 +43,11 @@ public class JSONArrayConverter extends Converter<JSONArray> {
 	@Override
 	public <V> JSONArray readFromJSON(Class<JSONArray> valType, Class<V> componentType, JSONObject obj, String key)
 			throws Exception {
-		return parseFromString(valType, componentType, obj.getString(key));
+		try {
+			return obj.getJSONArray(key);
+		} catch (Exception e) {
+			return parseFromString(valType, componentType, obj.getString(key));
+		}
 	}
 
 	@Override
