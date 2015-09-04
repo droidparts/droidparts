@@ -34,26 +34,27 @@ public class CharacterConverter extends Converter<Character> {
 	}
 
 	@Override
-	public <V> Character readFromJSON(Class<Character> valType, Class<V> componentType, JSONObject obj, String key)
-			throws Exception {
-		return parseFromString(valType, componentType, obj.getString(key));
+	public <G1, G2> Character readFromJSON(Class<Character> valType, Class<G1> genericType1, Class<G2> genericType2,
+			JSONObject obj, String key) throws Exception {
+		return parseFromString(valType, genericType1, null, obj.getString(key));
 	}
 
 	@Override
-	protected <V> Character parseFromString(Class<Character> valType, Class<V> componentType, String str) {
+	protected <G1, G2> Character parseFromString(Class<Character> valType, Class<G1> genericType1,
+			Class<G2> genericType2, String str) {
 		return Character.valueOf((str.length() == 0) ? ' ' : str.charAt(0));
 	}
 
 	@Override
-	public <V> void putToContentValues(Class<Character> valueType, Class<V> componentType, ContentValues cv, String key,
-			Character val) {
+	public <G1, G2> void putToContentValues(Class<Character> valueType, Class<G1> genericType1,
+			Class<G2> genericType2, ContentValues cv, String key, Character val) {
 		cv.put(key, String.valueOf(val));
 	}
 
 	@Override
-	public <V> Character readFromCursor(Class<Character> valType, Class<V> componentType, Cursor cursor,
-			int columnIndex) {
-		return parseFromString(valType, null, cursor.getString(columnIndex));
+	public <G1, G2> Character readFromCursor(Class<Character> valType, Class<G1> genericType1,
+			Class<G2> genericType2, Cursor cursor, int columnIndex) {
+		return parseFromString(valType, null, null, cursor.getString(columnIndex));
 	}
 
 }

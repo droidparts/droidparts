@@ -59,15 +59,16 @@ public class ArrayCollectionConverter extends Converter<Object> {
 	}
 
 	@Override
-	public <V> Object readFromJSON(Class<Object> valType, Class<V> componentType, JSONObject obj, String key)
-			throws Exception {
-		Wrapper w = new Wrapper(obj.getJSONArray(key), null);
-		return readFromWrapper(valType, componentType, w);
+	public <G1, G2> Object readFromJSON(Class<Object> valType, Class<G1> genericType1, Class<G2> genericType2,
+			JSONObject obj, String key) throws Exception {
+		Converter<JSONArray> conv = ConverterRegistry.getConverter(JSONArray.class);
+		Wrapper w = new Wrapper(conv.readFromJSON(JSONArray.class, null, null, obj, key), null);
+		return readFromWrapper(valType, genericType1, w);
 	}
 
 	@Override
-	public <V> Object readFromXML(Class<Object> valType, Class<V> componentType, Node node, String nodeListItemTagHint)
-			throws Exception {
+	public <G1, G2> Object readFromXML(Class<Object> valType, Class<G1> genericType1, Class<G2> genericType2, Node node,
+			String nodeListItemTagHint) throws Exception {
 		NodeList nl = node.getChildNodes();
 		ArrayList<Node> elementNodes = new ArrayList<Node>();
 		for (int i = 0; i < nl.getLength(); i++) {
@@ -83,34 +84,35 @@ public class ArrayCollectionConverter extends Converter<Object> {
 			}
 		}
 		Wrapper w = new Wrapper(null, elementNodes);
-		return readFromWrapper(valType, componentType, w);
+		return readFromWrapper(valType, genericType1, w);
 	}
 
 	@Override
-	public <V> void putToJSON(Class<Object> valType, Class<V> componentType, JSONObject obj, String key, Object val)
-			throws Exception {
-		Converter<V> converter = ConverterRegistry.getConverter(componentType);
-		ArrayList<V> list = arrOrCollToList(valType, componentType, val);
+	public <G1, G2> void putToJSON(Class<Object> valType, Class<G1> genericType1, Class<G2> genericType2,
+			JSONObject obj, String key, Object val) throws Exception {
+		Converter<G1> converter = ConverterRegistry.getConverter(genericType1);
+		ArrayList<G1> list = arrOrCollToList(valType, genericType1, val);
 		JSONArray vals = new JSONArray();
 		JSONObject tmpObj = new JSONObject();
-		for (V value : list) {
-			converter.putToJSON(componentType, null, tmpObj, "key", value);
+		for (G1 value : list) {
+			converter.putToJSON(genericType1, null, null, tmpObj, "key", value);
 			vals.put(tmpObj.get("key"));
 		}
 		obj.put(key, vals);
 	}
 
 	@Override
-	protected <V> Object parseFromString(Class<Object> valType, Class<V> componentType, String str) {
+	protected <G1, G2> Object parseFromString(Class<Object> valType, Class<G1> genericType1, Class<G2> genericType2,
+			String str) {
 		throw new UnsupportedOperationException();
 	}
 
 	//
 	@SuppressWarnings("unchecked")
-	protected <V> Object readFromWrapper(Class<Object> valType, Class<V> componentType, Wrapper wrapper)
+	protected <V> Object readFromWrapper(Class<Object> valType, Class<V> genericType1, Wrapper wrapper)
 			throws Exception {
 		boolean isArr = isArray(valType);
-		boolean isModel = isModel(componentType);
+		boolean isModel = isModel(genericType1);
 		Collection<Object> items;
 		if (isArr) {
 			items = new ArrayList<Object>();
@@ -120,22 +122,22 @@ public class ArrayCollectionConverter extends Converter<Object> {
 		AbstractSerializer<Model, Object, Object> serializer = null;
 		if (isModel) {
 			serializer = (AbstractSerializer<Model, Object, Object>) wrapper
-					.makeSerializer((Class<Model>) componentType);
+					.makeSerializer((Class<Model>) genericType1);
 		}
-		Converter<V> converter = ConverterRegistry.getConverter(componentType);
+		Converter<V> converter = ConverterRegistry.getConverter(genericType1);
 		for (int i = 0; i < wrapper.size(); i++) {
 			Object item = wrapper.get(i);
 			if (isModel) {
 				item = serializer.deserialize(item);
 			} else {
-				item = wrapper.convert(item, converter, componentType);
+				item = wrapper.convert(item, converter, genericType1);
 			}
 			items.add(item);
 		}
 		if (isArr) {
 			Object[] arr = items.toArray();
 			if (isModel) {
-				Object modelArr = Array.newInstance(componentType, arr.length);
+				Object modelArr = Array.newInstance(genericType1, arr.length);
 				for (int i = 0; i < arr.length; i++) {
 					Array.set(modelArr, i, arr[i]);
 				}
@@ -145,7 +147,7 @@ public class ArrayCollectionConverter extends Converter<Object> {
 				for (int i = 0; i < arr.length; i++) {
 					arr2[i] = arr[i].toString();
 				}
-				return parseTypeArr(converter, componentType, arr2);
+				return parseTypeArr(converter, genericType1, arr2);
 			}
 		} else {
 			return items;
@@ -153,18 +155,18 @@ public class ArrayCollectionConverter extends Converter<Object> {
 	}
 
 	@Override
-	public <V> void putToContentValues(Class<Object> valueType, Class<V> componentType, ContentValues cv, String key,
-			Object val) throws Exception {
-		Converter<V> converter = ConverterRegistry.getConverter(componentType);
+	public <G1, G2> void putToContentValues(Class<Object> valueType, Class<G1> genericType1, Class<G2> genericType2,
+			ContentValues cv, String key, Object val) throws Exception {
+		Converter<G1> converter = ConverterRegistry.getConverter(genericType1);
 		if (converter.getDBColumnType() == BLOB) {
 			byte[] bytes = PersistUtils.toBytes(val);
 			cv.put(key, bytes);
 		} else {
-			ArrayList<V> list = arrOrCollToList(valueType, componentType, val);
+			ArrayList<G1> list = arrOrCollToList(valueType, genericType1, val);
 			ArrayList<Object> vals = new ArrayList<Object>();
 			ContentValues tmpCV = new ContentValues();
-			for (V obj : list) {
-				converter.putToContentValues(componentType, null, tmpCV, "key", obj);
+			for (G1 obj : list) {
+				converter.putToContentValues(genericType1, null, null, tmpCV, "key", obj);
 				vals.add(tmpCV.get("key"));
 			}
 			String strVal = Strings.join(vals, SEP);
@@ -173,9 +175,9 @@ public class ArrayCollectionConverter extends Converter<Object> {
 	}
 
 	@Override
-	public <V> Object readFromCursor(Class<Object> valType, Class<V> componentType, Cursor cursor, int columnIndex)
-			throws Exception {
-		Converter<V> converter = ConverterRegistry.getConverter(componentType);
+	public <G1, G2> Object readFromCursor(Class<Object> valType, Class<G1> genericType1, Class<G2> genericType2,
+			Cursor cursor, int columnIndex) throws Exception {
+		Converter<G1> converter = ConverterRegistry.getConverter(genericType1);
 		if (converter.getDBColumnType() == BLOB) {
 			byte[] arr = cursor.getBlob(columnIndex);
 			return (arr != null) ? PersistUtils.fromBytes(arr) : null;
@@ -183,15 +185,15 @@ public class ArrayCollectionConverter extends Converter<Object> {
 			String str = cursor.getString(columnIndex);
 			String[] parts = (str.length() > 0) ? str.split("\\" + SEP) : new String[0];
 			if (isArray(valType)) {
-				return parseTypeArr(converter, componentType, parts);
+				return parseTypeArr(converter, genericType1, parts);
 			} else {
-				return parseTypeColl(converter, valType, componentType, parts);
+				return parseTypeColl(converter, valType, genericType1, parts);
 			}
 		}
 	}
 
 	@SuppressWarnings("unchecked")
-	private <T> ArrayList<T> arrOrCollToList(Class<?> valType, Class<T> componentType, Object val) {
+	private <T> ArrayList<T> arrOrCollToList(Class<?> valType, Class<T> genericType1, Object val) {
 		ArrayList<T> list = new ArrayList<T>();
 		if (isArray(valType)) {
 			list.addAll((List<T>) Arrays.asList(Arrays2.toObjectArray(val)));
@@ -205,18 +207,18 @@ public class ArrayCollectionConverter extends Converter<Object> {
 	private final <T> Object parseTypeArr(Converter<T> converter, Class<T> valType, String[] arr) throws Exception {
 		Object objArr = Array.newInstance(valType, arr.length);
 		for (int i = 0; i < arr.length; i++) {
-			T item = converter.parseFromString(valType, null, arr[i]);
+			T item = converter.parseFromString(valType, null, null, arr[i]);
 			Array.set(objArr, i, item);
 		}
 		return objArr;
 	}
 
-	private final <T> Collection<T> parseTypeColl(Converter<T> converter, Class<Object> collType,
-			Class<T> componentType, String[] arr) throws Exception {
+	private final <T> Collection<T> parseTypeColl(Converter<T> converter, Class<Object> collType, Class<T> genericType1,
+			String[] arr) throws Exception {
 		@SuppressWarnings("unchecked")
 		Collection<T> coll = (Collection<T>) newInstance(collType);
 		for (int i = 0; i < arr.length; i++) {
-			T item = converter.parseFromString(componentType, null, arr[i]);
+			T item = converter.parseFromString(genericType1, null, null, arr[i]);
 			coll.add(item);
 		}
 		return coll;
@@ -251,15 +253,15 @@ public class ArrayCollectionConverter extends Converter<Object> {
 			} else {
 				Node n = (Node) item;
 				String txt = PersistUtils.getNodeText(n);
-				return conv.parseFromString(valType, null, txt);
+				return conv.parseFromString(valType, null, null, txt);
 			}
 		}
 
-		<M extends Model> AbstractSerializer<M, ?, ?> makeSerializer(Class<M> componentType) {
+		<M extends Model> AbstractSerializer<M, ?, ?> makeSerializer(Class<M> genericType) {
 			if (isJSON()) {
-				return new JSONSerializer<M>(componentType, null);
+				return new JSONSerializer<M>(genericType, null);
 			} else {
-				return new XMLSerializer<M>(componentType, null);
+				return new XMLSerializer<M>(genericType, null);
 			}
 		}
 

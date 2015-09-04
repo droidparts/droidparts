@@ -20,13 +20,15 @@ import java.lang.reflect.Field;
 public class FieldSpec<AnnType extends Ann<?>> {
 
 	public final Field field;
-	public final Class<?> componentType;
+	public final Class<?> genericArg1;
+	public final Class<?> genericArg2;
 
 	public final AnnType ann;
 
-	public FieldSpec(Field field, Class<?> componentType, AnnType ann) {
+	public FieldSpec(Field field, Class<?> genericArg1, Class<?> genericArg2, AnnType ann) {
 		this.field = field;
-		this.componentType = componentType;
+		this.genericArg1 = genericArg1;
+		this.genericArg2 = genericArg2;
 		this.ann = ann;
 		field.setAccessible(true);
 	}

@@ -34,24 +34,26 @@ public class StringConverter extends Converter<String> {
 	}
 
 	@Override
-	public <V> String readFromJSON(Class<String> valType, Class<V> componentType, JSONObject obj, String key)
-			throws Exception {
+	public <G1, G2> String readFromJSON(Class<String> valType, Class<G1> genericType1, Class<G2> genericType2,
+			JSONObject obj, String key) throws Exception {
 		return obj.getString(key);
 	}
 
 	@Override
-	protected <V> String parseFromString(Class<String> valType, Class<V> componentType, String str) {
+	protected <G1, G2> String parseFromString(Class<String> valType, Class<G1> genericType1, Class<G2> genericType2,
+			String str) {
 		return str;
 	}
 
 	@Override
-	public <V> void putToContentValues(Class<String> valueType, Class<V> componentType, ContentValues cv, String key,
-			String val) {
+	public <G1, G2> void putToContentValues(Class<String> valueType, Class<G1> genericType1, Class<G2> genericType2,
+			ContentValues cv, String key, String val) {
 		cv.put(key, val);
 	}
 
 	@Override
-	public <V> String readFromCursor(Class<String> valType, Class<V> componentType, Cursor cursor, int columnIndex) {
+	public <G1, G2> String readFromCursor(Class<String> valType, Class<G1> genericType1, Class<G2> genericType2,
+			Cursor cursor, int columnIndex) {
 		return cursor.getString(columnIndex);
 	}
 

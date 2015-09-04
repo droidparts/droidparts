@@ -34,36 +34,36 @@ public class JSONObjectConverter extends Converter<JSONObject> {
 	}
 
 	@Override
-	public <V> void putToJSON(Class<JSONObject> valType, Class<V> componentType, JSONObject obj, String key,
-			JSONObject val) throws Exception {
+	public <G1, G2> void putToJSON(Class<JSONObject> valType, Class<G1> genericType1, Class<G2> genericType2,
+			JSONObject obj, String key, JSONObject val) throws Exception {
 		obj.put(key, val.toString());
 	}
 
 	@Override
-	public <V> JSONObject readFromJSON(Class<JSONObject> valType, Class<V> componentType, JSONObject obj, String key)
-			throws Exception {
+	public <G1, G2> JSONObject readFromJSON(Class<JSONObject> valType, Class<G1> genericType1,
+			Class<G2> genericType2, JSONObject obj, String key) throws Exception {
 		try {
 			return obj.getJSONObject(key);
 		} catch (Exception e) {
-			return parseFromString(valType, componentType, obj.getString(key));
+			return parseFromString(valType, genericType1, null, obj.getString(key));
 		}
 	}
 
 	@Override
-	protected <V> JSONObject parseFromString(Class<JSONObject> valType, Class<V> componentType, String str)
-			throws Exception {
+	protected <G1, G2> JSONObject parseFromString(Class<JSONObject> valType, Class<G1> genericType1,
+			Class<G2> genericType2, String str) throws Exception {
 		return new JSONObject(str);
 	}
 
 	@Override
-	public <V> void putToContentValues(Class<JSONObject> valueType, Class<V> componentType, ContentValues cv,
-			String key, JSONObject val) {
+	public <G1, G2> void putToContentValues(Class<JSONObject> valueType, Class<G1> genericType1,
+			Class<G2> genericType2, ContentValues cv, String key, JSONObject val) {
 		cv.put(key, val.toString());
 	}
 
 	@Override
-	public <V> JSONObject readFromCursor(Class<JSONObject> valType, Class<V> componentType, Cursor cursor,
-			int columnIndex) throws Exception {
+	public <G1, G2> JSONObject readFromCursor(Class<JSONObject> valType, Class<G1> genericType1,
+			Class<G2> genericType2, Cursor cursor, int columnIndex) throws Exception {
 		return new JSONObject(cursor.getString(columnIndex));
 	}
 

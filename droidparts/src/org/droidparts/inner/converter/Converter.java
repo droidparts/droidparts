@@ -29,25 +29,26 @@ public abstract class Converter<T> implements SQL.DDL {
 
 	public abstract String getDBColumnType();
 
-	protected abstract <V> T parseFromString(Class<T> valType, Class<V> componentType, String str) throws Exception;
+	protected abstract <G1, G2> T parseFromString(Class<T> valType, Class<G1> genericType1, Class<G2> genericType2,
+			String str) throws Exception;
 
-	public <V> void putToJSON(Class<T> valType, Class<V> componentType, JSONObject obj, String key, T val)
-			throws Exception {
+	public <G1, G2> void putToJSON(Class<T> valType, Class<G1> genericType1, Class<G2> genericType2, JSONObject obj,
+			String key, T val) throws Exception {
 		obj.put(key, val);
 	}
 
-	public abstract <V> T readFromJSON(Class<T> valType, Class<V> componentType, JSONObject obj, String key)
-			throws Exception;
+	public abstract <G1, G2> T readFromJSON(Class<T> valType, Class<G1> genericType1, Class<G2> genericType2,
+			JSONObject obj, String key) throws Exception;
 
-	public <V> T readFromXML(Class<T> valType, Class<V> componentType, Node node, String nodeListItemTagHint)
-			throws Exception {
-		return parseFromString(valType, componentType, PersistUtils.getNodeText(node));
+	public <G1, G2> T readFromXML(Class<T> valType, Class<G1> genericType1, Class<G2> genericType2, Node node,
+			String nodeListItemTagHint) throws Exception {
+		return parseFromString(valType, genericType1, null, PersistUtils.getNodeText(node));
 	}
 
-	public abstract <V> void putToContentValues(Class<T> valueType, Class<V> componentType, ContentValues cv,
-			String key, T val) throws Exception;
+	public abstract <G1, G2> void putToContentValues(Class<T> valueType, Class<G1> genericType1,
+			Class<G2> genericType2, ContentValues cv, String key, T val) throws Exception;
 
-	public abstract <V> T readFromCursor(Class<T> valType, Class<V> componentType, Cursor cursor, int columnIndex)
-			throws Exception;
+	public abstract <G1, G2> T readFromCursor(Class<T> valType, Class<G1> genericType1, Class<G2> genericType2,
+			Cursor cursor, int columnIndex) throws Exception;
 
 }

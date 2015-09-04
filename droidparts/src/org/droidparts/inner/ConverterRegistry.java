@@ -34,6 +34,7 @@ import org.droidparts.inner.converter.IntegerConverter;
 import org.droidparts.inner.converter.JSONArrayConverter;
 import org.droidparts.inner.converter.JSONObjectConverter;
 import org.droidparts.inner.converter.LongConverter;
+import org.droidparts.inner.converter.MapConverter;
 import org.droidparts.inner.converter.ModelConverter;
 import org.droidparts.inner.converter.ShortConverter;
 import org.droidparts.inner.converter.StringConverter;
@@ -67,6 +68,7 @@ public class ConverterRegistry {
 		registerConverter(new ModelConverter());
 		registerConverter(new EntityConverter());
 		registerConverter(new ArrayCollectionConverter());
+		registerConverter(new MapConverter());
 	}
 
 	public static void registerConverter(Converter<?> converter) {

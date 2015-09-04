@@ -34,24 +34,26 @@ public class LongConverter extends Converter<Long> {
 	}
 
 	@Override
-	public <V> Long readFromJSON(Class<Long> valType, Class<V> componentType, JSONObject obj, String key)
-			throws Exception {
+	public <G1, G2> Long readFromJSON(Class<Long> valType, Class<G1> genericType1, Class<G2> genericType2,
+			JSONObject obj, String key) throws Exception {
 		return obj.getLong(key);
 	}
 
 	@Override
-	protected <V> Long parseFromString(Class<Long> valType, Class<V> componentType, String str) {
+	protected <G1, G2> Long parseFromString(Class<Long> valType, Class<G1> genericType1, Class<G2> genericType2,
+			String str) {
 		return Long.valueOf(str);
 	}
 
 	@Override
-	public <V> void putToContentValues(Class<Long> valueType, Class<V> componentType, ContentValues cv, String key,
-			Long val) {
+	public <G1, G2> void putToContentValues(Class<Long> valueType, Class<G1> genericType1, Class<G2> genericType2,
+			ContentValues cv, String key, Long val) {
 		cv.put(key, val);
 	}
 
 	@Override
-	public <V> Long readFromCursor(Class<Long> valType, Class<V> componentType, Cursor cursor, int columnIndex) {
+	public <G1, G2> Long readFromCursor(Class<Long> valType, Class<G1> genericType1, Class<G2> genericType2,
+			Cursor cursor, int columnIndex) {
 		return cursor.getLong(columnIndex);
 	}
 

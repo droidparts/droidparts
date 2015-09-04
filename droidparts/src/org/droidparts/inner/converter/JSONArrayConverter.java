@@ -35,36 +35,36 @@ public class JSONArrayConverter extends Converter<JSONArray> {
 	}
 
 	@Override
-	public <V> void putToJSON(Class<JSONArray> valType, Class<V> componentType, JSONObject obj, String key,
-			JSONArray val) throws Exception {
+	public <G1, G2> void putToJSON(Class<JSONArray> valType, Class<G1> genericType1, Class<G2> genericType2,
+			JSONObject obj, String key, JSONArray val) throws Exception {
 		obj.put(key, val.toString());
 	}
 
 	@Override
-	public <V> JSONArray readFromJSON(Class<JSONArray> valType, Class<V> componentType, JSONObject obj, String key)
-			throws Exception {
+	public <G1, G2> JSONArray readFromJSON(Class<JSONArray> valType, Class<G1> genericType1, Class<G2> genericType2,
+			JSONObject obj, String key) throws Exception {
 		try {
 			return obj.getJSONArray(key);
 		} catch (Exception e) {
-			return parseFromString(valType, componentType, obj.getString(key));
+			return parseFromString(valType, genericType1, null, obj.getString(key));
 		}
 	}
 
 	@Override
-	protected <V> JSONArray parseFromString(Class<JSONArray> valType, Class<V> componentType, String str)
-			throws Exception {
+	protected <G1, G2> JSONArray parseFromString(Class<JSONArray> valType, Class<G1> genericType1,
+			Class<G2> genericType2, String str) throws Exception {
 		return new JSONArray(str);
 	}
 
 	@Override
-	public <V> void putToContentValues(Class<JSONArray> valueType, Class<V> componentType, ContentValues cv, String key,
-			JSONArray val) {
+	public <G1, G2> void putToContentValues(Class<JSONArray> valueType, Class<G1> genericType1,
+			Class<G2> genericType2, ContentValues cv, String key, JSONArray val) {
 		cv.put(key, val.toString());
 	}
 
 	@Override
-	public <V> JSONArray readFromCursor(Class<JSONArray> valType, Class<V> componentType, Cursor cursor,
-			int columnIndex) throws Exception {
+	public <G1, G2> JSONArray readFromCursor(Class<JSONArray> valType, Class<G1> genericType1,
+			Class<G2> genericType2, Cursor cursor, int columnIndex) throws Exception {
 		return new JSONArray(cursor.getString(columnIndex));
 	}
 

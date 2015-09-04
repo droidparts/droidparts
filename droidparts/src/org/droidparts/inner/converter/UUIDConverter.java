@@ -36,30 +36,32 @@ public class UUIDConverter extends Converter<UUID> {
 	}
 
 	@Override
-	public <V> void putToJSON(Class<UUID> valType, Class<V> componentType, JSONObject obj, String key, UUID val)
-			throws Exception {
+	public <G1, G2> void putToJSON(Class<UUID> valType, Class<G1> genericType1, Class<G2> genericType2,
+			JSONObject obj, String key, UUID val) throws Exception {
 		obj.put(key, val.toString());
 	}
 
 	@Override
-	public <V> UUID readFromJSON(Class<UUID> valType, Class<V> componentType, JSONObject obj, String key)
-			throws Exception {
-		return parseFromString(valType, componentType, obj.getString(key));
+	public <G1, G2> UUID readFromJSON(Class<UUID> valType, Class<G1> genericType1, Class<G2> genericType2,
+			JSONObject obj, String key) throws Exception {
+		return parseFromString(valType, genericType1, null, obj.getString(key));
 	}
 
 	@Override
-	protected <V> UUID parseFromString(Class<UUID> valType, Class<V> componentType, String str) {
+	protected <G1, G2> UUID parseFromString(Class<UUID> valType, Class<G1> genericType1, Class<G2> genericType2,
+			String str) {
 		return UUID.fromString(str);
 	}
 
 	@Override
-	public <V> void putToContentValues(Class<UUID> valueType, Class<V> componentType, ContentValues cv, String key,
-			UUID val) {
+	public <G1, G2> void putToContentValues(Class<UUID> valueType, Class<G1> genericType1, Class<G2> genericType2,
+			ContentValues cv, String key, UUID val) {
 		cv.put(key, val.toString());
 	}
 
 	@Override
-	public <V> UUID readFromCursor(Class<UUID> valType, Class<V> componentType, Cursor cursor, int columnIndex) {
+	public <G1, G2> UUID readFromCursor(Class<UUID> valType, Class<G1> genericType1, Class<G2> genericType2,
+			Cursor cursor, int columnIndex) {
 		return UUID.fromString(cursor.getString(columnIndex));
 	}
 

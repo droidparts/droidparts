@@ -36,30 +36,32 @@ public class EnumConverter extends Converter<Enum<?>> {
 	}
 
 	@Override
-	public <V> void putToJSON(Class<Enum<?>> valType, Class<V> componentType, JSONObject obj, String key, Enum<?> val)
-			throws Exception {
+	public <G1, G2> void putToJSON(Class<Enum<?>> valType, Class<G1> genericType1, Class<G2> genericType2,
+			JSONObject obj, String key, Enum<?> val) throws Exception {
 		obj.put(key, val.toString());
 	}
 
 	@Override
-	public <V> Enum<?> readFromJSON(Class<Enum<?>> valType, Class<V> componentType, JSONObject obj, String key)
-			throws Exception {
-		return parseFromString(valType, componentType, obj.getString(key));
+	public <G1, G2> Enum<?> readFromJSON(Class<Enum<?>> valType, Class<G1> genericType1, Class<G2> genericType2,
+			JSONObject obj, String key) throws Exception {
+		return parseFromString(valType, genericType1, null, obj.getString(key));
 	}
 
 	@Override
-	protected <V> Enum<?> parseFromString(Class<Enum<?>> valType, Class<V> componentType, String str) {
+	protected <G1, G2> Enum<?> parseFromString(Class<Enum<?>> valType, Class<G1> genericType1,
+			Class<G2> genericType2, String str) {
 		return newEnum(valType, str);
 	}
 
 	@Override
-	public <V> void putToContentValues(Class<Enum<?>> valueType, Class<V> componentType, ContentValues cv, String key,
-			Enum<?> val) {
+	public <G1, G2> void putToContentValues(Class<Enum<?>> valueType, Class<G1> genericType1,
+			Class<G2> genericType2, ContentValues cv, String key, Enum<?> val) {
 		cv.put(key, val.toString());
 	}
 
 	@Override
-	public <V> Enum<?> readFromCursor(Class<Enum<?>> valType, Class<V> componentType, Cursor cursor, int columnIndex) {
+	public <G1, G2> Enum<?> readFromCursor(Class<Enum<?>> valType, Class<G1> genericType1, Class<G2> genericType2,
+			Cursor cursor, int columnIndex) {
 		return newEnum(valType, cursor.getString(columnIndex));
 	}
 

@@ -17,6 +17,7 @@ package org.droidparts.inner;
 
 import java.util.Collection;
 import java.util.Date;
+import java.util.Map;
 import java.util.UUID;
 
 import org.droidparts.model.Entity;
@@ -98,6 +99,10 @@ public final class TypeHelper {
 
 	public static boolean isCollection(Class<?> cls) {
 		return Collection.class.isAssignableFrom(cls);
+	}
+
+	public static boolean isMap(Class<?> cls) {
+		return Map.class.isAssignableFrom(cls);
 	}
 
 	//

@@ -36,34 +36,36 @@ public class DateConverter extends Converter<Date> {
 	}
 
 	@Override
-	public <V> void putToJSON(Class<Date> valType, Class<V> componentType, JSONObject obj, String key, Date val)
-			throws Exception {
+	public <G1, G2> void putToJSON(Class<Date> valType, Class<G1> genericType1, Class<G2> genericType2,
+			JSONObject obj, String key, Date val) throws Exception {
 		obj.put(key, val.getTime());
 	}
 
 	@Override
-	public <V> Date readFromJSON(Class<Date> valType, Class<V> componentType, JSONObject obj, String key)
-			throws Exception {
+	public <G1, G2> Date readFromJSON(Class<Date> valType, Class<G1> genericType1, Class<G2> genericType2,
+			JSONObject obj, String key) throws Exception {
 		try {
 			return new Date(obj.getLong(key));
 		} catch (Exception e) {
-			return parseFromString(valType, componentType, obj.getString(key));
+			return parseFromString(valType, genericType1, null, obj.getString(key));
 		}
 	}
 
 	@Override
-	protected <V> Date parseFromString(Class<Date> valType, Class<V> componentType, String str) {
+	protected <G1, G2> Date parseFromString(Class<Date> valType, Class<G1> genericType1, Class<G2> genericType2,
+			String str) {
 		return new Date(Long.valueOf(str));
 	}
 
 	@Override
-	public <V> void putToContentValues(Class<Date> valueType, Class<V> componentType, ContentValues cv, String key,
-			Date val) {
+	public <G1, G2> void putToContentValues(Class<Date> valueType, Class<G1> genericType1, Class<G2> genericType2,
+			ContentValues cv, String key, Date val) {
 		cv.put(key, val.getTime());
 	}
 
 	@Override
-	public <V> Date readFromCursor(Class<Date> valType, Class<V> componentType, Cursor cursor, int columnIndex) {
+	public <G1, G2> Date readFromCursor(Class<Date> valType, Class<G1> genericType1, Class<G2> genericType2,
+			Cursor cursor, int columnIndex) {
 		return new Date(cursor.getLong(columnIndex));
 	}
 

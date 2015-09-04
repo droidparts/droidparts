@@ -35,6 +35,7 @@ import static org.droidparts.inner.TypeHelper.isEntity;
 import static org.droidparts.inner.TypeHelper.isFloat;
 import static org.droidparts.inner.TypeHelper.isInteger;
 import static org.droidparts.inner.TypeHelper.isLong;
+import static org.droidparts.inner.TypeHelper.isMap;
 import static org.droidparts.inner.TypeHelper.isShort;
 import static org.droidparts.util.Strings.isEmpty;
 
@@ -57,6 +58,8 @@ import org.droidparts.model.Entity;
 import org.droidparts.model.Model;
 import org.droidparts.util.L;
 
+import android.util.Pair;
+
 public final class ClassSpecRegistry {
 
 	// Inject
@@ -69,7 +72,7 @@ public final class ClassSpecRegistry {
 			for (Field field : getFieldHierarchy(cls)) {
 				InjectAnn<?> ann = getInjectAnn(field);
 				if (ann != null) {
-					list.add(new FieldSpec<InjectAnn<?>>(field, null, ann));
+					list.add(new FieldSpec<InjectAnn<?>>(field, null, null, ann));
 				}
 			}
 			specs = list.toArray(new FieldSpec[list.size()]);
@@ -88,7 +91,7 @@ public final class ClassSpecRegistry {
 			for (Field field : getFieldHierarchy(cls)) {
 				SaveInstanceStateAnn ann = getSaveInstanceStateAnn(field);
 				if (ann != null) {
-					list.add(new FieldSpec<SaveInstanceStateAnn>(field, null, ann));
+					list.add(new FieldSpec<SaveInstanceStateAnn>(field, null, null, ann));
 				}
 			}
 			specs = list.toArray(new FieldSpec[list.size()]);
@@ -141,9 +144,9 @@ public final class ClassSpecRegistry {
 			for (Field field : getFieldHierarchy(cls)) {
 				ColumnAnn ann = getColumnAnn(field);
 				if (ann != null) {
-					Class<?> componentType = getComponentType(field);
+					Pair<Class<?>, Class<?>> genericArgs = getGenericArgs(field);
 					ann.name = getColumnName(ann, field);
-					list.add(new FieldSpec<ColumnAnn>(field, componentType, ann));
+					list.add(new FieldSpec<ColumnAnn>(field, genericArgs.first, genericArgs.second, ann));
 				}
 			}
 			sanitizeSpecs(list);
@@ -162,9 +165,9 @@ public final class ClassSpecRegistry {
 			for (Field field : getFieldHierarchy(cls)) {
 				JSONAnn ann = getJSONAnn(field);
 				if (ann != null) {
-					Class<?> componentType = getComponentType(field);
+					Pair<Class<?>, Class<?>> genericArgs = getGenericArgs(field);
 					ann.key = getName(ann.key, field);
-					list.add(new FieldSpec<JSONAnn>(field, componentType, ann));
+					list.add(new FieldSpec<JSONAnn>(field, genericArgs.first, genericArgs.second, ann));
 				}
 			}
 			specs = list.toArray(new FieldSpec[list.size()]);
@@ -182,9 +185,9 @@ public final class ClassSpecRegistry {
 			for (Field field : getFieldHierarchy(cls)) {
 				XMLAnn ann = getXMLAnn(field);
 				if (ann != null) {
-					Class<?> componentType = getComponentType(field);
+					Pair<Class<?>, Class<?>> genericArgs = getGenericArgs(field);
 					ann.tag = getName(ann.tag, field);
-					list.add(new FieldSpec<XMLAnn>(field, componentType, ann));
+					list.add(new FieldSpec<XMLAnn>(field, genericArgs.first, genericArgs.second, ann));
 				}
 			}
 			specs = list.toArray(new FieldSpec[list.size()]);
@@ -223,16 +226,18 @@ public final class ClassSpecRegistry {
 
 	// Utils
 
-	private static Class<?> getComponentType(Field field) {
-		Class<?> componentType = null;
+	private static Pair<Class<?>, Class<?>> getGenericArgs(Field field) {
+		Class<?> genericArg1 = null;
+		Class<?> genericArg2 = null;
 		Class<?> fieldType = field.getType();
 		if (isArray(fieldType)) {
-			componentType = getArrayComponentType(fieldType);
-		} else if (isCollection(fieldType)) {
+			genericArg1 = getArrayComponentType(fieldType);
+		} else if (isCollection(fieldType) || isMap(fieldType)) {
 			Class<?>[] genericArgs = getFieldGenericArgs(field);
-			componentType = (genericArgs.length > 0) ? genericArgs[0] : Object.class;
+			genericArg1 = (genericArgs.length > 0) ? genericArgs[0] : Object.class;
+			genericArg2 = (genericArgs.length > 1) ? genericArgs[1] : Object.class;
 		}
-		return componentType;
+		return new Pair<Class<?>, Class<?>>(genericArg1, genericArg2);
 	}
 
 	// JSON & XML
@@ -271,7 +276,7 @@ public final class ClassSpecRegistry {
 				}
 			} else if (spec.ann.eager) {
 				boolean entity = isEntity(fieldType)
-						|| ((isArray(fieldType) || isCollection(fieldType)) && isEntity(spec.componentType));
+						|| ((isArray(fieldType) || isCollection(fieldType)) && isEntity(spec.genericArg1));
 				if (!entity) {
 					L.w("%s can't be eager.", fieldType.getSimpleName());
 					spec.ann.eager = false;
