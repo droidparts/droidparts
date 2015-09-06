@@ -50,7 +50,7 @@ public class DialogFragment extends android.support.v4.app.DialogFragment {
 		}
 	}
 
-	public View onCreateView(Bundle savedInstanceState, LayoutInflater inflater, ViewGroup container) {
+	protected View onCreateView(Bundle savedInstanceState, LayoutInflater inflater, ViewGroup container) {
 		return super.onCreateView(inflater, container, savedInstanceState);
 	}
 
