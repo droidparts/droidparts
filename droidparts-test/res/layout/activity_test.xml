@@ -8,7 +8,12 @@
         android:id="@+id/view_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/test_string"
-        />
+        android:text="@string/test_string" />
+
+    <fragment
+        android:id="@+id/fragment"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        class="org.droidparts.test.activity.TestFragment" />
 
 </LinearLayout>

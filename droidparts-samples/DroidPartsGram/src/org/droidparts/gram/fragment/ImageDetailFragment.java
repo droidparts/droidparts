@@ -66,7 +66,7 @@ public class ImageDetailFragment extends DialogFragment implements ImageFetchLis
 	private TextView tagsView;
 
 	@Override
-	public View onCreateView(Bundle savedInstanceState, LayoutInflater inflater, ViewGroup container) {
+	protected View onCreateView(Bundle savedInstanceState, LayoutInflater inflater, ViewGroup container) {
 		return inflater.inflate(R.layout.dialog_image, null);
 	}
 

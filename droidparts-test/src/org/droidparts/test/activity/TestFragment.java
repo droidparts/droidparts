@@ -15,43 +15,27 @@
  */
 package org.droidparts.test.activity;
 
-import org.droidparts.activity.legacy.Activity;
-import org.droidparts.annotation.inject.InjectFragment;
-import org.droidparts.annotation.inject.InjectResource;
-import org.droidparts.annotation.inject.InjectView;
+import org.droidparts.annotation.inject.InjectBundleExtra;
 import org.droidparts.annotation.serialize.SaveInstanceState;
+import org.droidparts.fragment.Fragment;
 import org.droidparts.test.R;
 
 import android.os.Bundle;
-import android.widget.TextView;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 
-public class TestActivity extends Activity {
+public class TestFragment extends Fragment {
 
-	@InjectResource(R.string.test_string)
-	public String testString;
+	public static final String EXTRA_STR = "str";
 
-	@InjectView(id = R.id.view_text)
-	public TextView textView;
-
-	@InjectFragment(id = R.id.fragment)
-	public TestFragment testFragment;
-
+	@InjectBundleExtra(key = EXTRA_STR)
 	@SaveInstanceState
-	public String data;
+	public String str;
 
 	@Override
-	public void onPreInject() {
-		setContentView(R.layout.activity_test);
-	}
-
-	@Override
-	public void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-	}
-
-	@Override
-	public void onSaveInstanceState(Bundle outState) {
-		super.onSaveInstanceState(outState);
+	protected View onCreateView(Bundle savedInstanceState, LayoutInflater inflater, ViewGroup container) {
+		return inflater.inflate(R.layout.fragment_test, null);
 	}
 
 }

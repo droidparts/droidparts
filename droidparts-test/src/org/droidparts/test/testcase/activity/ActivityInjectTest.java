@@ -13,31 +13,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License. 
  */
-package org.droidparts.test.testcase;
+package org.droidparts.test.testcase.activity;
 
 import org.droidparts.Injector;
 import org.droidparts.persist.sql.AbstractDBOpenHelper;
 import org.droidparts.test.R;
 import org.droidparts.test.activity.TestActivity;
 
-import android.content.Context;
-import android.os.Bundle;
-import android.test.ActivityInstrumentationTestCase2;
-
-public class TestActivityTestCase extends ActivityInstrumentationTestCase2<TestActivity> {
-
-	public TestActivityTestCase() {
-		super(TestActivity.class);
-	}
+public class ActivityInjectTest extends TestActivityTest {
 
 	public void testInjection() throws Exception {
-		Context ctx = getInstrumentation().getTargetContext();
 		TestActivity activity = getActivity();
-		String testString = ctx.getString(R.string.test_string);
+		String testString = activity.getString(R.string.test_string);
 
 		assertEquals(testString, activity.testString);
 		assertNotNull(activity.textView);
 		assertEquals(testString, activity.textView.getText());
+
+		assertNotNull(activity.testFragment);
 	}
 
 	public void testInjection2() {
@@ -45,23 +38,6 @@ public class TestActivityTestCase extends ActivityInstrumentationTestCase2<TestA
 		AbstractDBOpenHelper dependency = Injector.getDependency(getActivity(), cls);
 		assertNotNull(dependency);
 		assertTrue(cls.isAssignableFrom(dependency.getClass()));
-	}
-
-	public void testSaveInstanceState() {
-		final TestActivity activity = getActivity();
-		final String data = "data";
-		final Bundle b = new Bundle();
-		activity.runOnUiThread(new Runnable() {
-
-			@Override
-			public void run() {
-				activity.data = data;
-				activity.onSaveInstanceState(b);
-				activity.data = null;
-				activity.onCreate(b);
-				assertEquals(data, activity.data);
-			}
-		});
 	}
 
 }
