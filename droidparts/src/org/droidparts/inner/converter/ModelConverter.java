@@ -57,8 +57,8 @@ public class ModelConverter extends Converter<Model> {
 	}
 
 	@Override
-	public <G1, G2> void putToJSON(Class<Model> valType, Class<G1> genericType1, Class<G2> genericType2,
-			JSONObject obj, String key, Model val) throws Exception {
+	public <G1, G2> void putToJSON(Class<Model> valType, Class<G1> genericType1, Class<G2> genericType2, JSONObject obj,
+			String key, Model val) throws Exception {
 		@SuppressWarnings("unchecked")
 		Class<Model> cls = (Class<Model>) val.getClass();
 		JSONObject valStr = new JSONSerializer<Model>(cls, null).serialize(val);
@@ -72,8 +72,8 @@ public class ModelConverter extends Converter<Model> {
 	}
 
 	@Override
-	public <G1, G2> Model readFromXML(Class<Model> valType, Class<G1> genericType1, Class<G2> genericType2,
-			Node node, String nodeListItemTagHint) throws Exception {
+	public <G1, G2> Model readFromXML(Class<Model> valType, Class<G1> genericType1, Class<G2> genericType2, Node node,
+			String nodeListItemTagHint) throws Exception {
 		return new XMLSerializer<Model>(valType, null).deserialize(node);
 	}
 

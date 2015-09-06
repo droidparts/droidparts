@@ -36,8 +36,8 @@ public class UUIDConverter extends Converter<UUID> {
 	}
 
 	@Override
-	public <G1, G2> void putToJSON(Class<UUID> valType, Class<G1> genericType1, Class<G2> genericType2,
-			JSONObject obj, String key, UUID val) throws Exception {
+	public <G1, G2> void putToJSON(Class<UUID> valType, Class<G1> genericType1, Class<G2> genericType2, JSONObject obj,
+			String key, UUID val) throws Exception {
 		obj.put(key, val.toString());
 	}
 

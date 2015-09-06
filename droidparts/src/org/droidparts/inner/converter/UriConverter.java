@@ -35,14 +35,14 @@ public class UriConverter extends Converter<Uri> {
 	}
 
 	@Override
-	public <G1, G2> void putToJSON(Class<Uri> valType, Class<G1> genericType1, Class<G2> genericType2,
-			JSONObject obj, String key, Uri val) throws Exception {
+	public <G1, G2> void putToJSON(Class<Uri> valType, Class<G1> genericType1, Class<G2> genericType2, JSONObject obj,
+			String key, Uri val) throws Exception {
 		obj.put(key, val.toString());
 	}
 
 	@Override
-	public <G1, G2> Uri readFromJSON(Class<Uri> valType, Class<G1> genericType1, Class<G2> genericType2,
-			JSONObject obj, String key) throws Exception {
+	public <G1, G2> Uri readFromJSON(Class<Uri> valType, Class<G1> genericType1, Class<G2> genericType2, JSONObject obj,
+			String key) throws Exception {
 		return parseFromString(valType, genericType1, null, obj.getString(key));
 	}
 

@@ -57,14 +57,14 @@ public class JSONArrayConverter extends Converter<JSONArray> {
 	}
 
 	@Override
-	public <G1, G2> void putToContentValues(Class<JSONArray> valueType, Class<G1> genericType1,
-			Class<G2> genericType2, ContentValues cv, String key, JSONArray val) {
+	public <G1, G2> void putToContentValues(Class<JSONArray> valueType, Class<G1> genericType1, Class<G2> genericType2,
+			ContentValues cv, String key, JSONArray val) {
 		cv.put(key, val.toString());
 	}
 
 	@Override
-	public <G1, G2> JSONArray readFromCursor(Class<JSONArray> valType, Class<G1> genericType1,
-			Class<G2> genericType2, Cursor cursor, int columnIndex) throws Exception {
+	public <G1, G2> JSONArray readFromCursor(Class<JSONArray> valType, Class<G1> genericType1, Class<G2> genericType2,
+			Cursor cursor, int columnIndex) throws Exception {
 		return new JSONArray(cursor.getString(columnIndex));
 	}
 

@@ -40,14 +40,14 @@ public class IntegerConverter extends Converter<Integer> {
 	}
 
 	@Override
-	protected <G1, G2> Integer parseFromString(Class<Integer> valType, Class<G1> genericType1,
-			Class<G2> genericType2, String str) {
+	protected <G1, G2> Integer parseFromString(Class<Integer> valType, Class<G1> genericType1, Class<G2> genericType2,
+			String str) {
 		return Integer.valueOf(str);
 	}
 
 	@Override
-	public <G1, G2> void putToContentValues(Class<Integer> valueType, Class<G1> genericType1,
-			Class<G2> genericType2, ContentValues cv, String key, Integer val) {
+	public <G1, G2> void putToContentValues(Class<Integer> valueType, Class<G1> genericType1, Class<G2> genericType2,
+			ContentValues cv, String key, Integer val) {
 		cv.put(key, val);
 	}
 

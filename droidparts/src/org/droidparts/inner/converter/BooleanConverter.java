@@ -45,8 +45,8 @@ public class BooleanConverter extends Converter<Boolean> {
 	}
 
 	@Override
-	protected <G1, G2> Boolean parseFromString(Class<Boolean> valType, Class<G1> genericType1,
-			Class<G2> genericType2, String str) {
+	protected <G1, G2> Boolean parseFromString(Class<Boolean> valType, Class<G1> genericType1, Class<G2> genericType2,
+			String str) {
 		if ("1".equals(str)) {
 			str = "true";
 		}
@@ -54,8 +54,8 @@ public class BooleanConverter extends Converter<Boolean> {
 	}
 
 	@Override
-	public <G1, G2> void putToContentValues(Class<Boolean> valueType, Class<G1> genericType1,
-			Class<G2> genericType2, ContentValues cv, String key, Boolean val) {
+	public <G1, G2> void putToContentValues(Class<Boolean> valueType, Class<G1> genericType1, Class<G2> genericType2,
+			ContentValues cv, String key, Boolean val) {
 		cv.put(key, val);
 	}
 

@@ -48,14 +48,14 @@ public class EnumConverter extends Converter<Enum<?>> {
 	}
 
 	@Override
-	protected <G1, G2> Enum<?> parseFromString(Class<Enum<?>> valType, Class<G1> genericType1,
-			Class<G2> genericType2, String str) {
+	protected <G1, G2> Enum<?> parseFromString(Class<Enum<?>> valType, Class<G1> genericType1, Class<G2> genericType2,
+			String str) {
 		return newEnum(valType, str);
 	}
 
 	@Override
-	public <G1, G2> void putToContentValues(Class<Enum<?>> valueType, Class<G1> genericType1,
-			Class<G2> genericType2, ContentValues cv, String key, Enum<?> val) {
+	public <G1, G2> void putToContentValues(Class<Enum<?>> valueType, Class<G1> genericType1, Class<G2> genericType2,
+			ContentValues cv, String key, Enum<?> val) {
 		cv.put(key, val.toString());
 	}
 

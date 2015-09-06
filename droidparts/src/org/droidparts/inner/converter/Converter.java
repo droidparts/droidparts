@@ -45,8 +45,8 @@ public abstract class Converter<T> implements SQL.DDL {
 		return parseFromString(valType, genericType1, null, PersistUtils.getNodeText(node));
 	}
 
-	public abstract <G1, G2> void putToContentValues(Class<T> valueType, Class<G1> genericType1,
-			Class<G2> genericType2, ContentValues cv, String key, T val) throws Exception;
+	public abstract <G1, G2> void putToContentValues(Class<T> valueType, Class<G1> genericType1, Class<G2> genericType2,
+			ContentValues cv, String key, T val) throws Exception;
 
 	public abstract <G1, G2> T readFromCursor(Class<T> valType, Class<G1> genericType1, Class<G2> genericType2,
 			Cursor cursor, int columnIndex) throws Exception;

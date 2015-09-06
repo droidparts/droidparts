@@ -40,8 +40,8 @@ public class JSONObjectConverter extends Converter<JSONObject> {
 	}
 
 	@Override
-	public <G1, G2> JSONObject readFromJSON(Class<JSONObject> valType, Class<G1> genericType1,
-			Class<G2> genericType2, JSONObject obj, String key) throws Exception {
+	public <G1, G2> JSONObject readFromJSON(Class<JSONObject> valType, Class<G1> genericType1, Class<G2> genericType2,
+			JSONObject obj, String key) throws Exception {
 		try {
 			return obj.getJSONObject(key);
 		} catch (Exception e) {
@@ -56,14 +56,14 @@ public class JSONObjectConverter extends Converter<JSONObject> {
 	}
 
 	@Override
-	public <G1, G2> void putToContentValues(Class<JSONObject> valueType, Class<G1> genericType1,
-			Class<G2> genericType2, ContentValues cv, String key, JSONObject val) {
+	public <G1, G2> void putToContentValues(Class<JSONObject> valueType, Class<G1> genericType1, Class<G2> genericType2,
+			ContentValues cv, String key, JSONObject val) {
 		cv.put(key, val.toString());
 	}
 
 	@Override
-	public <G1, G2> JSONObject readFromCursor(Class<JSONObject> valType, Class<G1> genericType1,
-			Class<G2> genericType2, Cursor cursor, int columnIndex) throws Exception {
+	public <G1, G2> JSONObject readFromCursor(Class<JSONObject> valType, Class<G1> genericType1, Class<G2> genericType2,
+			Cursor cursor, int columnIndex) throws Exception {
 		return new JSONObject(cursor.getString(columnIndex));
 	}
 

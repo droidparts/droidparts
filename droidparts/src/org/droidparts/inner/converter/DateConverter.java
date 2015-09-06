@@ -36,8 +36,8 @@ public class DateConverter extends Converter<Date> {
 	}
 
 	@Override
-	public <G1, G2> void putToJSON(Class<Date> valType, Class<G1> genericType1, Class<G2> genericType2,
-			JSONObject obj, String key, Date val) throws Exception {
+	public <G1, G2> void putToJSON(Class<Date> valType, Class<G1> genericType1, Class<G2> genericType2, JSONObject obj,
+			String key, Date val) throws Exception {
 		obj.put(key, val.getTime());
 	}
 

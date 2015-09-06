@@ -233,8 +233,8 @@ public final class PersistUtils implements SQL.DDL {
 			//
 			if (defaultVal != null) {
 				ContentValues cv = new ContentValues();
-				converter.putToContentValues((Class<T>) spec.field.getType(), spec.genericArg1, null, cv,
-						DEFAULT, (T) defaultVal);
+				converter.putToContentValues((Class<T>) spec.field.getType(), spec.genericArg1, null, cv, DEFAULT,
+						(T) defaultVal);
 				defaultVal = cv.get(DEFAULT);
 			}
 			//

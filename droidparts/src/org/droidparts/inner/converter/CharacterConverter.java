@@ -46,14 +46,14 @@ public class CharacterConverter extends Converter<Character> {
 	}
 
 	@Override
-	public <G1, G2> void putToContentValues(Class<Character> valueType, Class<G1> genericType1,
-			Class<G2> genericType2, ContentValues cv, String key, Character val) {
+	public <G1, G2> void putToContentValues(Class<Character> valueType, Class<G1> genericType1, Class<G2> genericType2,
+			ContentValues cv, String key, Character val) {
 		cv.put(key, String.valueOf(val));
 	}
 
 	@Override
-	public <G1, G2> Character readFromCursor(Class<Character> valType, Class<G1> genericType1,
-			Class<G2> genericType2, Cursor cursor, int columnIndex) {
+	public <G1, G2> Character readFromCursor(Class<Character> valType, Class<G1> genericType1, Class<G2> genericType2,
+			Cursor cursor, int columnIndex) {
 		return parseFromString(valType, null, null, cursor.getString(columnIndex));
 	}
 
