@@ -70,7 +70,8 @@ public class EntityManager<EntityType extends Entity> extends AbstractEntityMana
 			int colIdx = cursor.getColumnIndex(spec.ann.name);
 			if (colIdx >= 0) {
 				try {
-					Object columnVal = readFromCursor(cursor, colIdx, spec.field.getType(), spec.genericArg1);
+					Object columnVal = readFromCursor(cursor, colIdx, spec.field.getType(), spec.genericArg1,
+							spec.genericArg2);
 					if (columnVal != null || spec.ann.nullable) {
 						setFieldVal(entity, spec.field, columnVal);
 					}
@@ -145,7 +146,7 @@ public class EntityManager<EntityType extends Entity> extends AbstractEntityMana
 		for (FieldSpec<ColumnAnn> spec : columnSpecs) {
 			Object val = getFieldVal(item, spec.field);
 			try {
-				putToContentValues(cv, spec.ann.name, spec.field.getType(), spec.genericArg1, val);
+				putToContentValues(cv, spec.ann.name, spec.field.getType(), spec.genericArg1, spec.genericArg2, val);
 			} catch (Exception e) {
 				throw new RuntimeException(e);
 			}
@@ -217,23 +218,23 @@ public class EntityManager<EntityType extends Entity> extends AbstractEntityMana
 	private String[] eagerForeignKeyColumnNames;
 
 	@SuppressWarnings("unchecked")
-	protected <T, G> void putToContentValues(ContentValues cv, String key, Class<T> valueType, Class<G> genericArg,
-			Object value) throws Exception {
+	protected <T, G1, G2> void putToContentValues(ContentValues cv, String key, Class<T> valueType,
+			Class<G1> genericArg1, Class<G2> genericArg2, Object value) throws Exception {
 		if (value == null) {
 			cv.putNull(key);
 		} else {
 			Converter<T> converter = ConverterRegistry.getConverter(valueType);
-			converter.putToContentValues(valueType, genericArg, null, cv, key, (T) value);
+			converter.putToContentValues(valueType, genericArg1, genericArg2, cv, key, (T) value);
 		}
 	}
 
-	protected <T, G> Object readFromCursor(Cursor cursor, int columnIndex, Class<T> valType, Class<G> genericArg)
-			throws Exception {
+	protected <T, G1, G2> Object readFromCursor(Cursor cursor, int columnIndex, Class<T> valType, Class<G1> genericArg1,
+			Class<G2> genericArg2) throws Exception {
 		if (cursor.isNull(columnIndex)) {
 			return null;
 		} else {
 			Converter<T> converter = ConverterRegistry.getConverter(valType);
-			return converter.readFromCursor(valType, genericArg, null, cursor, columnIndex);
+			return converter.readFromCursor(valType, genericArg1, genericArg2, cursor, columnIndex);
 		}
 	}
 
