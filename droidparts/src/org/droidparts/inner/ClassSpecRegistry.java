@@ -121,7 +121,7 @@ public final class ClassSpecRegistry {
 		if (name == null) {
 			TableAnn ann = getTableAnn(cls);
 			if (ann != null) {
-				name = ((TableAnn) ann).name;
+				name = ann.name;
 			}
 			if (isEmpty(name)) {
 				name = cls.getSimpleName();

@@ -20,7 +20,7 @@ import org.droidparts.inner.fragments.SecretFragmentsSupportUtil;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 
-public abstract class SingleFragmentActionBarActivity<F extends Fragment> extends ActionBarActivity {
+public abstract class SingleFragmentAppCompatActivity<F extends Fragment> extends AppCompatActivity {
 
 	private F fragment;
 
