@@ -23,8 +23,6 @@ import static org.droidparts.inner.AnnBuilder.getSaveInstanceStateAnn;
 import static org.droidparts.inner.AnnBuilder.getTableAnn;
 import static org.droidparts.inner.AnnBuilder.getXMLAnn;
 import static org.droidparts.inner.ReflectionUtils.buildClassHierarchy;
-import static org.droidparts.inner.ReflectionUtils.getArrayComponentType;
-import static org.droidparts.inner.ReflectionUtils.getFieldGenericArgs;
 import static org.droidparts.inner.TypeHelper.isArray;
 import static org.droidparts.inner.TypeHelper.isBoolean;
 import static org.droidparts.inner.TypeHelper.isByte;
@@ -35,7 +33,6 @@ import static org.droidparts.inner.TypeHelper.isEntity;
 import static org.droidparts.inner.TypeHelper.isFloat;
 import static org.droidparts.inner.TypeHelper.isInteger;
 import static org.droidparts.inner.TypeHelper.isLong;
-import static org.droidparts.inner.TypeHelper.isMap;
 import static org.droidparts.inner.TypeHelper.isShort;
 import static org.droidparts.util.Strings.isEmpty;
 
@@ -58,8 +55,6 @@ import org.droidparts.model.Entity;
 import org.droidparts.model.Model;
 import org.droidparts.util.L;
 
-import android.util.Pair;
-
 public final class ClassSpecRegistry {
 
 	// Inject
@@ -72,7 +67,7 @@ public final class ClassSpecRegistry {
 			for (Field field : getFieldHierarchy(cls)) {
 				InjectAnn<?> ann = getInjectAnn(field);
 				if (ann != null) {
-					list.add(new FieldSpec<InjectAnn<?>>(field, null, null, ann));
+					list.add(new FieldSpec<InjectAnn<?>>(field, ann));
 				}
 			}
 			specs = list.toArray(new FieldSpec[list.size()]);
@@ -91,7 +86,7 @@ public final class ClassSpecRegistry {
 			for (Field field : getFieldHierarchy(cls)) {
 				SaveInstanceStateAnn ann = getSaveInstanceStateAnn(field);
 				if (ann != null) {
-					list.add(new FieldSpec<SaveInstanceStateAnn>(field, null, null, ann));
+					list.add(new FieldSpec<SaveInstanceStateAnn>(field, ann));
 				}
 			}
 			specs = list.toArray(new FieldSpec[list.size()]);
@@ -144,9 +139,8 @@ public final class ClassSpecRegistry {
 			for (Field field : getFieldHierarchy(cls)) {
 				ColumnAnn ann = getColumnAnn(field);
 				if (ann != null) {
-					Pair<Class<?>, Class<?>> genericArgs = getGenericArgs(field);
 					ann.name = getColumnName(ann, field);
-					list.add(new FieldSpec<ColumnAnn>(field, genericArgs.first, genericArgs.second, ann));
+					list.add(new FieldSpec<ColumnAnn>(field, ann));
 				}
 			}
 			sanitizeSpecs(list);
@@ -165,9 +159,8 @@ public final class ClassSpecRegistry {
 			for (Field field : getFieldHierarchy(cls)) {
 				JSONAnn ann = getJSONAnn(field);
 				if (ann != null) {
-					Pair<Class<?>, Class<?>> genericArgs = getGenericArgs(field);
 					ann.key = getName(ann.key, field);
-					list.add(new FieldSpec<JSONAnn>(field, genericArgs.first, genericArgs.second, ann));
+					list.add(new FieldSpec<JSONAnn>(field, ann));
 				}
 			}
 			specs = list.toArray(new FieldSpec[list.size()]);
@@ -185,31 +178,14 @@ public final class ClassSpecRegistry {
 			for (Field field : getFieldHierarchy(cls)) {
 				XMLAnn ann = getXMLAnn(field);
 				if (ann != null) {
-					Pair<Class<?>, Class<?>> genericArgs = getGenericArgs(field);
 					ann.tag = getName(ann.tag, field);
-					list.add(new FieldSpec<XMLAnn>(field, genericArgs.first, genericArgs.second, ann));
+					list.add(new FieldSpec<XMLAnn>(field, ann));
 				}
 			}
 			specs = list.toArray(new FieldSpec[list.size()]);
 			XML_SPECS.put(cls, specs);
 		}
 		return specs;
-	}
-
-	private static ArrayList<Field> getFieldHierarchy(Class<?> cls) {
-		ArrayList<Field> list = new ArrayList<Field>();
-		for (Class<?> cl : buildClassHierarchy(cls)) {
-			list.addAll(Arrays.asList(cl.getDeclaredFields()));
-		}
-		return list;
-	}
-
-	private static ArrayList<Method> getMethodHierarchy(Class<?> cls) {
-		ArrayList<Method> list = new ArrayList<Method>();
-		for (Class<?> cl : buildClassHierarchy(cls)) {
-			list.addAll(Arrays.asList(cl.getDeclaredMethods()));
-		}
-		return list;
 	}
 
 	// caches
@@ -226,18 +202,20 @@ public final class ClassSpecRegistry {
 
 	// Utils
 
-	private static Pair<Class<?>, Class<?>> getGenericArgs(Field field) {
-		Class<?> genericArg1 = null;
-		Class<?> genericArg2 = null;
-		Class<?> fieldType = field.getType();
-		if (isArray(fieldType)) {
-			genericArg1 = getArrayComponentType(fieldType);
-		} else if (isCollection(fieldType) || isMap(fieldType)) {
-			Class<?>[] genericArgs = getFieldGenericArgs(field);
-			genericArg1 = (genericArgs.length > 0) ? genericArgs[0] : Object.class;
-			genericArg2 = (genericArgs.length > 1) ? genericArgs[1] : Object.class;
+	private static ArrayList<Field> getFieldHierarchy(Class<?> cls) {
+		ArrayList<Field> list = new ArrayList<Field>();
+		for (Class<?> cl : buildClassHierarchy(cls)) {
+			list.addAll(Arrays.asList(cl.getDeclaredFields()));
 		}
-		return new Pair<Class<?>, Class<?>>(genericArg1, genericArg2);
+		return list;
+	}
+
+	private static ArrayList<Method> getMethodHierarchy(Class<?> cls) {
+		ArrayList<Method> list = new ArrayList<Method>();
+		for (Class<?> cl : buildClassHierarchy(cls)) {
+			list.addAll(Arrays.asList(cl.getDeclaredMethods()));
+		}
+		return list;
 	}
 
 	// JSON & XML

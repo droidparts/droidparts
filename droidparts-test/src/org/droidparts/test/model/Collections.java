@@ -34,6 +34,6 @@ public class Collections extends Model {
 	public Album[] albumsArr;
 
 	@JSON(key = "map")
-	public HashMap<String, String> map;
+	public HashMap<Integer, String> map;
 
 }

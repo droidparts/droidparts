@@ -15,7 +15,15 @@
  */
 package org.droidparts.inner.ann;
 
+import static org.droidparts.inner.ReflectionUtils.getArrayComponentType;
+import static org.droidparts.inner.ReflectionUtils.getFieldGenericArgs;
+import static org.droidparts.inner.TypeHelper.isArray;
+import static org.droidparts.inner.TypeHelper.isCollection;
+import static org.droidparts.inner.TypeHelper.isMap;
+
 import java.lang.reflect.Field;
+
+import android.util.Pair;
 
 public class FieldSpec<AnnType extends Ann<?>> {
 
@@ -25,12 +33,27 @@ public class FieldSpec<AnnType extends Ann<?>> {
 
 	public final AnnType ann;
 
-	public FieldSpec(Field field, Class<?> genericArg1, Class<?> genericArg2, AnnType ann) {
+	public FieldSpec(Field field, AnnType ann) {
 		this.field = field;
-		this.genericArg1 = genericArg1;
-		this.genericArg2 = genericArg2;
 		this.ann = ann;
 		field.setAccessible(true);
+		Pair<Class<?>, Class<?>> genericArgs = getGenericArgs(field);
+		this.genericArg1 = genericArgs.first;
+		this.genericArg2 = genericArgs.second;
+	}
+
+	private static Pair<Class<?>, Class<?>> getGenericArgs(Field field) {
+		Class<?> genericArg1 = null;
+		Class<?> genericArg2 = null;
+		Class<?> fieldType = field.getType();
+		if (isArray(fieldType)) {
+			genericArg1 = getArrayComponentType(fieldType);
+		} else if (isCollection(fieldType) || isMap(fieldType)) {
+			Class<?>[] genericArgs = getFieldGenericArgs(field);
+			genericArg1 = (genericArgs.length > 0) ? genericArgs[0] : Object.class;
+			genericArg2 = (genericArgs.length > 1) ? genericArgs[1] : Object.class;
+		}
+		return new Pair<Class<?>, Class<?>>(genericArg1, genericArg2);
 	}
 
 }

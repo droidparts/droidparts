@@ -82,7 +82,8 @@ public class JSONTestCase extends AndroidTestCase {
 		assertEquals(2, coll.albumsColl.size());
 		//
 		assertEquals(2, coll.map.size());
-		assertTrue(coll.map.containsKey("name"));
+		assertTrue(coll.map.containsKey(2009));
+		assertEquals("Iris", coll.map.get(2009));
 		//
 		JSONObject obj = ser.serialize(coll);
 		assertTrue(obj.has("map"));
