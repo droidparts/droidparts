@@ -36,8 +36,8 @@ public class EnumConverter extends Converter<Enum<?>> {
 	}
 
 	@Override
-	public <G1, G2> void putToJSON(Class<Enum<?>> valType, Class<G1> genericArg1, Class<G2> genericArg2,
-			JSONObject obj, String key, Enum<?> val) throws Exception {
+	public <G1, G2> void putToJSON(Class<Enum<?>> valType, Class<G1> genericArg1, Class<G2> genericArg2, JSONObject obj,
+			String key, Enum<?> val) throws Exception {
 		obj.put(key, val.toString());
 	}
 

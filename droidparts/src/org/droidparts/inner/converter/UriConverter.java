@@ -53,8 +53,8 @@ public class UriConverter extends Converter<Uri> {
 	}
 
 	@Override
-	public <G1, G2> Uri readFromCursor(Class<Uri> valType, Class<G1> genericArg1, Class<G2> genericArg2,
-			Cursor cursor, int columnIndex) {
+	public <G1, G2> Uri readFromCursor(Class<Uri> valType, Class<G1> genericArg1, Class<G2> genericArg2, Cursor cursor,
+			int columnIndex) {
 		return Uri.parse(cursor.getString(columnIndex));
 	}
 

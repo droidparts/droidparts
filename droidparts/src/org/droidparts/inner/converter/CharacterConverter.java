@@ -33,8 +33,8 @@ public class CharacterConverter extends Converter<Character> {
 	}
 
 	@Override
-	protected <G1, G2> Character parseFromString(Class<Character> valType, Class<G1> genericArg1,
-			Class<G2> genericArg2, String str) {
+	protected <G1, G2> Character parseFromString(Class<Character> valType, Class<G1> genericArg1, Class<G2> genericArg2,
+			String str) {
 		return Character.valueOf((str.length() == 0) ? ' ' : str.charAt(0));
 	}
 

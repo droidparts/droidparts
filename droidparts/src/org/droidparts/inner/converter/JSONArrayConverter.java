@@ -51,8 +51,8 @@ public class JSONArrayConverter extends Converter<JSONArray> {
 	}
 
 	@Override
-	protected <G1, G2> JSONArray parseFromString(Class<JSONArray> valType, Class<G1> genericArg1,
-			Class<G2> genericArg2, String str) throws Exception {
+	protected <G1, G2> JSONArray parseFromString(Class<JSONArray> valType, Class<G1> genericArg1, Class<G2> genericArg2,
+			String str) throws Exception {
 		return new JSONArray(str);
 	}
 
