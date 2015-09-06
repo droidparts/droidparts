@@ -42,12 +42,6 @@ public class UUIDConverter extends Converter<UUID> {
 	}
 
 	@Override
-	public <G1, G2> UUID readFromJSON(Class<UUID> valType, Class<G1> genericType1, Class<G2> genericType2,
-			JSONObject obj, String key) throws Exception {
-		return parseFromString(valType, genericType1, null, obj.getString(key));
-	}
-
-	@Override
 	protected <G1, G2> UUID parseFromString(Class<UUID> valType, Class<G1> genericType1, Class<G2> genericType2,
 			String str) {
 		return UUID.fromString(str);

@@ -16,7 +16,6 @@
 package org.droidparts.inner.converter;
 
 import org.droidparts.inner.TypeHelper;
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.content.ContentValues;
@@ -39,8 +38,8 @@ public class BooleanConverter extends Converter<Boolean> {
 			JSONObject obj, String key) throws Exception {
 		try {
 			return obj.getBoolean(key);
-		} catch (JSONException e) {
-			return parseFromString(valType, genericType1, null, obj.getString(key));
+		} catch (Exception e) {
+			return parseFromString(valType, genericType1, genericType2, obj.getString(key));
 		}
 	}
 

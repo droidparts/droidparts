@@ -41,12 +41,6 @@ public class UriConverter extends Converter<Uri> {
 	}
 
 	@Override
-	public <G1, G2> Uri readFromJSON(Class<Uri> valType, Class<G1> genericType1, Class<G2> genericType2, JSONObject obj,
-			String key) throws Exception {
-		return parseFromString(valType, genericType1, null, obj.getString(key));
-	}
-
-	@Override
 	protected <G1, G2> Uri parseFromString(Class<Uri> valType, Class<G1> genericType1, Class<G2> genericType2,
 			String str) {
 		return Uri.parse(str);

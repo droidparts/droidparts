@@ -16,7 +16,6 @@
 package org.droidparts.inner.converter;
 
 import org.droidparts.inner.TypeHelper;
-import org.json.JSONObject;
 
 import android.content.ContentValues;
 import android.database.Cursor;
@@ -31,12 +30,6 @@ public class StringConverter extends Converter<String> {
 	@Override
 	public String getDBColumnType() {
 		return TEXT;
-	}
-
-	@Override
-	public <G1, G2> String readFromJSON(Class<String> valType, Class<G1> genericType1, Class<G2> genericType2,
-			JSONObject obj, String key) throws Exception {
-		return obj.getString(key);
 	}
 
 	@Override

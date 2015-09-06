@@ -36,7 +36,11 @@ public class FloatConverter extends Converter<Float> {
 	@Override
 	public <G1, G2> Float readFromJSON(Class<Float> valType, Class<G1> genericType1, Class<G2> genericType2,
 			JSONObject obj, String key) throws Exception {
-		return (float) obj.getDouble(key);
+		try {
+			return (float) obj.getDouble(key);
+		} catch (Exception e) {
+			return parseFromString(valType, genericType1, genericType2, obj.getString(key));
+		}
 	}
 
 	@Override

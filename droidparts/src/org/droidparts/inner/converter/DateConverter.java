@@ -47,7 +47,7 @@ public class DateConverter extends Converter<Date> {
 		try {
 			return new Date(obj.getLong(key));
 		} catch (Exception e) {
-			return parseFromString(valType, genericType1, null, obj.getString(key));
+			return parseFromString(valType, genericType1, genericType2, obj.getString(key));
 		}
 	}
 

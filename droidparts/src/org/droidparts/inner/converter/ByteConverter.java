@@ -36,7 +36,7 @@ public class ByteConverter extends Converter<Byte> {
 	@Override
 	public <G1, G2> Byte readFromJSON(Class<Byte> valType, Class<G1> genericType1, Class<G2> genericType2,
 			JSONObject obj, String key) throws Exception {
-		return parseFromString(valType, genericType1, null, obj.getString(key));
+		return parseFromString(valType, genericType1, genericType2, obj.getString(key));
 	}
 
 	@Override

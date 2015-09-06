@@ -101,12 +101,6 @@ public class ArrayCollectionConverter extends Converter<Object> {
 		obj.put(key, vals);
 	}
 
-	@Override
-	protected <G1, G2> Object parseFromString(Class<Object> valType, Class<G1> genericType1, Class<G2> genericType2,
-			String str) {
-		throw new UnsupportedOperationException();
-	}
-
 	//
 	@SuppressWarnings("unchecked")
 	protected <V> Object readFromWrapper(Class<Object> valType, Class<V> genericType1, Wrapper wrapper)

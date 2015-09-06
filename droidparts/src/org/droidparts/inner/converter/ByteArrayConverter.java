@@ -16,7 +16,6 @@
 package org.droidparts.inner.converter;
 
 import org.droidparts.inner.TypeHelper;
-import org.json.JSONObject;
 
 import android.content.ContentValues;
 import android.database.Cursor;
@@ -31,18 +30,6 @@ public class ByteArrayConverter extends Converter<byte[]> {
 	@Override
 	public String getDBColumnType() {
 		return BLOB;
-	}
-
-	@Override
-	public <G1, G2> byte[] readFromJSON(Class<byte[]> valType, Class<G1> genericType1, Class<G2> genericType2,
-			JSONObject obj, String key) {
-		throw new UnsupportedOperationException();
-	}
-
-	@Override
-	protected <G1, G2> byte[] parseFromString(Class<byte[]> valType, Class<G1> genericType1, Class<G2> genericType2,
-			String str) {
-		throw new UnsupportedOperationException();
 	}
 
 	@Override

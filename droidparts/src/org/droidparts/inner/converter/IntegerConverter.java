@@ -36,7 +36,11 @@ public class IntegerConverter extends Converter<Integer> {
 	@Override
 	public <G1, G2> Integer readFromJSON(Class<Integer> valType, Class<G1> genericType1, Class<G2> genericType2,
 			JSONObject obj, String key) throws Exception {
-		return obj.getInt(key);
+		try {
+			return obj.getInt(key);
+		} catch (Exception e) {
+			return parseFromString(valType, genericType1, genericType2, obj.getString(key));
+		}
 	}
 
 	@Override

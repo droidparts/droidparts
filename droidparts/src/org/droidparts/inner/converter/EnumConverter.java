@@ -42,12 +42,6 @@ public class EnumConverter extends Converter<Enum<?>> {
 	}
 
 	@Override
-	public <G1, G2> Enum<?> readFromJSON(Class<Enum<?>> valType, Class<G1> genericType1, Class<G2> genericType2,
-			JSONObject obj, String key) throws Exception {
-		return parseFromString(valType, genericType1, null, obj.getString(key));
-	}
-
-	@Override
 	protected <G1, G2> Enum<?> parseFromString(Class<Enum<?>> valType, Class<G1> genericType1, Class<G2> genericType2,
 			String str) {
 		return newEnum(valType, str);

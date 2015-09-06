@@ -18,7 +18,6 @@ package org.droidparts.inner.converter;
 import java.io.ByteArrayOutputStream;
 
 import org.droidparts.inner.TypeHelper;
-import org.json.JSONObject;
 
 import android.content.ContentValues;
 import android.database.Cursor;
@@ -36,18 +35,6 @@ public class BitmapConverter extends Converter<Bitmap> {
 	@Override
 	public String getDBColumnType() {
 		return BLOB;
-	}
-
-	@Override
-	public <G1, G2> Bitmap readFromJSON(Class<Bitmap> valType, Class<G1> genericType1, Class<G2> genericType2,
-			JSONObject obj, String key) {
-		throw new UnsupportedOperationException();
-	}
-
-	@Override
-	protected <G1, G2> Bitmap parseFromString(Class<Bitmap> valType, Class<G1> genericType1, Class<G2> genericType2,
-			String str) {
-		throw new UnsupportedOperationException();
 	}
 
 	@Override

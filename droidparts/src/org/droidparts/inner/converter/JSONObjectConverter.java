@@ -45,7 +45,7 @@ public class JSONObjectConverter extends Converter<JSONObject> {
 		try {
 			return obj.getJSONObject(key);
 		} catch (Exception e) {
-			return parseFromString(valType, genericType1, null, obj.getString(key));
+			return parseFromString(valType, genericType1, genericType2, obj.getString(key));
 		}
 	}
 

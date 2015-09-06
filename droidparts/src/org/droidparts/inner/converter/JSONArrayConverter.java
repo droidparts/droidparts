@@ -46,7 +46,7 @@ public class JSONArrayConverter extends Converter<JSONArray> {
 		try {
 			return obj.getJSONArray(key);
 		} catch (Exception e) {
-			return parseFromString(valType, genericType1, null, obj.getString(key));
+			return parseFromString(valType, genericType1, genericType2, obj.getString(key));
 		}
 	}
 

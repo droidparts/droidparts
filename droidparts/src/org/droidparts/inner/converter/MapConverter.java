@@ -23,9 +23,6 @@ import org.droidparts.inner.ReflectionUtils;
 import org.droidparts.inner.TypeHelper;
 import org.json.JSONObject;
 
-import android.content.ContentValues;
-import android.database.Cursor;
-
 public class MapConverter extends Converter<Map<?, ?>> {
 
 	@Override
@@ -69,21 +66,4 @@ public class MapConverter extends Converter<Map<?, ?>> {
 		obj.put(key, o);
 	}
 
-	@Override
-	protected <G1, G2> Map<G1, G2> parseFromString(Class<Map<?, ?>> valType, Class<G1> genericType1,
-			Class<G2> genericType2, String str) throws Exception {
-		throw new UnsupportedOperationException();
-	}
-
-	@Override
-	public <G1, G2> Map<G1, G2> readFromCursor(Class<Map<?, ?>> valType, Class<G1> genericType1, Class<G2> genericType2,
-			Cursor cursor, int columnIndex) throws Exception {
-		throw new UnsupportedOperationException();
-	}
-
-	@Override
-	public <G1, G2> void putToContentValues(Class<Map<?, ?>> valueType, Class<G1> genericType1, Class<G2> genericType2,
-			ContentValues cv, String key, Map<?, ?> val) throws Exception {
-		throw new UnsupportedOperationException();
-	}
 }
