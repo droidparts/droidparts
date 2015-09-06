@@ -37,13 +37,13 @@ public class EntityConverter extends ModelConverter {
 	}
 
 	@Override
-	public <G1, G2> void putToContentValues(Class<Model> valueType, Class<G1> genericType1, Class<G2> genericType2,
+	public <G1, G2> void putToContentValues(Class<Model> valueType, Class<G1> genericArg1, Class<G2> genericArg2,
 			ContentValues cv, String key, Model val) {
 		cv.put(key, ((Entity) val).id);
 	}
 
 	@Override
-	public <G1, G2> Entity readFromCursor(Class<Model> valType, Class<G1> genericType1, Class<G2> genericType2,
+	public <G1, G2> Entity readFromCursor(Class<Model> valType, Class<G1> genericArg1, Class<G2> genericArg2,
 			Cursor cursor, int columnIndex) {
 		long id = cursor.getLong(columnIndex);
 		Entity entity = (Entity) newInstance(valType);
@@ -52,11 +52,11 @@ public class EntityConverter extends ModelConverter {
 	}
 
 	@Override
-	protected <G1, G2> Model parseFromString(Class<Model> valType, Class<G1> genericType1, Class<G2> genericType2,
+	protected <G1, G2> Model parseFromString(Class<Model> valType, Class<G1> genericArg1, Class<G2> genericArg2,
 			String str) throws Exception {
 		if (str.startsWith("{")) {
 			// XXX it's a JSON Object
-			return super.parseFromString(valType, genericType1, genericType2, str);
+			return super.parseFromString(valType, genericArg1, genericArg2, str);
 		} else {
 			Entity entity = (Entity) newInstance(valType);
 			entity.id = Long.valueOf(str);

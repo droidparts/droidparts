@@ -36,32 +36,32 @@ public class MapConverter extends Converter<Map<?, ?>> {
 	}
 
 	@Override
-	public <G1, G2> Map<G1, G2> readFromJSON(Class<Map<?, ?>> valType, Class<G1> genericType1, Class<G2> genericType2,
+	public <G1, G2> Map<G1, G2> readFromJSON(Class<Map<?, ?>> valType, Class<G1> genericArg1, Class<G2> genericArg2,
 			JSONObject obj, String key) throws Exception {
-		JSONObject jo = ConverterRegistry.getConverter(JSONObject.class).readFromJSON(JSONObject.class, genericType1,
-				genericType2, obj, key);
-		Converter<G1> keyConv = ConverterRegistry.getConverter(genericType1);
-		Converter<G2> valConv = ConverterRegistry.getConverter(genericType2);
+		JSONObject jo = ConverterRegistry.getConverter(JSONObject.class).readFromJSON(JSONObject.class, genericArg1,
+				genericArg2, obj, key);
+		Converter<G1> keyConv = ConverterRegistry.getConverter(genericArg1);
+		Converter<G2> valConv = ConverterRegistry.getConverter(genericArg2);
 		Map<G1, G2> map = (Map<G1, G2>) ReflectionUtils.newInstance(valType);
 		Iterator<String> it = jo.keys();
 		while (it.hasNext()) {
 			String ks = it.next();
-			G1 k = keyConv.parseFromString(genericType1, null, null, ks);
-			G2 v = valConv.readFromJSON(genericType2, null, null, jo, ks);
+			G1 k = keyConv.parseFromString(genericArg1, null, null, ks);
+			G2 v = valConv.readFromJSON(genericArg2, null, null, jo, ks);
 			map.put(k, v);
 		}
 		return map;
 	}
 
 	@Override
-	public <G1, G2> void putToJSON(Class<Map<?, ?>> valType, Class<G1> genericType1, Class<G2> genericType2,
+	public <G1, G2> void putToJSON(Class<Map<?, ?>> valType, Class<G1> genericArg1, Class<G2> genericArg2,
 			JSONObject obj, String key, Map<?, ?> val) throws Exception {
 		JSONObject o = new JSONObject();
-		Converter<G2> valConv = ConverterRegistry.getConverter(genericType2);
+		Converter<G2> valConv = ConverterRegistry.getConverter(genericArg2);
 		for (Object k : val.keySet()) {
 			String ks = k.toString();
 			G2 v = (G2) val.get(k);
-			valConv.putToJSON(genericType2, null, null, o, ks, v);
+			valConv.putToJSON(genericArg2, null, null, o, ks, v);
 		}
 		obj.put(key, o);
 	}

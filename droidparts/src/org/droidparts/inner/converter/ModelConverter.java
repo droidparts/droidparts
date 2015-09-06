@@ -39,14 +39,14 @@ public class ModelConverter extends Converter<Model> {
 	}
 
 	@Override
-	public <G1, G2> void putToContentValues(Class<Model> valueType, Class<G1> genericType1, Class<G2> genericType2,
+	public <G1, G2> void putToContentValues(Class<Model> valueType, Class<G1> genericArg1, Class<G2> genericArg2,
 			ContentValues cv, String key, Model val) throws Exception {
 		byte[] arr = PersistUtils.toBytes(val);
 		cv.put(key, arr);
 	}
 
 	@Override
-	public <G1, G2> Model readFromCursor(Class<Model> valType, Class<G1> genericType1, Class<G2> genericType2,
+	public <G1, G2> Model readFromCursor(Class<Model> valType, Class<G1> genericArg1, Class<G2> genericArg2,
 			Cursor cursor, int columnIndex) throws Exception {
 		Model model = null;
 		byte[] arr = cursor.getBlob(columnIndex);
@@ -57,7 +57,7 @@ public class ModelConverter extends Converter<Model> {
 	}
 
 	@Override
-	public <G1, G2> void putToJSON(Class<Model> valType, Class<G1> genericType1, Class<G2> genericType2, JSONObject obj,
+	public <G1, G2> void putToJSON(Class<Model> valType, Class<G1> genericArg1, Class<G2> genericArg2, JSONObject obj,
 			String key, Model val) throws Exception {
 		@SuppressWarnings("unchecked")
 		Class<Model> cls = (Class<Model>) val.getClass();
@@ -66,19 +66,19 @@ public class ModelConverter extends Converter<Model> {
 	}
 
 	@Override
-	public <G1, G2> Model readFromJSON(Class<Model> valType, Class<G1> genericType1, Class<G2> genericType2,
+	public <G1, G2> Model readFromJSON(Class<Model> valType, Class<G1> genericArg1, Class<G2> genericArg2,
 			JSONObject obj, String key) throws Exception {
 		return new JSONSerializer<Model>(valType, null).deserialize(obj.getJSONObject(key));
 	}
 
 	@Override
-	public <G1, G2> Model readFromXML(Class<Model> valType, Class<G1> genericType1, Class<G2> genericType2, Node node,
+	public <G1, G2> Model readFromXML(Class<Model> valType, Class<G1> genericArg1, Class<G2> genericArg2, Node node,
 			String nodeListItemTagHint) throws Exception {
 		return new XMLSerializer<Model>(valType, null).deserialize(node);
 	}
 
 	@Override
-	protected <G1, G2> Model parseFromString(Class<Model> valType, Class<G1> genericType1, Class<G2> genericType2,
+	protected <G1, G2> Model parseFromString(Class<Model> valType, Class<G1> genericArg1, Class<G2> genericArg2,
 			String str) throws Exception {
 		return new JSONSerializer<Model>(valType, null).deserialize(new JSONObject(str));
 	}

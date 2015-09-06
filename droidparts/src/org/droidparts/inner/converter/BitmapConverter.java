@@ -38,7 +38,7 @@ public class BitmapConverter extends Converter<Bitmap> {
 	}
 
 	@Override
-	public <G1, G2> void putToContentValues(Class<Bitmap> valueType, Class<G1> genericType1, Class<G2> genericType2,
+	public <G1, G2> void putToContentValues(Class<Bitmap> valueType, Class<G1> genericArg1, Class<G2> genericArg2,
 			ContentValues cv, String key, Bitmap val) {
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		val.compress(CompressFormat.PNG, 0, baos);
@@ -46,7 +46,7 @@ public class BitmapConverter extends Converter<Bitmap> {
 	}
 
 	@Override
-	public <G1, G2> Bitmap readFromCursor(Class<Bitmap> valType, Class<G1> genericType1, Class<G2> genericType2,
+	public <G1, G2> Bitmap readFromCursor(Class<Bitmap> valType, Class<G1> genericArg1, Class<G2> genericArg2,
 			Cursor cursor, int columnIndex) {
 		byte[] arr = cursor.getBlob(columnIndex);
 		return BitmapFactory.decodeByteArray(arr, 0, arr.length);

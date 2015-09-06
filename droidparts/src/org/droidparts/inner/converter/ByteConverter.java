@@ -34,25 +34,25 @@ public class ByteConverter extends Converter<Byte> {
 	}
 
 	@Override
-	public <G1, G2> Byte readFromJSON(Class<Byte> valType, Class<G1> genericType1, Class<G2> genericType2,
+	public <G1, G2> Byte readFromJSON(Class<Byte> valType, Class<G1> genericArg1, Class<G2> genericArg2,
 			JSONObject obj, String key) throws Exception {
-		return parseFromString(valType, genericType1, genericType2, obj.getString(key));
+		return parseFromString(valType, genericArg1, genericArg2, obj.getString(key));
 	}
 
 	@Override
-	protected <G1, G2> Byte parseFromString(Class<Byte> valType, Class<G1> genericType1, Class<G2> genericType2,
+	protected <G1, G2> Byte parseFromString(Class<Byte> valType, Class<G1> genericArg1, Class<G2> genericArg2,
 			String str) {
 		return Byte.valueOf(str);
 	}
 
 	@Override
-	public <G1, G2> void putToContentValues(Class<Byte> valueType, Class<G1> genericType1, Class<G2> genericType2,
+	public <G1, G2> void putToContentValues(Class<Byte> valueType, Class<G1> genericArg1, Class<G2> genericArg2,
 			ContentValues cv, String key, Byte val) {
 		cv.put(key, val);
 	}
 
 	@Override
-	public <G1, G2> Byte readFromCursor(Class<Byte> valType, Class<G1> genericType1, Class<G2> genericType2,
+	public <G1, G2> Byte readFromCursor(Class<Byte> valType, Class<G1> genericArg1, Class<G2> genericArg2,
 			Cursor cursor, int columnIndex) {
 		return Byte.valueOf(cursor.getString(columnIndex));
 	}

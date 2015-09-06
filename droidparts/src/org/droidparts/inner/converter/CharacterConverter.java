@@ -33,19 +33,19 @@ public class CharacterConverter extends Converter<Character> {
 	}
 
 	@Override
-	protected <G1, G2> Character parseFromString(Class<Character> valType, Class<G1> genericType1,
-			Class<G2> genericType2, String str) {
+	protected <G1, G2> Character parseFromString(Class<Character> valType, Class<G1> genericArg1,
+			Class<G2> genericArg2, String str) {
 		return Character.valueOf((str.length() == 0) ? ' ' : str.charAt(0));
 	}
 
 	@Override
-	public <G1, G2> void putToContentValues(Class<Character> valueType, Class<G1> genericType1, Class<G2> genericType2,
+	public <G1, G2> void putToContentValues(Class<Character> valueType, Class<G1> genericArg1, Class<G2> genericArg2,
 			ContentValues cv, String key, Character val) {
 		cv.put(key, String.valueOf(val));
 	}
 
 	@Override
-	public <G1, G2> Character readFromCursor(Class<Character> valType, Class<G1> genericType1, Class<G2> genericType2,
+	public <G1, G2> Character readFromCursor(Class<Character> valType, Class<G1> genericArg1, Class<G2> genericArg2,
 			Cursor cursor, int columnIndex) {
 		return parseFromString(valType, null, null, cursor.getString(columnIndex));
 	}

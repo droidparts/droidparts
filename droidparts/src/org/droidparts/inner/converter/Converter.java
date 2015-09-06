@@ -27,22 +27,22 @@ public abstract class Converter<T> implements SQL.DDL {
 
 	public abstract boolean canHandle(Class<?> cls);
 
-	public <G1, G2> void putToJSON(Class<T> valType, Class<G1> genericType1, Class<G2> genericType2, JSONObject obj,
+	public <G1, G2> void putToJSON(Class<T> valType, Class<G1> genericArg1, Class<G2> genericArg2, JSONObject obj,
 			String key, T val) throws Exception {
 		obj.put(key, val);
 	}
 
-	public <G1, G2> T readFromJSON(Class<T> valType, Class<G1> genericType1, Class<G2> genericType2, JSONObject obj,
+	public <G1, G2> T readFromJSON(Class<T> valType, Class<G1> genericArg1, Class<G2> genericArg2, JSONObject obj,
 			String key) throws Exception {
-		return parseFromString(valType, genericType1, genericType2, obj.getString(key));
+		return parseFromString(valType, genericArg1, genericArg2, obj.getString(key));
 	}
 
-	public <G1, G2> T readFromXML(Class<T> valType, Class<G1> genericType1, Class<G2> genericType2, Node node,
+	public <G1, G2> T readFromXML(Class<T> valType, Class<G1> genericArg1, Class<G2> genericArg2, Node node,
 			String nodeListItemTagHint) throws Exception {
-		return parseFromString(valType, genericType1, genericType2, PersistUtils.getNodeText(node));
+		return parseFromString(valType, genericArg1, genericArg2, PersistUtils.getNodeText(node));
 	}
 
-	protected <G1, G2> T parseFromString(Class<T> valType, Class<G1> genericType1, Class<G2> genericType2, String str)
+	protected <G1, G2> T parseFromString(Class<T> valType, Class<G1> genericArg1, Class<G2> genericArg2, String str)
 			throws Exception {
 		throw new UnsupportedOperationException();
 	}
@@ -51,12 +51,12 @@ public abstract class Converter<T> implements SQL.DDL {
 		throw new UnsupportedOperationException();
 	}
 
-	public <G1, G2> void putToContentValues(Class<T> valueType, Class<G1> genericType1, Class<G2> genericType2,
+	public <G1, G2> void putToContentValues(Class<T> valueType, Class<G1> genericArg1, Class<G2> genericArg2,
 			ContentValues cv, String key, T val) throws Exception {
 		throw new UnsupportedOperationException();
 	}
 
-	public <G1, G2> T readFromCursor(Class<T> valType, Class<G1> genericType1, Class<G2> genericType2, Cursor cursor,
+	public <G1, G2> T readFromCursor(Class<T> valType, Class<G1> genericArg1, Class<G2> genericArg2, Cursor cursor,
 			int columnIndex) throws Exception {
 		throw new UnsupportedOperationException();
 	}

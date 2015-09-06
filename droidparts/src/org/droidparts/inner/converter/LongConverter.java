@@ -34,29 +34,29 @@ public class LongConverter extends Converter<Long> {
 	}
 
 	@Override
-	public <G1, G2> Long readFromJSON(Class<Long> valType, Class<G1> genericType1, Class<G2> genericType2,
+	public <G1, G2> Long readFromJSON(Class<Long> valType, Class<G1> genericArg1, Class<G2> genericArg2,
 			JSONObject obj, String key) throws Exception {
 		try {
 			return obj.getLong(key);
 		} catch (Exception e) {
-			return parseFromString(valType, genericType1, genericType2, obj.getString(key));
+			return parseFromString(valType, genericArg1, genericArg2, obj.getString(key));
 		}
 	}
 
 	@Override
-	protected <G1, G2> Long parseFromString(Class<Long> valType, Class<G1> genericType1, Class<G2> genericType2,
+	protected <G1, G2> Long parseFromString(Class<Long> valType, Class<G1> genericArg1, Class<G2> genericArg2,
 			String str) {
 		return Long.valueOf(str);
 	}
 
 	@Override
-	public <G1, G2> void putToContentValues(Class<Long> valueType, Class<G1> genericType1, Class<G2> genericType2,
+	public <G1, G2> void putToContentValues(Class<Long> valueType, Class<G1> genericArg1, Class<G2> genericArg2,
 			ContentValues cv, String key, Long val) {
 		cv.put(key, val);
 	}
 
 	@Override
-	public <G1, G2> Long readFromCursor(Class<Long> valType, Class<G1> genericType1, Class<G2> genericType2,
+	public <G1, G2> Long readFromCursor(Class<Long> valType, Class<G1> genericArg1, Class<G2> genericArg2,
 			Cursor cursor, int columnIndex) {
 		return cursor.getLong(columnIndex);
 	}

@@ -34,35 +34,35 @@ public class JSONObjectConverter extends Converter<JSONObject> {
 	}
 
 	@Override
-	public <G1, G2> void putToJSON(Class<JSONObject> valType, Class<G1> genericType1, Class<G2> genericType2,
+	public <G1, G2> void putToJSON(Class<JSONObject> valType, Class<G1> genericArg1, Class<G2> genericArg2,
 			JSONObject obj, String key, JSONObject val) throws Exception {
 		obj.put(key, val.toString());
 	}
 
 	@Override
-	public <G1, G2> JSONObject readFromJSON(Class<JSONObject> valType, Class<G1> genericType1, Class<G2> genericType2,
+	public <G1, G2> JSONObject readFromJSON(Class<JSONObject> valType, Class<G1> genericArg1, Class<G2> genericArg2,
 			JSONObject obj, String key) throws Exception {
 		try {
 			return obj.getJSONObject(key);
 		} catch (Exception e) {
-			return parseFromString(valType, genericType1, genericType2, obj.getString(key));
+			return parseFromString(valType, genericArg1, genericArg2, obj.getString(key));
 		}
 	}
 
 	@Override
-	protected <G1, G2> JSONObject parseFromString(Class<JSONObject> valType, Class<G1> genericType1,
-			Class<G2> genericType2, String str) throws Exception {
+	protected <G1, G2> JSONObject parseFromString(Class<JSONObject> valType, Class<G1> genericArg1,
+			Class<G2> genericArg2, String str) throws Exception {
 		return new JSONObject(str);
 	}
 
 	@Override
-	public <G1, G2> void putToContentValues(Class<JSONObject> valueType, Class<G1> genericType1, Class<G2> genericType2,
+	public <G1, G2> void putToContentValues(Class<JSONObject> valueType, Class<G1> genericArg1, Class<G2> genericArg2,
 			ContentValues cv, String key, JSONObject val) {
 		cv.put(key, val.toString());
 	}
 
 	@Override
-	public <G1, G2> JSONObject readFromCursor(Class<JSONObject> valType, Class<G1> genericType1, Class<G2> genericType2,
+	public <G1, G2> JSONObject readFromCursor(Class<JSONObject> valType, Class<G1> genericArg1, Class<G2> genericArg2,
 			Cursor cursor, int columnIndex) throws Exception {
 		return new JSONObject(cursor.getString(columnIndex));
 	}

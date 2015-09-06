@@ -132,27 +132,27 @@ public class JSONSerializer<ModelType extends Model> extends AbstractSerializer<
 		}
 	}
 
-	protected <T, G1, G2> Object readFromJSON(Class<T> valType, Class<G1> genericType1, Class<G2> genericType2,
+	protected <T, G1, G2> Object readFromJSON(Class<T> valType, Class<G1> genericArg1, Class<G2> genericArg2,
 			JSONObject obj, String key) throws Exception {
 		Object jsonVal = obj.get(key);
 		if (NULL.equals(jsonVal)) {
 			return jsonVal;
 		} else {
 			Converter<T> converter = ConverterRegistry.getConverter(valType);
-			return converter.readFromJSON(valType, genericType1, genericType2, obj, key);
+			return converter.readFromJSON(valType, genericArg1, genericArg2, obj, key);
 		}
 	}
 
 	@SuppressWarnings("unchecked")
-	protected <T> void putToJSON(JSONObject obj, String key, boolean optional, Class<T> valType, Class<?> genericType1,
-			Class<?> genericType2, Object val) throws Exception {
+	protected <T> void putToJSON(JSONObject obj, String key, boolean optional, Class<T> valType, Class<?> genericArg1,
+			Class<?> genericArg2, Object val) throws Exception {
 		if (val == null) {
 			if (!optional) {
 				obj.put(key, NULL);
 			}
 		} else {
 			Converter<T> converter = ConverterRegistry.getConverter(valType);
-			converter.putToJSON(valType, genericType1, genericType2, obj, key, (T) val);
+			converter.putToJSON(valType, genericArg1, genericArg2, obj, key, (T) val);
 		}
 	}
 
