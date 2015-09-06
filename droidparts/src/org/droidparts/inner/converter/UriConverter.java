@@ -35,30 +35,26 @@ public class UriConverter extends Converter<Uri> {
 	}
 
 	@Override
-	public <V> void putToJSON(Class<Uri> valType, Class<V> componentType, JSONObject obj, String key, Uri val)
-			throws Exception {
+	public <G1, G2> void putToJSON(Class<Uri> valType, Class<G1> genericArg1, Class<G2> genericArg2, JSONObject obj,
+			String key, Uri val) throws Exception {
 		obj.put(key, val.toString());
 	}
 
 	@Override
-	public <V> Uri readFromJSON(Class<Uri> valType, Class<V> componentType, JSONObject obj, String key)
-			throws Exception {
-		return parseFromString(valType, componentType, obj.getString(key));
-	}
-
-	@Override
-	protected <V> Uri parseFromString(Class<Uri> valType, Class<V> componentType, String str) {
+	protected <G1, G2> Uri parseFromString(Class<Uri> valType, Class<G1> genericArg1, Class<G2> genericArg2,
+			String str) {
 		return Uri.parse(str);
 	}
 
 	@Override
-	public <V> void putToContentValues(Class<Uri> valueType, Class<V> componentType, ContentValues cv, String key,
-			Uri val) {
+	public <G1, G2> void putToContentValues(Class<Uri> valueType, Class<G1> genericArg1, Class<G2> genericArg2,
+			ContentValues cv, String key, Uri val) {
 		cv.put(key, val.toString());
 	}
 
 	@Override
-	public <V> Uri readFromCursor(Class<Uri> valType, Class<V> componentType, Cursor cursor, int columnIndex) {
+	public <G1, G2> Uri readFromCursor(Class<Uri> valType, Class<G1> genericArg1, Class<G2> genericArg2,
+			Cursor cursor, int columnIndex) {
 		return Uri.parse(cursor.getString(columnIndex));
 	}
 

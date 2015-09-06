@@ -16,7 +16,6 @@
 package org.droidparts.inner.converter;
 
 import org.droidparts.inner.TypeHelper;
-import org.json.JSONObject;
 
 import android.content.ContentValues;
 import android.database.Cursor;
@@ -34,24 +33,20 @@ public class ShortConverter extends Converter<Short> {
 	}
 
 	@Override
-	public <V> Short readFromJSON(Class<Short> valType, Class<V> componentType, JSONObject obj, String key)
-			throws Exception {
-		return parseFromString(valType, componentType, obj.getString(key));
-	}
-
-	@Override
-	protected <V> Short parseFromString(Class<Short> valType, Class<V> componentType, String str) {
+	protected <G1, G2> Short parseFromString(Class<Short> valType, Class<G1> genericArg1, Class<G2> genericArg2,
+			String str) {
 		return Short.valueOf(str);
 	}
 
 	@Override
-	public <V> void putToContentValues(Class<Short> valueType, Class<V> componentType, ContentValues cv, String key,
-			Short val) {
+	public <G1, G2> void putToContentValues(Class<Short> valueType, Class<G1> genericArg1, Class<G2> genericArg2,
+			ContentValues cv, String key, Short val) {
 		cv.put(key, val);
 	}
 
 	@Override
-	public <V> Short readFromCursor(Class<Short> valType, Class<V> componentType, Cursor cursor, int columnIndex) {
+	public <G1, G2> Short readFromCursor(Class<Short> valType, Class<G1> genericArg1, Class<G2> genericArg2,
+			Cursor cursor, int columnIndex) {
 		return cursor.getShort(columnIndex);
 	}
 }

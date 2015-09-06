@@ -1,0 +1,16 @@
+{
+"albums": [
+	{
+		"name": "Diamond",
+		"year": 2007
+	},
+	{
+		"name": "Iris",
+		"year": 2009
+	}
+],
+"map": {
+		"2009": "Iris",
+		"2007": "Diamond"
+	}
+}

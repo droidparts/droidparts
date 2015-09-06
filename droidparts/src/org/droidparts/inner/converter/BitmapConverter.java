@@ -18,7 +18,6 @@ package org.droidparts.inner.converter;
 import java.io.ByteArrayOutputStream;
 
 import org.droidparts.inner.TypeHelper;
-import org.json.JSONObject;
 
 import android.content.ContentValues;
 import android.database.Cursor;
@@ -39,25 +38,16 @@ public class BitmapConverter extends Converter<Bitmap> {
 	}
 
 	@Override
-	public <V> Bitmap readFromJSON(Class<Bitmap> valType, Class<V> componentType, JSONObject obj, String key) {
-		throw new UnsupportedOperationException();
-	}
-
-	@Override
-	protected <V> Bitmap parseFromString(Class<Bitmap> valType, Class<V> componentType, String str) {
-		throw new UnsupportedOperationException();
-	}
-
-	@Override
-	public <V> void putToContentValues(Class<Bitmap> valueType, Class<V> componentType, ContentValues cv, String key,
-			Bitmap val) {
+	public <G1, G2> void putToContentValues(Class<Bitmap> valueType, Class<G1> genericArg1, Class<G2> genericArg2,
+			ContentValues cv, String key, Bitmap val) {
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		val.compress(CompressFormat.PNG, 0, baos);
 		cv.put(key, baos.toByteArray());
 	}
 
 	@Override
-	public <V> Bitmap readFromCursor(Class<Bitmap> valType, Class<V> componentType, Cursor cursor, int columnIndex) {
+	public <G1, G2> Bitmap readFromCursor(Class<Bitmap> valType, Class<G1> genericArg1, Class<G2> genericArg2,
+			Cursor cursor, int columnIndex) {
 		byte[] arr = cursor.getBlob(columnIndex);
 		return BitmapFactory.decodeByteArray(arr, 0, arr.length);
 	}

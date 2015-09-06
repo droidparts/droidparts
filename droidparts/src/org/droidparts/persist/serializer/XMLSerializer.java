@@ -84,7 +84,7 @@ public class XMLSerializer<ModelType extends Model> extends AbstractSerializer<M
 			}
 		} else {
 			boolean defaultOrSameTag = tag.equals(spec.field.getName()) || tag.equals(node.getNodeName());
-			if (spec.componentType == null && isNotEmpty(attribute)) {
+			if (spec.genericArg1 == null && isNotEmpty(attribute)) {
 				if (!tag.equals(node.getNodeName())) {
 					Node child = getChildNode(node, tag);
 					if (child != null) {
@@ -102,10 +102,12 @@ public class XMLSerializer<ModelType extends Model> extends AbstractSerializer<M
 			}
 			try {
 				if (attrNode != null) {
-					Object attrVal = getNodeVal(spec.field.getType(), spec.componentType, attrNode, attribute);
+					Object attrVal = getNodeVal(spec.field.getType(), spec.genericArg1, spec.genericArg2, attrNode,
+							attribute);
 					setFieldVal(obj, spec.field, attrVal);
 				} else if (tagNode != null) {
-					Object tagVal = getNodeVal(spec.field.getType(), spec.componentType, tagNode, attribute);
+					Object tagVal = getNodeVal(spec.field.getType(), spec.genericArg1, spec.genericArg2, tagNode,
+							attribute);
 					setFieldVal(obj, spec.field, tagVal);
 				} else {
 					throw new IllegalArgumentException("Tag or attribute not found.");
@@ -117,10 +119,10 @@ public class XMLSerializer<ModelType extends Model> extends AbstractSerializer<M
 
 	}
 
-	protected <T, V> Object getNodeVal(Class<T> valType, Class<V> componentType, Node node, String attribute)
-			throws Exception {
+	protected <T, G1, G2> Object getNodeVal(Class<T> valType, Class<G1> genericArg1, Class<G2> genericArg2, Node node,
+			String attribute) throws Exception {
 		Converter<T> converter = ConverterRegistry.getConverter(valType);
-		return converter.readFromXML(valType, componentType, node, attribute);
+		return converter.readFromXML(valType, genericArg1, genericArg2, node, attribute);
 	}
 
 	private static Node gotAttributeNode(Node tagNode, String name) {

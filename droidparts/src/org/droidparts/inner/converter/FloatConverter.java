@@ -34,24 +34,30 @@ public class FloatConverter extends Converter<Float> {
 	}
 
 	@Override
-	public <V> Float readFromJSON(Class<Float> valType, Class<V> componentType, JSONObject obj, String key)
-			throws Exception {
-		return (float) obj.getDouble(key);
+	public <G1, G2> Float readFromJSON(Class<Float> valType, Class<G1> genericArg1, Class<G2> genericArg2,
+			JSONObject obj, String key) throws Exception {
+		try {
+			return (float) obj.getDouble(key);
+		} catch (Exception e) {
+			return parseFromString(valType, genericArg1, genericArg2, obj.getString(key));
+		}
 	}
 
 	@Override
-	protected <V> Float parseFromString(Class<Float> valType, Class<V> componentType, String str) {
+	protected <G1, G2> Float parseFromString(Class<Float> valType, Class<G1> genericArg1, Class<G2> genericArg2,
+			String str) {
 		return Float.valueOf(str);
 	}
 
 	@Override
-	public <V> void putToContentValues(Class<Float> valueType, Class<V> componentType, ContentValues cv, String key,
-			Float val) {
+	public <G1, G2> void putToContentValues(Class<Float> valueType, Class<G1> genericArg1, Class<G2> genericArg2,
+			ContentValues cv, String key, Float val) {
 		cv.put(key, val);
 	}
 
 	@Override
-	public <V> Float readFromCursor(Class<Float> valType, Class<V> componentType, Cursor cursor, int columnIndex) {
+	public <G1, G2> Float readFromCursor(Class<Float> valType, Class<G1> genericArg1, Class<G2> genericArg2,
+			Cursor cursor, int columnIndex) {
 		return cursor.getFloat(columnIndex);
 	}
 

@@ -25,6 +25,7 @@ import static org.droidparts.inner.TypeHelper.isInteger;
 import static org.droidparts.inner.TypeHelper.isLong;
 import static org.droidparts.inner.TypeHelper.isShort;
 
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
@@ -105,7 +106,9 @@ public final class ReflectionUtils {
 
 	public static <T> T newInstance(Class<T> cls) throws IllegalArgumentException {
 		try {
-			return cls.newInstance();
+			Constructor<T> con = cls.getDeclaredConstructor();
+			con.setAccessible(true);
+			return con.newInstance();
 		} catch (Exception e) {
 			throw new IllegalArgumentException(e);
 		}

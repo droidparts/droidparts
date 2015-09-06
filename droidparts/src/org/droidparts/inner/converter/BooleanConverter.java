@@ -16,7 +16,6 @@
 package org.droidparts.inner.converter;
 
 import org.droidparts.inner.TypeHelper;
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.content.ContentValues;
@@ -35,17 +34,18 @@ public class BooleanConverter extends Converter<Boolean> {
 	}
 
 	@Override
-	public <V> Boolean readFromJSON(Class<Boolean> valType, Class<V> componentType, JSONObject obj, String key)
-			throws Exception {
+	public <G1, G2> Boolean readFromJSON(Class<Boolean> valType, Class<G1> genericArg1, Class<G2> genericArg2,
+			JSONObject obj, String key) throws Exception {
 		try {
 			return obj.getBoolean(key);
-		} catch (JSONException e) {
-			return parseFromString(valType, componentType, obj.getString(key));
+		} catch (Exception e) {
+			return parseFromString(valType, genericArg1, genericArg2, obj.getString(key));
 		}
 	}
 
 	@Override
-	protected <V> Boolean parseFromString(Class<Boolean> valType, Class<V> componentType, String str) {
+	protected <G1, G2> Boolean parseFromString(Class<Boolean> valType, Class<G1> genericArg1, Class<G2> genericArg2,
+			String str) {
 		if ("1".equals(str)) {
 			str = "true";
 		}
@@ -53,13 +53,14 @@ public class BooleanConverter extends Converter<Boolean> {
 	}
 
 	@Override
-	public <V> void putToContentValues(Class<Boolean> valueType, Class<V> componentType, ContentValues cv, String key,
-			Boolean val) {
+	public <G1, G2> void putToContentValues(Class<Boolean> valueType, Class<G1> genericArg1, Class<G2> genericArg2,
+			ContentValues cv, String key, Boolean val) {
 		cv.put(key, val);
 	}
 
 	@Override
-	public <V> Boolean readFromCursor(Class<Boolean> valType, Class<V> componentType, Cursor cursor, int columnIndex) {
+	public <G1, G2> Boolean readFromCursor(Class<Boolean> valType, Class<G1> genericArg1, Class<G2> genericArg2,
+			Cursor cursor, int columnIndex) {
 		return (cursor.getInt(columnIndex) == 1);
 	}
 

@@ -103,7 +103,7 @@ public class JSONSerializer<ModelType extends Model> extends AbstractSerializer<
 			readFromModelAndPutToJSON(item, spec, subObj, keyParts.second);
 		} else {
 			Object val = getFieldVal(item, spec.field);
-			putToJSON(obj, key, spec.ann.optional, spec.field.getType(), spec.componentType, val);
+			putToJSON(obj, key, spec.ann.optional, spec.field.getType(), spec.genericArg1, spec.genericArg2, val);
 		}
 	}
 
@@ -113,14 +113,14 @@ public class JSONSerializer<ModelType extends Model> extends AbstractSerializer<
 		if (keyParts != null) {
 			String subKey = keyParts.first;
 			try {
-				JSONObject subObj = obj.getJSONObject(subKey);
+				JSONObject subObj = (JSONObject) readFromJSON(JSONObject.class, null, null, obj, subKey);
 				readFromJSONAndSetFieldVal(model, spec, subObj, keyParts.second);
 			} catch (Exception e) {
 				handleParseException(spec.ann.optional, subKey, e);
 			}
 		} else {
 			try {
-				Object val = readFromJSON(spec.field.getType(), spec.componentType, obj, key);
+				Object val = readFromJSON(spec.field.getType(), spec.genericArg1, spec.genericArg2, obj, key);
 				if (!NULL.equals(val)) {
 					setFieldVal(model, spec.field, val);
 				} else {
@@ -132,27 +132,27 @@ public class JSONSerializer<ModelType extends Model> extends AbstractSerializer<
 		}
 	}
 
-	protected <T, V> Object readFromJSON(Class<T> valType, Class<V> componentType, JSONObject obj, String key)
-			throws Exception {
+	protected <T, G1, G2> Object readFromJSON(Class<T> valType, Class<G1> genericArg1, Class<G2> genericArg2,
+			JSONObject obj, String key) throws Exception {
 		Object jsonVal = obj.get(key);
 		if (NULL.equals(jsonVal)) {
 			return jsonVal;
 		} else {
 			Converter<T> converter = ConverterRegistry.getConverter(valType);
-			return converter.readFromJSON(valType, componentType, obj, key);
+			return converter.readFromJSON(valType, genericArg1, genericArg2, obj, key);
 		}
 	}
 
 	@SuppressWarnings("unchecked")
-	protected <T> void putToJSON(JSONObject obj, String key, boolean optional, Class<T> valType, Class<?> componentType,
-			Object val) throws Exception {
+	protected <T> void putToJSON(JSONObject obj, String key, boolean optional, Class<T> valType, Class<?> genericArg1,
+			Class<?> genericArg2, Object val) throws Exception {
 		if (val == null) {
 			if (!optional) {
 				obj.put(key, NULL);
 			}
 		} else {
 			Converter<T> converter = ConverterRegistry.getConverter(valType);
-			converter.putToJSON(valType, componentType, obj, key, (T) val);
+			converter.putToJSON(valType, genericArg1, genericArg2, obj, key, (T) val);
 		}
 	}
 

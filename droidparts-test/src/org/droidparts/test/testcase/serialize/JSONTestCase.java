@@ -75,6 +75,20 @@ public class JSONTestCase extends AndroidTestCase {
 
 	//
 
+	public void testCollections() throws Exception {
+		JSONSerializer<Collections> ser = new JSONSerializer<Collections>(Collections.class, getContext());
+		Collections coll = ser.deserialize(new JSONObject(getJSONString(R.raw.collections_json)));
+		assertEquals(2, coll.albumsArr.length);
+		assertEquals(2, coll.albumsColl.size());
+		//
+		assertEquals(2, coll.map.size());
+		assertTrue(coll.map.containsKey(2009));
+		assertEquals("Iris", coll.map.get(2009));
+		//
+		JSONObject obj = ser.serialize(coll);
+		assertTrue(obj.has("map"));
+	}
+
 	public void testCollectionsFail() throws Exception {
 		try {
 			JSONSerializer<Collections> ser = new JSONSerializer<Collections>(Collections.class, getContext());
@@ -87,6 +101,7 @@ public class JSONTestCase extends AndroidTestCase {
 	}
 
 	//
+
 	private JSONObject getPrimitives() throws Exception {
 		return new JSONObject(getJSONString(R.raw.primitives));
 	}
@@ -102,7 +117,5 @@ public class JSONTestCase extends AndroidTestCase {
 	private String getJSONString(int resId) {
 		return ResourceUtils.readRawResource(getContext(), resId);
 	}
-
-	//
 
 }

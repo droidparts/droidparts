@@ -70,7 +70,8 @@ public class EntityManager<EntityType extends Entity> extends AbstractEntityMana
 			int colIdx = cursor.getColumnIndex(spec.ann.name);
 			if (colIdx >= 0) {
 				try {
-					Object columnVal = readFromCursor(cursor, colIdx, spec.field.getType(), spec.componentType);
+					Object columnVal = readFromCursor(cursor, colIdx, spec.field.getType(), spec.genericArg1,
+							spec.genericArg2);
 					if (columnVal != null || spec.ann.nullable) {
 						setFieldVal(entity, spec.field, columnVal);
 					}
@@ -97,8 +98,8 @@ public class EntityManager<EntityType extends Entity> extends AbstractEntityMana
 						Object obj = manager.read(foreignEntity.id);
 						setFieldVal(item, spec.field, obj);
 					}
-				} else if ((isArray(fieldType) || isCollection(fieldType)) && isEntity(spec.componentType)) {
-					EntityManager<Entity> manager = subManager(spec.componentType);
+				} else if ((isArray(fieldType) || isCollection(fieldType)) && isEntity(spec.genericArg1)) {
+					EntityManager<Entity> manager = subManager(spec.genericArg1);
 					if (isArray(fieldType)) {
 						Entity[] arr = getFieldVal(item, spec.field);
 						if (arr != null) {
@@ -145,7 +146,7 @@ public class EntityManager<EntityType extends Entity> extends AbstractEntityMana
 		for (FieldSpec<ColumnAnn> spec : columnSpecs) {
 			Object val = getFieldVal(item, spec.field);
 			try {
-				putToContentValues(cv, spec.ann.name, spec.field.getType(), spec.componentType, val);
+				putToContentValues(cv, spec.ann.name, spec.field.getType(), spec.genericArg1, spec.genericArg2, val);
 			} catch (Exception e) {
 				throw new RuntimeException(e);
 			}
@@ -163,7 +164,7 @@ public class EntityManager<EntityType extends Entity> extends AbstractEntityMana
 				if (foreignEntity != null && foreignEntity.id == 0) {
 					subManager(spec.field.getType()).create(foreignEntity);
 				}
-			} else if ((isArray(fieldType) || isCollection(fieldType)) && isEntity(spec.componentType)) {
+			} else if ((isArray(fieldType) || isCollection(fieldType)) && isEntity(spec.genericArg1)) {
 				ArrayList<Entity> toCreate = new ArrayList<Entity>();
 				if (isArray(fieldType)) {
 					Entity[] arr = getFieldVal(item, spec.field);
@@ -185,7 +186,7 @@ public class EntityManager<EntityType extends Entity> extends AbstractEntityMana
 					}
 				}
 				if (!toCreate.isEmpty()) {
-					subManager(spec.componentType).create(toCreate);
+					subManager(spec.genericArg1).create(toCreate);
 				}
 
 			}
@@ -217,23 +218,23 @@ public class EntityManager<EntityType extends Entity> extends AbstractEntityMana
 	private String[] eagerForeignKeyColumnNames;
 
 	@SuppressWarnings("unchecked")
-	protected <T, V> void putToContentValues(ContentValues cv, String key, Class<T> valueType, Class<V> componentType,
-			Object value) throws Exception {
+	protected <T, G1, G2> void putToContentValues(ContentValues cv, String key, Class<T> valueType,
+			Class<G1> genericArg1, Class<G2> genericArg2, Object value) throws Exception {
 		if (value == null) {
 			cv.putNull(key);
 		} else {
 			Converter<T> converter = ConverterRegistry.getConverter(valueType);
-			converter.putToContentValues(valueType, componentType, cv, key, (T) value);
+			converter.putToContentValues(valueType, genericArg1, genericArg2, cv, key, (T) value);
 		}
 	}
 
-	protected <T, V> Object readFromCursor(Cursor cursor, int columnIndex, Class<T> valType, Class<V> componentType)
-			throws Exception {
+	protected <T, G1, G2> Object readFromCursor(Cursor cursor, int columnIndex, Class<T> valType, Class<G1> genericArg1,
+			Class<G2> genericArg2) throws Exception {
 		if (cursor.isNull(columnIndex)) {
 			return null;
 		} else {
 			Converter<T> converter = ConverterRegistry.getConverter(valType);
-			return converter.readFromCursor(valType, componentType, cursor, columnIndex);
+			return converter.readFromCursor(valType, genericArg1, genericArg2, cursor, columnIndex);
 		}
 	}
 

@@ -16,6 +16,7 @@
 package org.droidparts.test.model;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import org.droidparts.annotation.serialize.JSON;
 import org.droidparts.annotation.serialize.XML;
@@ -27,8 +28,12 @@ public class Collections extends Model {
 	@JSON(key = "albums")
 	@XML(tag = "albums")
 	public ArrayList<Album> albumsColl;
+
 	@JSON(key = "albums")
 	@XML(tag = "albums")
 	public Album[] albumsArr;
+
+	@JSON(key = "map")
+	public HashMap<Integer, String> map;
 
 }
