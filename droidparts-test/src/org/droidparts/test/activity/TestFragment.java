@@ -15,6 +15,9 @@
  */
 package org.droidparts.test.activity;
 
+import java.io.Serializable;
+import java.util.HashMap;
+
 import org.droidparts.annotation.inject.InjectBundleExtra;
 import org.droidparts.annotation.serialize.SaveInstanceState;
 import org.droidparts.fragment.Fragment;
@@ -33,9 +36,28 @@ public class TestFragment extends Fragment {
 	@SaveInstanceState
 	public String str;
 
+	@SaveInstanceState
+	public HashMap<Integer, KV<String, String>> map = new HashMap<Integer, KV<String, String>>();
+
 	@Override
 	protected View onCreateView(Bundle savedInstanceState, LayoutInflater inflater, ViewGroup container) {
 		return inflater.inflate(R.layout.fragment_test, null);
+	}
+
+	public static class KV<K extends Serializable, V extends Serializable> implements Serializable {
+		private static final long serialVersionUID = 1L;
+
+		public KV(K k, V v) {
+			this.k = k;
+			this.v = v;
+		}
+
+		private KV() {
+
+		}
+
+		public K k;
+		public V v;
 	}
 
 }

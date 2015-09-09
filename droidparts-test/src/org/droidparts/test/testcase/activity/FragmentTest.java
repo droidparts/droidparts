@@ -16,6 +16,7 @@
 package org.droidparts.test.testcase.activity;
 
 import org.droidparts.test.activity.TestFragment;
+import org.droidparts.test.activity.TestFragment.KV;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -63,6 +64,18 @@ public class FragmentTest extends TestActivityTest {
 		tf.str = null;
 		tf.onCreateView(getLayoutInflater(), null, state);
 		assertEquals("changed", tf.str);
+	}
+
+	public void testSaveInstanceInjectedNested() {
+		TestFragment tf = makeFragment();
+		tf.onCreateView(LayoutInflater.from(getActivity()), null, null);
+		tf.map.put(1, new KV<String, String>("k", "v"));
+		tf.onSaveInstanceState(state);
+		tf.map = null;
+		tf.onCreateView(getLayoutInflater(), null, state);
+		assertNotNull(tf.map);
+		assertTrue(tf.map.containsKey(1));
+		assertEquals("v", tf.map.get(1).v);
 	}
 
 	private TestFragment makeFragment() {

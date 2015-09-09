@@ -164,18 +164,25 @@ public final class ReflectionUtils {
 	public static Class<?>[] getFieldGenericArgs(Field field) {
 		Type genericType = field.getGenericType();
 		if (genericType instanceof ParameterizedType) {
-			Type[] typeArr = ((ParameterizedType) genericType).getActualTypeArguments();
-			Class<?>[] argsArr = new Class<?>[typeArr.length];
-			for (int i = 0; i < typeArr.length; i++) {
-				// class java.lang.String
-				String[] nameParts = typeArr[i].toString().split(" ");
-				String clsName = nameParts[nameParts.length - 1];
-				argsArr[i] = classForName(clsName);
-			}
-			return argsArr;
+			return getGenericArgs((ParameterizedType) genericType);
 		} else {
 			return new Class<?>[0];
 		}
+	}
+
+	public static Class<?>[] getGenericArgs(ParameterizedType genericType) {
+		Type[] typeArr = genericType.getActualTypeArguments();
+		Class<?>[] argsArr = new Class<?>[typeArr.length];
+		for (int i = 0; i < typeArr.length; i++) {
+			Type t = typeArr[i];
+			if (t instanceof ParameterizedType) {
+				// TODO full hierarchy
+				t = ((ParameterizedType) t).getRawType();
+			}
+			String clsName = t.toString().replaceFirst("^class ", "");
+			argsArr[i] = classForName(clsName);
+		}
+		return argsArr;
 	}
 
 	public static Object[] varArgsHack(Object[] varArgs) {
