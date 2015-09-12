@@ -36,6 +36,7 @@ public class MapConverter extends Converter<Map<?, ?>> {
 	}
 
 	@Override
+	@SuppressWarnings("unchecked")
 	public <G1, G2> Map<G1, G2> readFromJSON(Class<Map<?, ?>> valType, Class<G1> genericArg1, Class<G2> genericArg2,
 			JSONObject obj, String key) throws Exception {
 		JSONObject jo = ConverterRegistry.getConverter(JSONObject.class).readFromJSON(JSONObject.class, genericArg1,
@@ -54,6 +55,7 @@ public class MapConverter extends Converter<Map<?, ?>> {
 	}
 
 	@Override
+	@SuppressWarnings("unchecked")
 	public <G1, G2> void putToJSON(Class<Map<?, ?>> valType, Class<G1> genericArg1, Class<G2> genericArg2,
 			JSONObject obj, String key, Map<?, ?> val) throws Exception {
 		JSONObject o = new JSONObject();

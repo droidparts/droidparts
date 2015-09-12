@@ -16,6 +16,7 @@
 package org.droidparts.test.activity;
 
 import org.droidparts.activity.legacy.Activity;
+import org.droidparts.annotation.inject.InjectFragment;
 import org.droidparts.annotation.inject.InjectResource;
 import org.droidparts.annotation.inject.InjectView;
 import org.droidparts.annotation.serialize.SaveInstanceState;
@@ -31,6 +32,9 @@ public class TestActivity extends Activity {
 
 	@InjectView(id = R.id.view_text)
 	public TextView textView;
+
+	@InjectFragment(id = R.id.fragment)
+	public TestFragment testFragment;
 
 	@SaveInstanceState
 	public String data;

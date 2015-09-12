@@ -44,7 +44,7 @@ public class PreferenceFragment extends android.preference.PreferenceFragment {
 		}
 	}
 
-	public View onCreateView(Bundle savedInstanceState, LayoutInflater inflater, ViewGroup container) {
+	protected View onCreateView(Bundle savedInstanceState, LayoutInflater inflater, ViewGroup container) {
 		return super.onCreateView(inflater, container, savedInstanceState);
 	}
 

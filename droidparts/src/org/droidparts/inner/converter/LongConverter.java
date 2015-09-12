@@ -34,8 +34,8 @@ public class LongConverter extends Converter<Long> {
 	}
 
 	@Override
-	public <G1, G2> Long readFromJSON(Class<Long> valType, Class<G1> genericArg1, Class<G2> genericArg2,
-			JSONObject obj, String key) throws Exception {
+	public <G1, G2> Long readFromJSON(Class<Long> valType, Class<G1> genericArg1, Class<G2> genericArg2, JSONObject obj,
+			String key) throws Exception {
 		try {
 			return obj.getLong(key);
 		} catch (Exception e) {

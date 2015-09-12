@@ -3,7 +3,7 @@
     package="org.droidparts.test" >
 
     <uses-sdk
-        android:minSdkVersion="8"
+        android:minSdkVersion="11"
         android:targetSdkVersion="14" />
     
     <uses-permission android:name="android.permission.INTERNET" />

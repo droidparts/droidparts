@@ -88,8 +88,8 @@ public class ArrayCollectionConverter extends Converter<Object> {
 	}
 
 	@Override
-	public <G1, G2> void putToJSON(Class<Object> valType, Class<G1> genericArg1, Class<G2> genericArg2,
-			JSONObject obj, String key, Object val) throws Exception {
+	public <G1, G2> void putToJSON(Class<Object> valType, Class<G1> genericArg1, Class<G2> genericArg2, JSONObject obj,
+			String key, Object val) throws Exception {
 		Converter<G1> converter = ConverterRegistry.getConverter(genericArg1);
 		ArrayList<G1> list = arrOrCollToList(valType, genericArg1, val);
 		JSONArray vals = new JSONArray();
@@ -115,8 +115,7 @@ public class ArrayCollectionConverter extends Converter<Object> {
 		}
 		AbstractSerializer<Model, Object, Object> serializer = null;
 		if (isModel) {
-			serializer = (AbstractSerializer<Model, Object, Object>) wrapper
-					.makeSerializer((Class<Model>) genericArg1);
+			serializer = (AbstractSerializer<Model, Object, Object>) wrapper.makeSerializer((Class<Model>) genericArg1);
 		}
 		Converter<V> converter = ConverterRegistry.getConverter(genericArg1);
 		for (int i = 0; i < wrapper.size(); i++) {

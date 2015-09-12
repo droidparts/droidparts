@@ -26,7 +26,8 @@ import android.support.v4.app.Fragment;
 import android.view.MenuItem;
 import android.view.View;
 
-public abstract class ActionBarActivity extends android.support.v7.app.ActionBarActivity implements Injectable {
+@SuppressWarnings("deprecation")
+public abstract class AppCompatActivity extends android.support.v7.app.AppCompatActivity implements Injectable {
 
 	private MenuItem reloadMenuItem;
 	private View loadingIndicator;
