@@ -98,7 +98,7 @@ public class HttpURLConnectionWorker extends HTTPWorker {
 		}
 	}
 
-	public static void postOrPut(HttpURLConnection conn, String contentType, String data) throws HTTPException {
+	public void postOrPut(HttpURLConnection conn, String contentType, String data) throws HTTPException {
 		conn.setRequestProperty(ACCEPT_CHARSET, UTF8);
 		conn.setRequestProperty(CONTENT_TYPE, contentType);
 		OutputStream os = null;
@@ -113,8 +113,8 @@ public class HttpURLConnectionWorker extends HTTPWorker {
 		}
 	}
 
-	public static void postMultipart(HttpURLConnection conn, String name, String contentType, String fileName,
-			InputStream is) throws HTTPException {
+	public void postMultipart(HttpURLConnection conn, String name, String contentType, String fileName, InputStream is)
+			throws HTTPException {
 		conn.setDoOutput(true);
 		conn.setRequestProperty(CACHE_CONTROL, NO_CACHE);
 		conn.setRequestProperty(CONNECTION, KEEP_ALIVE);
@@ -147,7 +147,7 @@ public class HttpURLConnectionWorker extends HTTPWorker {
 		}
 	}
 
-	public static HTTPResponse getResponse(HttpURLConnection conn, boolean body) throws HTTPException {
+	public HTTPResponse getResponse(HttpURLConnection conn, boolean body) throws HTTPException {
 		HTTPResponse response = new HTTPResponse();
 		response.code = connectAndGetResponseCodeOrThrow(conn);
 		response.headers = conn.getHeaderFields();
@@ -160,7 +160,7 @@ public class HttpURLConnectionWorker extends HTTPWorker {
 		return response;
 	}
 
-	private static int connectAndGetResponseCodeOrThrow(HttpURLConnection conn) throws HTTPException {
+	private int connectAndGetResponseCodeOrThrow(HttpURLConnection conn) throws HTTPException {
 		try {
 			conn.connect();
 			int respCode = conn.getResponseCode();
