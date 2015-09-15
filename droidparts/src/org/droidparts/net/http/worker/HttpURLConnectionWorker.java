@@ -50,6 +50,7 @@ public class HttpURLConnectionWorker extends HTTPWorker {
 	private static final String BOUNDARY = "*****";
 
 	private final String userAgent;
+	private int multipartChunkSize = -1;
 
 	private Proxy proxy;
 
@@ -64,6 +65,10 @@ public class HttpURLConnectionWorker extends HTTPWorker {
 
 	public void setProxy(Proxy proxy) {
 		this.proxy = proxy;
+	}
+
+	public void setMultipartChunkSize(int size) {
+		this.multipartChunkSize = size;
 	}
 
 	public HttpURLConnection getConnection(String urlStr, String requestMethod) throws HTTPException {
@@ -116,6 +121,9 @@ public class HttpURLConnectionWorker extends HTTPWorker {
 	public void postMultipart(HttpURLConnection conn, String name, String contentType, String fileName, InputStream is)
 			throws HTTPException {
 		conn.setDoOutput(true);
+		if (multipartChunkSize > 0) {
+			conn.setChunkedStreamingMode(multipartChunkSize);
+		}
 		conn.setRequestProperty(CACHE_CONTROL, NO_CACHE);
 		conn.setRequestProperty(CONNECTION, KEEP_ALIVE);
 		conn.setRequestProperty(CONTENT_TYPE, MULTIPART + ";boundary=" + BOUNDARY);
