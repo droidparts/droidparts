@@ -13,45 +13,40 @@
  * See the License for the specific language governing permissions and
  * limitations under the License. 
  */
-package org.droidparts.activity.legacy;
+package org.droidparts.activity;
 
-import org.droidparts.Injector;
-import org.droidparts.bus.EventBus;
-import org.droidparts.contract.Injectable;
-import org.droidparts.inner.InstanceStateSaver;
+import org.droidparts.inner.delegate.BaseDelegate;
 
 import android.os.Bundle;
 
-public abstract class ListActivity extends android.app.ListActivity implements Injectable {
+public abstract class PreferenceActivity extends android.preference.PreferenceActivity {
 
-	@Override
-	public void onPreInject() {
+	protected void onPreInject() {
 	}
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		onPreInject();
-		Injector.inject(this);
-		InstanceStateSaver.onCreate(this, savedInstanceState);
+		BaseDelegate.onActivityCreate(this, savedInstanceState);
 	}
 
 	@Override
 	protected void onResume() {
 		super.onResume();
-		EventBus.registerAnnotatedReceiver(this);
+		BaseDelegate.onActivityResume(this);
 	}
 
 	@Override
 	protected void onPause() {
 		super.onPause();
-		EventBus.unregisterAnnotatedReceiver(this);
+		BaseDelegate.onActivityPause(this);
 	}
 
 	@Override
 	protected void onSaveInstanceState(Bundle outState) {
 		super.onSaveInstanceState(outState);
-		InstanceStateSaver.onSaveInstanceState(this, outState);
+		BaseDelegate.onActivitySaveInstanceState(this, outState);
 	}
 
 }

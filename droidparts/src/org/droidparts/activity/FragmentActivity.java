@@ -13,70 +13,40 @@
  * See the License for the specific language governing permissions and
  * limitations under the License. 
  */
-package org.droidparts.activity.support.v7;
+package org.droidparts.activity;
 
-import org.droidparts.inner.delegate.SupportDelegate;
+import org.droidparts.inner.delegate.FragmentDelegate;
 
-import android.os.Bundle;
-import android.support.v4.app.Fragment;
+import android.app.Fragment;
 import android.view.MenuItem;
 import android.view.View;
 
-@SuppressWarnings("deprecation")
-public abstract class AppCompatActivity extends android.support.v7.app.AppCompatActivity {
+public abstract class FragmentActivity extends org.droidparts.activity.Activity {
 
 	private MenuItem reloadMenuItem;
 	private View loadingIndicator;
 
 	private boolean isLoading;
 
-	protected void onPreInject() {
-	}
-
-	@Override
-	protected void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		onPreInject();
-		SupportDelegate.onActivityCreate(this, savedInstanceState);
-	}
-
-	@Override
-	protected void onResume() {
-		super.onResume();
-		SupportDelegate.onActivityResume(this);
-	}
-
-	@Override
-	protected void onPause() {
-		super.onPause();
-		SupportDelegate.onActivityPause(this);
-	}
-
-	@Override
-	protected void onSaveInstanceState(Bundle outState) {
-		super.onSaveInstanceState(outState);
-		SupportDelegate.onActivitySaveInstanceState(this, outState);
-	}
-
 	public final void setActionBarLoadingIndicatorVisible(boolean visible) {
 		isLoading = visible;
 		if (reloadMenuItem != null) {
 			reloadMenuItem.setActionView(visible ? loadingIndicator : null);
 		} else {
-			super.setSupportProgressBarIndeterminateVisibility(visible);
+			super.setProgressBarIndeterminateVisibility(visible);
 		}
 	}
 
 	public final void setActionBarReloadMenuItem(MenuItem menuItem) {
 		this.reloadMenuItem = menuItem;
 		if (menuItem != null && loadingIndicator == null) {
-			loadingIndicator = SupportDelegate.activityBuildLoadingIndicator(this);
+			loadingIndicator = FragmentDelegate.activityBuildLoadingIndicator(this);
 		}
 		setActionBarLoadingIndicatorVisible(isLoading);
 	}
 
 	public void setFragmentVisible(boolean visible, Fragment... fragments) {
-		SupportDelegate.activitySetFragmentVisible(this, visible, fragments);
+		FragmentDelegate.activitySetFragmentVisible(this, visible, fragments);
 	}
 
 }

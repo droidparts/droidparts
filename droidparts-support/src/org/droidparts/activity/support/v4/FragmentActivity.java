@@ -15,49 +15,43 @@
  */
 package org.droidparts.activity.support.v4;
 
-import org.droidparts.Injector;
-import org.droidparts.bus.EventBus;
-import org.droidparts.contract.Injectable;
-import org.droidparts.inner.InstanceStateSaver;
-import org.droidparts.inner.fragments.SecretFragmentsSupportUtil;
+import org.droidparts.inner.delegate.SupportDelegate;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 
-public abstract class FragmentActivity extends android.support.v4.app.FragmentActivity implements Injectable {
+public abstract class FragmentActivity extends android.support.v4.app.FragmentActivity {
 
-	@Override
-	public void onPreInject() {
+	protected void onPreInject() {
 	}
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		onPreInject();
-		Injector.inject(this);
-		InstanceStateSaver.onCreate(this, savedInstanceState);
+		SupportDelegate.onActivityCreate(this, savedInstanceState);
 	}
 
 	@Override
 	protected void onResume() {
 		super.onResume();
-		EventBus.registerAnnotatedReceiver(this);
+		SupportDelegate.onActivityResume(this);
 	}
 
 	@Override
 	protected void onPause() {
 		super.onPause();
-		EventBus.unregisterAnnotatedReceiver(this);
+		SupportDelegate.onActivityPause(this);
 	}
 
 	@Override
 	protected void onSaveInstanceState(Bundle outState) {
 		super.onSaveInstanceState(outState);
-		InstanceStateSaver.onSaveInstanceState(this, outState);
+		SupportDelegate.onActivitySaveInstanceState(this, outState);
 	}
 
 	public void setFragmentVisible(boolean visible, Fragment... fragments) {
-		SecretFragmentsSupportUtil.fragmentActivitySetFragmentVisible(this, visible, fragments);
+		SupportDelegate.activitySetFragmentVisible(this, visible, fragments);
 	}
 
 }

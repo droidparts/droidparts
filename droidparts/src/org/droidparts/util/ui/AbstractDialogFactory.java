@@ -16,6 +16,7 @@
 package org.droidparts.util.ui;
 
 import static android.widget.Toast.LENGTH_SHORT;
+
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.widget.Toast;

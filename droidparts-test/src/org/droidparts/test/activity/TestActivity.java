@@ -15,7 +15,7 @@
  */
 package org.droidparts.test.activity;
 
-import org.droidparts.activity.legacy.Activity;
+import org.droidparts.activity.Activity;
 import org.droidparts.annotation.inject.InjectFragment;
 import org.droidparts.annotation.inject.InjectResource;
 import org.droidparts.annotation.inject.InjectView;

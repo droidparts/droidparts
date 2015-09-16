@@ -20,6 +20,7 @@ import static org.droidparts.inner.TypeHelper.isBoolean;
 import static org.droidparts.inner.TypeHelper.isDrawable;
 import static org.droidparts.inner.TypeHelper.isInteger;
 import static org.droidparts.inner.TypeHelper.isString;
+
 import android.content.Context;
 import android.content.res.Resources;
 

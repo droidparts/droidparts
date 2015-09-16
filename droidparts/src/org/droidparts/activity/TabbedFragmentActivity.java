@@ -27,7 +27,7 @@ import android.app.Fragment;
 import android.app.FragmentTransaction;
 import android.os.Bundle;
 
-public abstract class TabbedFragmentActivity extends Activity {
+public abstract class TabbedFragmentActivity extends FragmentActivity {
 
 	private static final String CURR_TAB = "__curr_tab__";
 

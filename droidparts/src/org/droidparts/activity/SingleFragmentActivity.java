@@ -15,25 +15,25 @@
  */
 package org.droidparts.activity;
 
-import org.droidparts.inner.fragments.SecretFragmentsStockUtil;
+import org.droidparts.inner.delegate.FragmentDelegate;
 
 import android.app.Fragment;
 import android.os.Bundle;
 
-public abstract class SingleFragmentActivity<F extends Fragment> extends Activity {
+public abstract class SingleFragmentActivity<F extends Fragment> extends FragmentActivity {
 
 	private F fragment;
 
 	@Override
-	public void onPreInject() {
-		SecretFragmentsStockUtil.singleFragmentActivitySetContentView(this);
+	protected void onPreInject() {
+		FragmentDelegate.singleFragmentActivitySetContentView(this);
 	}
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		fragment = onCreateFragment();
-		SecretFragmentsStockUtil.singleFragmentActivityAddFragmentToContentView(this, fragment);
+		FragmentDelegate.singleFragmentActivityAddFragmentToContentView(this, fragment);
 	}
 
 	protected F getFragment() {
