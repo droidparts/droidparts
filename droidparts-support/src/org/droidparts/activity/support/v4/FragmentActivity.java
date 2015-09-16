@@ -20,7 +20,7 @@ import org.droidparts.inner.delegate.SupportDelegate;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 
-public abstract class FragmentActivity extends android.support.v4.app.FragmentActivity {
+public class FragmentActivity extends android.support.v4.app.FragmentActivity {
 
 	protected void onPreInject() {
 	}

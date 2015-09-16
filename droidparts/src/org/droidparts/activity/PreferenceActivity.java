@@ -19,7 +19,7 @@ import org.droidparts.inner.delegate.BaseDelegate;
 
 import android.os.Bundle;
 
-public abstract class PreferenceActivity extends android.preference.PreferenceActivity {
+public class PreferenceActivity extends android.preference.PreferenceActivity {
 
 	protected void onPreInject() {
 	}

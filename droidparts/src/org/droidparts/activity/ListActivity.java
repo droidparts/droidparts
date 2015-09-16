@@ -19,7 +19,7 @@ import org.droidparts.inner.delegate.BaseDelegate;
 
 import android.os.Bundle;
 
-public abstract class ListActivity extends android.app.ListActivity {
+public class ListActivity extends android.app.ListActivity {
 
 	protected void onPreInject() {
 	}

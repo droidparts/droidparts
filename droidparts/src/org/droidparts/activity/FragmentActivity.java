@@ -21,7 +21,7 @@ import android.app.Fragment;
 import android.view.MenuItem;
 import android.view.View;
 
-public abstract class FragmentActivity extends org.droidparts.activity.Activity {
+public class FragmentActivity extends Activity {
 
 	private MenuItem reloadMenuItem;
 	private View loadingIndicator;

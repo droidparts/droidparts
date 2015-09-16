@@ -23,7 +23,7 @@ import android.view.MenuItem;
 import android.view.View;
 
 @SuppressWarnings("deprecation")
-public abstract class AppCompatActivity extends android.support.v7.app.AppCompatActivity {
+public class AppCompatActivity extends android.support.v7.app.AppCompatActivity {
 
 	private MenuItem reloadMenuItem;
 	private View loadingIndicator;
