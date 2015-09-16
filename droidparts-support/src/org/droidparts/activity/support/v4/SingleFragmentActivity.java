@@ -15,7 +15,7 @@
  */
 package org.droidparts.activity.support.v4;
 
-import org.droidparts.inner.fragments.SecretFragmentsSupportUtil;
+import org.droidparts.inner.delegate.SupportDelegate;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -25,15 +25,15 @@ public abstract class SingleFragmentActivity<F extends Fragment> extends Fragmen
 	private F fragment;
 
 	@Override
-	public void onPreInject() {
-		SecretFragmentsSupportUtil.singleFragmentActivitySetContentView(this);
+	protected void onPreInject() {
+		SupportDelegate.singleFragmentActivitySetContentView(this);
 	}
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		fragment = onCreateFragment();
-		SecretFragmentsSupportUtil.singleFragmentActivityAddFragmentToContentView(this, fragment);
+		SupportDelegate.singleFragmentActivityAddFragmentToContentView(this, fragment);
 	}
 
 	protected F getFragment() {

@@ -17,7 +17,7 @@ package org.droidparts.sample.activity;
 
 import java.util.ArrayList;
 
-import org.droidparts.activity.legacy.Activity;
+import org.droidparts.activity.Activity;
 import org.droidparts.annotation.inject.InjectBundleExtra;
 import org.droidparts.annotation.inject.InjectDependency;
 import org.droidparts.annotation.inject.InjectView;

@@ -16,6 +16,7 @@
 package org.droidparts.inner;
 
 import static android.content.pm.PackageManager.GET_META_DATA;
+
 import android.content.Context;
 
 public class ManifestMetaData {

@@ -15,73 +15,38 @@
  */
 package org.droidparts.activity;
 
-import org.droidparts.Injector;
-import org.droidparts.bus.EventBus;
-import org.droidparts.contract.Injectable;
-import org.droidparts.inner.InstanceStateSaver;
-import org.droidparts.inner.fragments.SecretFragmentsStockUtil;
+import org.droidparts.inner.delegate.BaseDelegate;
 
-import android.app.Fragment;
 import android.os.Bundle;
-import android.view.MenuItem;
-import android.view.View;
 
-public abstract class Activity extends android.app.Activity implements Injectable {
+public class Activity extends android.app.Activity {
 
-	private MenuItem reloadMenuItem;
-	private View loadingIndicator;
-
-	private boolean isLoading;
-
-	@Override
-	public void onPreInject() {
+	protected void onPreInject() {
 	}
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		onPreInject();
-		Injector.inject(this);
-		InstanceStateSaver.onCreate(this, savedInstanceState);
+		BaseDelegate.onActivityCreate(this, savedInstanceState);
 	}
 
 	@Override
 	protected void onResume() {
 		super.onResume();
-		EventBus.registerAnnotatedReceiver(this);
+		BaseDelegate.onActivityResume(this);
 	}
 
 	@Override
 	protected void onPause() {
 		super.onPause();
-		EventBus.unregisterAnnotatedReceiver(this);
+		BaseDelegate.onActivityPause(this);
 	}
 
 	@Override
 	protected void onSaveInstanceState(Bundle outState) {
 		super.onSaveInstanceState(outState);
-		InstanceStateSaver.onSaveInstanceState(this, outState);
-	}
-
-	public final void setActionBarLoadingIndicatorVisible(boolean visible) {
-		isLoading = visible;
-		if (reloadMenuItem != null) {
-			reloadMenuItem.setActionView(visible ? loadingIndicator : null);
-		} else {
-			super.setProgressBarIndeterminateVisibility(visible);
-		}
-	}
-
-	public final void setActionBarReloadMenuItem(MenuItem menuItem) {
-		this.reloadMenuItem = menuItem;
-		if (menuItem != null && loadingIndicator == null) {
-			loadingIndicator = SecretFragmentsStockUtil.fragmentActivityBuildLoadingIndicator(this);
-		}
-		setActionBarLoadingIndicatorVisible(isLoading);
-	}
-
-	public void setFragmentVisible(boolean visible, Fragment... fragments) {
-		SecretFragmentsStockUtil.fragmentActivitySetFragmentVisible(this, visible, fragments);
+		BaseDelegate.onActivitySaveInstanceState(this, outState);
 	}
 
 }

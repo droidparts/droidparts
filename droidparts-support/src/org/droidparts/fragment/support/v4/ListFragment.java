@@ -15,8 +15,7 @@
  */
 package org.droidparts.fragment.support.v4;
 
-import org.droidparts.Injector;
-import org.droidparts.inner.InstanceStateSaver;
+import org.droidparts.inner.delegate.SupportDelegate;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -30,8 +29,7 @@ public class ListFragment extends android.support.v4.app.ListFragment {
 	@Override
 	public final View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		View view = onCreateView(savedInstanceState, inflater, container);
-		Injector.inject(view, this);
-		InstanceStateSaver.onCreate(this, savedInstanceState);
+		SupportDelegate.onFragmentCreateView(this, view, null, savedInstanceState);
 		injected = true;
 		return view;
 	}
@@ -39,9 +37,7 @@ public class ListFragment extends android.support.v4.app.ListFragment {
 	@Override
 	public void onSaveInstanceState(Bundle outState) {
 		super.onSaveInstanceState(outState);
-		if (injected) {
-			InstanceStateSaver.onSaveInstanceState(this, outState);
-		}
+		SupportDelegate.onFragmentSaveInstanceState(this, injected, outState);
 	}
 
 	protected View onCreateView(Bundle savedInstanceState, LayoutInflater inflater, ViewGroup container) {

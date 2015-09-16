@@ -15,9 +15,7 @@
  */
 package org.droidparts.fragment.support.v4;
 
-import org.droidparts.Injector;
-import org.droidparts.inner.InstanceStateSaver;
-import org.droidparts.inner.fragments.SecretFragmentsSupportUtil;
+import org.droidparts.inner.delegate.SupportDelegate;
 
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
@@ -32,12 +30,7 @@ public class DialogFragment extends android.support.v4.app.DialogFragment {
 	@Override
 	public final View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		View view = onCreateView(savedInstanceState, inflater, container);
-		if (view != null) {
-			Injector.inject(view, this);
-		} else {
-			Injector.inject(getDialog(), this);
-		}
-		InstanceStateSaver.onCreate(this, savedInstanceState);
+		SupportDelegate.onFragmentCreateView(this, view, getDialog(), savedInstanceState);
 		injected = true;
 		return view;
 	}
@@ -45,9 +38,7 @@ public class DialogFragment extends android.support.v4.app.DialogFragment {
 	@Override
 	public void onSaveInstanceState(Bundle outState) {
 		super.onSaveInstanceState(outState);
-		if (injected) {
-			InstanceStateSaver.onSaveInstanceState(this, outState);
-		}
+		SupportDelegate.onFragmentSaveInstanceState(this, injected, outState);
 	}
 
 	protected View onCreateView(Bundle savedInstanceState, LayoutInflater inflater, ViewGroup container) {
@@ -59,7 +50,7 @@ public class DialogFragment extends android.support.v4.app.DialogFragment {
 	}
 
 	public void show(FragmentActivity activity) {
-		SecretFragmentsSupportUtil.dialogFragmentShowDialogFragment(activity, this);
+		SupportDelegate.showDialogFragment(activity, this);
 	}
 
 }

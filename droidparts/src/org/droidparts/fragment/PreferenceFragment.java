@@ -15,8 +15,7 @@
  */
 package org.droidparts.fragment;
 
-import org.droidparts.Injector;
-import org.droidparts.inner.InstanceStateSaver;
+import org.droidparts.inner.delegate.FragmentDelegate;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -30,18 +29,15 @@ public class PreferenceFragment extends android.preference.PreferenceFragment {
 	@Override
 	public final View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		View view = onCreateView(savedInstanceState, inflater, container);
-		Injector.inject(view, this);
+		FragmentDelegate.onFragmentCreateView(this, view, null, savedInstanceState);
 		injected = true;
-		InstanceStateSaver.onCreate(this, savedInstanceState);
 		return view;
 	}
 
 	@Override
 	public void onSaveInstanceState(Bundle outState) {
 		super.onSaveInstanceState(outState);
-		if (injected) {
-			InstanceStateSaver.onSaveInstanceState(this, outState);
-		}
+		FragmentDelegate.onFragmentSaveInstanceState(this, injected, outState);
 	}
 
 	protected View onCreateView(Bundle savedInstanceState, LayoutInflater inflater, ViewGroup container) {

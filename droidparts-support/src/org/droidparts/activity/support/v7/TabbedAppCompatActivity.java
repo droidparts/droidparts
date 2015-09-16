@@ -28,7 +28,7 @@ import android.support.v7.app.ActionBar.Tab;
 import android.support.v7.app.ActionBar.TabListener;
 
 @SuppressWarnings("deprecation")
-public abstract class TabbedAppCompatActivity extends AppCompatActivity {
+public class TabbedAppCompatActivity extends AppCompatActivity {
 
 	private static final String CURR_TAB = "__curr_tab__";
 

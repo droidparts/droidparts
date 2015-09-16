@@ -20,7 +20,7 @@ import static org.droidparts.util.ui.ViewUtils.setKeyboardVisible;
 
 import java.util.ArrayList;
 
-import org.droidparts.activity.legacy.ListActivity;
+import org.droidparts.activity.ListActivity;
 import org.droidparts.annotation.inject.InjectView;
 import org.droidparts.sample.R;
 import org.droidparts.sample.adapter.EntryListAdapter;

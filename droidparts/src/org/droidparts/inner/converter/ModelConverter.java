@@ -61,14 +61,14 @@ public class ModelConverter extends Converter<Model> {
 			String key, Model val) throws Exception {
 		@SuppressWarnings("unchecked")
 		Class<Model> cls = (Class<Model>) val.getClass();
-		JSONObject valStr = new JSONSerializer<Model>(cls, null).serialize(val);
+		JSONObject valStr = makeSerializer(cls).serialize(val);
 		obj.put(key, valStr);
 	}
 
 	@Override
 	public <G1, G2> Model readFromJSON(Class<Model> valType, Class<G1> genericArg1, Class<G2> genericArg2,
 			JSONObject obj, String key) throws Exception {
-		return new JSONSerializer<Model>(valType, null).deserialize(obj.getJSONObject(key));
+		return makeSerializer(valType).deserialize(obj.getJSONObject(key));
 	}
 
 	@Override
@@ -80,7 +80,11 @@ public class ModelConverter extends Converter<Model> {
 	@Override
 	protected <G1, G2> Model parseFromString(Class<Model> valType, Class<G1> genericArg1, Class<G2> genericArg2,
 			String str) throws Exception {
-		return new JSONSerializer<Model>(valType, null).deserialize(new JSONObject(str));
+		return makeSerializer(valType).deserialize(new JSONObject(str));
+	}
+
+	protected JSONSerializer<Model> makeSerializer(Class<Model> valType) {
+		return new JSONSerializer<Model>(valType, null);
 	}
 
 }

@@ -108,7 +108,7 @@ public class RESTClient {
 			if (etag != null) {
 				conn.addRequestProperty(Header.IF_NONE_MATCH, etag);
 			}
-			response = HttpURLConnectionWorker.getResponse(conn, body);
+			response = httpURLConnectionWorker.getResponse(conn, body);
 		} else {
 			HttpGet req = new HttpGet(uri);
 			if (ifModifiedSince > 0) {
@@ -128,8 +128,8 @@ public class RESTClient {
 		HTTPResponse response;
 		if (httpURLConnectionWorker != null) {
 			HttpURLConnection conn = httpURLConnectionWorker.getConnection(uri, Method.POST);
-			HttpURLConnectionWorker.postOrPut(conn, contentType, data);
-			response = HttpURLConnectionWorker.getResponse(conn, true);
+			httpURLConnectionWorker.postOrPut(conn, contentType, data);
+			response = httpURLConnectionWorker.getResponse(conn, true);
 		} else {
 			HttpPost req = new HttpPost(uri);
 			req.setEntity(HttpClientWorker.buildStringEntity(contentType, data));
@@ -145,8 +145,8 @@ public class RESTClient {
 		HTTPResponse response;
 		if (httpURLConnectionWorker != null) {
 			HttpURLConnection conn = httpURLConnectionWorker.getConnection(uri, Method.POST);
-			HttpURLConnectionWorker.postMultipart(conn, name, contentType, fileName, is);
-			response = HttpURLConnectionWorker.getResponse(conn, true);
+			httpURLConnectionWorker.postMultipart(conn, name, contentType, fileName, is);
+			response = httpURLConnectionWorker.getResponse(conn, true);
 		} else {
 			HttpPost req = new HttpPost(uri);
 			req.setEntity(HttpClientWorker.buildMultipartEntity(name, contentType, fileName, is));
@@ -160,8 +160,8 @@ public class RESTClient {
 		HTTPResponse response;
 		if (httpURLConnectionWorker != null) {
 			HttpURLConnection conn = httpURLConnectionWorker.getConnection(uri, Method.PUT);
-			HttpURLConnectionWorker.postOrPut(conn, contentType, data);
-			response = HttpURLConnectionWorker.getResponse(conn, true);
+			httpURLConnectionWorker.postOrPut(conn, contentType, data);
+			response = httpURLConnectionWorker.getResponse(conn, true);
 		} else {
 			HttpPut req = new HttpPut(uri);
 			req.setEntity(HttpClientWorker.buildStringEntity(contentType, data));
@@ -176,7 +176,7 @@ public class RESTClient {
 		HTTPResponse response;
 		if (httpURLConnectionWorker != null) {
 			HttpURLConnection conn = httpURLConnectionWorker.getConnection(uri, Method.DELETE);
-			response = HttpURLConnectionWorker.getResponse(conn, true);
+			response = httpURLConnectionWorker.getResponse(conn, true);
 		} else {
 			HttpDelete req = new HttpDelete(uri);
 			response = httpClientWorker.getResponse(req, true);

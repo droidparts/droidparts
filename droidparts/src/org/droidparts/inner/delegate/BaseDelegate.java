@@ -13,22 +13,29 @@
  * See the License for the specific language governing permissions and
  * limitations under the License. 
  */
-package org.droidparts.inner.fragments;
+package org.droidparts.inner.delegate;
 
 import static org.droidparts.util.ResourceUtils.dpToPx;
+
+import org.droidparts.Injector;
+import org.droidparts.bus.EventBus;
+import org.droidparts.inner.InstanceStateSaver;
+
 import android.app.Activity;
+import android.app.Dialog;
 import android.content.Context;
 import android.content.res.Configuration;
 import android.os.Build;
+import android.os.Bundle;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.FrameLayout.LayoutParams;
 import android.widget.ProgressBar;
 
-public class SecretFragmentsUtil {
+public class BaseDelegate {
 
-	public static View fragmentActivityBuildLoadingIndicator(Context ctx) {
+	public static View activityBuildLoadingIndicator(Context ctx) {
 		boolean large = (ctx.getResources().getConfiguration().screenLayout
 				& Configuration.SCREENLAYOUT_SIZE_MASK) > Configuration.SCREENLAYOUT_SIZE_NORMAL;
 		boolean fresh = Build.VERSION.SDK_INT > Build.VERSION_CODES.GINGERBREAD_MR1;
@@ -48,6 +55,44 @@ public class SecretFragmentsUtil {
 		fl.setLayoutParams(new LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.FILL_PARENT));
 		fl.setId(CONTENT_VIEW_ID);
 		activity.setContentView(fl);
+	}
+
+	//
+
+	public static void onActivityCreate(Activity activity, Bundle savedInstanceState) {
+		Injector.inject(activity);
+		InstanceStateSaver.onCreate(activity, savedInstanceState);
+	}
+
+	public static void onActivityResume(Activity activity) {
+		EventBus.registerAnnotatedReceiver(activity);
+	}
+
+	public static void onActivityPause(Activity activity) {
+		EventBus.unregisterAnnotatedReceiver(activity);
+	}
+
+	public static void onActivitySaveInstanceState(Activity activity, Bundle outState) {
+		InstanceStateSaver.onSaveInstanceState(activity, outState);
+	}
+
+	//
+
+	public static void onFragmentCreateView(Object obj, View view, Dialog dialog, Bundle savedInstanceState) {
+		if (view != null) {
+			Injector.inject(view, obj);
+		} else {
+			Injector.inject(dialog, obj);
+		}
+		InstanceStateSaver.onCreate(obj, savedInstanceState);
+		EventBus.registerAnnotatedReceiver(obj);
+	}
+
+	public static void onFragmentSaveInstanceState(Object obj, boolean injected, Bundle outState) {
+		if (injected) {
+			EventBus.unregisterAnnotatedReceiver(obj);
+			InstanceStateSaver.onSaveInstanceState(obj, outState);
+		}
 	}
 
 }

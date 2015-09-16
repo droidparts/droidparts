@@ -16,6 +16,7 @@
 package org.droidparts.concurrent.thread;
 
 import static org.droidparts.util.Strings.isNotEmpty;
+
 import android.os.Process;
 
 public class BackgroundThread extends Thread {
