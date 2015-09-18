@@ -81,8 +81,10 @@ public class BaseDelegate {
 	public static void onFragmentCreateView(Object obj, View view, Dialog dialog, Bundle savedInstanceState) {
 		if (view != null) {
 			Injector.inject(view, obj);
-		} else {
+		} else if (dialog != null) {
 			Injector.inject(dialog, obj);
+		} else {
+			throw new IllegalArgumentException("Null View.");
 		}
 		InstanceStateSaver.onCreate(obj, savedInstanceState);
 		EventBus.registerAnnotatedReceiver(obj);
