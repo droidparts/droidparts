@@ -179,7 +179,7 @@ public final class ReflectionUtils {
 				// TODO full hierarchy
 				t = ((ParameterizedType) t).getRawType();
 			}
-			String clsName = t.toString().replaceFirst("^class ", "");
+			String clsName = t.toString().replaceFirst("^(class|interface) ", "");
 			argsArr[i] = classForName(clsName);
 		}
 		return argsArr;
