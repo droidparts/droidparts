@@ -1,3 +1,6 @@
+2.8.6 /2015-09-24/:
+    * Fixed getting Interface generic arg.
+
 2.8.5 /2015-09-17/:
     * Moved activities from legacy package.
     * Activity -> FragmentActivity.
