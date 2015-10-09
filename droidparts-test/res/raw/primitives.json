@@ -8,5 +8,6 @@
 	"boolean3": 1,
 	"boolean4": "0",
 	"string1": "str",
-	"string_array": ["one", "two"]
+	"string_array": ["one", "two"],
+	"long_array": [9000, 100500]
 }

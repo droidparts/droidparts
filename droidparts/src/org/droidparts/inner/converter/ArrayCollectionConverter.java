@@ -223,6 +223,8 @@ public class ArrayCollectionConverter extends Converter<Object> {
 		private final JSONArray arr;
 		private final ArrayList<Node> nodes;
 
+		private final JSONObject tmp = new JSONObject();
+
 		Wrapper(JSONArray arr, ArrayList<Node> nodes) {
 			this.arr = arr;
 			this.nodes = nodes;
@@ -242,10 +244,14 @@ public class ArrayCollectionConverter extends Converter<Object> {
 
 		<V> Object convert(Object item, Converter<V> conv, Class<V> valType) throws Exception {
 			if (isJSON()) {
-				return item;
+				if (item.getClass() == valType) {
+					return item;
+				} else {
+					tmp.put("key", item);
+					return conv.readFromJSON(valType, null, null, tmp, "key");
+				}
 			} else {
-				Node n = (Node) item;
-				String txt = PersistUtils.getNodeText(n);
+				String txt = PersistUtils.getNodeText((Node) item);
 				return conv.parseFromString(valType, null, null, txt);
 			}
 		}
