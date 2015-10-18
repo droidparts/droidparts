@@ -40,6 +40,7 @@ public class JSONTestCase extends AndroidTestCase {
 		JSONSerializer<Primitives> serializer = new JSONSerializer<Primitives>(Primitives.class, getContext());
 		Primitives primitives = serializer.deserialize(getPrimitives());
 		assertNotNull(primitives.strArr);
+		assertEquals(9000, (long) primitives.longList.get(0));
 		//
 		JSONObject obj = serializer.serialize(primitives);
 		//

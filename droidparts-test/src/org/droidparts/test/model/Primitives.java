@@ -58,6 +58,9 @@ public class Primitives extends Entity {
 	@JSON(key = "string_array")
 	@Column(nullable = true)
 	public String[] strArr;
+	@JSON(key = "long_array")
+	public ArrayList<Long> longList;
+
 	@Column(nullable = true)
 	public int[] intArr;
 	@Column

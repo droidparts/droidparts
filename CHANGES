@@ -1,3 +1,6 @@
+2.8.7 /2015-10-18/:
+    * Fixed reading longs from JSON.
+
 2.8.6 /2015-09-24/:
     * Fixed getting Interface generic arg.
 
