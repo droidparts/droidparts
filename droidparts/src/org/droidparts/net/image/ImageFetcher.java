@@ -18,7 +18,6 @@ package org.droidparts.net.image;
 import static android.graphics.Color.TRANSPARENT;
 import static org.droidparts.contract.Constants.BUFFER_SIZE;
 import static org.droidparts.util.IOUtils.silentlyClose;
-import static org.droidparts.util.Strings.isNotEmpty;
 
 import java.io.BufferedInputStream;
 import java.io.ByteArrayOutputStream;
@@ -140,13 +139,7 @@ public class ImageFetcher {
 			Runnable r = new ReadFromCacheRunnable(spec, submitted);
 			cacheExecutor.remove(r);
 			fetchExecutor.remove(r);
-			if (isNotEmpty(imgUrl)) {
-				cacheExecutor.execute(r);
-			} else {
-				if (listener != null) {
-					listener.onFetchCompleted(imageView, imgUrl, null);
-				}
-			}
+			cacheExecutor.execute(r);
 		}
 	}
 
@@ -292,7 +285,7 @@ public class ImageFetcher {
 
 	//
 
-	static class ImageViewSpec {
+	static final class ImageViewSpec {
 
 		final WeakReference<ImageView> imgViewRef;
 		final String imgUrl;
@@ -311,7 +304,7 @@ public class ImageFetcher {
 		public ImageViewSpec(ImageView imgView, String imgUrl, Bitmap inBitmap, int crossFadeMillis,
 				ImageReshaper reshaper, ImageFetchListener listener) {
 			imgViewRef = new WeakReference<ImageView>(imgView);
-			this.imgUrl = imgUrl;
+			this.imgUrl = String.valueOf(imgUrl);
 			inBitmapRef = new WeakReference<Bitmap>(inBitmap);
 			this.crossFadeMillis = crossFadeMillis;
 			this.reshaper = reshaper;
