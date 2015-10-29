@@ -20,14 +20,14 @@ import org.droidparts.util.Strings;
 public class SerializerException extends Exception {
 	private static final long serialVersionUID = 1L;
 
-	public static String createMessage(String[] parts) {
-		return String.format("Missing or invalid %s.", Strings.join(parts, " | "));
+	public static String createMessage(Object src, String[] parts) {
+		return String.format("Missing or invalid %s in '%s'.", Strings.join(parts, " | "), String.valueOf(src));
 	}
 
 	private final String[] parts;
 
-	public SerializerException(String[] parts) {
-		super(createMessage(parts));
+	public SerializerException(Object src, String[] parts) {
+		super(createMessage(src, parts));
 		this.parts = parts;
 	}
 

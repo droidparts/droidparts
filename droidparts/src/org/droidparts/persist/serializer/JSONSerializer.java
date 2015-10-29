@@ -111,13 +111,14 @@ public class JSONSerializer<ModelType extends Model> extends AbstractSerializer<
 			throws Exception {
 		Pair<String, String> keyParts = getNestedKeyParts(key);
 		if (keyParts != null) {
-			String subKey = keyParts.first;
+			JSONObject subObj = null;
 			try {
-				JSONObject subObj = (JSONObject) readFromJSON(JSONObject.class, null, null, obj, subKey);
-				readFromJSONAndSetFieldVal(model, spec, subObj, keyParts.second);
+				subObj = (JSONObject) readFromJSON(JSONObject.class, null, null, obj, keyParts.first);
 			} catch (Exception e) {
-				handleParseException(spec.ann.optional, subKey, e);
+				handleParseException(obj, spec.ann.optional, keyParts.first, e);
+				return;
 			}
+			readFromJSONAndSetFieldVal(model, spec, subObj, keyParts.second);
 		} else {
 			try {
 				Object val = readFromJSON(spec.field.getType(), spec.genericArg1, spec.genericArg2, obj, key);
@@ -127,7 +128,7 @@ public class JSONSerializer<ModelType extends Model> extends AbstractSerializer<
 					L.d("Received NULL '%s', skipping.", spec.ann.key);
 				}
 			} catch (Exception e) {
-				handleParseException(spec.ann.optional, key, e);
+				handleParseException(obj, spec.ann.optional, key, e);
 			}
 		}
 	}
@@ -156,8 +157,9 @@ public class JSONSerializer<ModelType extends Model> extends AbstractSerializer<
 		}
 	}
 
-	private static void handleParseException(boolean optional, String key, Exception e) throws SerializerException {
-		logOrThrow(optional, String.format("key '%s'", key), e);
+	private static void handleParseException(JSONObject obj, boolean optional, String key, Exception e)
+			throws SerializerException {
+		logOrThrow(obj, optional, String.format("key '%s'", key), e);
 	}
 
 }
