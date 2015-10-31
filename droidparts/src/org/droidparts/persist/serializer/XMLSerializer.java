@@ -80,7 +80,7 @@ public class XMLSerializer<ModelType extends Model> extends AbstractSerializer<M
 				Node childTag = getChildNode(node, subKey);
 				readFromXMLAndSetFieldVal(obj, spec, childTag, keyParts.second, attribute);
 			} catch (Exception e) {
-				handleParseException(spec.ann.optional, subKey, attribute, e);
+				handleParseException(node, spec.ann.optional, subKey, attribute, e);
 			}
 		} else {
 			boolean defaultOrSameTag = tag.equals(spec.field.getName()) || tag.equals(node.getNodeName());
@@ -90,7 +90,7 @@ public class XMLSerializer<ModelType extends Model> extends AbstractSerializer<M
 					if (child != null) {
 						node = child;
 					} else if (!defaultOrSameTag) {
-						handleParseException(spec.ann.optional, tag, attribute,
+						handleParseException(node, spec.ann.optional, tag, attribute,
 								new IllegalArgumentException("No node."));
 					}
 				}
@@ -113,7 +113,7 @@ public class XMLSerializer<ModelType extends Model> extends AbstractSerializer<M
 					throw new IllegalArgumentException("Tag or attribute not found.");
 				}
 			} catch (Exception e) {
-				handleParseException(spec.ann.optional, tag, attribute, e);
+				handleParseException(node, spec.ann.optional, tag, attribute, e);
 			}
 		}
 
@@ -149,7 +149,7 @@ public class XMLSerializer<ModelType extends Model> extends AbstractSerializer<M
 		return null;
 	}
 
-	private static void handleParseException(boolean optional, String tag, String attribute, Exception e)
+	private static void handleParseException(Node node, boolean optional, String tag, String attribute, Exception e)
 			throws SerializerException {
 		StringBuilder sb = new StringBuilder();
 		if (isNotEmpty(tag)) {
@@ -158,6 +158,6 @@ public class XMLSerializer<ModelType extends Model> extends AbstractSerializer<M
 		if (isNotEmpty(attribute)) {
 			sb.append(String.format(" attribute '%s'", attribute));
 		}
-		logOrThrow(optional, sb.toString(), e);
+		logOrThrow(node, optional, sb.toString(), e);
 	}
 }
