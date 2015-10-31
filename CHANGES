@@ -1,3 +1,7 @@
+2.8.8 /2015-10-30/:
+    * ImageFetcher: don't report success on null url.
+    * Serializers: report source object on serialization exception.
+
 2.8.7 /2015-10-18/:
     * Fixed reading longs from JSON.
 
