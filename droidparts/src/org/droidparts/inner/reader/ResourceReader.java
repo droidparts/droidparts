@@ -44,11 +44,9 @@ public class ResourceReader {
 			} else if (isString(type)) {
 				val = res.getStringArray(resId);
 			}
-		}
-		if (val == null) {
-			throw new Exception("Unsupported resource type '" + valType.getName() + "'.");
 		} else {
-			return val;
+			throw new Exception("Unsupported resource type '" + valType.getName() + "'.");
 		}
+		return val;
 	}
 }

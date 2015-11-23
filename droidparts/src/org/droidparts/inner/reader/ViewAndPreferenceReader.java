@@ -70,10 +70,8 @@ public class ViewAndPreferenceReader {
 					}
 				}
 			}
-			return viewOrPref;
-		} else {
-			throw new Exception("View or Preference not found for id.");
 		}
+		return viewOrPref;
 	}
 
 	private static Preference findPreferenceInFragment(Object prefFragment, String prefKey) {
