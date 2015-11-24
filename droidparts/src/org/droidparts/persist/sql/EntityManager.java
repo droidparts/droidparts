@@ -48,7 +48,7 @@ public class EntityManager<EntityType extends Entity> extends AbstractEntityMana
 	private final SQLiteDatabase db;
 
 	public EntityManager(Class<EntityType> cls, Context ctx) {
-		this(cls, ctx, getDB(ctx));
+		this(cls, ctx, DependencyReader.getDB(ctx));
 	}
 
 	protected EntityManager(Class<EntityType> cls, Context ctx, SQLiteDatabase db) {
@@ -243,11 +243,4 @@ public class EntityManager<EntityType extends Entity> extends AbstractEntityMana
 		return new EntityManager<Entity>((Class<Entity>) entityType, ctx, db);
 	}
 
-	private static SQLiteDatabase getDB(Context ctx) {
-		try {
-			return DependencyReader.getDB(ctx);
-		} catch (Exception e) {
-			throw new RuntimeException(e);
-		}
-	}
 }

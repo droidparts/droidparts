@@ -37,7 +37,7 @@ public class DependencyReader {
 	private static AbstractDependencyProvider dependencyProvider;
 	private static HashMap<Class<?>, MethodSpec<?>> methodRegistry = new HashMap<Class<?>, MethodSpec<?>>();
 
-	public static void init(Context ctx) throws Exception {
+	public static void init(Context ctx) throws RuntimeException {
 		if (!inited) {
 			synchronized (DependencyReader.class) {
 				if (!inited) {
@@ -79,7 +79,7 @@ public class DependencyReader {
 		return val;
 	}
 
-	public static SQLiteDatabase getDB(Context ctx) throws Exception {
+	public static SQLiteDatabase getDB(Context ctx) throws RuntimeException {
 		init(ctx);
 		AbstractDBOpenHelper helper = dependencyProvider.getDBOpenHelper();
 		if (helper != null) {
@@ -88,10 +88,10 @@ public class DependencyReader {
 		return null;
 	}
 
-	private static AbstractDependencyProvider createDependencyProvider(Context ctx) throws Exception {
+	private static AbstractDependencyProvider createDependencyProvider(Context ctx) throws RuntimeException {
 		String className = ManifestMetaData.get(ctx, DEPENDENCY_PROVIDER);
 		if (className == null) {
-			throw new Exception(
+			throw new RuntimeException(
 					String.format("No <meta-data android:name=\"%s\" android:value=\"...\"/> in AndroidManifest.xml.",
 							ManifestMetaData.DEPENDENCY_PROVIDER));
 		} else {
@@ -105,7 +105,8 @@ public class DependencyReader {
 						.newInstance(ctx.getApplicationContext());
 				return adp;
 			} catch (Exception e) {
-				throw new Exception(String.format("Not a valid DroidParts dependency provider: %s.", className), e);
+				throw new RuntimeException(String.format("Not a valid DroidParts dependency provider: %s.", className),
+						e);
 			}
 		}
 	}
