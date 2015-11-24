@@ -80,14 +80,14 @@
 			<dependency>
 				<groupId>com.google.android</groupId>
 				<artifactId>android-support-v4</artifactId>
-				<version>23.0</version>
+				<version>23.1.1</version>
 				<scope>system</scope>
 				<systemPath>${project.basedir}/libs/android-support-v4.jar</systemPath>
 			</dependency>
 			<dependency>
 				<groupId>com.google.android</groupId>
 				<artifactId>android-support-v7-appcompat</artifactId>
-				<version>23.0</version>
+				<version>23.1.1</version>
 				<scope>system</scope>
 				<systemPath>${project.basedir}/libs/android-support-v7-appcompat.jar</systemPath>
 			</dependency>

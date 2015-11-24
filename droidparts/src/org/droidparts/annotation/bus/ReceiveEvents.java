@@ -25,6 +25,6 @@ import java.lang.annotation.Target;
 @Target(METHOD)
 public @interface ReceiveEvents {
 
-	String[]name() default "";
+	String[] name() default "";
 
 }
