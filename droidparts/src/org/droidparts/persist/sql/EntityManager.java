@@ -242,4 +242,5 @@ public class EntityManager<EntityType extends Entity> extends AbstractEntityMana
 	private EntityManager<Entity> subManager(Class<?> entityType) {
 		return new EntityManager<Entity>((Class<Entity>) entityType, ctx, db);
 	}
+
 }

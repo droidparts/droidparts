@@ -28,7 +28,7 @@ public class SystemServiceReader {
 	static Object readVal(Context ctx, String serviceName, Class<?> valType) throws Exception {
 		String name = isEmpty(serviceName) ? serviceRegistry.get(valType) : serviceName;
 		if (name == null) {
-			throw new Exception("Unknown service: " + name);
+			throw new Exception("Unknown service: " + serviceName);
 		} else {
 			return ctx.getSystemService(name);
 		}

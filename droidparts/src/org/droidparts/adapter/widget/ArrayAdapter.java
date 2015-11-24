@@ -26,7 +26,7 @@ import org.droidparts.contract.AlterableContent;
 import android.content.Context;
 import android.view.LayoutInflater;
 
-public class ArrayAdapter<T> extends android.widget.ArrayAdapter<T>implements AlterableContent<Collection<T>> {
+public class ArrayAdapter<T> extends android.widget.ArrayAdapter<T> implements AlterableContent<Collection<T>> {
 
 	@InjectSystemService
 	private LayoutInflater layoutInflater;

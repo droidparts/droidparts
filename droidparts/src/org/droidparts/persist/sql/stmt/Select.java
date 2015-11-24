@@ -29,7 +29,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Pair;
 
-public class Select<EntityType extends Entity> extends Statement<EntityType>implements AbstractSelect<EntityType> {
+public class Select<EntityType extends Entity> extends Statement<EntityType> implements AbstractSelect<EntityType> {
 
 	private String[] columns = null;
 	private boolean distinct = false;

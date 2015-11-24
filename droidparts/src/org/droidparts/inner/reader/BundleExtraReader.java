@@ -29,11 +29,14 @@ public class BundleExtraReader {
 		} else {
 			data = FragmentsReader.getFragmentArguments(obj);
 		}
-		Object val = (data != null) ? data.get(key) : null;
-		if (val == null && !optional) {
-			throw new Exception("Bundle missing required key: " + key);
+		Object val = null;
+		if (data != null && data.containsKey(key)) {
+			val = data.get(key);
 		} else {
-			return val;
+			if (!optional) {
+				throw new Exception("Bundle missing required key: " + key);
+			}
 		}
+		return val;
 	}
 }

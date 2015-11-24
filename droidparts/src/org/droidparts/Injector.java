@@ -64,7 +64,11 @@ public class Injector {
 
 	public static <T> T getDependency(Context ctx, Class<T> cls) throws RuntimeException {
 		setContext(ctx);
-		return DependencyReader.readVal(ctx, cls);
+		try {
+			return DependencyReader.readVal(ctx, cls);
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
 	}
 
 	public static Context getApplicationContext() {
@@ -73,7 +77,10 @@ public class Injector {
 
 	public static void setUp(Context ctx) {
 		setContext(ctx);
-		DependencyReader.init(ctx);
+		try {
+			DependencyReader.init(ctx);
+		} catch (Exception ignored) {
+		}
 	}
 
 	public static void tearDown() {
@@ -89,7 +96,7 @@ public class Injector {
 
 	private static volatile Context appCtx;
 
-	private static void inject(Context ctx, View root, Object target) {
+	private static void inject(Context ctx, View root, Object target) throws RuntimeException {
 		long start = System.currentTimeMillis();
 		Class<?> cls = target.getClass();
 		FieldSpec<InjectAnn<?>>[] specs = ClassSpecRegistry.getInjectSpecs(cls);
@@ -99,9 +106,8 @@ public class Injector {
 				if (val != null) {
 					setFieldVal(target, spec.field, val);
 				}
-			} catch (Throwable e) {
-				L.w("Failed to inject %s#%s: %s.", cls.getSimpleName(), spec.field.getName(), e.getMessage());
-				L.d(e);
+			} catch (Exception e) {
+				throw new RuntimeException(e);
 			}
 		}
 		L.i("Injected into %s in %d ms.", cls.getSimpleName(), (System.currentTimeMillis() - start));

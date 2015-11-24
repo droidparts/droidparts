@@ -27,7 +27,6 @@ import org.droidparts.inner.ManifestMetaData;
 import org.droidparts.inner.ann.Ann;
 import org.droidparts.inner.ann.MethodSpec;
 import org.droidparts.persist.sql.AbstractDBOpenHelper;
-import org.droidparts.util.L;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
@@ -38,16 +37,14 @@ public class DependencyReader {
 	private static AbstractDependencyProvider dependencyProvider;
 	private static HashMap<Class<?>, MethodSpec<?>> methodRegistry = new HashMap<Class<?>, MethodSpec<?>>();
 
-	public static void init(Context ctx) {
+	public static void init(Context ctx) throws RuntimeException {
 		if (!inited) {
 			synchronized (DependencyReader.class) {
 				if (!inited) {
 					dependencyProvider = createDependencyProvider(ctx);
-					if (dependencyProvider != null) {
-						Method[] methods = dependencyProvider.getClass().getMethods();
-						for (Method method : methods) {
-							methodRegistry.put(method.getReturnType(), new MethodSpec<Ann<Annotation>>(method, null));
-						}
+					Method[] methods = dependencyProvider.getClass().getMethods();
+					for (Method method : methods) {
+						methodRegistry.put(method.getReturnType(), new MethodSpec<Ann<Annotation>>(method, null));
 					}
 					inited = true;
 				}
@@ -56,10 +53,10 @@ public class DependencyReader {
 	}
 
 	public static void tearDown() {
-		if (dependencyProvider != null) {
-			SQLiteDatabase db = getDB(null);
-			if (db != null) {
-				db.close();
+		if (inited) {
+			try {
+				getDB(null).close();
+			} catch (Exception ignored) {
 			}
 		}
 		dependencyProvider = null;
@@ -67,41 +64,36 @@ public class DependencyReader {
 	}
 
 	@SuppressWarnings("unchecked")
-	public static <T> T readVal(Context ctx, Class<T> valType) throws RuntimeException {
+	public static <T> T readVal(Context ctx, Class<T> valType) throws Exception {
 		init(ctx);
 		T val = null;
-		if (dependencyProvider != null) {
-			MethodSpec<?> spec = methodRegistry.get(valType);
-			try {
-				int paramCount = spec.paramTypes.length;
-				if (paramCount == 0) {
-					val = (T) spec.method.invoke(dependencyProvider);
-				} else {
-					val = (T) spec.method.invoke(dependencyProvider, ctx);
-				}
-			} catch (Exception e) {
-				throw new RuntimeException("No valid DependencyProvider method for " + valType.getName() + ".", e);
+		MethodSpec<?> spec = methodRegistry.get(valType);
+		if (spec != null) {
+			int paramCount = spec.paramTypes.length;
+			if (paramCount == 0) {
+				val = (T) spec.method.invoke(dependencyProvider);
+			} else {
+				val = (T) spec.method.invoke(dependencyProvider, ctx);
 			}
 		}
 		return val;
 	}
 
-	public static SQLiteDatabase getDB(Context ctx) {
+	public static SQLiteDatabase getDB(Context ctx) throws RuntimeException {
 		init(ctx);
-		if (dependencyProvider != null) {
-			AbstractDBOpenHelper helper = dependencyProvider.getDBOpenHelper();
-			if (helper != null) {
-				return helper.getWritableDatabase();
-			}
+		AbstractDBOpenHelper helper = dependencyProvider.getDBOpenHelper();
+		if (helper != null) {
+			return helper.getWritableDatabase();
 		}
 		return null;
 	}
 
-	private static AbstractDependencyProvider createDependencyProvider(Context ctx) {
+	private static AbstractDependencyProvider createDependencyProvider(Context ctx) throws RuntimeException {
 		String className = ManifestMetaData.get(ctx, DEPENDENCY_PROVIDER);
 		if (className == null) {
-			L.w("No <meta-data android:name=\"%s\" android:value=\"...\"/> in AndroidManifest.xml.",
-					ManifestMetaData.DEPENDENCY_PROVIDER);
+			throw new RuntimeException(
+					String.format("No <meta-data android:name=\"%s\" android:value=\"...\"/> in AndroidManifest.xml.",
+							ManifestMetaData.DEPENDENCY_PROVIDER));
 		} else {
 			if (className.startsWith(".")) {
 				className = ctx.getPackageName() + className;
@@ -113,11 +105,10 @@ public class DependencyReader {
 						.newInstance(ctx.getApplicationContext());
 				return adp;
 			} catch (Exception e) {
-				L.e("Not a valid DroidParts dependency provider: %s.", className);
-				L.d(e);
+				throw new RuntimeException(String.format("Not a valid DroidParts dependency provider: %s.", className),
+						e);
 			}
 		}
-		return null;
 	}
 
 }

@@ -32,7 +32,7 @@ public class TestFragment extends Fragment {
 
 	public static final String EXTRA_STR = "str";
 
-	@InjectBundleExtra(key = EXTRA_STR)
+	@InjectBundleExtra(key = EXTRA_STR, optional = true)
 	@SaveInstanceState
 	public String str;
 

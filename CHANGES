@@ -1,3 +1,7 @@
+2.8.9 /2015-11-24/:
+    * Fixed exceptions being swallowed during injection.
+    * EventBus: don't unregister a listener on exception.
+
 2.8.8 /2015-10-30/:
     * ImageFetcher: don't report success on null url.
     * Serializers: report source object on serialization exception.
