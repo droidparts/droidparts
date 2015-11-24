@@ -15,7 +15,6 @@
  */
 package org.droidparts.bus;
 
-import static java.lang.String.format;
 import static org.droidparts.inner.ClassSpecRegistry.getReceiveEventsSpecs;
 
 import java.lang.ref.WeakReference;
@@ -25,7 +24,6 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import org.droidparts.inner.ann.MethodSpec;
 import org.droidparts.inner.ann.bus.ReceiveEventsAnn;
-import org.droidparts.util.L;
 
 import android.os.Handler;
 import android.os.Looper;
@@ -77,14 +75,14 @@ public class EventBus {
 		if (allEvents) {
 			for (String name : stickyEvents.keySet()) {
 				Object data = stickyEvents.get(name);
-				notifyReceiver(rec, name, (data == NULL) ? null : data);
+				rec.onEvent(name, (data == NULL) ? null : data);
 			}
 			receiversForEventName(ALL).put(rec, Boolean.FALSE);
 		} else {
 			for (String name : eventNames) {
 				Object data = stickyEvents.get(name);
 				if (data != null) {
-					notifyReceiver(rec, name, (data == NULL) ? null : data);
+					rec.onEvent(name, (data == NULL) ? null : data);
 				}
 			}
 			for (String action : eventNames) {
@@ -132,19 +130,6 @@ public class EventBus {
 		return map;
 	}
 
-	private static void notifyReceiver(EventReceiver<Object> receiver, String event, Object data) {
-		try {
-			receiver.onEvent(event, data);
-		} catch (IllegalArgumentException e) {
-			L.w(format("Failed to deliver event %s to %s: %s.", event, receiver.getClass().getName(), e.getMessage()));
-		} catch (Exception e) {
-			L.w(e);
-			L.w("Receiver unregistered.");
-			unregisterReceiver(receiver);
-		}
-
-	}
-
 	private static void runOnUiThread(Runnable r) {
 		if (handler == null) {
 			handler = new Handler(Looper.getMainLooper());
@@ -175,7 +160,7 @@ public class EventBus {
 			receivers.addAll(receiversForEventName(ALL).keySet());
 			receivers.addAll(receiversForEventName(name).keySet());
 			for (EventReceiver<Object> rec : receivers) {
-				notifyReceiver(rec, name, data);
+				rec.onEvent(name, data);
 			}
 		}
 	}
