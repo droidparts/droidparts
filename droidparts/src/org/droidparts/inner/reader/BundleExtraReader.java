@@ -30,7 +30,7 @@ public class BundleExtraReader {
 			data = FragmentsReader.getFragmentArguments(obj);
 		}
 		Object val = null;
-		if (data.containsKey(key)) {
+		if (data != null && data.containsKey(key)) {
 			val = data.get(key);
 		} else {
 			if (!optional) {
