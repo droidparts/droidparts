@@ -30,9 +30,6 @@ import org.droidparts.inner.ConverterRegistry;
 import org.droidparts.inner.PersistUtils;
 import org.droidparts.inner.TypeHelper;
 import org.droidparts.model.Model;
-import org.droidparts.persist.serializer.AbstractSerializer;
-import org.droidparts.persist.serializer.JSONSerializer;
-import org.droidparts.persist.serializer.XMLSerializer;
 import org.droidparts.util.Arrays2;
 import org.droidparts.util.Strings;
 import org.json.JSONArray;
@@ -113,15 +110,11 @@ public class ArrayCollectionConverter extends Converter<Object> {
 		} else {
 			items = (Collection<Object>) newInstance(valType);
 		}
-		AbstractSerializer<Model, Object, Object> serializer = null;
-		if (isModel) {
-			serializer = (AbstractSerializer<Model, Object, Object>) wrapper.makeSerializer((Class<Model>) genericArg1);
-		}
 		Converter<V> converter = ConverterRegistry.getConverter(genericArg1);
 		for (int i = 0; i < wrapper.size(); i++) {
 			Object item = wrapper.get(i);
 			if (isModel) {
-				item = serializer.deserialize(item);
+				item = wrapper.deserialize(item, converter, genericArg1);
 			} else {
 				item = wrapper.convert(item, converter, genericArg1);
 			}
@@ -256,11 +249,16 @@ public class ArrayCollectionConverter extends Converter<Object> {
 			}
 		}
 
-		<M extends Model> AbstractSerializer<M, ?, ?> makeSerializer(Class<M> cls) {
+		@SuppressWarnings("unchecked")
+		<V, M extends Model> Object deserialize(Object item, Converter<V> conv, Class<V> valType) throws Exception {
+			ModelConverter<M> mc = (ModelConverter<M>) conv;
+			Class<M> cl = (Class<M>) valType;
 			if (isJSON()) {
-				return new JSONSerializer<M>(cls, null);
+				JSONObject obj = (JSONObject) item;
+				return mc.getJSONSerializer(cl, obj).deserialize(obj);
 			} else {
-				return new XMLSerializer<M>(cls, null);
+				Node node = (Node) item;
+				return mc.getXMLSerializer(cl, node).deserialize(node);
 			}
 		}
 

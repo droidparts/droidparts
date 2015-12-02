@@ -40,6 +40,8 @@ import org.droidparts.inner.converter.ShortConverter;
 import org.droidparts.inner.converter.StringConverter;
 import org.droidparts.inner.converter.UUIDConverter;
 import org.droidparts.inner.converter.UriConverter;
+import org.droidparts.model.Entity;
+import org.droidparts.model.Model;
 
 public class ConverterRegistry {
 
@@ -65,14 +67,15 @@ public class ConverterRegistry {
 		registerConverter(new JSONObjectConverter());
 		registerConverter(new JSONArrayConverter());
 		registerConverter(new BitmapConverter());
-		registerConverter(new ModelConverter());
-		registerConverter(new EntityConverter());
+		registerConverter(new ModelConverter<Model>());
+		registerConverter(new EntityConverter<Entity>());
 		registerConverter(new ArrayCollectionConverter());
 		registerConverter(new MapConverter());
 	}
 
 	public static void registerConverter(Converter<?> converter) {
-		converters.add(converter);
+		converters.add(0, converter);
+		map.clear();
 	}
 
 	@SuppressWarnings("unchecked")
