@@ -27,17 +27,15 @@ import org.droidparts.test.model.Album;
 import org.droidparts.test.model.Collections;
 import org.droidparts.test.model.Nested;
 import org.droidparts.test.model.Primitives;
-import org.droidparts.util.ResourceUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import android.test.AndroidTestCase;
 import android.test.AssertionFailedError;
 
-public class JSONTestCase extends AndroidTestCase {
+public class JSONTestCase extends AbstractJSONTestCase {
 
 	public void testPrimitives() throws Exception {
-		JSONSerializer<Primitives> serializer = new JSONSerializer<Primitives>(Primitives.class, getContext());
+		JSONSerializer<Primitives> serializer = makeSerializer(Primitives.class);
 		Primitives primitives = serializer.deserialize(getPrimitives());
 		assertNotNull(primitives.strArr);
 		assertEquals(9000, (long) primitives.longList.get(0));
@@ -58,7 +56,7 @@ public class JSONTestCase extends AndroidTestCase {
 	}
 
 	public void testAlbums() throws Exception {
-		JSONSerializer<Album> serializer = new JSONSerializer<Album>(Album.class, getContext());
+		JSONSerializer<Album> serializer = makeSerializer(Album.class);
 		ArrayList<Album> albums = serializer.deserializeAll(getAlbums());
 		assertEquals(2, albums.size());
 		assertEquals("Diamond", albums.get(0).name);
@@ -67,7 +65,7 @@ public class JSONTestCase extends AndroidTestCase {
 
 	public void testNestedKeys() throws Exception {
 		assertEquals("obj->key", join(new String[] { "obj", "key" }, JSON.SUB));
-		JSONSerializer<Nested> serializer = new JSONSerializer<Nested>(Nested.class, getContext());
+		JSONSerializer<Nested> serializer = makeSerializer(Nested.class);
 		Nested model = serializer.deserialize(getNested());
 		assertEquals("str", model.str);
 		JSONObject obj = serializer.serialize(model);
@@ -77,8 +75,8 @@ public class JSONTestCase extends AndroidTestCase {
 	//
 
 	public void testCollections() throws Exception {
-		JSONSerializer<Collections> ser = new JSONSerializer<Collections>(Collections.class, getContext());
-		Collections coll = ser.deserialize(new JSONObject(getJSONString(R.raw.collections_json)));
+		JSONSerializer<Collections> ser = makeSerializer(Collections.class);
+		Collections coll = ser.deserialize(getJSONObject(R.raw.collections_json));
 		assertEquals(2, coll.albumsArr.length);
 		assertEquals(2, coll.albumsColl.size());
 		//
@@ -92,8 +90,8 @@ public class JSONTestCase extends AndroidTestCase {
 
 	public void testCollectionsFail() throws Exception {
 		try {
-			JSONSerializer<Collections> ser = new JSONSerializer<Collections>(Collections.class, getContext());
-			ser.deserialize(new JSONObject(getJSONString(R.raw.collections_fail_json)));
+			JSONSerializer<Collections> ser = makeSerializer(Collections.class);
+			ser.deserialize(getJSONObject(R.raw.albums_partial_json));
 		} catch (Exception e) {
 			assertTrue(e instanceof SerializerException);
 			return;
@@ -104,19 +102,15 @@ public class JSONTestCase extends AndroidTestCase {
 	//
 
 	private JSONObject getPrimitives() throws Exception {
-		return new JSONObject(getJSONString(R.raw.primitives));
+		return getJSONObject(R.raw.primitives);
 	}
 
 	private JSONObject getNested() throws Exception {
-		return new JSONObject(getJSONString(R.raw.nested));
+		return getJSONObject(R.raw.nested);
 	}
 
 	private JSONArray getAlbums() throws Exception {
-		return new JSONArray(getJSONString(R.raw.albums_json));
-	}
-
-	private String getJSONString(int resId) {
-		return ResourceUtils.readRawResource(getContext(), resId);
+		return getJSONArray(R.raw.albums_json);
 	}
 
 }

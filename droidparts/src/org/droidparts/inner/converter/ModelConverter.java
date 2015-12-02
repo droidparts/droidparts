@@ -26,7 +26,8 @@ import org.w3c.dom.Node;
 import android.content.ContentValues;
 import android.database.Cursor;
 
-public class ModelConverter extends Converter<Model> {
+@SuppressWarnings("unchecked")
+public class ModelConverter<M extends Model> extends Converter<M> {
 
 	@Override
 	public boolean canHandle(Class<?> cls) {
@@ -39,52 +40,57 @@ public class ModelConverter extends Converter<Model> {
 	}
 
 	@Override
-	public <G1, G2> void putToContentValues(Class<Model> valueType, Class<G1> genericArg1, Class<G2> genericArg2,
-			ContentValues cv, String key, Model val) throws Exception {
+	public <G1, G2> void putToContentValues(Class<M> valueType, Class<G1> genericArg1, Class<G2> genericArg2,
+			ContentValues cv, String key, M val) throws Exception {
 		byte[] arr = PersistUtils.toBytes(val);
 		cv.put(key, arr);
 	}
 
 	@Override
-	public <G1, G2> Model readFromCursor(Class<Model> valType, Class<G1> genericArg1, Class<G2> genericArg2,
-			Cursor cursor, int columnIndex) throws Exception {
-		Model model = null;
+	public <G1, G2> M readFromCursor(Class<M> valType, Class<G1> genericArg1, Class<G2> genericArg2, Cursor cursor,
+			int columnIndex) throws Exception {
+		M model = null;
 		byte[] arr = cursor.getBlob(columnIndex);
 		if (arr != null) {
-			model = (Model) PersistUtils.fromBytes(arr);
+			model = (M) PersistUtils.fromBytes(arr);
 		}
 		return model;
 	}
 
 	@Override
-	public <G1, G2> void putToJSON(Class<Model> valType, Class<G1> genericArg1, Class<G2> genericArg2, JSONObject obj,
-			String key, Model val) throws Exception {
-		@SuppressWarnings("unchecked")
-		Class<Model> cls = (Class<Model>) val.getClass();
-		JSONObject valStr = makeSerializer(cls).serialize(val);
+	public <G1, G2> void putToJSON(Class<M> valType, Class<G1> genericArg1, Class<G2> genericArg2, JSONObject obj,
+			String key, M val) throws Exception {
+		Class<M> cls = (Class<M>) val.getClass();
+		JSONObject valStr = ((JSONSerializer<M>) getJSONSerializer(cls, null)).serialize(val);
 		obj.put(key, valStr);
 	}
 
 	@Override
-	public <G1, G2> Model readFromJSON(Class<Model> valType, Class<G1> genericArg1, Class<G2> genericArg2,
-			JSONObject obj, String key) throws Exception {
-		return makeSerializer(valType).deserialize(obj.getJSONObject(key));
+	public <G1, G2> M readFromJSON(Class<M> valType, Class<G1> genericArg1, Class<G2> genericArg2, JSONObject obj,
+			String key) throws Exception {
+		JSONObject src = obj.getJSONObject(key);
+		return getJSONSerializer(valType, src).deserialize(src);
 	}
 
 	@Override
-	public <G1, G2> Model readFromXML(Class<Model> valType, Class<G1> genericArg1, Class<G2> genericArg2, Node node,
+	public <G1, G2> M readFromXML(Class<M> valType, Class<G1> genericArg1, Class<G2> genericArg2, Node node,
 			String nodeListItemTagHint) throws Exception {
-		return new XMLSerializer<Model>(valType, null).deserialize(node);
+		return getXMLSerializer(valType, node).deserialize(node);
 	}
 
 	@Override
-	protected <G1, G2> Model parseFromString(Class<Model> valType, Class<G1> genericArg1, Class<G2> genericArg2,
-			String str) throws Exception {
-		return makeSerializer(valType).deserialize(new JSONObject(str));
+	protected <G1, G2> M parseFromString(Class<M> valType, Class<G1> genericArg1, Class<G2> genericArg2, String str)
+			throws Exception {
+		JSONObject src = new JSONObject(str);
+		return getJSONSerializer(valType, src).deserialize(src);
 	}
 
-	protected JSONSerializer<Model> makeSerializer(Class<Model> valType) {
-		return new JSONSerializer<Model>(valType, null);
+	protected JSONSerializer<? extends M> getJSONSerializer(Class<M> valType, JSONObject src) throws Exception {
+		return new JSONSerializer<M>(valType, null);
+	}
+
+	protected XMLSerializer<? extends M> getXMLSerializer(Class<M> valType, Node src) throws Exception {
+		return new XMLSerializer<M>(valType, null);
 	}
 
 }

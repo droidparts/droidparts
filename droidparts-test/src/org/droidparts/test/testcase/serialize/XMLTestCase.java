@@ -17,6 +17,7 @@ package org.droidparts.test.testcase.serialize;
 
 import java.util.ArrayList;
 
+import org.droidparts.model.Model;
 import org.droidparts.persist.serializer.SerializerException;
 import org.droidparts.persist.serializer.XMLSerializer;
 import org.droidparts.test.R;
@@ -36,7 +37,7 @@ public class XMLTestCase extends AndroidTestCase {
 	public void testAlbums() throws Exception {
 		Document albumsDoc = getXMLDocument(R.raw.albums_xml);
 		NodeList nl = albumsDoc.getElementsByTagName("album");
-		XMLSerializer<Album> serializer = new XMLSerializer<Album>(Album.class, getContext());
+		XMLSerializer<Album> serializer = makeSerializer(Album.class);
 		ArrayList<Album> albums = serializer.deserializeAll(nl);
 		assertEquals(2, albums.size());
 		assertEquals("Diamond", albums.get(0).name);
@@ -45,7 +46,7 @@ public class XMLTestCase extends AndroidTestCase {
 
 	public void testAlbum2() throws Exception {
 		Document albumDoc = getXMLDocument(R.raw.album2);
-		XMLSerializer<Album2> serializer = new XMLSerializer<Album2>(Album2.class, getContext());
+		XMLSerializer<Album2> serializer = makeSerializer(Album2.class);
 		Album2 a2 = serializer.deserialize(albumDoc);
 		assertEquals("Iris", a2.name);
 		assertEquals(2009, a2.year);
@@ -61,7 +62,7 @@ public class XMLTestCase extends AndroidTestCase {
 
 	public void testFail() throws Exception {
 		Document albumDoc = getXMLDocument(R.raw.album2);
-		XMLSerializer<AlbumFail> serializer = new XMLSerializer<AlbumFail>(AlbumFail.class, getContext());
+		XMLSerializer<AlbumFail> serializer = makeSerializer(AlbumFail.class);
 		try {
 			serializer.deserialize(albumDoc);
 			assertTrue(false);
@@ -74,8 +75,8 @@ public class XMLTestCase extends AndroidTestCase {
 
 	public void testCollectionsFail() throws Exception {
 		try {
-			Document doc = getXMLDocument(R.raw.collections_fail_xml);
-			XMLSerializer<Collections> ser = new XMLSerializer<Collections>(Collections.class, getContext());
+			Document doc = getXMLDocument(R.raw.albums_partial_xml);
+			XMLSerializer<Collections> ser = makeSerializer(Collections.class);
 			ser.deserialize(doc);
 		} catch (Exception e) {
 			assertTrue(e instanceof SerializerException);
@@ -89,6 +90,10 @@ public class XMLTestCase extends AndroidTestCase {
 	private Document getXMLDocument(int resId) throws Exception {
 		String xml = IOUtils.readToString(getContext().getResources().openRawResource(resId));
 		return XMLSerializer.parseDocument(xml);
+	}
+
+	protected final <T extends Model> XMLSerializer<T> makeSerializer(Class<T> cls) {
+		return new XMLSerializer<T>(cls, getContext());
 	}
 
 }
