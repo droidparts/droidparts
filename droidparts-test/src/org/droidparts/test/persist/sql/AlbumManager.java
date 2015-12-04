@@ -28,7 +28,7 @@ import org.droidparts.test.persist.DB;
 
 import android.content.Context;
 
-public class AlbumManager extends EntityManager<Album>implements DB {
+public class AlbumManager extends EntityManager<Album> implements DB {
 
 	private final EntityManager<AlbumToTag> albumToTagManager;
 	private final EntityManager<Tag> tagManager;

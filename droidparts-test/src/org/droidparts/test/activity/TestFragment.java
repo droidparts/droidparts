@@ -53,7 +53,6 @@ public class TestFragment extends Fragment {
 		}
 
 		private KV() {
-
 		}
 
 		public K k;
