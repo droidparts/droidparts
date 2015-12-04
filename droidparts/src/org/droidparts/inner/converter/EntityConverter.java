@@ -19,12 +19,11 @@ import static org.droidparts.inner.ReflectionUtils.newInstance;
 
 import org.droidparts.inner.TypeHelper;
 import org.droidparts.model.Entity;
-import org.droidparts.model.Model;
 
 import android.content.ContentValues;
 import android.database.Cursor;
 
-public class EntityConverter extends ModelConverter {
+public class EntityConverter<E extends Entity> extends ModelConverter<E> {
 
 	@Override
 	public boolean canHandle(Class<?> cls) {
@@ -37,28 +36,28 @@ public class EntityConverter extends ModelConverter {
 	}
 
 	@Override
-	public <G1, G2> void putToContentValues(Class<Model> valueType, Class<G1> genericArg1, Class<G2> genericArg2,
-			ContentValues cv, String key, Model val) {
-		cv.put(key, ((Entity) val).id);
+	public <G1, G2> void putToContentValues(Class<E> valueType, Class<G1> genericArg1, Class<G2> genericArg2,
+			ContentValues cv, String key, E val) {
+		cv.put(key, val.id);
 	}
 
 	@Override
-	public <G1, G2> Entity readFromCursor(Class<Model> valType, Class<G1> genericArg1, Class<G2> genericArg2,
-			Cursor cursor, int columnIndex) {
+	public <G1, G2> E readFromCursor(Class<E> valType, Class<G1> genericArg1, Class<G2> genericArg2, Cursor cursor,
+			int columnIndex) {
 		long id = cursor.getLong(columnIndex);
-		Entity entity = (Entity) newInstance(valType);
+		E entity = newInstance(valType);
 		entity.id = id;
 		return entity;
 	}
 
 	@Override
-	protected <G1, G2> Model parseFromString(Class<Model> valType, Class<G1> genericArg1, Class<G2> genericArg2,
-			String str) throws Exception {
+	protected <G1, G2> E parseFromString(Class<E> valType, Class<G1> genericArg1, Class<G2> genericArg2, String str)
+			throws Exception {
 		if (str.startsWith("{")) {
 			// XXX it's a JSON Object
 			return super.parseFromString(valType, genericArg1, genericArg2, str);
 		} else {
-			Entity entity = (Entity) newInstance(valType);
+			E entity = newInstance(valType);
 			entity.id = Long.valueOf(str);
 			return entity;
 		}
