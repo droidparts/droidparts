@@ -28,7 +28,6 @@ import org.json.JSONObject;
 public class CustomSerializerJSONTestCase extends AbstractJSONTestCase {
 
 	public void testAlbumCollection() throws Exception {
-
 		JSONSerializer<AlbumCollection> ser = makeSerializer(AlbumCollection.class);
 		JSONObject obj = getJSONObject(R.raw.albums_partial_json);
 		ConverterRegistry.registerConverter(new AbstractAlbum.Converter());

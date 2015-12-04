@@ -1,3 +1,6 @@
+2.9.0 /2015-12-04/:
+    * ModelConverter: getJSONSerializer() & getXMLSerializer() methods for customization.
+
 2.8.9 /2015-11-24/:
     * Fixed exceptions being swallowed during injection.
     * EventBus: don't unregister a listener on exception.
