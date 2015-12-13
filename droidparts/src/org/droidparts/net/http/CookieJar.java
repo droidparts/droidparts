@@ -26,12 +26,12 @@ import java.net.CookieHandler;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.apache.http.client.CookieStore;
 import org.apache.http.cookie.Cookie;
@@ -98,10 +98,12 @@ public class CookieJar extends CookieHandler implements CookieStore {
 	@Override
 	public void addCookie(Cookie cookie) {
 		L.d("Got a cookie: %s.", cookie);
-		for (Iterator<Cookie> it = cookies.iterator(); it.hasNext();) {
-			Cookie c = it.next();
-			if (isEqual(cookie, c)) {
-				it.remove();
+		synchronized (cookies) {
+			for (Iterator<Cookie> it = cookies.iterator(); it.hasNext();) {
+				Cookie c = it.next();
+				if (isEqual(cookie, c)) {
+					it.remove();
+				}
 			}
 		}
 		if (!cookie.isExpired(new Date())) {
@@ -123,11 +125,13 @@ public class CookieJar extends CookieHandler implements CookieStore {
 	@Override
 	public boolean clearExpired(Date date) {
 		boolean purged = false;
-		for (Iterator<Cookie> it = cookies.iterator(); it.hasNext();) {
-			Cookie cookie = it.next();
-			if (cookie.isExpired(date)) {
-				it.remove();
-				purged = true;
+		synchronized (cookies) {
+			for (Iterator<Cookie> it = cookies.iterator(); it.hasNext();) {
+				Cookie cookie = it.next();
+				if (cookie.isExpired(date)) {
+					it.remove();
+					purged = true;
+				}
 			}
 		}
 		if (persistCookies && purged) {
@@ -144,7 +148,7 @@ public class CookieJar extends CookieHandler implements CookieStore {
 
 	// Custom
 
-	private final CopyOnWriteArrayList<Cookie> cookies = new CopyOnWriteArrayList<Cookie>();
+	private final List<Cookie> cookies = Collections.synchronizedList(new ArrayList<Cookie>());
 
 	private List<Cookie> parseCookies(URI uri, List<String> cookieHeaders) {
 		ArrayList<Cookie> cookies = new ArrayList<Cookie>();
