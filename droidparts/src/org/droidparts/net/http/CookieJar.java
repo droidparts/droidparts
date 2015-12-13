@@ -15,11 +15,20 @@
  */
 package org.droidparts.net.http;
 
-import static android.content.Context.MODE_PRIVATE;
-import static java.util.Collections.singletonList;
-import static java.util.Collections.singletonMap;
-import static java.util.Collections.unmodifiableList;
-import static org.droidparts.util.Strings.join;
+import android.content.Context;
+import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
+
+import org.apache.http.client.CookieStore;
+import org.apache.http.cookie.Cookie;
+import org.apache.http.cookie.CookieOrigin;
+import org.apache.http.cookie.CookieSpec;
+import org.apache.http.cookie.MalformedCookieException;
+import org.apache.http.cookie.SM;
+import org.apache.http.impl.cookie.BasicClientCookie;
+import org.apache.http.impl.cookie.BrowserCompatSpec;
+import org.apache.http.message.BasicHeader;
+import org.droidparts.util.L;
 
 import java.io.IOException;
 import java.net.CookieHandler;
@@ -33,20 +42,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-import org.apache.http.client.CookieStore;
-import org.apache.http.cookie.Cookie;
-import org.apache.http.cookie.CookieOrigin;
-import org.apache.http.cookie.CookieSpec;
-import org.apache.http.cookie.MalformedCookieException;
-import org.apache.http.cookie.SM;
-import org.apache.http.impl.cookie.BasicClientCookie;
-import org.apache.http.impl.cookie.BrowserCompatSpec;
-import org.apache.http.message.BasicHeader;
-import org.droidparts.util.L;
-
-import android.content.Context;
-import android.content.SharedPreferences;
-import android.content.SharedPreferences.Editor;
+import static android.content.Context.MODE_PRIVATE;
+import static java.util.Collections.singletonList;
+import static java.util.Collections.singletonMap;
+import static java.util.Collections.unmodifiableList;
+import static org.droidparts.util.Strings.join;
 
 public class CookieJar extends CookieHandler implements CookieStore {
 
@@ -98,12 +98,14 @@ public class CookieJar extends CookieHandler implements CookieStore {
 	@Override
 	public void addCookie(Cookie cookie) {
 		L.d("Got a cookie: %s.", cookie);
+		List<Cookie> tmpList = new ArrayList<Cookie>();
 		for (Iterator<Cookie> it = cookies.iterator(); it.hasNext();) {
 			Cookie c = it.next();
 			if (isEqual(cookie, c)) {
-				it.remove();
+				tmpList.add(c);
 			}
 		}
+		cookies.removeAll(tmpList);
 		if (!cookie.isExpired(new Date())) {
 			cookies.add(cookie);
 		}
@@ -123,13 +125,15 @@ public class CookieJar extends CookieHandler implements CookieStore {
 	@Override
 	public boolean clearExpired(Date date) {
 		boolean purged = false;
+		List<Cookie> tmpList = new ArrayList<Cookie>();
 		for (Iterator<Cookie> it = cookies.iterator(); it.hasNext();) {
 			Cookie cookie = it.next();
 			if (cookie.isExpired(date)) {
-				it.remove();
+				tmpList.add(cookie);
 				purged = true;
 			}
 		}
+		cookies.removeAll(tmpList);
 		if (persistCookies && purged) {
 			persistCookies();
 		}
