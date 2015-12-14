@@ -15,6 +15,7 @@
  */
 package org.droidparts.fragment;
 
+import org.droidparts.inner.delegate.BaseDelegate;
 import org.droidparts.inner.delegate.FragmentDelegate;
 
 import android.app.Activity;
@@ -35,14 +36,26 @@ public class DialogFragment extends android.app.DialogFragment {
 		return view;
 	}
 
+	protected View onCreateView(Bundle savedInstanceState, LayoutInflater inflater, ViewGroup container) {
+		return super.onCreateView(inflater, container, savedInstanceState);
+	}
+
+	@Override
+	public void onResume() {
+		super.onResume();
+		BaseDelegate.onResume(this);
+	}
+
+	@Override
+	public void onPause() {
+		super.onPause();
+		BaseDelegate.onPause(this);
+	}
+
 	@Override
 	public void onSaveInstanceState(Bundle outState) {
 		super.onSaveInstanceState(outState);
 		FragmentDelegate.onFragmentSaveInstanceState(this, injected, outState);
-	}
-
-	protected View onCreateView(Bundle savedInstanceState, LayoutInflater inflater, ViewGroup container) {
-		return super.onCreateView(inflater, container, savedInstanceState);
 	}
 
 	public final boolean isInjected() {

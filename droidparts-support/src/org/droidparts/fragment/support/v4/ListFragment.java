@@ -34,14 +34,26 @@ public class ListFragment extends android.support.v4.app.ListFragment {
 		return view;
 	}
 
+	protected View onCreateView(Bundle savedInstanceState, LayoutInflater inflater, ViewGroup container) {
+		return super.onCreateView(inflater, container, savedInstanceState);
+	}
+
+	@Override
+	public void onResume() {
+		super.onResume();
+		SupportDelegate.onResume(this);
+	}
+
+	@Override
+	public void onPause() {
+		super.onPause();
+		SupportDelegate.onPause(this);
+	}
+
 	@Override
 	public void onSaveInstanceState(Bundle outState) {
 		super.onSaveInstanceState(outState);
 		SupportDelegate.onFragmentSaveInstanceState(this, injected, outState);
-	}
-
-	protected View onCreateView(Bundle savedInstanceState, LayoutInflater inflater, ViewGroup container) {
-		return super.onCreateView(inflater, container, savedInstanceState);
 	}
 
 	public final boolean isInjected() {

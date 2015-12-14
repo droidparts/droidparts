@@ -43,13 +43,13 @@ public class AppCompatActivity extends android.support.v7.app.AppCompatActivity 
 	@Override
 	protected void onResume() {
 		super.onResume();
-		SupportDelegate.onActivityResume(this);
+		SupportDelegate.onResume(this);
 	}
 
 	@Override
 	protected void onPause() {
 		super.onPause();
-		SupportDelegate.onActivityPause(this);
+		SupportDelegate.onPause(this);
 	}
 
 	@Override

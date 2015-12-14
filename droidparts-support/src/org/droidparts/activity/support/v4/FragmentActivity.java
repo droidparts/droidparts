@@ -35,13 +35,13 @@ public class FragmentActivity extends android.support.v4.app.FragmentActivity {
 	@Override
 	protected void onResume() {
 		super.onResume();
-		SupportDelegate.onActivityResume(this);
+		SupportDelegate.onResume(this);
 	}
 
 	@Override
 	protected void onPause() {
 		super.onPause();
-		SupportDelegate.onActivityPause(this);
+		SupportDelegate.onPause(this);
 	}
 
 	@Override
