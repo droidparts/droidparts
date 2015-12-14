@@ -34,13 +34,13 @@ public class PreferenceActivity extends android.preference.PreferenceActivity {
 	@Override
 	protected void onResume() {
 		super.onResume();
-		BaseDelegate.onActivityResume(this);
+		BaseDelegate.onResume(this);
 	}
 
 	@Override
 	protected void onPause() {
 		super.onPause();
-		BaseDelegate.onActivityPause(this);
+		BaseDelegate.onPause(this);
 	}
 
 	@Override

@@ -64,12 +64,12 @@ public class BaseDelegate {
 		InstanceStateSaver.onCreate(activity, savedInstanceState);
 	}
 
-	public static void onActivityResume(Activity activity) {
-		EventBus.registerAnnotatedReceiver(activity);
+	public static void onResume(Object obj) {
+		EventBus.registerAnnotatedReceiver(obj);
 	}
 
-	public static void onActivityPause(Activity activity) {
-		EventBus.unregisterAnnotatedReceiver(activity);
+	public static void onPause(Object obj) {
+		EventBus.unregisterAnnotatedReceiver(obj);
 	}
 
 	public static void onActivitySaveInstanceState(Activity activity, Bundle outState) {
