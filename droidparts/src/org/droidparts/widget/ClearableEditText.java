@@ -1,5 +1,5 @@
 /**
- * Copyright 2015 Alex Yanchenko
+ * Copyright 2016 Alex Yanchenko
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -80,7 +80,10 @@ public class ClearableEditText extends EditText implements OnTouchListener, OnFo
 	@Override
 	public boolean onTouch(View v, MotionEvent event) {
 		if (getCompoundDrawables()[2] != null) {
-			boolean tappedX = event.getX() > (getWidth() - getPaddingRight() - xD.getIntrinsicWidth());
+			int x = (int) event.getX();
+			int y = (int) event.getY();
+			int left = getWidth() - getPaddingRight() - xD.getIntrinsicWidth();
+			boolean tappedX = x >= left && x <= getWidth() && y >= getTop() && y <= getBottom();
 			if (tappedX) {
 				if (event.getAction() == MotionEvent.ACTION_UP) {
 					setText("");

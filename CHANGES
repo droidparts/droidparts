@@ -1,3 +1,7 @@
+2.9.2 /2015-02-12/:
+    * EventBus: fixed ReflectiveReceiver registered more than once /kudos to @plzen/.
+    * ClearableEditText: improved X tap detection.
+
 2.9.1 /2015-12-14/:
     * CookieJar: fixed UnsupportedOperationException /kudos to @plzen/.
     * EventBus: register/unregister in onResume()/onPause() in Fragments.

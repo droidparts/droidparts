@@ -13,25 +13,38 @@
  * See the License for the specific language governing permissions and
  * limitations under the License. 
  */
-package org.droidparts.annotation.sql;
+package org.droidparts.inner;
 
-import static java.lang.annotation.ElementType.FIELD;
-import static java.lang.annotation.RetentionPolicy.RUNTIME;
+import java.lang.ref.WeakReference;
 
-import java.lang.annotation.Retention;
-import java.lang.annotation.Target;
+public class WeakWrapper<T> {
 
-@Retention(RUNTIME)
-@Target(FIELD)
-public @interface Column {
+	private final WeakReference<T> ref;
+	private final int hash;
 
-	String name() default "";
+	public WeakWrapper(T obj) {
+		ref = new WeakReference<T>(obj);
+		hash = obj.hashCode();
+	}
 
-	boolean nullable() default false;
+	public T getObj() {
+		return ref.get();
+	}
 
-	boolean unique() default false;
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) {
+			return true;
+		} else if (o != null && getClass() == o.getClass()) {
+			return hashCode() == o.hashCode();
+		} else {
+			return false;
+		}
+	}
 
-	// for foreign keys
-	boolean eager() default false;
+	@Override
+	public int hashCode() {
+		return hash;
+	}
 
 }
