@@ -21,7 +21,6 @@ import org.droidparts.adapter.widget.TextWatcherAdapter;
 import org.droidparts.adapter.widget.TextWatcherAdapter.TextWatcherListener;
 
 import android.content.Context;
-import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
@@ -81,11 +80,10 @@ public class ClearableEditText extends EditText implements OnTouchListener, OnFo
 	@Override
 	public boolean onTouch(View v, MotionEvent event) {
 		if (getCompoundDrawables()[2] != null) {
-			int right = getWidth() - getPaddingRight();
-			int left = right - xD.getIntrinsicWidth();
-			int bottom = getHeight() - getPaddingBottom();
-			int top = bottom - xD.getIntrinsicHeight();
-			boolean tappedX = new Rect(left, top, right, bottom).contains((int) event.getX(), (int) event.getY());
+			int x = (int) event.getX();
+			int y = (int) event.getY();
+			int left = getWidth() - getPaddingRight() - xD.getIntrinsicWidth();
+			boolean tappedX = x >= left && x <= getWidth() && y >= getTop() && y <= getBottom();
 			if (tappedX) {
 				if (event.getAction() == MotionEvent.ACTION_UP) {
 					setText("");
