@@ -17,11 +17,11 @@ package org.droidparts.bus;
 
 import static org.droidparts.inner.ClassSpecRegistry.getReceiveEventsSpecs;
 
-import java.lang.ref.WeakReference;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.concurrent.ConcurrentHashMap;
 
+import org.droidparts.inner.WeakWrapper;
 import org.droidparts.inner.ann.MethodSpec;
 import org.droidparts.inner.ann.bus.ReceiveEventsAnn;
 
@@ -113,7 +113,7 @@ public class EventBus {
 		for (ConcurrentHashMap<EventReceiver<Object>, Boolean> receivers : eventNameToReceivers.values()) {
 			for (EventReceiver<Object> receiver : receivers.keySet()) {
 				if (receiver instanceof ReflectiveReceiver) {
-					if (obj == ((ReflectiveReceiver) receiver).objectRef.get()) {
+					if (obj == ((ReflectiveReceiver) receiver).getObj()) {
 						receivers.remove(receiver);
 					}
 				}
@@ -165,23 +165,19 @@ public class EventBus {
 		}
 	}
 
-	private static final class ReflectiveReceiver implements EventReceiver<Object> {
-
-		final WeakReference<Object> objectRef;
+	static final class ReflectiveReceiver extends WeakWrapper<Object> implements EventReceiver<Object> {
 
 		private final MethodSpec<ReceiveEventsAnn> spec;
-		private final int objectHash;
 
-		ReflectiveReceiver(Object object, MethodSpec<ReceiveEventsAnn> spec) {
-			objectRef = new WeakReference<Object>(object);
+		ReflectiveReceiver(Object obj, MethodSpec<ReceiveEventsAnn> spec) {
+			super(obj);
 			this.spec = spec;
-			objectHash = object.hashCode();
 		}
 
 		@Override
 		public void onEvent(String name, Object data) {
 			try {
-				Object obj = objectRef.get();
+				Object obj = getObj();
 				switch (spec.paramTypes.length) {
 				case 0:
 					spec.method.invoke(obj);
@@ -201,22 +197,6 @@ public class EventBus {
 			} catch (Exception e) {
 				throw new IllegalStateException(e);
 			}
-		}
-
-		@Override
-		public boolean equals(Object o) {
-			if (this == o) {
-				return true;
-			} else if (o instanceof ReflectiveReceiver) {
-				return hashCode() == o.hashCode();
-			} else {
-				return false;
-			}
-		}
-
-		@Override
-		public int hashCode() {
-			return objectHash;
 		}
 
 	}

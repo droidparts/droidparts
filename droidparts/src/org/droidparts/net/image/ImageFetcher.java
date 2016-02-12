@@ -29,6 +29,7 @@ import java.util.concurrent.ThreadPoolExecutor;
 import org.droidparts.concurrent.thread.BackgroundThreadExecutor;
 import org.droidparts.contract.HTTP.Header;
 import org.droidparts.inner.BitmapFactoryUtils;
+import org.droidparts.inner.WeakWrapper;
 import org.droidparts.net.http.HTTPResponse;
 import org.droidparts.net.http.RESTClient;
 import org.droidparts.net.http.worker.HTTPWorker;
@@ -95,7 +96,7 @@ public class ImageFetcher {
 		paused = false;
 		if (executePendingTasks) {
 			for (ImageViewSpec spec : pending) {
-				ImageView imgView = spec.imgViewRef.get();
+				ImageView imgView = spec.getObj();
 				if (imgView != null) {
 					attachImage(spec.imgUrl, imgView, spec.reshaper, spec.crossFadeMillis, spec.listener,
 							spec.inBitmapRef.get());
@@ -178,7 +179,7 @@ public class ImageFetcher {
 	//
 
 	Pair<byte[], Pair<Bitmap, BitmapFactory.Options>> fetchAndDecode(final ImageViewSpec spec) throws Exception {
-		final ImageView imgView = spec.imgViewRef.get();
+		final ImageView imgView = spec.getObj();
 		if (imgView == null) {
 			throw new IllegalStateException("ImageView is null.");
 		}
@@ -285,9 +286,8 @@ public class ImageFetcher {
 
 	//
 
-	static final class ImageViewSpec {
+	static final class ImageViewSpec extends WeakWrapper<ImageView> {
 
-		final WeakReference<ImageView> imgViewRef;
 		final String imgUrl;
 		final WeakReference<Bitmap> inBitmapRef;
 		final int crossFadeMillis;
@@ -299,11 +299,9 @@ public class ImageFetcher {
 		final int widthHint;
 		final int heightHint;
 
-		private final int imgViewHash;
-
 		public ImageViewSpec(ImageView imgView, String imgUrl, Bitmap inBitmap, int crossFadeMillis,
 				ImageReshaper reshaper, ImageFetchListener listener) {
-			imgViewRef = new WeakReference<ImageView>(imgView);
+			super(imgView);
 			this.imgUrl = String.valueOf(imgUrl);
 			inBitmapRef = new WeakReference<Bitmap>(inBitmap);
 			this.crossFadeMillis = crossFadeMillis;
@@ -314,7 +312,6 @@ public class ImageFetcher {
 			Point p = getSizeHint();
 			widthHint = p.x;
 			heightHint = p.y;
-			imgViewHash = imgView.hashCode();
 		}
 
 		private String getCacheKey() {
@@ -345,25 +342,9 @@ public class ImageFetcher {
 				p.y = reshaper.getImageHeightHint();
 			}
 			if (p.x <= 0 && p.y <= 0) {
-				p = BitmapFactoryUtils.calcDecodeSizeHint(imgViewRef.get());
+				p = BitmapFactoryUtils.calcDecodeSizeHint(getObj());
 			}
 			return p;
-		}
-
-		@Override
-		public boolean equals(Object o) {
-			if (this == o) {
-				return true;
-			} else if (o instanceof ImageViewSpec) {
-				return hashCode() == o.hashCode();
-			} else {
-				return false;
-			}
-		}
-
-		@Override
-		public int hashCode() {
-			return imgViewHash;
 		}
 
 	}
@@ -432,7 +413,7 @@ public class ImageFetcher {
 				HTTPWorker.throwIfNetworkOnMainThreadException(e);
 				L.w("Failed to fetch '%s'.", spec.imgUrl);
 				L.d(e);
-				final ImageView imgView = spec.imgViewRef.get();
+				final ImageView imgView = spec.getObj();
 				if (spec.listener != null && imgView != null) {
 					runOnUiThread(new Runnable() {
 
@@ -458,7 +439,7 @@ public class ImageFetcher {
 
 		@Override
 		public void run() {
-			ImageView imgView = spec.imgViewRef.get();
+			ImageView imgView = spec.getObj();
 			if (imgView == null) {
 				L.i("ImageView became null (no strong references => GCed).");
 			} else {
