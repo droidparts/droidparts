@@ -15,6 +15,7 @@
  */
 package org.droidparts.test.testcase;
 
+import org.droidparts.annotation.bus.ReceiveEvents;
 import org.droidparts.bus.EventBus;
 import org.droidparts.bus.EventReceiver;
 
@@ -25,28 +26,38 @@ public class EventBusTestCase extends AndroidTestCase {
 	private final String NAME = "name";
 	private final String DATA = "data";
 
-	private boolean calledBack;
+	private int calledBackTimes = 0;
 
-	EventReceiver<Object> er = new EventReceiver<Object>() {
+	private final EventReceiver<Object> er = new EventReceiver<Object>() {
 
 		@Override
 		public void onEvent(String name, Object data) {
-			calledBack = true;
+			calledBackTimes++;
 			assertEquals(NAME, name);
 			assertEquals(DATA, data);
 		}
 	};
 
+	private final Object aer = new Object() {
+
+		@ReceiveEvents
+		private void onEvent() {
+			calledBackTimes++;
+		}
+
+	};
+
+	@Override
 	protected void tearDown() throws Exception {
-		super.tearDown();
 		EventBus.unregisterReceiver(er);
+		EventBus.unregisterAnnotatedReceiver(aer);
 	}
 
 	public void testEvent() {
 		EventBus.registerReceiver(er);
 		EventBus.postEvent(NAME, DATA);
 		sleep();
-		assertTrue(calledBack);
+		assertEquals(1, calledBackTimes);
 	}
 
 	public void testStikyEvent() {
@@ -54,7 +65,18 @@ public class EventBusTestCase extends AndroidTestCase {
 		sleep();
 		EventBus.registerReceiver(er);
 		sleep();
-		assertTrue(calledBack);
+		assertEquals(1, calledBackTimes);
+	}
+
+	public void testAnnotatedReceiver() {
+		for (int i = 0; i < 5; i++) {
+			EventBus.registerAnnotatedReceiver(aer);
+		}
+		for (int i = 0; i < 2; i++) {
+			EventBus.postEvent(NAME, DATA);
+		}
+		sleep();
+		assertEquals(2, calledBackTimes);
 	}
 
 	private void sleep() {
