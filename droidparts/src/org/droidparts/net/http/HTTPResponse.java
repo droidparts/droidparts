@@ -75,7 +75,7 @@ public class HTTPResponse {
 
 	@Override
 	public boolean equals(Object o) {
-		if (o == this) {
+		if (this == o) {
 			return true;
 		} else if (o instanceof HTTPResponse) {
 			return hashCode() == o.hashCode();
