@@ -83,7 +83,7 @@ public class ClearableEditText extends EditText implements OnTouchListener, OnFo
 			int x = (int) event.getX();
 			int y = (int) event.getY();
 			int left = getWidth() - getPaddingRight() - xD.getIntrinsicWidth();
-			boolean tappedX = x >= left && x <= getWidth() && y >= getTop() && y <= getBottom();
+			boolean tappedX = x >= left && x <= getWidth() && y >= 0 && y <= (getBottom() - getTop());
 			if (tappedX) {
 				if (event.getAction() == MotionEvent.ACTION_UP) {
 					setText("");

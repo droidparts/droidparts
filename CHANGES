@@ -1,3 +1,6 @@
+2.9.3 /2015-02-13/:
+    * ClearableEditText fix.
+
 2.9.2 /2015-02-12/:
     * EventBus: fixed ReflectiveReceiver registered more than once /kudos to @plzen/.
     * ClearableEditText: improved X tap detection.
