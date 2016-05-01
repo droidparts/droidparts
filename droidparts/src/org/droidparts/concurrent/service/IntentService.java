@@ -64,23 +64,25 @@ public abstract class IntentService extends android.app.IntentService {
 
 	@Override
 	protected final void onHandleIntent(Intent intent) {
-		String action = intent.getAction();
-		Bundle data = intent.getExtras();
-		if (data == null) {
-			data = new Bundle();
-		}
-		ResultReceiver resultReceiver = data.getParcelable(EXTRA_RESULT_RECEIVER);
-		data.putString(EXTRA_ACTION, action);
-		try {
-			data = onExecute(action, data);
-			if (resultReceiver != null) {
-				resultReceiver.send(RESULT_SUCCESS, data);
+		if (intent != null) {
+			String action = intent.getAction();
+			Bundle data = intent.getExtras();
+			if (data == null) {
+				data = new Bundle();
 			}
-		} catch (Exception e) {
-			L.d(e);
-			if (resultReceiver != null) {
-				data.putSerializable(EXTRA_EXCEPTION, e);
-				resultReceiver.send(RESULT_FAILURE, data);
+			ResultReceiver resultReceiver = data.getParcelable(EXTRA_RESULT_RECEIVER);
+			data.putString(EXTRA_ACTION, action);
+			try {
+				data = onExecute(action, data);
+				if (resultReceiver != null) {
+					resultReceiver.send(RESULT_SUCCESS, data);
+				}
+			} catch (Exception e) {
+				L.d(e);
+				if (resultReceiver != null) {
+					data.putSerializable(EXTRA_EXCEPTION, e);
+					resultReceiver.send(RESULT_FAILURE, data);
+				}
 			}
 		}
 	}
