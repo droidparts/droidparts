@@ -1,13 +1,16 @@
-2.9.5 /2015-05-01/:
+2.9.6 /2016-07-08/:
+    * EventBus fix.
+
+2.9.5 /2016-05-01/:
     * IntentService: fixed null Intent crash /kudos to @plzen/.
 
-2.9.4 /2015-03-04/:
+2.9.4 /2016-03-04/:
     * ClearableEditText: customizable X location & misc.
 
-2.9.3 /2015-02-13/:
+2.9.3 /2016-02-13/:
     * ClearableEditText fix.
 
-2.9.2 /2015-02-12/:
+2.9.2 /2016-02-12/:
     * EventBus: fixed ReflectiveReceiver registered more than once /kudos to @plzen/.
     * ClearableEditText: improved X tap detection.
 

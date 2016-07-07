@@ -38,14 +38,27 @@ public class EventBusTestCase extends AndroidTestCase {
 		}
 	};
 
-	private final Object aer = new Object() {
+	class AnnotatedParent {
+
+		int parentCalledBackTimes = 0;
 
 		@ReceiveEvents
 		private void onEvent() {
-			calledBackTimes++;
+			parentCalledBackTimes++;
 		}
+	}
 
-	};
+	class AnnotatedChild extends AnnotatedParent {
+
+		int childCalledBackTimes = 0;
+
+		@ReceiveEvents(name = NAME)
+		private void onEvent() {
+			childCalledBackTimes++;
+		}
+	}
+
+	private final AnnotatedChild aer = new AnnotatedChild();
 
 	@Override
 	protected void tearDown() throws Exception {
@@ -72,11 +85,13 @@ public class EventBusTestCase extends AndroidTestCase {
 		for (int i = 0; i < 5; i++) {
 			EventBus.registerAnnotatedReceiver(aer);
 		}
+		EventBus.postEvent("whatever");
 		for (int i = 0; i < 2; i++) {
 			EventBus.postEvent(NAME, DATA);
 		}
 		sleep();
-		assertEquals(2, calledBackTimes);
+		assertEquals(3, aer.parentCalledBackTimes);
+		assertEquals(2, aer.childCalledBackTimes);
 	}
 
 	private void sleep() {

@@ -199,6 +199,11 @@ public class EventBus {
 			}
 		}
 
+		@Override
+		public int hashCode() {
+			return super.hashCode() + spec.method.hashCode();
+		}
+
 	}
 
 }
