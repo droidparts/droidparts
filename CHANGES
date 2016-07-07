@@ -1,3 +1,6 @@
+2.9.6 /2015-07-08/:
+    * EventBus fix.
+
 2.9.5 /2015-05-01/:
     * IntentService: fixed null Intent crash /kudos to @plzen/.
 
