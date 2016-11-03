@@ -23,6 +23,7 @@ import java.io.BufferedInputStream;
 import java.io.ByteArrayOutputStream;
 import java.lang.ref.WeakReference;
 import java.util.LinkedHashSet;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ThreadPoolExecutor;
 
@@ -64,7 +65,7 @@ public class ImageFetcher {
 	private final ImageView mockImageView;
 
 	private final LinkedHashSet<ImageViewSpec> pending = new LinkedHashSet<ImageViewSpec>();
-	private final ConcurrentHashMap<ImageViewSpec, Long> wip = new ConcurrentHashMap<ImageViewSpec, Long>();
+	private final Map<ImageViewSpec, Long> wip = new ConcurrentHashMap<ImageViewSpec, Long>();
 	private Handler handler;
 
 	private volatile boolean paused;

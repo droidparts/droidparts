@@ -40,6 +40,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.droidparts.inner.ann.FieldSpec;
@@ -190,15 +191,15 @@ public final class ClassSpecRegistry {
 
 	// caches
 
-	private static final ConcurrentHashMap<Class<?>, FieldSpec<InjectAnn<?>>[]> INJECT_SPECS = new ConcurrentHashMap<Class<?>, FieldSpec<InjectAnn<?>>[]>();
-	private static final ConcurrentHashMap<Class<?>, FieldSpec<SaveInstanceStateAnn>[]> SAVE_INSTANCE_SPECS = new ConcurrentHashMap<Class<?>, FieldSpec<SaveInstanceStateAnn>[]>();
-	private static final ConcurrentHashMap<Class<?>, MethodSpec<ReceiveEventsAnn>[]> RECEIVE_EVENTS_SPECS = new ConcurrentHashMap<Class<?>, MethodSpec<ReceiveEventsAnn>[]>();
+	private static final Map<Class<?>, FieldSpec<InjectAnn<?>>[]> INJECT_SPECS = new ConcurrentHashMap<Class<?>, FieldSpec<InjectAnn<?>>[]>();
+	private static final Map<Class<?>, FieldSpec<SaveInstanceStateAnn>[]> SAVE_INSTANCE_SPECS = new ConcurrentHashMap<Class<?>, FieldSpec<SaveInstanceStateAnn>[]>();
+	private static final Map<Class<?>, MethodSpec<ReceiveEventsAnn>[]> RECEIVE_EVENTS_SPECS = new ConcurrentHashMap<Class<?>, MethodSpec<ReceiveEventsAnn>[]>();
 
-	private static final ConcurrentHashMap<Class<? extends Entity>, String> TABLE_NAMES = new ConcurrentHashMap<Class<? extends Entity>, String>();
-	private static final ConcurrentHashMap<Class<? extends Entity>, FieldSpec<ColumnAnn>[]> COLUMN_SPECS = new ConcurrentHashMap<Class<? extends Entity>, FieldSpec<ColumnAnn>[]>();
+	private static final Map<Class<? extends Entity>, String> TABLE_NAMES = new ConcurrentHashMap<Class<? extends Entity>, String>();
+	private static final Map<Class<? extends Entity>, FieldSpec<ColumnAnn>[]> COLUMN_SPECS = new ConcurrentHashMap<Class<? extends Entity>, FieldSpec<ColumnAnn>[]>();
 
-	private static final ConcurrentHashMap<Class<? extends Model>, FieldSpec<JSONAnn>[]> JSON_SPECS = new ConcurrentHashMap<Class<? extends Model>, FieldSpec<JSONAnn>[]>();
-	private static final ConcurrentHashMap<Class<? extends Model>, FieldSpec<XMLAnn>[]> XML_SPECS = new ConcurrentHashMap<Class<? extends Model>, FieldSpec<XMLAnn>[]>();
+	private static final Map<Class<? extends Model>, FieldSpec<JSONAnn>[]> JSON_SPECS = new ConcurrentHashMap<Class<? extends Model>, FieldSpec<JSONAnn>[]>();
+	private static final Map<Class<? extends Model>, FieldSpec<XMLAnn>[]> XML_SPECS = new ConcurrentHashMap<Class<? extends Model>, FieldSpec<XMLAnn>[]>();
 
 	// Utils
 
