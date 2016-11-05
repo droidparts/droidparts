@@ -22,7 +22,6 @@ import android.support.v4.app.Fragment;
 import android.view.MenuItem;
 import android.view.View;
 
-@SuppressWarnings("deprecation")
 public class AppCompatActivity extends android.support.v7.app.AppCompatActivity {
 
 	private MenuItem reloadMenuItem;
@@ -62,8 +61,6 @@ public class AppCompatActivity extends android.support.v7.app.AppCompatActivity 
 		isLoading = visible;
 		if (reloadMenuItem != null) {
 			reloadMenuItem.setActionView(visible ? loadingIndicator : null);
-		} else {
-			super.setSupportProgressBarIndeterminateVisibility(visible);
 		}
 	}
 
