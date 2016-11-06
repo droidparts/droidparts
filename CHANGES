@@ -1,3 +1,8 @@
+2.9.7 /2016-11-05/:
+    * @Deprecated TabbedAppCompatActivity.
+    * Fixed compiling with Java 8.
+    * Switched to Gradle.
+
 2.9.6 /2016-07-08/:
     * EventBus fix.
 
