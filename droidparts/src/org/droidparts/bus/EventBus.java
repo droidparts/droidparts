@@ -19,6 +19,7 @@ import static org.droidparts.inner.ClassSpecRegistry.getReceiveEventsSpecs;
 
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.droidparts.inner.WeakWrapper;
@@ -33,8 +34,8 @@ public class EventBus {
 	private static final String ALL = "__all__";
 	private static final Object NULL = new Object();
 
-	private static final ConcurrentHashMap<String, ConcurrentHashMap<EventReceiver<Object>, Boolean>> eventNameToReceivers = new ConcurrentHashMap<String, ConcurrentHashMap<EventReceiver<Object>, Boolean>>();
-	private static final ConcurrentHashMap<String, Object> stickyEvents = new ConcurrentHashMap<String, Object>();
+	private static final Map<String, Map<EventReceiver<Object>, Boolean>> eventNameToReceivers = new ConcurrentHashMap<String, Map<EventReceiver<Object>, Boolean>>();
+	private static final Map<String, Object> stickyEvents = new ConcurrentHashMap<String, Object>();
 
 	public static void postEvent(String name) {
 		postEvent(name, null);
@@ -94,7 +95,7 @@ public class EventBus {
 	public static void unregisterReceiver(EventReceiver<?> receiver) {
 		receiversForEventName(ALL).remove(receiver);
 		for (String eventName : eventNameToReceivers.keySet()) {
-			ConcurrentHashMap<EventReceiver<Object>, Boolean> receivers = eventNameToReceivers.get(eventName);
+			Map<EventReceiver<Object>, Boolean> receivers = eventNameToReceivers.get(eventName);
 			receivers.remove(receiver);
 			if (receivers.isEmpty()) {
 				eventNameToReceivers.remove(eventName);
@@ -110,7 +111,7 @@ public class EventBus {
 	}
 
 	public static void unregisterAnnotatedReceiver(Object obj) {
-		for (ConcurrentHashMap<EventReceiver<Object>, Boolean> receivers : eventNameToReceivers.values()) {
+		for (Map<EventReceiver<Object>, Boolean> receivers : eventNameToReceivers.values()) {
 			for (EventReceiver<Object> receiver : receivers.keySet()) {
 				if (receiver instanceof ReflectiveReceiver) {
 					if (obj == ((ReflectiveReceiver) receiver).getObj()) {
@@ -121,8 +122,8 @@ public class EventBus {
 		}
 	}
 
-	private static ConcurrentHashMap<EventReceiver<Object>, Boolean> receiversForEventName(String name) {
-		ConcurrentHashMap<EventReceiver<Object>, Boolean> map = eventNameToReceivers.get(name);
+	private static Map<EventReceiver<Object>, Boolean> receiversForEventName(String name) {
+		Map<EventReceiver<Object>, Boolean> map = eventNameToReceivers.get(name);
 		if (map == null) {
 			map = new ConcurrentHashMap<EventReceiver<Object>, Boolean>();
 			eventNameToReceivers.put(name, map);

@@ -1,0 +1,23 @@
+apply plugin: 'com.android.application'
+
+android {
+
+	compileSdkVersion 25
+	buildToolsVersion "25"
+
+	sourceSets {
+		main {
+			manifest.srcFile 'AndroidManifest.xml'
+			java.srcDirs = ['src']
+			res.srcDirs = ['res']
+		}
+		androidTest { java.srcDirs = ['test']}
+	}
+
+	buildTypes {
+		release {
+			minifyEnabled true
+			proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), "$rootProject.projectDir/proguard-droidparts.cfg"
+		}
+	}
+}

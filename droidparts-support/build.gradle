@@ -1,0 +1,5 @@
+apply from: "$rootProject.projectDir/scripts/java_lib.gradle"
+
+archivesBaseName = 'droidparts-support'
+
+dependencies { compile project(':droidparts') }

@@ -1,0 +1,94 @@
+apply plugin: 'java'
+apply plugin: 'maven'
+apply plugin: 'signing'
+
+group = 'org.droidparts'
+version = new File('VERSION').text
+
+task javadocJar(type: Jar) {
+	classifier = 'javadoc'
+	from javadoc
+}
+
+task sourcesJar(type: Jar) {
+	classifier = 'sources'
+	from sourceSets.main.allSource
+}
+
+allprojects {
+	tasks.withType(Jar) {
+		manifest {
+			attributes (
+					'Implementation-Version': "$version",
+					'Implementation-Title': "$archivesBaseName"
+					)
+		}
+	}
+	if (JavaVersion.current().isJava8Compatible()) {
+		tasks.withType(Javadoc) {
+			options.addStringOption('Xdoclint:none', '-quiet')
+		}
+	}
+}
+
+sourceCompatibility = 1.6
+
+dependencies {
+	compileOnly 'com.google.android:android:4.1.1.4'
+	compile fileTree(dir: 'libs', include: '*.jar')
+}
+
+sourceSets {
+	main {
+		java.srcDirs = ['src']
+	}
+}
+
+artifacts { archives javadocJar, sourcesJar }
+
+signing { sign configurations.archives }
+
+uploadArchives {
+	repositories {
+		mavenDeployer {
+			beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
+
+			repository(url: "https://oss.sonatype.org/service/local/staging/deploy/maven2/") {
+				authentication(userName: ossrhUsername, password: ossrhPassword)
+			}
+
+			snapshotRepository(url: "https://oss.sonatype.org/content/repositories/snapshots/") {
+				authentication(userName: ossrhUsername, password: ossrhPassword)
+			}
+
+			pom.project {
+				name 'DroidParts'
+				description 'A carefully crafted Android framework'
+				url 'http://droidparts.org'
+				packaging 'jar'
+				artifactId "$archivesBaseName"
+
+				scm {
+					url 'https://github.com/droidparts/droidparts'
+					connection 'scm:git:git@github.com:droidparts/droidparts.git'
+					developerConnection 'scm:git:git@github.com:droidparts/droidparts.git'
+				}
+
+				licenses {
+					license {
+						name 'The Apache License, Version 2.0'
+						url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+					}
+				}
+
+				developers {
+					developer {
+						id 'yanchenko'
+						name 'Alex Yanchenko'
+						email 'alex@yanchenko.com'
+					}
+				}
+			}
+		}
+	}
+}
