@@ -3,7 +3,7 @@ apply plugin: 'maven'
 apply plugin: 'signing'
 
 group = 'org.droidparts'
-version = new File('VERSION').text
+version = new File('VERSION').text.trim()
 
 task javadocJar(type: Jar) {
 	classifier = 'javadoc'
