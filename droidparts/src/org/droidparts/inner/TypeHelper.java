@@ -87,6 +87,10 @@ public final class TypeHelper {
 		return Date.class.isAssignableFrom(cls);
 	}
 
+	public static boolean isThrowable(Class<?> cls) {
+		return Throwable.class.isAssignableFrom(cls);
+	}
+
 	//
 
 	public static boolean isByteArray(Class<?> cls) {
