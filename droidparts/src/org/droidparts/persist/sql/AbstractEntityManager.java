@@ -1,12 +1,12 @@
 /**
  * Copyright 2016 Alex Yanchenko
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *  
+ *
  *     http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -19,6 +19,11 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.concurrent.Callable;
 
+import android.content.ContentValues;
+import android.database.Cursor;
+import android.database.SQLException;
+import android.database.sqlite.SQLiteDatabase;
+
 import org.droidparts.contract.DB;
 import org.droidparts.contract.SQL;
 import org.droidparts.inner.PersistUtils;
@@ -27,11 +32,6 @@ import org.droidparts.persist.sql.stmt.Delete;
 import org.droidparts.persist.sql.stmt.Select;
 import org.droidparts.persist.sql.stmt.Update;
 import org.droidparts.util.L;
-
-import android.content.ContentValues;
-import android.database.Cursor;
-import android.database.SQLException;
-import android.database.sqlite.SQLiteDatabase;
 
 public abstract class AbstractEntityManager<EntityType extends Entity> implements SQL {
 
@@ -106,15 +106,15 @@ public abstract class AbstractEntityManager<EntityType extends Entity> implement
 				for (EntityType item : items) {
 					boolean success = false;
 					switch (operation) {
-					case 1:
-						success = create(item);
-						break;
-					case 2:
-						success = update(item);
-						break;
-					case 3:
-						success = delete(item.id);
-						break;
+						case 1:
+							success = create(item);
+							break;
+						case 2:
+							success = update(item);
+							break;
+						case 3:
+							success = delete(item.id);
+							break;
 					}
 					if (success) {
 						count++;

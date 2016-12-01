@@ -1,12 +1,12 @@
 /**
  * Copyright 2016 Alex Yanchenko
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *  
+ *
  *     http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -15,6 +15,12 @@
  */
 package org.droidparts.util.intent;
 
+import java.io.File;
+
+import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
+
 import static android.content.Intent.ACTION_DIAL;
 import static android.content.Intent.ACTION_SEND;
 import static android.content.Intent.ACTION_SENDTO;
@@ -22,12 +28,6 @@ import static android.content.Intent.ACTION_VIEW;
 import static android.content.Intent.EXTRA_SUBJECT;
 import static android.content.Intent.EXTRA_TEXT;
 import static org.droidparts.util.Strings.isNotEmpty;
-
-import java.io.File;
-
-import android.content.Context;
-import android.content.Intent;
-import android.net.Uri;
 
 public class IntentFactory {
 
@@ -59,7 +59,7 @@ public class IntentFactory {
 	}
 
 	public static Intent getSendEmailIntent(String mailTo, String mailCC, String subject, CharSequence body,
-			File attachment) {
+	                                        File attachment) {
 		Intent intent = new Intent(ACTION_SENDTO);
 		// intent.setType("text/plain");
 		intent.setType("message/rfc822");
@@ -68,7 +68,7 @@ public class IntentFactory {
 		}
 		intent.setData(Uri.parse("mailto:" + mailTo));
 		if (isNotEmpty(mailCC)) {
-			intent.putExtra(Intent.EXTRA_CC, new String[] { mailCC });
+			intent.putExtra(Intent.EXTRA_CC, new String[]{mailCC});
 		}
 		if (isNotEmpty(subject)) {
 			intent.putExtra(EXTRA_SUBJECT, subject);

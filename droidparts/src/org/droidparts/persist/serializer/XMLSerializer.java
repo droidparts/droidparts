@@ -1,12 +1,12 @@
 /**
  * Copyright 2016 Alex Yanchenko
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *  
+ *
  *     http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -15,23 +15,15 @@
  */
 package org.droidparts.persist.serializer;
 
-import static org.droidparts.inner.ReflectionUtils.newInstance;
-import static org.droidparts.inner.ReflectionUtils.setFieldVal;
-import static org.droidparts.util.Strings.isNotEmpty;
-
 import java.io.IOException;
 import java.io.StringReader;
 import java.util.ArrayList;
 
+import android.content.Context;
+import android.util.Pair;
+
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-
-import org.droidparts.inner.ClassSpecRegistry;
-import org.droidparts.inner.ConverterRegistry;
-import org.droidparts.inner.ann.FieldSpec;
-import org.droidparts.inner.ann.serialize.XMLAnn;
-import org.droidparts.inner.converter.Converter;
-import org.droidparts.model.Model;
 import org.w3c.dom.Document;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
@@ -39,8 +31,16 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
-import android.content.Context;
-import android.util.Pair;
+import org.droidparts.inner.ClassSpecRegistry;
+import org.droidparts.inner.ConverterRegistry;
+import org.droidparts.inner.ann.FieldSpec;
+import org.droidparts.inner.ann.serialize.XMLAnn;
+import org.droidparts.inner.converter.Converter;
+import org.droidparts.model.Model;
+
+import static org.droidparts.inner.ReflectionUtils.newInstance;
+import static org.droidparts.inner.ReflectionUtils.setFieldVal;
+import static org.droidparts.util.Strings.isNotEmpty;
 
 public class XMLSerializer<ModelType extends Model> extends AbstractSerializer<ModelType, Node, NodeList> {
 
@@ -120,7 +120,7 @@ public class XMLSerializer<ModelType extends Model> extends AbstractSerializer<M
 	}
 
 	protected <T, G1, G2> Object getNodeVal(Class<T> valType, Class<G1> genericArg1, Class<G2> genericArg2, Node node,
-			String attribute) throws Exception {
+	                                        String attribute) throws Exception {
 		Converter<T> converter = ConverterRegistry.getConverter(valType);
 		return converter.readFromXML(valType, genericArg1, genericArg2, node, attribute);
 	}

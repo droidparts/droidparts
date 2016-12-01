@@ -18,10 +18,10 @@ task sourcesJar(type: Jar) {
 allprojects {
 	tasks.withType(Jar) {
 		manifest {
-			attributes (
+			attributes(
 					'Implementation-Version': "$version",
 					'Implementation-Title': "$archivesBaseName"
-					)
+			)
 		}
 	}
 	if (JavaVersion.current().isJava8Compatible()) {

@@ -1,12 +1,12 @@
 /**
  * Copyright 2016 Alex Yanchenko
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *  
+ *
  *     http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -20,19 +20,20 @@ import java.net.HttpURLConnection;
 import java.util.Date;
 import java.util.Map;
 
+import android.content.Context;
+import android.os.Build;
+
 import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpPut;
+
 import org.droidparts.contract.HTTP.Header;
 import org.droidparts.contract.HTTP.Method;
 import org.droidparts.net.http.worker.HTTPWorker;
 import org.droidparts.net.http.worker.HttpClientWorker;
 import org.droidparts.net.http.worker.HttpURLConnectionWorker;
 import org.droidparts.util.L;
-
-import android.content.Context;
-import android.os.Build;
 
 public class RESTClient {
 

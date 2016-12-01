@@ -11,7 +11,7 @@ android {
 			java.srcDirs = ['src']
 			res.srcDirs = ['res']
 		}
-		androidTest { java.srcDirs = ['test']}
+		androidTest { java.srcDirs = ['test'] }
 	}
 
 	buildTypes {

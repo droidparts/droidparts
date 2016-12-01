@@ -15,62 +15,63 @@
  */
 package org.droidparts.test.testcase;
 
-import android.test.AndroidTestCase;
-import org.droidparts.util.L;
-
 import java.util.Arrays;
 import java.util.List;
 
+import android.test.AndroidTestCase;
+
+import org.droidparts.util.L;
+
 public class LTestCase extends AndroidTestCase implements L.Listener {
 
-    private int priority;
-    private String tag;
-    private String msg;
+	private int priority;
+	private String tag;
+	private String msg;
 
 
-    @Override
-    public void onMessageLogged(int priority, String tag, String msg) {
-        this.priority = priority;
-        this.tag = tag;
-        this.msg = msg;
-    }
+	@Override
+	public void onMessageLogged(int priority, String tag, String msg) {
+		this.priority = priority;
+		this.tag = tag;
+		this.msg = msg;
+	}
 
-    @Override
-    protected void setUp() throws Exception {
-        L.setListener(this);
-        priority = -1;
-        tag = msg = null;
-    }
+	@Override
+	protected void setUp() throws Exception {
+		L.setListener(this);
+		priority = -1;
+		tag = msg = null;
+	}
 
-    private static final String MSG = "MSG";
-    private static final String MSG_FORMAT_1 = "MSG %s";
+	private static final String MSG = "MSG";
+	private static final String MSG_FORMAT_1 = "MSG %s";
 
 
-    public void testLog() {
-        L.v(MSG);
-        assertEquals(MSG, msg);
-        L.v(MSG_FORMAT_1);
-        assertEquals(MSG_FORMAT_1, msg);
-        L.v(MSG_FORMAT_1, 5);
-        assertEquals(String.format(MSG_FORMAT_1, 5), msg);
-    }
+	public void testLog() {
+		L.v(MSG);
+		assertEquals(MSG, msg);
+		L.v(MSG_FORMAT_1);
+		assertEquals(MSG_FORMAT_1, msg);
+		L.v(MSG_FORMAT_1, 5);
+		assertEquals(String.format(MSG_FORMAT_1, 5), msg);
+	}
 
-    public void testArrayCollectionMessage() {
-        Integer[] arr = new Integer[]{100, 500};
-        List<Integer> list = Arrays.asList(arr);
-        L.v(arr);
-        String tmpMsg = msg;
-        msg = null;
-        L.v(list);
-        assertEquals(tmpMsg, msg);
-    }
+	public void testArrayCollectionMessage() {
+		Integer[] arr = new Integer[]{100, 500};
+		List<Integer> list = Arrays.asList(arr);
+		L.v(arr);
+		String tmpMsg = msg;
+		msg = null;
+		L.v(list);
+		assertEquals(tmpMsg, msg);
+	}
 
-    public void testTag() {
-        L.v(MSG_FORMAT_1, 1);
-        String prevTag = tag;
-        tag = null;
-        L.v(new Object());
-        assertEquals(prevTag.substring(0, prevTag.indexOf(':')), tag.substring(0, tag.indexOf(':')));
-    }
+	public void testTag() {
+		L.v(MSG_FORMAT_1, 1);
+		String prevTag = tag;
+		tag = null;
+		L.v(new Object());
+		assertEquals(prevTag.substring(0, prevTag.indexOf(':')), tag.substring(0, tag.indexOf(':')));
+	}
 
 }

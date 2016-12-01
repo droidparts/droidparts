@@ -1,12 +1,12 @@
 /**
  * Copyright 2016 Alex Yanchenko
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *  
+ *
  *     http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -15,17 +15,17 @@
  */
 package org.droidparts.persist.sql.stmt;
 
-import static java.util.Arrays.asList;
-import static org.droidparts.inner.PersistUtils.buildPlaceholders;
-import static org.droidparts.inner.PersistUtils.toWhereArgs;
-import static org.droidparts.inner.ReflectionUtils.varArgsHack;
-
 import java.util.ArrayList;
+
+import android.util.Pair;
 
 import org.droidparts.contract.SQL;
 import org.droidparts.util.L;
 
-import android.util.Pair;
+import static java.util.Arrays.asList;
+import static org.droidparts.inner.PersistUtils.buildPlaceholders;
+import static org.droidparts.inner.PersistUtils.toWhereArgs;
+import static org.droidparts.inner.ReflectionUtils.varArgsHack;
 
 public class Where implements SQL {
 
@@ -99,31 +99,31 @@ public class Where implements SQL {
 		//
 		selectionBuilder.append(spec.columnName).append(spec.operator.str);
 		switch (spec.operator) {
-		case NULL:
-		case NOT_NULL:
-			if (argNum != 0) {
-				errArgs(spec.operator, argNum);
-			}
-			break;
-		case BETWEEN:
-		case NOT_BETWEEN:
-			if (argNum != 2) {
-				errArgs(spec.operator, argNum);
-			}
-			break;
-		case IN:
-		case NOT_IN:
-			if (argNum < 1) {
-				errArgs(spec.operator, argNum);
-			}
-			selectionBuilder.append("(");
-			selectionBuilder.append(buildPlaceholders(whereArgs.length));
-			selectionBuilder.append(")");
-			break;
-		default:
-			if (argNum != 1) {
-				errArgs(spec.operator, argNum);
-			}
+			case NULL:
+			case NOT_NULL:
+				if (argNum != 0) {
+					errArgs(spec.operator, argNum);
+				}
+				break;
+			case BETWEEN:
+			case NOT_BETWEEN:
+				if (argNum != 2) {
+					errArgs(spec.operator, argNum);
+				}
+				break;
+			case IN:
+			case NOT_IN:
+				if (argNum < 1) {
+					errArgs(spec.operator, argNum);
+				}
+				selectionBuilder.append("(");
+				selectionBuilder.append(buildPlaceholders(whereArgs.length));
+				selectionBuilder.append(")");
+				break;
+			default:
+				if (argNum != 1) {
+					errArgs(spec.operator, argNum);
+				}
 		}
 		selectionArgsBuilder.addAll(asList(whereArgs));
 		return Pair.create(selectionBuilder.toString(), selectionArgsBuilder);

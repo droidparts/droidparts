@@ -1,12 +1,12 @@
 /**
  * Copyright 2016 Alex Yanchenko
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *  
+ *
  *     http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -15,14 +15,14 @@
  */
 package org.droidparts.adapter.cursor;
 
+import android.content.Context;
+import android.database.Cursor;
+import android.view.View;
+
 import org.droidparts.contract.AlterableContent;
 import org.droidparts.model.Entity;
 import org.droidparts.persist.sql.EntityManager;
 import org.droidparts.persist.sql.stmt.AbstractSelect;
-
-import android.content.Context;
-import android.database.Cursor;
-import android.view.View;
 
 public abstract class EntityCursorAdapter<EntityType extends Entity> extends CursorAdapter
 		implements AlterableContent<AbstractSelect<EntityType>> {
@@ -38,7 +38,7 @@ public abstract class EntityCursorAdapter<EntityType extends Entity> extends Cur
 	}
 
 	public EntityCursorAdapter(Context ctx, EntityManager<EntityType> entityManager,
-			AbstractSelect<EntityType> select) {
+	                           AbstractSelect<EntityType> select) {
 		super(ctx, (select != null) ? select.execute() : null);
 		this.entityManager = entityManager;
 	}

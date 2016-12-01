@@ -1,12 +1,12 @@
 /**
  * Copyright 2016 Alex Yanchenko
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *  
+ *
  *     http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -17,11 +17,12 @@ package org.droidparts.inner.converter;
 
 import java.util.Date;
 
-import org.droidparts.inner.TypeHelper;
-import org.json.JSONObject;
-
 import android.content.ContentValues;
 import android.database.Cursor;
+
+import org.json.JSONObject;
+
+import org.droidparts.inner.TypeHelper;
 
 public class DateConverter extends Converter<Date> {
 
@@ -37,13 +38,13 @@ public class DateConverter extends Converter<Date> {
 
 	@Override
 	public <G1, G2> void putToJSON(Class<Date> valType, Class<G1> genericArg1, Class<G2> genericArg2, JSONObject obj,
-			String key, Date val) throws Exception {
+	                               String key, Date val) throws Exception {
 		obj.put(key, val.getTime());
 	}
 
 	@Override
 	public <G1, G2> Date readFromJSON(Class<Date> valType, Class<G1> genericArg1, Class<G2> genericArg2, JSONObject obj,
-			String key) throws Exception {
+	                                  String key) throws Exception {
 		try {
 			return new Date(obj.getLong(key));
 		} catch (Exception e) {
@@ -53,19 +54,19 @@ public class DateConverter extends Converter<Date> {
 
 	@Override
 	protected <G1, G2> Date parseFromString(Class<Date> valType, Class<G1> genericArg1, Class<G2> genericArg2,
-			String str) {
+	                                        String str) {
 		return new Date(Long.valueOf(str));
 	}
 
 	@Override
 	public <G1, G2> void putToContentValues(Class<Date> valueType, Class<G1> genericArg1, Class<G2> genericArg2,
-			ContentValues cv, String key, Date val) {
+	                                        ContentValues cv, String key, Date val) {
 		cv.put(key, val.getTime());
 	}
 
 	@Override
 	public <G1, G2> Date readFromCursor(Class<Date> valType, Class<G1> genericArg1, Class<G2> genericArg2,
-			Cursor cursor, int columnIndex) {
+	                                    Cursor cursor, int columnIndex) {
 		return new Date(cursor.getLong(columnIndex));
 	}
 

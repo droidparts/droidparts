@@ -1,12 +1,12 @@
 /**
  * Copyright 2016 Alex Yanchenko
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *  
+ *
  *     http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -18,10 +18,11 @@ package org.droidparts.inner.converter;
 import java.util.Iterator;
 import java.util.Map;
 
+import org.json.JSONObject;
+
 import org.droidparts.inner.ConverterRegistry;
 import org.droidparts.inner.ReflectionUtils;
 import org.droidparts.inner.TypeHelper;
-import org.json.JSONObject;
 
 public class MapConverter extends Converter<Map<?, ?>> {
 
@@ -38,7 +39,7 @@ public class MapConverter extends Converter<Map<?, ?>> {
 	@Override
 	@SuppressWarnings("unchecked")
 	public <G1, G2> Map<G1, G2> readFromJSON(Class<Map<?, ?>> valType, Class<G1> genericArg1, Class<G2> genericArg2,
-			JSONObject obj, String key) throws Exception {
+	                                         JSONObject obj, String key) throws Exception {
 		JSONObject jo = ConverterRegistry.getConverter(JSONObject.class).readFromJSON(JSONObject.class, genericArg1,
 				genericArg2, obj, key);
 		Converter<G1> keyConv = ConverterRegistry.getConverter(genericArg1);
@@ -57,7 +58,7 @@ public class MapConverter extends Converter<Map<?, ?>> {
 	@Override
 	@SuppressWarnings("unchecked")
 	public <G1, G2> void putToJSON(Class<Map<?, ?>> valType, Class<G1> genericArg1, Class<G2> genericArg2,
-			JSONObject obj, String key, Map<?, ?> val) throws Exception {
+	                               JSONObject obj, String key, Map<?, ?> val) throws Exception {
 		JSONObject o = new JSONObject();
 		Converter<G2> valConv = ConverterRegistry.getConverter(genericArg2);
 		for (Object k : val.keySet()) {

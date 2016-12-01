@@ -1,12 +1,12 @@
 /**
  * Copyright 2016 Alex Yanchenko
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *  
+ *
  *     http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -15,10 +15,10 @@
  */
 package org.droidparts.inner.converter;
 
-import org.droidparts.inner.TypeHelper;
-
 import android.content.ContentValues;
 import android.database.Cursor;
+
+import org.droidparts.inner.TypeHelper;
 
 public class CharacterConverter extends Converter<Character> {
 
@@ -34,19 +34,19 @@ public class CharacterConverter extends Converter<Character> {
 
 	@Override
 	protected <G1, G2> Character parseFromString(Class<Character> valType, Class<G1> genericArg1, Class<G2> genericArg2,
-			String str) {
+	                                             String str) {
 		return Character.valueOf((str.length() == 0) ? ' ' : str.charAt(0));
 	}
 
 	@Override
 	public <G1, G2> void putToContentValues(Class<Character> valueType, Class<G1> genericArg1, Class<G2> genericArg2,
-			ContentValues cv, String key, Character val) {
+	                                        ContentValues cv, String key, Character val) {
 		cv.put(key, String.valueOf(val));
 	}
 
 	@Override
 	public <G1, G2> Character readFromCursor(Class<Character> valType, Class<G1> genericArg1, Class<G2> genericArg2,
-			Cursor cursor, int columnIndex) {
+	                                         Cursor cursor, int columnIndex) {
 		return parseFromString(valType, null, null, cursor.getString(columnIndex));
 	}
 

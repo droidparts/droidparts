@@ -1,12 +1,12 @@
 /**
  * Copyright 2016 Alex Yanchenko
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *  
+ *
  *     http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -15,25 +15,25 @@
  */
 package org.droidparts.net.image.cache;
 
-import static org.droidparts.contract.Constants.BUFFER_SIZE;
-import static org.droidparts.util.IOUtils.getFileList;
-import static org.droidparts.util.IOUtils.readToByteArray;
-import static org.droidparts.util.IOUtils.silentlyClose;
-
 import java.io.BufferedOutputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 
-import org.droidparts.inner.BitmapFactoryUtils;
-import org.droidparts.util.L;
-
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.CompressFormat;
 import android.graphics.BitmapFactory;
 import android.util.Pair;
+
+import org.droidparts.inner.BitmapFactoryUtils;
+import org.droidparts.util.L;
+
+import static org.droidparts.contract.Constants.BUFFER_SIZE;
+import static org.droidparts.util.IOUtils.getFileList;
+import static org.droidparts.util.IOUtils.readToByteArray;
+import static org.droidparts.util.IOUtils.silentlyClose;
 
 public class BitmapDiskCache {
 
@@ -85,7 +85,7 @@ public class BitmapDiskCache {
 	}
 
 	public Pair<Bitmap, BitmapFactory.Options> get(String key, int reqWidth, int reqHeight, Bitmap.Config config,
-			Bitmap inBitmap) {
+	                                               Bitmap inBitmap) {
 		Pair<Bitmap, BitmapFactory.Options> bmData = null;
 		File file = getCachedFile(key);
 		if (file.exists()) {

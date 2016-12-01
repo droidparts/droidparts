@@ -1,12 +1,12 @@
 /**
  * Copyright 2016 Alex Yanchenko
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *  
+ *
  *     http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -18,6 +18,9 @@ package org.droidparts.test.testcase;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+
+import android.database.Cursor;
+import android.test.AndroidTestCase;
 
 import org.droidparts.persist.sql.EntityManager;
 import org.droidparts.persist.sql.stmt.Is;
@@ -33,16 +36,13 @@ import org.droidparts.test.persist.DB;
 import org.droidparts.test.persist.sql.AlbumManager;
 import org.droidparts.test.persist.sql.TrackManager;
 
-import android.database.Cursor;
-import android.test.AndroidTestCase;
-
 public class EntityTestCase extends AndroidTestCase implements DB {
 
-	private static final String[] ALBUMS = new String[] { "Diamond", "Iris" };
-	private static final int[] YEARS = new int[] { 2007, 2009 };
-	private static final String[] TRACKS = new String[] { "Diamond", "Beautiful", "Stay", "Secret Desire", "The Sun",
-			"Buddha" };
-	private static final String[] TAGS = new String[] { "downtempo", "lounge", "chillout" };
+	private static final String[] ALBUMS = new String[]{"Diamond", "Iris"};
+	private static final int[] YEARS = new int[]{2007, 2009};
+	private static final String[] TRACKS = new String[]{"Diamond", "Beautiful", "Stay", "Secret Desire", "The Sun",
+			"Buddha"};
+	private static final String[] TAGS = new String[]{"downtempo", "lounge", "chillout"};
 
 	private EntityManager<Primitives> primitivesManager;
 	private EntityManager<AlbumToTag> albumToTagManager;
@@ -163,7 +163,7 @@ public class EntityTestCase extends AndroidTestCase implements DB {
 	public void testEnum() {
 		Primitives pri = new Primitives();
 		pri.en = En.HI;
-		pri.enArr = new En[] { En.HI, En.THERE };
+		pri.enArr = new En[]{En.HI, En.THERE};
 		primitivesManager.create(pri);
 		pri = primitivesManager.read(pri.id);
 		assertEquals(En.HI, pri.en);
@@ -172,8 +172,8 @@ public class EntityTestCase extends AndroidTestCase implements DB {
 
 	public void testArraysAndCollections() {
 		Primitives pri = new Primitives();
-		pri.strArr = new String[] { "one", "two" };
-		pri.intArr = new int[] { 10, 20, 30 };
+		pri.strArr = new String[]{"one", "two"};
+		pri.intArr = new int[]{10, 20, 30};
 		pri.strList.addAll(Arrays.asList(pri.strArr));
 		pri.doubleSet.add(100.500);
 		pri.doubleSet.add(12.5);
@@ -208,7 +208,7 @@ public class EntityTestCase extends AndroidTestCase implements DB {
 	public void testIn() {
 		createDummyAlbums(3);
 		//
-		int[] arr = new int[] { 1, 2 };
+		int[] arr = new int[]{1, 2};
 		int count = albumManager.select().where(Column.ID, Is.IN, arr).count();
 		assertEquals(2, count);
 		count = albumManager.select().where(Column.ID, Is.NOT_IN, arr).count();
@@ -304,7 +304,7 @@ public class EntityTestCase extends AndroidTestCase implements DB {
 		assertEquals(0, albumManager.select().where(Column.ID, Is.EQUAL, 100).count());
 	}
 
-	public void testMultipleWheres(){
+	public void testMultipleWheres() {
 		createDummyAlbums(20);
 		Where where1 = new Where(Column.NAME, Is.IN, "A 10", "A 11", "A 12");
 		Where where2 = new Where(Column.YEAR, Is.IN, 10, 11, 15);

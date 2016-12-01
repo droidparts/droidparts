@@ -1,12 +1,12 @@
 /**
  * Copyright 2016 Alex Yanchenko
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *  
+ *
  *     http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -14,15 +14,6 @@
  * limitations under the License. 
  */
 package org.droidparts.util;
-
-import static android.content.pm.ApplicationInfo.FLAG_DEBUGGABLE;
-import static android.content.pm.PackageManager.COMPONENT_ENABLED_STATE_DISABLED;
-import static android.content.pm.PackageManager.COMPONENT_ENABLED_STATE_ENABLED;
-import static android.content.pm.PackageManager.DONT_KILL_APP;
-import static android.content.pm.PackageManager.GET_META_DATA;
-import static android.content.pm.PackageManager.GET_SIGNATURES;
-import static android.content.pm.PackageManager.SIGNATURE_MATCH;
-import static android.provider.Settings.Secure.ANDROID_ID;
 
 import java.io.IOException;
 import java.util.zip.ZipEntry;
@@ -35,6 +26,15 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.provider.Settings.Secure;
+
+import static android.content.pm.ApplicationInfo.FLAG_DEBUGGABLE;
+import static android.content.pm.PackageManager.COMPONENT_ENABLED_STATE_DISABLED;
+import static android.content.pm.PackageManager.COMPONENT_ENABLED_STATE_ENABLED;
+import static android.content.pm.PackageManager.DONT_KILL_APP;
+import static android.content.pm.PackageManager.GET_META_DATA;
+import static android.content.pm.PackageManager.GET_SIGNATURES;
+import static android.content.pm.PackageManager.SIGNATURE_MATCH;
+import static android.provider.Settings.Secure.ANDROID_ID;
 
 public class AppUtils {
 

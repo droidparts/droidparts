@@ -1,12 +1,12 @@
 /**
  * Copyright 2016 Alex Yanchenko
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *  
+ *
  *     http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -17,6 +17,12 @@ package org.droidparts.test.testcase.serialize;
 
 import java.util.ArrayList;
 
+import android.test.AndroidTestCase;
+import android.test.AssertionFailedError;
+
+import org.w3c.dom.Document;
+import org.w3c.dom.NodeList;
+
 import org.droidparts.model.Model;
 import org.droidparts.persist.serializer.SerializerException;
 import org.droidparts.persist.serializer.XMLSerializer;
@@ -26,11 +32,6 @@ import org.droidparts.test.model.Album2;
 import org.droidparts.test.model.AlbumFail;
 import org.droidparts.test.model.Collections;
 import org.droidparts.util.IOUtils;
-import org.w3c.dom.Document;
-import org.w3c.dom.NodeList;
-
-import android.test.AndroidTestCase;
-import android.test.AssertionFailedError;
 
 public class XMLTestCase extends AndroidTestCase {
 
