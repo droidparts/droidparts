@@ -1,12 +1,12 @@
 /**
  * Copyright 2016 Alex Yanchenko
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *  
+ *
  *     http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -15,9 +15,12 @@
  */
 package org.droidparts.test.testcase.serialize;
 
-import static org.droidparts.util.Strings.join;
-
 import java.util.ArrayList;
+
+import android.test.AssertionFailedError;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 import org.droidparts.annotation.serialize.JSON;
 import org.droidparts.persist.serializer.JSONSerializer;
@@ -27,10 +30,8 @@ import org.droidparts.test.model.Album;
 import org.droidparts.test.model.Collections;
 import org.droidparts.test.model.Nested;
 import org.droidparts.test.model.Primitives;
-import org.json.JSONArray;
-import org.json.JSONObject;
 
-import android.test.AssertionFailedError;
+import static org.droidparts.util.Strings.join;
 
 public class JSONTestCase extends AbstractJSONTestCase {
 
@@ -64,7 +65,7 @@ public class JSONTestCase extends AbstractJSONTestCase {
 	}
 
 	public void testNestedKeys() throws Exception {
-		assertEquals("obj->key", join(new String[] { "obj", "key" }, JSON.SUB));
+		assertEquals("obj->key", join(new String[]{"obj", "key"}, JSON.SUB));
 		JSONSerializer<Nested> serializer = makeSerializer(Nested.class);
 		Nested model = serializer.deserialize(getNested());
 		assertEquals("str", model.str);

@@ -1,12 +1,12 @@
 /**
  * Copyright 2016 Alex Yanchenko
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *  
+ *
  *     http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -14,11 +14,6 @@
  * limitations under the License. 
  */
 package org.droidparts.net.http.worker;
-
-import static org.apache.http.client.params.CookiePolicy.BROWSER_COMPATIBILITY;
-import static org.droidparts.contract.Constants.BUFFER_SIZE;
-import static org.droidparts.contract.Constants.UTF8;
-import static org.droidparts.contract.HTTP.Header.ACCEPT_ENCODING;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -38,10 +33,16 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.params.HttpConnectionParams;
 import org.apache.http.params.HttpParams;
 import org.apache.http.params.HttpProtocolParams;
+
 import org.droidparts.net.http.CookieJar;
 import org.droidparts.net.http.HTTPException;
 import org.droidparts.net.http.HTTPResponse;
 import org.droidparts.net.http.worker.wrapper.HttpMimeWrapper;
+
+import static org.apache.http.client.params.CookiePolicy.BROWSER_COMPATIBILITY;
+import static org.droidparts.contract.Constants.BUFFER_SIZE;
+import static org.droidparts.contract.Constants.UTF8;
+import static org.droidparts.contract.HTTP.Header.ACCEPT_ENCODING;
 
 // For API < 10
 public class HttpClientWorker extends HTTPWorker {

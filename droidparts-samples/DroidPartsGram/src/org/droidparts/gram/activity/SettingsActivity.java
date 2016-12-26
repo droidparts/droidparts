@@ -1,12 +1,12 @@
 /**
  * Copyright 2016 Alex Yanchenko
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *  
+ *
  *     http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -15,19 +15,19 @@
  */
 package org.droidparts.gram.activity;
 
-import static org.droidparts.util.Strings.join;
-
-import org.droidparts.activity.PreferenceActivity;
-import org.droidparts.annotation.inject.InjectView;
-import org.droidparts.gram.R;
-import org.droidparts.widget.MultiSelectListPreference;
-
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.preference.Preference;
 import android.preference.Preference.OnPreferenceChangeListener;
 import android.view.MenuItem;
+
+import org.droidparts.activity.PreferenceActivity;
+import org.droidparts.annotation.inject.InjectView;
+import org.droidparts.gram.R;
+import org.droidparts.widget.MultiSelectListPreference;
+
+import static org.droidparts.util.Strings.join;
 
 public class SettingsActivity extends PreferenceActivity implements OnPreferenceChangeListener {
 
@@ -53,11 +53,11 @@ public class SettingsActivity extends PreferenceActivity implements OnPreference
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
-		case android.R.id.home:
-			finish();
-			return true;
-		default:
-			return super.onOptionsItemSelected(item);
+			case android.R.id.home:
+				finish();
+				return true;
+			default:
+				return super.onOptionsItemSelected(item);
 		}
 	}
 

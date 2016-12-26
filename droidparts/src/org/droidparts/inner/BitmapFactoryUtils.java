@@ -1,12 +1,12 @@
 /**
  * Copyright 2016 Alex Yanchenko
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *  
+ *
  *     http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -17,8 +17,6 @@ package org.droidparts.inner;
 
 import java.io.IOException;
 
-import org.droidparts.util.L;
-
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Point;
@@ -26,6 +24,8 @@ import android.os.Build;
 import android.util.Pair;
 import android.view.ViewGroup.LayoutParams;
 import android.widget.ImageView;
+
+import org.droidparts.util.L;
 
 public class BitmapFactoryUtils {
 
@@ -38,7 +38,7 @@ public class BitmapFactoryUtils {
 	}
 
 	public static Pair<Bitmap, BitmapFactory.Options> decodeScaled(byte[] data, int reqWidth, int reqHeight,
-			Bitmap.Config config, Bitmap inBitmap) throws Exception {
+	                                                               Bitmap.Config config, Bitmap inBitmap) throws Exception {
 		BitmapFactory.Options opts = new BitmapFactory.Options();
 		boolean gotSizeHint = (reqWidth > 0) || (reqHeight > 0);
 		boolean gotConfig = (config != null);

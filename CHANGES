@@ -1,3 +1,6 @@
+2.9.8 /2016-12-26/:
+    * Improved Logger.
+
 2.9.7 /2016-11-05/:
     * @Deprecated TabbedAppCompatActivity.
     * Fixed compiling with Java 8.

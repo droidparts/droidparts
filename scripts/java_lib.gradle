@@ -3,7 +3,7 @@ apply plugin: 'maven'
 apply plugin: 'signing'
 
 group = 'org.droidparts'
-version = new File('VERSION').text
+version = new File("$rootProject.projectDir/VERSION").text.trim()
 
 task javadocJar(type: Jar) {
 	classifier = 'javadoc'
@@ -18,10 +18,10 @@ task sourcesJar(type: Jar) {
 allprojects {
 	tasks.withType(Jar) {
 		manifest {
-			attributes (
+			attributes(
 					'Implementation-Version': "$version",
 					'Implementation-Title': "$archivesBaseName"
-					)
+			)
 		}
 	}
 	if (JavaVersion.current().isJava8Compatible()) {

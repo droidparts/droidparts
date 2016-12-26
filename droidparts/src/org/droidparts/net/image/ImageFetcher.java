@@ -1,12 +1,12 @@
 /**
  * Copyright 2016 Alex Yanchenko
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *  
+ *
  *     http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -15,10 +15,6 @@
  */
 package org.droidparts.net.image;
 
-import static android.graphics.Color.TRANSPARENT;
-import static org.droidparts.contract.Constants.BUFFER_SIZE;
-import static org.droidparts.util.IOUtils.silentlyClose;
-
 import java.io.BufferedInputStream;
 import java.io.ByteArrayOutputStream;
 import java.lang.ref.WeakReference;
@@ -26,17 +22,6 @@ import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ThreadPoolExecutor;
-
-import org.droidparts.concurrent.thread.BackgroundThreadExecutor;
-import org.droidparts.contract.HTTP.Header;
-import org.droidparts.inner.BitmapFactoryUtils;
-import org.droidparts.inner.WeakWrapper;
-import org.droidparts.net.http.HTTPResponse;
-import org.droidparts.net.http.RESTClient;
-import org.droidparts.net.http.worker.HTTPWorker;
-import org.droidparts.net.image.cache.BitmapDiskCache;
-import org.droidparts.net.image.cache.BitmapMemoryCache;
-import org.droidparts.util.L;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -51,6 +36,21 @@ import android.os.Handler;
 import android.os.Looper;
 import android.util.Pair;
 import android.widget.ImageView;
+
+import org.droidparts.concurrent.thread.BackgroundThreadExecutor;
+import org.droidparts.contract.HTTP.Header;
+import org.droidparts.inner.BitmapFactoryUtils;
+import org.droidparts.inner.WeakWrapper;
+import org.droidparts.net.http.HTTPResponse;
+import org.droidparts.net.http.RESTClient;
+import org.droidparts.net.http.worker.HTTPWorker;
+import org.droidparts.net.image.cache.BitmapDiskCache;
+import org.droidparts.net.image.cache.BitmapMemoryCache;
+import org.droidparts.util.L;
+
+import static android.graphics.Color.TRANSPARENT;
+import static org.droidparts.contract.Constants.BUFFER_SIZE;
+import static org.droidparts.util.IOUtils.silentlyClose;
 
 public class ImageFetcher {
 
@@ -79,7 +79,7 @@ public class ImageFetcher {
 	}
 
 	protected ImageFetcher(Context ctx, ThreadPoolExecutor fetchExecutor, RESTClient restClient,
-			BitmapMemoryCache memoryCache, BitmapDiskCache diskCache) {
+	                       BitmapMemoryCache memoryCache, BitmapDiskCache diskCache) {
 		this.fetchExecutor = fetchExecutor;
 		this.restClient = restClient;
 		this.memoryCache = memoryCache;
@@ -122,12 +122,12 @@ public class ImageFetcher {
 	}
 
 	public void attachImage(String imgUrl, ImageView imageView, ImageReshaper reshaper, int crossFadeMillis,
-			ImageFetchListener listener) {
+	                        ImageFetchListener listener) {
 		attachImage(imgUrl, imageView, reshaper, crossFadeMillis, listener, null);
 	}
 
 	public void attachImage(String imgUrl, ImageView imageView, ImageReshaper reshaper, int crossFadeMillis,
-			ImageFetchListener listener, Bitmap inBitmap) {
+	                        ImageFetchListener listener, Bitmap inBitmap) {
 		ImageViewSpec spec = new ImageViewSpec(imageView, imgUrl, inBitmap, crossFadeMillis, reshaper, listener);
 		long submitted = System.nanoTime();
 		wip.put(spec, submitted);
@@ -301,7 +301,7 @@ public class ImageFetcher {
 		final int heightHint;
 
 		public ImageViewSpec(ImageView imgView, String imgUrl, Bitmap inBitmap, int crossFadeMillis,
-				ImageReshaper reshaper, ImageFetchListener listener) {
+		                     ImageReshaper reshaper, ImageFetchListener listener) {
 			super(imgView);
 			this.imgUrl = String.valueOf(imgUrl);
 			inBitmapRef = new WeakReference<Bitmap>(inBitmap);
@@ -451,7 +451,7 @@ public class ImageFetcher {
 					}
 					Drawable nextDrawable = new BitmapDrawable(imgView.getResources(), bitmap);
 					TransitionDrawable transitionDrawable = new TransitionDrawable(
-							new Drawable[] { prevDrawable, nextDrawable });
+							new Drawable[]{prevDrawable, nextDrawable});
 					imgView.setImageDrawable(transitionDrawable);
 					transitionDrawable.startTransition(spec.crossFadeMillis);
 				} else {

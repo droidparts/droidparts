@@ -1,12 +1,12 @@
 /**
  * Copyright 2016 Alex Yanchenko
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *  
+ *
  *     http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -15,18 +15,22 @@
  */
 package org.droidparts.util;
 
-import static org.droidparts.inner.ManifestMetaData.LOG_LEVEL;
-import static org.droidparts.util.Strings.isEmpty;
-
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.util.Arrays;
+
+import android.content.Context;
+import android.util.Log;
 
 import org.droidparts.Injector;
 import org.droidparts.inner.ManifestMetaData;
 import org.droidparts.inner.ManifestMetaData.LogLevel;
 
-import android.content.Context;
-import android.util.Log;
+import static org.droidparts.inner.ManifestMetaData.LOG_LEVEL;
+import static org.droidparts.inner.TypeHelper.isArray;
+import static org.droidparts.inner.TypeHelper.isString;
+import static org.droidparts.inner.TypeHelper.isThrowable;
+import static org.droidparts.util.Strings.isEmpty;
 
 public class L {
 
@@ -130,34 +134,47 @@ public class L {
 
 	private static Listener listener;
 
-	private static final String TAG = "DroidParts";
+	private static final String DEFAULT_TAG = "DroidParts";
 
 	private static void log(int priority, Object obj) {
-		String msg;
-		if (obj instanceof Throwable) {
-			StringWriter sw = new StringWriter();
-			((Throwable) obj).printStackTrace(new PrintWriter(sw));
-			msg = sw.toString();
-		} else {
-			msg = String.valueOf(obj);
-			if (isEmpty(msg)) {
-				msg = "\"\"";
+		String msg = "null";
+		if (obj != null) {
+			Class<?> cls = obj.getClass();
+			if (isString(cls)) {
+				msg = (String) obj;
+				if (isEmpty(msg)) {
+					msg = "\"\"";
+				}
+			} else if (isThrowable(cls)) {
+				StringWriter sw = new StringWriter();
+				((Throwable) obj).printStackTrace(new PrintWriter(sw));
+				msg = sw.toString();
+			} else if (isArray(cls)) {
+				msg = Arrays.toString(Arrays2.toObjectArray(obj));
+			} else {
+				msg = obj.toString();
 			}
 		}
-		Log.println(priority, getTag(isDebug()), msg);
+		log(msg, priority);
 	}
 
 	private static void log(int priority, String format, Object... args) {
+		String msg;
 		try {
-			String tag = getTag(isDebug());
-			String msg = String.format(format, args);
-			Log.println(priority, tag, msg);
-			if (listener != null) {
-				listener.onMessageLogged(priority, tag, msg);
-			}
+			msg = String.format(format, args);
 		} catch (Exception e) {
 			e(e);
+			return;
 		}
+		log(msg, priority);
+	}
+
+	private static void log(String msg, int priority) {
+		String tag = getTag(isDebug());
+		if (listener != null) {
+			listener.onMessageLogged(priority, tag, msg);
+		}
+		Log.println(priority, tag, msg);
 	}
 
 	private static boolean isDebug() {
@@ -165,6 +182,8 @@ public class L {
 			Context ctx = Injector.getApplicationContext();
 			if (ctx != null) {
 				_debug = AppUtils.isDebuggable(ctx) ? 1 : -1;
+			} else {
+				return true;
 			}
 		}
 		return (_debug == 1);
@@ -191,7 +210,7 @@ public class L {
 					_logLevel = DISABLE;
 				} else {
 					_logLevel = VERBOSE;
-					Log.i(TAG, "No valid <meta-data android:name=\"" + ManifestMetaData.LOG_LEVEL
+					Log.i(DEFAULT_TAG, "No valid <meta-data android:name=\"" + ManifestMetaData.LOG_LEVEL
 							+ "\" android:value=\"...\"/> in AndroidManifest.xml.");
 				}
 			}
@@ -201,7 +220,7 @@ public class L {
 
 	private static String getTag(boolean debug) {
 		if (debug) {
-			StackTraceElement caller = Thread.currentThread().getStackTrace()[5];
+			StackTraceElement caller = Thread.currentThread().getStackTrace()[6];
 			String c = caller.getClassName();
 			String className = c.substring(c.lastIndexOf(".") + 1, c.length());
 			StringBuilder sb = new StringBuilder(5);
@@ -218,7 +237,7 @@ public class L {
 					_tag = ctx.getPackageName();
 				}
 			}
-			return (_tag != null) ? _tag : TAG;
+			return (_tag != null) ? _tag : DEFAULT_TAG;
 		}
 	}
 

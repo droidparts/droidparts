@@ -1,12 +1,12 @@
 /**
  * Copyright 2016 Alex Yanchenko
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *  
+ *
  *     http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -15,13 +15,13 @@
  */
 package org.droidparts.inner.converter;
 
-import static org.droidparts.inner.ReflectionUtils.newInstance;
+import android.content.ContentValues;
+import android.database.Cursor;
 
 import org.droidparts.inner.TypeHelper;
 import org.droidparts.model.Entity;
 
-import android.content.ContentValues;
-import android.database.Cursor;
+import static org.droidparts.inner.ReflectionUtils.newInstance;
 
 public class EntityConverter<E extends Entity> extends ModelConverter<E> {
 
@@ -37,13 +37,13 @@ public class EntityConverter<E extends Entity> extends ModelConverter<E> {
 
 	@Override
 	public <G1, G2> void putToContentValues(Class<E> valueType, Class<G1> genericArg1, Class<G2> genericArg2,
-			ContentValues cv, String key, E val) {
+	                                        ContentValues cv, String key, E val) {
 		cv.put(key, val.id);
 	}
 
 	@Override
 	public <G1, G2> E readFromCursor(Class<E> valType, Class<G1> genericArg1, Class<G2> genericArg2, Cursor cursor,
-			int columnIndex) {
+	                                 int columnIndex) {
 		long id = cursor.getLong(columnIndex);
 		E entity = newInstance(valType);
 		entity.id = id;

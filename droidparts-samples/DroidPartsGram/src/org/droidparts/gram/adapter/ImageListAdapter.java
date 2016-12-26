@@ -1,12 +1,12 @@
 /**
  * Copyright 2016 Alex Yanchenko
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *  
+ *
  *     http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -14,16 +14,6 @@
  * limitations under the License. 
  */
 package org.droidparts.gram.adapter;
-
-import static org.droidparts.util.Strings.join;
-
-import org.droidparts.adapter.cursor.EntityCursorAdapter;
-import org.droidparts.adapter.holder.IconText2Holder;
-import org.droidparts.annotation.inject.InjectDependency;
-import org.droidparts.gram.R;
-import org.droidparts.gram.model.Image;
-import org.droidparts.net.image.ImageFetcher;
-import org.droidparts.persist.sql.stmt.Select;
 
 import android.content.Context;
 import android.database.Cursor;
@@ -34,6 +24,16 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.AbsListView.OnScrollListener;
+
+import org.droidparts.adapter.cursor.EntityCursorAdapter;
+import org.droidparts.adapter.holder.IconText2Holder;
+import org.droidparts.annotation.inject.InjectDependency;
+import org.droidparts.gram.R;
+import org.droidparts.gram.model.Image;
+import org.droidparts.net.image.ImageFetcher;
+import org.droidparts.persist.sql.stmt.Select;
+
+import static org.droidparts.util.Strings.join;
 
 public class ImageListAdapter extends EntityCursorAdapter<Image> implements OnScrollListener {
 
@@ -78,11 +78,11 @@ public class ImageListAdapter extends EntityCursorAdapter<Image> implements OnSc
 	@Override
 	public void onScrollStateChanged(AbsListView view, int scrollState) {
 		switch (scrollState) {
-		case OnScrollListener.SCROLL_STATE_FLING:
-			imageFetcher.pause();
-			break;
-		default:
-			imageFetcher.resume(true);
+			case OnScrollListener.SCROLL_STATE_FLING:
+				imageFetcher.pause();
+				break;
+			default:
+				imageFetcher.resume(true);
 		}
 	}
 

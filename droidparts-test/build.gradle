@@ -1,6 +1,7 @@
 apply from: "$rootProject.projectDir/scripts/android_app.gradle"
 
 dependencies {
+	compile project(':droidparts')
 	compile project(':droidparts-support')
 	androidTestCompile fileTree(dir: '../droidparts/libs', include: '*.jar')
 	androidTestCompile fileTree(dir: '../droidparts-support/libs', include: '*.jar')

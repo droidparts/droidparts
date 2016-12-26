@@ -1,12 +1,12 @@
 /**
  * Copyright 2016 Alex Yanchenko
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *  
+ *
  *     http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -14,6 +14,11 @@
  * limitations under the License. 
  */
 package org.droidparts.gram.activity;
+
+import android.content.Intent;
+import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuItem;
 
 import org.droidparts.activity.SingleFragmentActivity;
 import org.droidparts.annotation.inject.InjectDependency;
@@ -25,11 +30,6 @@ import org.droidparts.gram.fragment.ImageListFragment;
 import org.droidparts.gram.model.Image;
 import org.droidparts.gram.persist.ImageEntityManager;
 import org.droidparts.gram.service.ImageIntentService;
-
-import android.content.Intent;
-import android.os.Bundle;
-import android.view.Menu;
-import android.view.MenuItem;
 
 public class PopularImageListActivity extends SingleFragmentActivity<ImageListFragment>
 		implements ImageListFragment.Listener {
@@ -61,17 +61,17 @@ public class PopularImageListActivity extends SingleFragmentActivity<ImageListFr
 	public boolean onOptionsItemSelected(MenuItem item) {
 		Intent intent;
 		switch (item.getItemId()) {
-		case R.id.menu_refresh:
-			setActionBarLoadingIndicatorVisible(true);
-			intent = ImageIntentService.getUpdatePicsIntent(this, refreshResultReceiver);
-			startService(intent);
-			return true;
-		case R.id.menu_settings:
-			intent = SettingsActivity.getIntent(this);
-			startActivity(intent);
-			return true;
-		default:
-			return super.onOptionsItemSelected(item);
+			case R.id.menu_refresh:
+				setActionBarLoadingIndicatorVisible(true);
+				intent = ImageIntentService.getUpdatePicsIntent(this, refreshResultReceiver);
+				startService(intent);
+				return true;
+			case R.id.menu_settings:
+				intent = SettingsActivity.getIntent(this);
+				startActivity(intent);
+				return true;
+			default:
+				return super.onOptionsItemSelected(item);
 		}
 	}
 

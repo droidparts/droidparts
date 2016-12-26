@@ -1,12 +1,12 @@
 /**
  * Copyright 2016 Alex Yanchenko
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *  
+ *
  *     http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -14,12 +14,6 @@
  * limitations under the License. 
  */
 package org.droidparts.inner;
-
-import static java.util.Arrays.asList;
-import static org.droidparts.inner.ClassSpecRegistry.getTableName;
-import static org.droidparts.inner.TypeHelper.isEntity;
-import static org.droidparts.util.Strings.join;
-import static org.json.JSONObject.NULL;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -30,6 +24,16 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.concurrent.Callable;
 
+import android.content.ContentValues;
+import android.database.Cursor;
+import android.database.DatabaseUtils;
+import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteQueryBuilder;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.w3c.dom.Node;
+
 import org.droidparts.contract.DB.Column;
 import org.droidparts.contract.SQL;
 import org.droidparts.inner.ann.FieldSpec;
@@ -38,15 +42,12 @@ import org.droidparts.inner.converter.Converter;
 import org.droidparts.model.Entity;
 import org.droidparts.persist.sql.AbstractEntityManager;
 import org.droidparts.util.L;
-import org.json.JSONException;
-import org.json.JSONObject;
-import org.w3c.dom.Node;
 
-import android.content.ContentValues;
-import android.database.Cursor;
-import android.database.DatabaseUtils;
-import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteQueryBuilder;
+import static java.util.Arrays.asList;
+import static org.json.JSONObject.NULL;
+import static org.droidparts.inner.ClassSpecRegistry.getTableName;
+import static org.droidparts.inner.TypeHelper.isEntity;
+import static org.droidparts.util.Strings.join;
 
 public final class PersistUtils implements SQL.DDL {
 
@@ -94,7 +95,7 @@ public final class PersistUtils implements SQL.DDL {
 	}
 
 	public static <EntityType extends Entity> EntityType readFirst(AbstractEntityManager<EntityType> entityManager,
-			Cursor cursor) {
+	                                                               Cursor cursor) {
 		EntityType item = null;
 		try {
 			if (cursor.moveToFirst()) {
@@ -154,9 +155,9 @@ public final class PersistUtils implements SQL.DDL {
 	}
 
 	public static int getRowCount(SQLiteDatabase db, boolean distinct, String table, String[] columns, String selection,
-			String[] selectionArgs, String groupBy, String having, String orderBy, String limit) {
+	                              String[] selectionArgs, String groupBy, String having, String orderBy, String limit) {
 		if (columns != null && columns.length > 0) {
-			columns = new String[] { columns[0] };
+			columns = new String[]{columns[0]};
 		}
 		String sql = SQLiteQueryBuilder.buildQueryString(distinct, table, columns, selection, groupBy, having, orderBy,
 				limit);

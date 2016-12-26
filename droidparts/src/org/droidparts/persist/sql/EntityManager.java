@@ -1,12 +1,12 @@
 /**
  * Copyright 2016 Alex Yanchenko
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *  
+ *
  *     http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -15,17 +15,14 @@
  */
 package org.droidparts.persist.sql;
 
-import static java.util.Arrays.asList;
-import static org.droidparts.inner.ReflectionUtils.getFieldVal;
-import static org.droidparts.inner.ReflectionUtils.newInstance;
-import static org.droidparts.inner.ReflectionUtils.setFieldVal;
-import static org.droidparts.inner.TypeHelper.isArray;
-import static org.droidparts.inner.TypeHelper.isCollection;
-import static org.droidparts.inner.TypeHelper.isEntity;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
+
+import android.content.ContentValues;
+import android.content.Context;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 
 import org.droidparts.Injector;
 import org.droidparts.inner.ClassSpecRegistry;
@@ -36,10 +33,13 @@ import org.droidparts.inner.converter.Converter;
 import org.droidparts.inner.reader.DependencyReader;
 import org.droidparts.model.Entity;
 
-import android.content.ContentValues;
-import android.content.Context;
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
+import static java.util.Arrays.asList;
+import static org.droidparts.inner.ReflectionUtils.getFieldVal;
+import static org.droidparts.inner.ReflectionUtils.newInstance;
+import static org.droidparts.inner.ReflectionUtils.setFieldVal;
+import static org.droidparts.inner.TypeHelper.isArray;
+import static org.droidparts.inner.TypeHelper.isCollection;
+import static org.droidparts.inner.TypeHelper.isEntity;
 
 public class EntityManager<EntityType extends Entity> extends AbstractEntityManager<EntityType> {
 
@@ -219,7 +219,7 @@ public class EntityManager<EntityType extends Entity> extends AbstractEntityMana
 
 	@SuppressWarnings("unchecked")
 	protected <T, G1, G2> void putToContentValues(ContentValues cv, String key, Class<T> valueType,
-			Class<G1> genericArg1, Class<G2> genericArg2, Object value) throws Exception {
+	                                              Class<G1> genericArg1, Class<G2> genericArg2, Object value) throws Exception {
 		if (value == null) {
 			cv.putNull(key);
 		} else {
@@ -229,7 +229,7 @@ public class EntityManager<EntityType extends Entity> extends AbstractEntityMana
 	}
 
 	protected <T, G1, G2> Object readFromCursor(Cursor cursor, int columnIndex, Class<T> valType, Class<G1> genericArg1,
-			Class<G2> genericArg2) throws Exception {
+	                                            Class<G2> genericArg2) throws Exception {
 		if (cursor.isNull(columnIndex)) {
 			return null;
 		} else {

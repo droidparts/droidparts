@@ -1,12 +1,12 @@
 /**
  * Copyright 2016 Alex Yanchenko
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *  
+ *
  *     http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -14,12 +14,6 @@
  * limitations under the License. 
  */
 package org.droidparts.net.http;
-
-import static android.content.Context.MODE_PRIVATE;
-import static java.util.Collections.singletonList;
-import static java.util.Collections.singletonMap;
-import static java.util.Collections.unmodifiableList;
-import static org.droidparts.util.Strings.join;
 
 import java.io.IOException;
 import java.net.CookieHandler;
@@ -33,6 +27,10 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import android.content.Context;
+import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
+
 import org.apache.http.client.CookieStore;
 import org.apache.http.cookie.Cookie;
 import org.apache.http.cookie.CookieOrigin;
@@ -42,11 +40,14 @@ import org.apache.http.cookie.SM;
 import org.apache.http.impl.cookie.BasicClientCookie;
 import org.apache.http.impl.cookie.BrowserCompatSpec;
 import org.apache.http.message.BasicHeader;
+
 import org.droidparts.util.L;
 
-import android.content.Context;
-import android.content.SharedPreferences;
-import android.content.SharedPreferences.Editor;
+import static android.content.Context.MODE_PRIVATE;
+import static java.util.Collections.singletonList;
+import static java.util.Collections.singletonMap;
+import static java.util.Collections.unmodifiableList;
+import static org.droidparts.util.Strings.join;
 
 public class CookieJar extends CookieHandler implements CookieStore {
 
@@ -99,7 +100,7 @@ public class CookieJar extends CookieHandler implements CookieStore {
 	public void addCookie(Cookie cookie) {
 		L.d("Got a cookie: %s.", cookie);
 		synchronized (cookies) {
-			for (Iterator<Cookie> it = cookies.iterator(); it.hasNext();) {
+			for (Iterator<Cookie> it = cookies.iterator(); it.hasNext(); ) {
 				Cookie c = it.next();
 				if (isEqual(cookie, c)) {
 					it.remove();
@@ -126,7 +127,7 @@ public class CookieJar extends CookieHandler implements CookieStore {
 	public boolean clearExpired(Date date) {
 		boolean purged = false;
 		synchronized (cookies) {
-			for (Iterator<Cookie> it = cookies.iterator(); it.hasNext();) {
+			for (Iterator<Cookie> it = cookies.iterator(); it.hasNext(); ) {
 				Cookie cookie = it.next();
 				if (cookie.isExpired(date)) {
 					it.remove();

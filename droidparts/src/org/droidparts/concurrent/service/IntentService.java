@@ -1,12 +1,12 @@
 /**
  * Copyright 2016 Alex Yanchenko
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *  
+ *
  *     http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -17,15 +17,15 @@ package org.droidparts.concurrent.service;
 
 import java.lang.reflect.Field;
 
-import org.droidparts.Injector;
-import org.droidparts.util.L;
-
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.ResultReceiver;
+
+import org.droidparts.Injector;
+import org.droidparts.util.L;
 
 public abstract class IntentService extends android.app.IntentService {
 
@@ -46,7 +46,7 @@ public abstract class IntentService extends android.app.IntentService {
 	}
 
 	public static final Intent getIntent(Context ctx, Class<? extends IntentService> cls, String action,
-			ResultReceiver resultReceiver) {
+	                                     ResultReceiver resultReceiver) {
 		Intent intent = getIntent(ctx, cls, action);
 		intent.putExtra(EXTRA_RESULT_RECEIVER, resultReceiver);
 		return intent;

@@ -1,12 +1,12 @@
 /**
  * Copyright 2016 Alex Yanchenko
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *  
+ *
  *     http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -14,6 +14,22 @@
  * limitations under the License. 
  */
 package org.droidparts.net.http.worker;
+
+import java.io.DataOutputStream;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.CookieHandler;
+import java.net.HttpURLConnection;
+import java.net.Proxy;
+import java.net.URL;
+
+import android.content.Context;
+
+import org.droidparts.contract.HTTP.Method;
+import org.droidparts.net.http.CookieJar;
+import org.droidparts.net.http.HTTPException;
+import org.droidparts.net.http.HTTPResponse;
+import org.droidparts.util.IOUtils;
 
 import static org.droidparts.contract.Constants.UTF8;
 import static org.droidparts.contract.HTTP.ContentType.MULTIPART;
@@ -26,22 +42,6 @@ import static org.droidparts.contract.HTTP.Header.KEEP_ALIVE;
 import static org.droidparts.contract.HTTP.Header.NO_CACHE;
 import static org.droidparts.contract.HTTP.Header.USER_AGENT;
 import static org.droidparts.util.IOUtils.silentlyClose;
-
-import java.io.DataOutputStream;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.net.CookieHandler;
-import java.net.HttpURLConnection;
-import java.net.Proxy;
-import java.net.URL;
-
-import org.droidparts.contract.HTTP.Method;
-import org.droidparts.net.http.CookieJar;
-import org.droidparts.net.http.HTTPException;
-import org.droidparts.net.http.HTTPResponse;
-import org.droidparts.util.IOUtils;
-
-import android.content.Context;
 
 public class HttpURLConnectionWorker extends HTTPWorker {
 

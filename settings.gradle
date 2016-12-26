@@ -2,5 +2,5 @@ include \
  ':droidparts',\
  ':droidparts-support',\
  ':droidparts-test',\
- ':droidparts-samples/droidparts-sample',\
- ':droidparts-samples/DroidPartsGram'
+ ':droidparts-samples:droidparts-sample',\
+ ':droidparts-samples:DroidPartsGram'

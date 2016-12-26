@@ -1,12 +1,12 @@
 /**
  * Copyright 2016 Alex Yanchenko
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *  
+ *
  *     http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -15,16 +15,19 @@
  */
 package org.droidparts.inner.converter;
 
-import static org.droidparts.inner.ReflectionUtils.newInstance;
-import static org.droidparts.inner.TypeHelper.isArray;
-import static org.droidparts.inner.TypeHelper.isModel;
-import static org.droidparts.util.Strings.isNotEmpty;
-
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+
+import android.content.ContentValues;
+import android.database.Cursor;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 import org.droidparts.inner.ConverterRegistry;
 import org.droidparts.inner.PersistUtils;
@@ -32,13 +35,11 @@ import org.droidparts.inner.TypeHelper;
 import org.droidparts.model.Model;
 import org.droidparts.util.Arrays2;
 import org.droidparts.util.Strings;
-import org.json.JSONArray;
-import org.json.JSONObject;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
 
-import android.content.ContentValues;
-import android.database.Cursor;
+import static org.droidparts.inner.ReflectionUtils.newInstance;
+import static org.droidparts.inner.TypeHelper.isArray;
+import static org.droidparts.inner.TypeHelper.isModel;
+import static org.droidparts.util.Strings.isNotEmpty;
 
 public class ArrayCollectionConverter extends Converter<Object> {
 
@@ -57,7 +58,7 @@ public class ArrayCollectionConverter extends Converter<Object> {
 
 	@Override
 	public <G1, G2> Object readFromJSON(Class<Object> valType, Class<G1> genericArg1, Class<G2> genericArg2,
-			JSONObject obj, String key) throws Exception {
+	                                    JSONObject obj, String key) throws Exception {
 		Converter<JSONArray> conv = ConverterRegistry.getConverter(JSONArray.class);
 		Wrapper w = new Wrapper(conv.readFromJSON(JSONArray.class, null, null, obj, key), null);
 		return readFromWrapper(valType, genericArg1, w);
@@ -65,7 +66,7 @@ public class ArrayCollectionConverter extends Converter<Object> {
 
 	@Override
 	public <G1, G2> Object readFromXML(Class<Object> valType, Class<G1> genericArg1, Class<G2> genericArg2, Node node,
-			String nodeListItemTagHint) throws Exception {
+	                                   String nodeListItemTagHint) throws Exception {
 		NodeList nl = node.getChildNodes();
 		ArrayList<Node> elementNodes = new ArrayList<Node>();
 		for (int i = 0; i < nl.getLength(); i++) {
@@ -86,7 +87,7 @@ public class ArrayCollectionConverter extends Converter<Object> {
 
 	@Override
 	public <G1, G2> void putToJSON(Class<Object> valType, Class<G1> genericArg1, Class<G2> genericArg2, JSONObject obj,
-			String key, Object val) throws Exception {
+	                               String key, Object val) throws Exception {
 		Converter<G1> converter = ConverterRegistry.getConverter(genericArg1);
 		ArrayList<G1> list = arrOrCollToList(valType, genericArg1, val);
 		JSONArray vals = new JSONArray();
@@ -142,7 +143,7 @@ public class ArrayCollectionConverter extends Converter<Object> {
 
 	@Override
 	public <G1, G2> void putToContentValues(Class<Object> valueType, Class<G1> genericArg1, Class<G2> genericArg2,
-			ContentValues cv, String key, Object val) throws Exception {
+	                                        ContentValues cv, String key, Object val) throws Exception {
 		Converter<G1> converter = ConverterRegistry.getConverter(genericArg1);
 		if (converter.getDBColumnType() == BLOB) {
 			byte[] bytes = PersistUtils.toBytes(val);
@@ -162,7 +163,7 @@ public class ArrayCollectionConverter extends Converter<Object> {
 
 	@Override
 	public <G1, G2> Object readFromCursor(Class<Object> valType, Class<G1> genericArg1, Class<G2> genericArg2,
-			Cursor cursor, int columnIndex) throws Exception {
+	                                      Cursor cursor, int columnIndex) throws Exception {
 		Converter<G1> converter = ConverterRegistry.getConverter(genericArg1);
 		if (converter.getDBColumnType() == BLOB) {
 			byte[] arr = cursor.getBlob(columnIndex);
@@ -200,7 +201,7 @@ public class ArrayCollectionConverter extends Converter<Object> {
 	}
 
 	private final <T> Collection<T> parseTypeColl(Converter<T> converter, Class<Object> collType, Class<T> genericArg1,
-			String[] arr) throws Exception {
+	                                              String[] arr) throws Exception {
 		@SuppressWarnings("unchecked")
 		Collection<T> coll = (Collection<T>) newInstance(collType);
 		for (int i = 0; i < arr.length; i++) {

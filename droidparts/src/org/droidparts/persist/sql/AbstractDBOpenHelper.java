@@ -1,12 +1,12 @@
 /**
  * Copyright 2016 Alex Yanchenko
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *  
+ *
  *     http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -15,18 +15,18 @@
  */
 package org.droidparts.persist.sql;
 
-import static org.droidparts.inner.ClassSpecRegistry.getTableColumnSpecs;
-import static org.droidparts.inner.ClassSpecRegistry.getTableName;
-
 import java.util.ArrayList;
+
+import android.content.Context;
+import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteOpenHelper;
 
 import org.droidparts.contract.SQL;
 import org.droidparts.inner.PersistUtils;
 import org.droidparts.model.Entity;
 
-import android.content.Context;
-import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteOpenHelper;
+import static org.droidparts.inner.ClassSpecRegistry.getTableColumnSpecs;
+import static org.droidparts.inner.ClassSpecRegistry.getTableName;
 
 public abstract class AbstractDBOpenHelper extends SQLiteOpenHelper implements SQL.DDL {
 
@@ -49,7 +49,7 @@ public abstract class AbstractDBOpenHelper extends SQLiteOpenHelper implements S
 	// helpers
 
 	protected final boolean createIndex(SQLiteDatabase db, String table, boolean unique, String firstColumn,
-			String... otherColumns) {
+	                                    String... otherColumns) {
 		ArrayList<String> statements = new ArrayList<String>();
 		statements.add(PersistUtils.getCreateIndex(table, unique, firstColumn, otherColumns));
 		return executeStatements(db, statements);
