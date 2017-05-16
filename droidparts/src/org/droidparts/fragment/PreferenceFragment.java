@@ -25,6 +25,10 @@ import org.droidparts.inner.delegate.FragmentDelegate;
 
 public class PreferenceFragment extends android.preference.PreferenceFragment {
 
+    public static <T extends PreferenceFragment> T newInstance(Class<T> cls, Bundle args) {
+        return FragmentDelegate.newInstance(cls, args);
+    }
+
 	private boolean injected;
 
 	@Override

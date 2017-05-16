@@ -15,13 +15,22 @@
  */
 package org.droidparts.inner.delegate;
 
+import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 
+import org.droidparts.inner.ReflectionUtils;
+
 public class SupportDelegate extends BaseDelegate {
+
+	public static <T extends Fragment> T newInstance(Class<T> cls, Bundle bundle) {
+		T fragment = ReflectionUtils.newInstance(cls);
+		fragment.setArguments(bundle);
+		return fragment;
+	}
 
 	public static void activitySetFragmentVisible(FragmentActivity fragmentActivity, boolean visible,
 	                                              Fragment... fragments) {

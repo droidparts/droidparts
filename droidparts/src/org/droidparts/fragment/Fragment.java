@@ -25,6 +25,10 @@ import org.droidparts.inner.delegate.FragmentDelegate;
 
 public class Fragment extends android.app.Fragment {
 
+	public static <T extends Fragment> T newInstance(Class<T> cls, Bundle args){
+		return FragmentDelegate.newInstance(cls, args);
+	}
+
 	private boolean injected;
 
 	@Override

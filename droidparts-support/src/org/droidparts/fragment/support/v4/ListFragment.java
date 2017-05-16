@@ -24,6 +24,10 @@ import org.droidparts.inner.delegate.SupportDelegate;
 
 public class ListFragment extends android.support.v4.app.ListFragment {
 
+	public static <T extends ListFragment> T newInstance(Class<T> cls, Bundle args){
+		return SupportDelegate.newInstance(cls, args);
+	}
+
 	private boolean injected;
 
 	@Override
