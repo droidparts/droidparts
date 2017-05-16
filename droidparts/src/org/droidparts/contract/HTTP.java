@@ -19,7 +19,7 @@ import org.apache.http.HttpStatus;
 
 public interface HTTP {
 
-	public interface Method {
+	interface Method {
 
 		String GET = "GET";
 		String PUT = "PUT";
@@ -28,10 +28,10 @@ public interface HTTP {
 
 	}
 
-	public interface ResponseCode extends HttpStatus {
+	interface ResponseCode extends HttpStatus {
 	}
 
-	public interface ContentType {
+	interface ContentType {
 
 		String APPLICATION_FORM_DATA = "application/x-www-form-urlencoded";
 		String APPLICATION_JSON = "application/json";
@@ -40,7 +40,7 @@ public interface HTTP {
 
 	}
 
-	public interface Header {
+	interface Header {
 
 		// Request
 		String USER_AGENT = "User-Agent";

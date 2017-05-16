@@ -17,7 +17,7 @@ package org.droidparts.test.persist;
 
 public interface DB extends org.droidparts.contract.DB {
 
-	public interface Table extends org.droidparts.contract.DB.Table {
+	interface Table extends org.droidparts.contract.DB.Table {
 
 		String ALBUMS = "_albums_";
 		String TRACKS = "_tracks_";
@@ -27,7 +27,7 @@ public interface DB extends org.droidparts.contract.DB {
 
 	}
 
-	public interface Column extends org.droidparts.contract.DB.Column {
+	interface Column extends org.droidparts.contract.DB.Column {
 
 		String YEAR = "_year_";
 		String NAME = "_name_";

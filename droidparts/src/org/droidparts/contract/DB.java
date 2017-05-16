@@ -19,11 +19,11 @@ import android.provider.BaseColumns;
 
 public interface DB {
 
-	public interface Table {
+	interface Table {
 
 	}
 
-	public interface Column {
+	interface Column {
 
 		String ID = BaseColumns._ID;
 

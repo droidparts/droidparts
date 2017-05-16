@@ -20,14 +20,14 @@ public interface DB extends org.droidparts.contract.DB {
 	int VERSION = 1;
 	String FILE = "dpg.sqlite";
 
-	public interface Table extends org.droidparts.contract.DB.Table {
+	interface Table extends org.droidparts.contract.DB.Table {
 
 		String IMAGES = "images";
 		String FILTERS = "filters";
 
 	}
 
-	public interface Column extends org.droidparts.contract.DB.Column {
+	interface Column extends org.droidparts.contract.DB.Column {
 
 		String NAME = "name";
 

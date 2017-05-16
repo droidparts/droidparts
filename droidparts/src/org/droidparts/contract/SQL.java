@@ -41,7 +41,7 @@ public interface SQL {
 	String ASC = " ASC";
 	String DESC = " DESC";
 
-	public interface DDL {
+	interface DDL {
 		String CREATE_TABLE = "CREATE TABLE ";
 		String ALTER_TABLE = "ALTER TABLE ";
 

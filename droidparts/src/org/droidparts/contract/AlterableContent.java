@@ -17,6 +17,6 @@ package org.droidparts.contract;
 
 public interface AlterableContent<T> {
 
-	public void setContent(T content);
+	void setContent(T content);
 
 }
