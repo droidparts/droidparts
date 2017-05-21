@@ -24,6 +24,7 @@ import java.util.List;
 import android.content.ContentValues;
 import android.database.Cursor;
 
+import org.droidparts.inner.ReflectionUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.w3c.dom.Node;
@@ -36,7 +37,7 @@ import org.droidparts.model.Model;
 import org.droidparts.util.Arrays2;
 import org.droidparts.util.Strings;
 
-import static org.droidparts.inner.ReflectionUtils.newInstance;
+import static org.droidparts.inner.ReflectionUtils.*;
 import static org.droidparts.inner.TypeHelper.isArray;
 import static org.droidparts.inner.TypeHelper.isModel;
 import static org.droidparts.util.Strings.isNotEmpty;
@@ -104,9 +105,10 @@ public class ArrayCollectionConverter extends Converter<Object> {
 	protected <V> Object readFromWrapper(Class<Object> valType, Class<V> genericArg1, Wrapper wrapper)
 			throws Exception {
 		boolean isArr = isArray(valType);
+		boolean noDefaultConstructor = !hasDefaultConstructor(valType);
 		boolean isModel = isModel(genericArg1);
 		Collection<Object> items;
-		if (isArr) {
+		if (isArr || noDefaultConstructor) {
 			items = new ArrayList<Object>();
 		} else {
 			items = (Collection<Object>) newInstance(valType);
