@@ -186,7 +186,7 @@ public class EntityManager<EntityType extends Entity> extends AbstractEntityMana
 					}
 				}
 				if (!toCreate.isEmpty()) {
-					subManager(spec.genericArg1).create(toCreate);
+					subManager(spec.genericArg1).createAll(toCreate);
 				}
 
 			}

@@ -70,7 +70,7 @@ public class ImageIntentService extends IntentService {
 			JSONArray arr = obj.getJSONArray("data");
 			ArrayList<Image> list = imageSerializer.deserializeAll(arr);
 			imageEntityManager.delete().execute();
-			imageEntityManager.create(list);
+			imageEntityManager.createAll(list);
 			EventBus.postEvent("REFRESH_COMPLETE", list);
 			return data;
 		} else {
