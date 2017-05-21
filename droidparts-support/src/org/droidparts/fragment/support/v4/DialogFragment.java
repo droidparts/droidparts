@@ -25,6 +25,10 @@ import org.droidparts.inner.delegate.SupportDelegate;
 
 public class DialogFragment extends android.support.v4.app.DialogFragment {
 
+	public static <T extends DialogFragment> T newInstance(Class<T> cls, Bundle args) {
+		return SupportDelegate.newInstance(cls, args);
+	}
+
 	private boolean injected;
 
 	@Override
