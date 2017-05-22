@@ -22,7 +22,8 @@ import java.util.Map;
 import org.json.JSONObject;
 
 import org.droidparts.inner.ConverterRegistry;
-import static org.droidparts.inner.ReflectionUtils.*;
+import static org.droidparts.inner.ReflectionUtils.hasDefaultConstructor;
+import static org.droidparts.inner.ReflectionUtils.newInstance;
 import org.droidparts.inner.TypeHelper;
 
 public class MapConverter extends Converter<Map<?, ?>> {

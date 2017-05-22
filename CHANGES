@@ -1,3 +1,9 @@
+3.0.0 /2017-05-22/:
+    * Deserialize lowercase Enums from JSON.
+    * Instantiate Maps & Collections.
+    * newInstance() method in Fragments.
+    * EntityManager: changed names of methods operating on collections.
+
 2.9.8 /2016-12-26/:
     * Improved Logger.
 

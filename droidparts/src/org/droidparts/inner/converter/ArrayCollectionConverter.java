@@ -25,7 +25,6 @@ import java.util.List;
 import android.content.ContentValues;
 import android.database.Cursor;
 
-import org.droidparts.inner.ReflectionUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.w3c.dom.Node;
@@ -38,7 +37,8 @@ import org.droidparts.model.Model;
 import org.droidparts.util.Arrays2;
 import org.droidparts.util.Strings;
 
-import static org.droidparts.inner.ReflectionUtils.*;
+import static org.droidparts.inner.ReflectionUtils.hasDefaultConstructor;
+import static org.droidparts.inner.ReflectionUtils.newInstance;
 import static org.droidparts.inner.TypeHelper.isArray;
 import static org.droidparts.inner.TypeHelper.isModel;
 import static org.droidparts.inner.TypeHelper.isSet;
@@ -215,11 +215,11 @@ public class ArrayCollectionConverter extends Converter<Object> {
 
     @SuppressWarnings("unchecked")
     private static <T> Collection<T> makeCollection(Class<Object> collCls) {
-        if (hasDefaultConstructor(collCls)) {
+		if (hasDefaultConstructor(collCls)) {
 			return (Collection<T>) newInstance(collCls);
-        } else if (isSet(collCls)) {
+		} else if (isSet(collCls)) {
 			return new LinkedHashSet<T>();
-        } else {
+		} else {
 			return new ArrayList<T>();
         }
     }
