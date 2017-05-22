@@ -1,5 +1,5 @@
 /**
- * Copyright 2016 Alex Yanchenko
+ * Copyright 2017 Alex Yanchenko
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,6 +23,10 @@ import android.view.ViewGroup;
 import org.droidparts.inner.delegate.SupportDelegate;
 
 public class ListFragment extends android.support.v4.app.ListFragment {
+
+	public static <T extends ListFragment> T newInstance(Class<T> cls, Bundle args){
+		return SupportDelegate.newInstance(cls, args);
+	}
 
 	private boolean injected;
 

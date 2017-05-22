@@ -1,5 +1,5 @@
 /**
- * Copyright 2016 Alex Yanchenko
+ * Copyright 2017 Alex Yanchenko
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,11 +19,11 @@ import android.provider.BaseColumns;
 
 public interface DB {
 
-	public interface Table {
+	interface Table {
 
 	}
 
-	public interface Column {
+	interface Column {
 
 		String ID = BaseColumns._ID;
 

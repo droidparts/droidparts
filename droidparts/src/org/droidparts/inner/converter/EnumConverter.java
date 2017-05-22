@@ -1,5 +1,5 @@
 /**
- * Copyright 2016 Alex Yanchenko
+ * Copyright 2017 Alex Yanchenko
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -11,7 +11,7 @@
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
- * limitations under the License. 
+ * limitations under the License.
  */
 package org.droidparts.inner.converter;
 
@@ -39,19 +39,27 @@ public class EnumConverter extends Converter<Enum<?>> {
 	@Override
 	public <G1, G2> void putToJSON(Class<Enum<?>> valType, Class<G1> genericArg1, Class<G2> genericArg2, JSONObject obj,
 	                               String key, Enum<?> val) throws Exception {
-		obj.put(key, val.toString());
+		obj.put(key, val.name());
 	}
 
 	@Override
-	protected <G1, G2> Enum<?> parseFromString(Class<Enum<?>> valType, Class<G1> genericArg1, Class<G2> genericArg2,
-	                                           String str) {
-		return newEnum(valType, str);
-	}
+    protected <G1, G2> Enum<?> parseFromString(Class<Enum<?>> valType, Class<G1> genericArg1, Class<G2> genericArg2,
+                                               String str) {
+        try {
+            return newEnum(valType, str);
+        } catch (RuntimeException e1) {
+            try {
+                return newEnum(valType, str.toUpperCase());
+            } catch (RuntimeException e2) {
+                throw e1;
+            }
+        }
+    }
 
 	@Override
 	public <G1, G2> void putToContentValues(Class<Enum<?>> valueType, Class<G1> genericArg1, Class<G2> genericArg2,
 	                                        ContentValues cv, String key, Enum<?> val) {
-		cv.put(key, val.toString());
+		cv.put(key, val.name());
 	}
 
 	@Override

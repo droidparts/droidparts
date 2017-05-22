@@ -1,5 +1,5 @@
 /**
- * Copyright 2016 Alex Yanchenko
+ * Copyright 2017 Alex Yanchenko
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -41,7 +41,7 @@ public interface SQL {
 	String ASC = " ASC";
 	String DESC = " DESC";
 
-	public interface DDL {
+	interface DDL {
 		String CREATE_TABLE = "CREATE TABLE ";
 		String ALTER_TABLE = "ALTER TABLE ";
 

@@ -1,5 +1,5 @@
 /**
- * Copyright 2016 Alex Yanchenko
+ * Copyright 2017 Alex Yanchenko
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,7 +17,7 @@ package org.droidparts.test.persist;
 
 public interface DB extends org.droidparts.contract.DB {
 
-	public interface Table extends org.droidparts.contract.DB.Table {
+	interface Table extends org.droidparts.contract.DB.Table {
 
 		String ALBUMS = "_albums_";
 		String TRACKS = "_tracks_";
@@ -27,7 +27,7 @@ public interface DB extends org.droidparts.contract.DB {
 
 	}
 
-	public interface Column extends org.droidparts.contract.DB.Column {
+	interface Column extends org.droidparts.contract.DB.Column {
 
 		String YEAR = "_year_";
 		String NAME = "_name_";

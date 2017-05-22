@@ -1,5 +1,5 @@
 /**
- * Copyright 2016 Alex Yanchenko
+ * Copyright 2017 Alex Yanchenko
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -11,17 +11,19 @@
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
- * limitations under the License. 
+ * limitations under the License.
  */
 package org.droidparts.inner.converter;
 
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.json.JSONObject;
 
 import org.droidparts.inner.ConverterRegistry;
-import org.droidparts.inner.ReflectionUtils;
+import static org.droidparts.inner.ReflectionUtils.hasDefaultConstructor;
+import static org.droidparts.inner.ReflectionUtils.newInstance;
 import org.droidparts.inner.TypeHelper;
 
 public class MapConverter extends Converter<Map<?, ?>> {
@@ -44,7 +46,12 @@ public class MapConverter extends Converter<Map<?, ?>> {
 				genericArg2, obj, key);
 		Converter<G1> keyConv = ConverterRegistry.getConverter(genericArg1);
 		Converter<G2> valConv = ConverterRegistry.getConverter(genericArg2);
-		Map<G1, G2> map = (Map<G1, G2>) ReflectionUtils.newInstance(valType);
+		Map<G1, G2> map;
+		if(hasDefaultConstructor(valType)) {
+			map = (Map<G1, G2>) newInstance(valType);
+		} else {
+			map = new LinkedHashMap<G1, G2>();
+		}
 		Iterator<String> it = jo.keys();
 		while (it.hasNext()) {
 			String ks = it.next();

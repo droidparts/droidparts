@@ -1,5 +1,5 @@
 /**
- * Copyright 2016 Alex Yanchenko
+ * Copyright 2017 Alex Yanchenko
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -186,7 +186,7 @@ public class EntityManager<EntityType extends Entity> extends AbstractEntityMana
 					}
 				}
 				if (!toCreate.isEmpty()) {
-					subManager(spec.genericArg1).create(toCreate);
+					subManager(spec.genericArg1).createAll(toCreate);
 				}
 
 			}

@@ -1,5 +1,5 @@
 /**
- * Copyright 2016 Alex Yanchenko
+ * Copyright 2017 Alex Yanchenko
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -11,7 +11,7 @@
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
- * limitations under the License. 
+ * limitations under the License.
  */
 package org.droidparts.inner.converter;
 
@@ -19,6 +19,7 @@ import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.LinkedHashSet;
 import java.util.List;
 
 import android.content.ContentValues;
@@ -36,9 +37,11 @@ import org.droidparts.model.Model;
 import org.droidparts.util.Arrays2;
 import org.droidparts.util.Strings;
 
+import static org.droidparts.inner.ReflectionUtils.hasDefaultConstructor;
 import static org.droidparts.inner.ReflectionUtils.newInstance;
 import static org.droidparts.inner.TypeHelper.isArray;
 import static org.droidparts.inner.TypeHelper.isModel;
+import static org.droidparts.inner.TypeHelper.isSet;
 import static org.droidparts.util.Strings.isNotEmpty;
 
 public class ArrayCollectionConverter extends Converter<Object> {
@@ -109,7 +112,7 @@ public class ArrayCollectionConverter extends Converter<Object> {
 		if (isArr) {
 			items = new ArrayList<Object>();
 		} else {
-			items = (Collection<Object>) newInstance(valType);
+			items = makeCollection(valType);
 		}
 		Converter<V> converter = ConverterRegistry.getConverter(genericArg1);
 		for (int i = 0; i < wrapper.size(); i++) {
@@ -202,14 +205,24 @@ public class ArrayCollectionConverter extends Converter<Object> {
 
 	private final <T> Collection<T> parseTypeColl(Converter<T> converter, Class<Object> collType, Class<T> genericArg1,
 	                                              String[] arr) throws Exception {
-		@SuppressWarnings("unchecked")
-		Collection<T> coll = (Collection<T>) newInstance(collType);
+		Collection<T> coll = makeCollection(collType);
 		for (int i = 0; i < arr.length; i++) {
 			T item = converter.parseFromString(genericArg1, null, null, arr[i]);
 			coll.add(item);
 		}
 		return coll;
 	}
+
+    @SuppressWarnings("unchecked")
+    private static <T> Collection<T> makeCollection(Class<Object> collCls) {
+		if (hasDefaultConstructor(collCls)) {
+			return (Collection<T>) newInstance(collCls);
+		} else if (isSet(collCls)) {
+			return new LinkedHashSet<T>();
+		} else {
+			return new ArrayList<T>();
+        }
+    }
 
 	//
 

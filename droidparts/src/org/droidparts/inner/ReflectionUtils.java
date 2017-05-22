@@ -1,5 +1,5 @@
 /**
- * Copyright 2016 Alex Yanchenko
+ * Copyright 2017 Alex Yanchenko
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -113,6 +113,15 @@ public final class ReflectionUtils {
 			throw new IllegalArgumentException(e);
 		}
 	}
+
+    public static boolean hasDefaultConstructor(Class cls) {
+        try {
+            cls.getConstructor();
+            return true;
+        } catch (NoSuchMethodException e) {
+            return false;
+        }
+    }
 
 	public static Enum<?> newEnum(Class<?> enumClass, String enumStr) {
 		@SuppressWarnings({"rawtypes", "unchecked"})

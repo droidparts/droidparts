@@ -1,5 +1,5 @@
 /**
- * Copyright 2016 Alex Yanchenko
+ * Copyright 2017 Alex Yanchenko
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -222,7 +222,7 @@ public class EntityTestCase extends AndroidTestCase implements DB {
 			album.name = str;
 			list.add(album);
 		}
-		albumManager.create(list);
+		albumManager.createAll(list);
 		int count = albumManager.select().where(Column.NAME, Is.LIKE, "%%udd%%").count();
 		assertEquals(1, count);
 		count = albumManager.select().where(Column.NAME, Is.NOT_LIKE, "%%udd%%").count();
@@ -324,7 +324,7 @@ public class EntityTestCase extends AndroidTestCase implements DB {
 		tags = albumManager.getTags(album.id);
 		assertEquals(TAGS.length, tags.size());
 		//
-		tagManager.delete(tags);
+		tagManager.deleteAll(tags);
 		tags = albumManager.getTags(album.id);
 		assertEquals(0, albumToTagManager.select().count());
 		assertEquals(0, tags.size());
@@ -341,7 +341,7 @@ public class EntityTestCase extends AndroidTestCase implements DB {
 		for (int i = 0; i < count; i++) {
 			albums.add(new Album("A " + i, i));
 		}
-		return albumManager.create(albums);
+		return albumManager.createAll(albums);
 	}
 
 }

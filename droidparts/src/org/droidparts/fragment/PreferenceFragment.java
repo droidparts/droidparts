@@ -1,5 +1,5 @@
 /**
- * Copyright 2016 Alex Yanchenko
+ * Copyright 2017 Alex Yanchenko
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,6 +24,10 @@ import org.droidparts.inner.delegate.BaseDelegate;
 import org.droidparts.inner.delegate.FragmentDelegate;
 
 public class PreferenceFragment extends android.preference.PreferenceFragment {
+
+    public static <T extends PreferenceFragment> T newInstance(Class<T> cls, Bundle args) {
+        return FragmentDelegate.newInstance(cls, args);
+    }
 
 	private boolean injected;
 

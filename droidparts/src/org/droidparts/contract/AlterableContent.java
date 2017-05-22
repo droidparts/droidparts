@@ -1,5 +1,5 @@
 /**
- * Copyright 2016 Alex Yanchenko
+ * Copyright 2017 Alex Yanchenko
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,6 +17,6 @@ package org.droidparts.contract;
 
 public interface AlterableContent<T> {
 
-	public void setContent(T content);
+	void setContent(T content);
 
 }

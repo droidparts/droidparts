@@ -1,5 +1,5 @@
 /**
- * Copyright 2016 Alex Yanchenko
+ * Copyright 2017 Alex Yanchenko
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -85,19 +85,19 @@ public abstract class AbstractEntityManager<EntityType extends Entity> implement
 
 	// mass CUD
 
-	public int create(Collection<EntityType> items) {
-		return cud(items, 1);
+	public int createAll(Collection<EntityType> items) {
+		return cudAll(items, 1);
 	}
 
-	public int update(Collection<EntityType> items) {
-		return cud(items, 2);
+	public int updateAll(Collection<EntityType> items) {
+		return cudAll(items, 2);
 	}
 
-	public int delete(Collection<EntityType> items) {
-		return cud(items, 3);
+	public int deleteAll(Collection<EntityType> items) {
+		return cudAll(items, 3);
 	}
 
-	private int cud(final Collection<EntityType> items, final int operation) {
+	private int cudAll(final Collection<EntityType> items, final int operation) {
 		Callable<Integer> task = new Callable<Integer>() {
 
 			@Override
