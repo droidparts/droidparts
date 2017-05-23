@@ -66,7 +66,7 @@ public class ImageIntentService extends IntentService {
 	@Override
 	protected Bundle onExecute(String action, Bundle data) throws Exception {
 		if (ACTION_REFRESH.equals(action)) {
-			JSONObject obj = restClient.getJSONObject(refreshUri.toString());
+			JSONObject obj = restClient.get(refreshUri.toString()).bodyAsJSONObject();
 			JSONArray arr = obj.getJSONArray("data");
 			ArrayList<Image> list = imageSerializer.deserializeAll(arr);
 			imageEntityManager.delete().execute();
