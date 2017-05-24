@@ -213,16 +213,16 @@ public class ArrayCollectionConverter extends Converter<Object> {
 		return coll;
 	}
 
-    @SuppressWarnings("unchecked")
-    private static <T> Collection<T> makeCollection(Class<Object> collCls) {
+	@SuppressWarnings("unchecked")
+	private static <T> Collection<T> makeCollection(Class<Object> collCls) {
 		if (hasDefaultConstructor(collCls)) {
 			return (Collection<T>) newInstance(collCls);
 		} else if (isSet(collCls)) {
 			return new LinkedHashSet<T>();
 		} else {
 			return new ArrayList<T>();
-        }
-    }
+		}
+	}
 
 	//
 

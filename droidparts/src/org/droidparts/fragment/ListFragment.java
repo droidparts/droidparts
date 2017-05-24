@@ -25,7 +25,7 @@ import org.droidparts.inner.delegate.FragmentDelegate;
 
 public class ListFragment extends android.app.ListFragment {
 
-	public static <T extends ListFragment> T newInstance(Class<T> cls, Bundle args){
+	public static <T extends ListFragment> T newInstance(Class<T> cls, Bundle args) {
 		return FragmentDelegate.newInstance(cls, args);
 	}
 

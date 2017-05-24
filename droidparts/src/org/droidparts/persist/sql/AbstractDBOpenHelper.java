@@ -49,7 +49,7 @@ public abstract class AbstractDBOpenHelper extends SQLiteOpenHelper implements S
 	// helpers
 
 	protected final boolean createIndex(SQLiteDatabase db, String table, boolean unique, String firstColumn,
-			String... otherColumns) {
+	                                    String... otherColumns) {
 		ArrayList<String> statements = new ArrayList<String>();
 		statements.add(PersistUtils.getCreateIndex(table, unique, firstColumn, otherColumns));
 		return executeStatements(db, statements);

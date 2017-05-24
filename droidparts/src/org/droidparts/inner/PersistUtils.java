@@ -95,7 +95,7 @@ public final class PersistUtils implements SQL.DDL {
 	}
 
 	public static <EntityType extends Entity> EntityType readFirst(AbstractEntityManager<EntityType> entityManager,
-			Cursor cursor) {
+	                                                               Cursor cursor) {
 		EntityType item = null;
 		try {
 			if (cursor.moveToFirst()) {
@@ -155,9 +155,9 @@ public final class PersistUtils implements SQL.DDL {
 	}
 
 	public static int getRowCount(SQLiteDatabase db, boolean distinct, String table, String[] columns, String selection,
-			String[] selectionArgs, String groupBy, String having, String orderBy, String limit) {
+	                              String[] selectionArgs, String groupBy, String having, String orderBy, String limit) {
 		if (columns != null && columns.length > 0) {
-			columns = new String[] { columns[0] };
+			columns = new String[]{columns[0]};
 		}
 		String sql = SQLiteQueryBuilder.buildQueryString(distinct, table, columns, selection, groupBy, having, orderBy,
 				limit);

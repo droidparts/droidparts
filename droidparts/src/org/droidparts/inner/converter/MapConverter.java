@@ -22,8 +22,10 @@ import java.util.Map;
 import org.json.JSONObject;
 
 import org.droidparts.inner.ConverterRegistry;
+
 import static org.droidparts.inner.ReflectionUtils.hasDefaultConstructor;
 import static org.droidparts.inner.ReflectionUtils.newInstance;
+
 import org.droidparts.inner.TypeHelper;
 
 public class MapConverter extends Converter<Map<?, ?>> {
@@ -47,7 +49,7 @@ public class MapConverter extends Converter<Map<?, ?>> {
 		Converter<G1> keyConv = ConverterRegistry.getConverter(genericArg1);
 		Converter<G2> valConv = ConverterRegistry.getConverter(genericArg2);
 		Map<G1, G2> map;
-		if(hasDefaultConstructor(valType)) {
+		if (hasDefaultConstructor(valType)) {
 			map = (Map<G1, G2>) newInstance(valType);
 		} else {
 			map = new LinkedHashMap<G1, G2>();

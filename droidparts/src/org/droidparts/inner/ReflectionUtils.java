@@ -114,14 +114,14 @@ public final class ReflectionUtils {
 		}
 	}
 
-    public static boolean hasDefaultConstructor(Class cls) {
-        try {
-            cls.getConstructor();
-            return true;
-        } catch (NoSuchMethodException e) {
-            return false;
-        }
-    }
+	public static boolean hasDefaultConstructor(Class cls) {
+		try {
+			cls.getConstructor();
+			return true;
+		} catch (NoSuchMethodException e) {
+			return false;
+		}
+	}
 
 	public static Enum<?> newEnum(Class<?> enumClass, String enumStr) {
 		@SuppressWarnings({"rawtypes", "unchecked"})

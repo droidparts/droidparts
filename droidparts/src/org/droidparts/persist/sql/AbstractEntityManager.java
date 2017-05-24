@@ -106,15 +106,15 @@ public abstract class AbstractEntityManager<EntityType extends Entity> implement
 				for (EntityType item : items) {
 					boolean success = false;
 					switch (operation) {
-					case 1:
-						success = create(item);
-						break;
-					case 2:
-						success = update(item);
-						break;
-					case 3:
-						success = delete(item.id);
-						break;
+						case 1:
+							success = create(item);
+							break;
+						case 2:
+							success = update(item);
+							break;
+						case 3:
+							success = delete(item.id);
+							break;
 					}
 					if (success) {
 						count++;

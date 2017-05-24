@@ -43,18 +43,18 @@ public class EnumConverter extends Converter<Enum<?>> {
 	}
 
 	@Override
-    protected <G1, G2> Enum<?> parseFromString(Class<Enum<?>> valType, Class<G1> genericArg1, Class<G2> genericArg2,
-                                               String str) {
-        try {
-            return newEnum(valType, str);
-        } catch (RuntimeException e1) {
-            try {
-                return newEnum(valType, str.toUpperCase());
-            } catch (RuntimeException e2) {
-                throw e1;
-            }
-        }
-    }
+	protected <G1, G2> Enum<?> parseFromString(Class<Enum<?>> valType, Class<G1> genericArg1, Class<G2> genericArg2,
+	                                           String str) {
+		try {
+			return newEnum(valType, str);
+		} catch (RuntimeException e1) {
+			try {
+				return newEnum(valType, str.toUpperCase());
+			} catch (RuntimeException e2) {
+				throw e1;
+			}
+		}
+	}
 
 	@Override
 	public <G1, G2> void putToContentValues(Class<Enum<?>> valueType, Class<G1> genericArg1, Class<G2> genericArg2,
