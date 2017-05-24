@@ -11,7 +11,7 @@
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
- * limitations under the License. 
+ * limitations under the License.
  */
 package org.droidparts.persist.sql;
 
@@ -49,7 +49,7 @@ public abstract class AbstractDBOpenHelper extends SQLiteOpenHelper implements S
 	// helpers
 
 	protected final boolean createIndex(SQLiteDatabase db, String table, boolean unique, String firstColumn,
-	                                    String... otherColumns) {
+			String... otherColumns) {
 		ArrayList<String> statements = new ArrayList<String>();
 		statements.add(PersistUtils.getCreateIndex(table, unique, firstColumn, otherColumns));
 		return executeStatements(db, statements);
@@ -82,7 +82,11 @@ public abstract class AbstractDBOpenHelper extends SQLiteOpenHelper implements S
 	}
 
 	protected final boolean executeStatements(SQLiteDatabase db, ArrayList<String> statements) {
-		return PersistUtils.executeStatements(db, statements);
+		try {
+			return PersistUtils.executeStatements(db, statements);
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
 	}
 
 	//

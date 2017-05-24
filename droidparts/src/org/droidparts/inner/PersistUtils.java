@@ -95,7 +95,7 @@ public final class PersistUtils implements SQL.DDL {
 	}
 
 	public static <EntityType extends Entity> EntityType readFirst(AbstractEntityManager<EntityType> entityManager,
-	                                                               Cursor cursor) {
+			Cursor cursor) {
 		EntityType item = null;
 		try {
 			if (cursor.moveToFirst()) {
@@ -155,9 +155,9 @@ public final class PersistUtils implements SQL.DDL {
 	}
 
 	public static int getRowCount(SQLiteDatabase db, boolean distinct, String table, String[] columns, String selection,
-	                              String[] selectionArgs, String groupBy, String having, String orderBy, String limit) {
+			String[] selectionArgs, String groupBy, String having, String orderBy, String limit) {
 		if (columns != null && columns.length > 0) {
-			columns = new String[]{columns[0]};
+			columns = new String[] { columns[0] };
 		}
 		String sql = SQLiteQueryBuilder.buildQueryString(distinct, table, columns, selection, groupBy, having, orderBy,
 				limit);
@@ -165,16 +165,12 @@ public final class PersistUtils implements SQL.DDL {
 		return (int) DatabaseUtils.longForQuery(db, countSelection, selectionArgs);
 	}
 
-	public static <Result> Result executeInTransaction(SQLiteDatabase db, Callable<Result> task) {
+	public static <Result> Result executeInTransaction(SQLiteDatabase db, Callable<Result> task) throws Exception {
 		db.beginTransaction();
 		try {
 			Result result = task.call();
 			db.setTransactionSuccessful();
 			return result;
-		} catch (Exception e) {
-			L.w(e.getMessage());
-			L.d(e);
-			return null;
 		} finally {
 			db.endTransaction();
 		}
@@ -182,7 +178,8 @@ public final class PersistUtils implements SQL.DDL {
 
 	// DBOpenHelper
 
-	public static boolean executeStatements(final SQLiteDatabase db, final ArrayList<String> statements) {
+	public static boolean executeStatements(final SQLiteDatabase db, final ArrayList<String> statements)
+			throws Exception {
 		Callable<Boolean> task = new Callable<Boolean>() {
 
 			@Override

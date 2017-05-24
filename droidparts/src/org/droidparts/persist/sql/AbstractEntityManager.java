@@ -106,15 +106,15 @@ public abstract class AbstractEntityManager<EntityType extends Entity> implement
 				for (EntityType item : items) {
 					boolean success = false;
 					switch (operation) {
-						case 1:
-							success = create(item);
-							break;
-						case 2:
-							success = update(item);
-							break;
-						case 3:
-							success = delete(item.id);
-							break;
+					case 1:
+						success = create(item);
+						break;
+					case 2:
+						success = update(item);
+						break;
+					case 3:
+						success = delete(item.id);
+						break;
 					}
 					if (success) {
 						count++;
@@ -144,7 +144,13 @@ public abstract class AbstractEntityManager<EntityType extends Entity> implement
 	//
 
 	public <Result> Result executeInTransaction(Callable<Result> task) {
-		return PersistUtils.executeInTransaction(getDB(), task);
+		try {
+			return PersistUtils.executeInTransaction(getDB(), task);
+		} catch (Exception e) {
+			L.e(e.getMessage());
+			L.d(e);
+			return null;
+		}
 	}
 
 	public long[] readIds(Select<EntityType> select) {
