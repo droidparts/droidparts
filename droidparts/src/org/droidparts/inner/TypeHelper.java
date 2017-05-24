@@ -36,6 +36,10 @@ import org.droidparts.model.Model;
 
 public final class TypeHelper {
 
+	public static boolean isInterface(Class<?> cls) {
+		return cls.isInterface();
+	}
+
 	public static boolean isBoolean(Class<?> cls, boolean orWrapper) {
 		return (cls == boolean.class) ? true : orWrapper ? (cls == Boolean.class) : false;
 	}
