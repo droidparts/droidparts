@@ -165,16 +165,12 @@ public final class PersistUtils implements SQL.DDL {
 		return (int) DatabaseUtils.longForQuery(db, countSelection, selectionArgs);
 	}
 
-	public static <Result> Result executeInTransaction(SQLiteDatabase db, Callable<Result> task) {
+	public static <Result> Result executeInTransaction(SQLiteDatabase db, Callable<Result> task) throws Exception {
 		db.beginTransaction();
 		try {
 			Result result = task.call();
 			db.setTransactionSuccessful();
 			return result;
-		} catch (Exception e) {
-			L.w(e.getMessage());
-			L.d(e);
-			return null;
 		} finally {
 			db.endTransaction();
 		}
@@ -182,7 +178,8 @@ public final class PersistUtils implements SQL.DDL {
 
 	// DBOpenHelper
 
-	public static boolean executeStatements(final SQLiteDatabase db, final ArrayList<String> statements) {
+	public static boolean executeStatements(final SQLiteDatabase db, final ArrayList<String> statements)
+			throws Exception {
 		Callable<Boolean> task = new Callable<Boolean>() {
 
 			@Override

@@ -37,9 +37,9 @@ import org.droidparts.model.Model;
 import org.droidparts.util.Arrays2;
 import org.droidparts.util.Strings;
 
-import static org.droidparts.inner.ReflectionUtils.hasDefaultConstructor;
 import static org.droidparts.inner.ReflectionUtils.newInstance;
 import static org.droidparts.inner.TypeHelper.isArray;
+import static org.droidparts.inner.TypeHelper.isInterface;
 import static org.droidparts.inner.TypeHelper.isModel;
 import static org.droidparts.inner.TypeHelper.isSet;
 import static org.droidparts.util.Strings.isNotEmpty;
@@ -213,16 +213,16 @@ public class ArrayCollectionConverter extends Converter<Object> {
 		return coll;
 	}
 
-    @SuppressWarnings("unchecked")
-    private static <T> Collection<T> makeCollection(Class<Object> collCls) {
-		if (hasDefaultConstructor(collCls)) {
+	@SuppressWarnings("unchecked")
+	private static <T> Collection<T> makeCollection(Class<Object> collCls) {
+		if (!isInterface(collCls)) {
 			return (Collection<T>) newInstance(collCls);
 		} else if (isSet(collCls)) {
 			return new LinkedHashSet<T>();
 		} else {
 			return new ArrayList<T>();
-        }
-    }
+		}
+	}
 
 	//
 

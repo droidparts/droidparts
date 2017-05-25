@@ -144,7 +144,13 @@ public abstract class AbstractEntityManager<EntityType extends Entity> implement
 	//
 
 	public <Result> Result executeInTransaction(Callable<Result> task) {
-		return PersistUtils.executeInTransaction(getDB(), task);
+		try {
+			return PersistUtils.executeInTransaction(getDB(), task);
+		} catch (Exception e) {
+			L.e(e.getMessage());
+			L.d(e);
+			return null;
+		}
 	}
 
 	public long[] readIds(Select<EntityType> select) {

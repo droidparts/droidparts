@@ -11,7 +11,7 @@
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
- * limitations under the License. 
+ * limitations under the License.
  */
 package org.droidparts.net.http;
 
@@ -19,6 +19,7 @@ import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.InputStream;
 import java.util.Map;
 
 import android.content.Context;
@@ -45,49 +46,62 @@ public class RESTClient2 extends RESTClient {
 		super(ctx, worker);
 	}
 
-	public JSONObject getJSONObject(String uri) throws HTTPException {
-		String resp = get(uri).body;
-		try {
-			return new JSONObject(resp);
-		} catch (JSONException e) {
-			throw new HTTPException(e);
-		}
+	@Override
+	public HTTPResponse2 get(String uri) throws HTTPException {
+		return new HTTPResponse2(super.get(uri));
 	}
 
-	public JSONArray getJSONArray(String uri) throws HTTPException {
-		String resp = get(uri).body;
-		try {
-			return new JSONArray(resp);
-		} catch (JSONException e) {
-			throw new HTTPException(e);
-		}
+	@Override
+	public HTTPResponse2 get(String uri, long ifModifiedSince, String etag, boolean body) throws HTTPException {
+		return new HTTPResponse2(super.get(uri, ifModifiedSince, etag, body));
 	}
 
-	public HTTPResponse put(String uri, String data) throws HTTPException {
+	@Override
+	public HTTPResponse2 post(String uri, String contentType, String data) throws HTTPException {
+		return new HTTPResponse2(super.post(uri, contentType, data));
+	}
+
+	@Override
+	public HTTPResponse2 postMultipart(String uri, String name, String contentType, String fileName, InputStream is)
+			throws HTTPException {
+		return new HTTPResponse2(super.postMultipart(uri, name, contentType, fileName, is));
+	}
+
+	@Override
+	public HTTPResponse2 put(String uri, String contentType, String data) throws HTTPException {
+		return new HTTPResponse2(super.put(uri, contentType, data));
+	}
+
+	@Override
+	public HTTPResponse2 delete(String uri) throws HTTPException {
+		return new HTTPResponse2(super.delete(uri));
+	}
+
+	public HTTPResponse2 put(String uri, String data) throws HTTPException {
 		return put(uri, ContentType.TEXT_PLAIN, data);
 	}
 
-	public HTTPResponse put(String uri, JSONObject data) throws HTTPException {
+	public HTTPResponse2 put(String uri, JSONObject data) throws HTTPException {
 		return put(uri, ContentType.APPLICATION_JSON, data.toString());
 	}
 
-	public HTTPResponse put(String uri, JSONArray data) throws HTTPException {
+	public HTTPResponse2 put(String uri, JSONArray data) throws HTTPException {
 		return put(uri, ContentType.APPLICATION_JSON, data.toString());
 	}
 
-	public HTTPResponse post(String uri, String data) throws HTTPException {
+	public HTTPResponse2 post(String uri, String data) throws HTTPException {
 		return post(uri, ContentType.TEXT_PLAIN, data);
 	}
 
-	public HTTPResponse post(String uri, JSONObject data) throws HTTPException {
+	public HTTPResponse2 post(String uri, JSONObject data) throws HTTPException {
 		return post(uri, ContentType.APPLICATION_JSON, data.toString());
 	}
 
-	public HTTPResponse post(String uri, JSONArray data) throws HTTPException {
+	public HTTPResponse2 post(String uri, JSONArray data) throws HTTPException {
 		return post(uri, ContentType.APPLICATION_JSON, data.toString());
 	}
 
-	public HTTPResponse post(String uri, Map<String, String> formData) throws HTTPException {
+	public HTTPResponse2 post(String uri, Map<String, String> formData) throws HTTPException {
 		Uri.Builder builder = new Uri.Builder();
 		for (String key : formData.keySet()) {
 			String val = formData.get(key);
@@ -97,11 +111,11 @@ public class RESTClient2 extends RESTClient {
 		return post(uri, ContentType.APPLICATION_FORM_DATA, query);
 	}
 
-	public HTTPResponse postMultipart(String uri, String name, File file) throws HTTPException {
+	public HTTPResponse2 postMultipart(String uri, String name, File file) throws HTTPException {
 		return postMultipart(uri, name, null, file);
 	}
 
-	public HTTPResponse postMultipart(String uri, String name, String contentType, File file) throws HTTPException {
+	public HTTPResponse2 postMultipart(String uri, String name, String contentType, File file) throws HTTPException {
 		try {
 			return postMultipart(uri, name, contentType, file.getName(), new FileInputStream(file));
 		} catch (FileNotFoundException e) {
@@ -109,11 +123,12 @@ public class RESTClient2 extends RESTClient {
 		}
 	}
 
-	public HTTPResponse postMultipart(String uri, String name, String fileName, byte[] fileBytes) throws HTTPException {
+	public HTTPResponse2 postMultipart(String uri, String name, String fileName, byte[] fileBytes)
+			throws HTTPException {
 		return postMultipart(uri, name, null, fileName, fileBytes);
 	}
 
-	public HTTPResponse postMultipart(String uri, String name, String contentType, String fileName, byte[] fileBytes)
+	public HTTPResponse2 postMultipart(String uri, String name, String contentType, String fileName, byte[] fileBytes)
 			throws HTTPException {
 		return postMultipart(uri, name, contentType, fileName, new ByteArrayInputStream(fileBytes));
 	}

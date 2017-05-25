@@ -1,3 +1,7 @@
+3.1.0 /2017-05-25/:
+    * RESTClient2 returns a HTTPResponse2 with methods to get JSONObject & Array.
+    * AbstractDBOpenHelper will crash on incorrect DDL.
+
 3.0.0 /2017-05-22/:
     * Deserialize lowercase Enums from JSON.
     * Instantiate Maps & Collections.
