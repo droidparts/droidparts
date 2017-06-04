@@ -31,11 +31,10 @@ allprojects {
 	}
 }
 
-sourceCompatibility = 1.6
+sourceCompatibility = JavaVersion.VERSION_1_6
 
 dependencies {
 	compileOnly 'com.google.android:android:4.1.1.4'
-	compile fileTree(dir: 'libs', include: '*.jar')
 }
 
 sourceSets {

@@ -14,6 +14,10 @@ android {
 		androidTest { java.srcDirs = ['test'] }
 	}
 
+	defaultConfig {
+		testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+	}
+
 	buildTypes {
 		release {
 			minifyEnabled true

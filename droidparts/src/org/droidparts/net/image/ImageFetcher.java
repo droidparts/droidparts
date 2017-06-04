@@ -49,6 +49,7 @@ import org.droidparts.net.image.cache.BitmapMemoryCache;
 import org.droidparts.util.L;
 
 import static android.graphics.Color.TRANSPARENT;
+
 import static org.droidparts.contract.Constants.BUFFER_SIZE;
 import static org.droidparts.util.IOUtils.silentlyClose;
 

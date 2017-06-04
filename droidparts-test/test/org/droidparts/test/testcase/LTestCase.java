@@ -18,11 +18,19 @@ package org.droidparts.test.testcase;
 import java.util.Arrays;
 import java.util.List;
 
-import android.test.AndroidTestCase;
+import android.support.test.runner.AndroidJUnit4;
+
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
 
 import org.droidparts.util.L;
 
-public class LTestCase extends AndroidTestCase implements L.Listener {
+import static org.junit.Assert.assertEquals;
+
+
+@RunWith(AndroidJUnit4.class)
+public class LTestCase implements L.Listener {
 
 	private int priority;
 	private String tag;
@@ -36,8 +44,8 @@ public class LTestCase extends AndroidTestCase implements L.Listener {
 		this.msg = msg;
 	}
 
-	@Override
-	protected void setUp() throws Exception {
+	@Before
+	public void setUp() throws Exception {
 		L.setListener(this);
 		priority = -1;
 		tag = msg = null;
@@ -46,7 +54,7 @@ public class LTestCase extends AndroidTestCase implements L.Listener {
 	private static final String MSG = "MSG";
 	private static final String MSG_FORMAT_1 = "MSG %s";
 
-
+	@Test
 	public void testLog() {
 		L.v(MSG);
 		assertEquals(MSG, msg);
@@ -56,6 +64,7 @@ public class LTestCase extends AndroidTestCase implements L.Listener {
 		assertEquals(String.format(MSG_FORMAT_1, 5), msg);
 	}
 
+	@Test
 	public void testArrayCollectionMessage() {
 		Integer[] arr = new Integer[]{100, 500};
 		List<Integer> list = Arrays.asList(arr);
@@ -66,6 +75,7 @@ public class LTestCase extends AndroidTestCase implements L.Listener {
 		assertEquals(tmpMsg, msg);
 	}
 
+	@Test
 	public void testTag() {
 		L.v(MSG_FORMAT_1, 1);
 		String prevTag = tag;

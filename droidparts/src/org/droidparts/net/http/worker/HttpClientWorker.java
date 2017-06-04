@@ -40,6 +40,7 @@ import org.droidparts.net.http.HTTPResponse;
 import org.droidparts.net.http.worker.wrapper.HttpMimeWrapper;
 
 import static org.apache.http.client.params.CookiePolicy.BROWSER_COMPATIBILITY;
+
 import static org.droidparts.contract.Constants.BUFFER_SIZE;
 import static org.droidparts.contract.Constants.UTF8;
 import static org.droidparts.contract.HTTP.Header.ACCEPT_ENCODING;

@@ -11,7 +11,7 @@
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
- * limitations under the License. 
+ * limitations under the License.
  */
 package org.droidparts.test.testcase.serialize;
 
@@ -21,6 +21,7 @@ import android.test.AssertionFailedError;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.junit.Test;
 
 import org.droidparts.annotation.serialize.JSON;
 import org.droidparts.persist.serializer.JSONSerializer;
@@ -31,10 +32,15 @@ import org.droidparts.test.model.Collections;
 import org.droidparts.test.model.Nested;
 import org.droidparts.test.model.Primitives;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
 import static org.droidparts.util.Strings.join;
 
 public class JSONTestCase extends AbstractJSONTestCase {
 
+	@Test
 	public void testPrimitives() throws Exception {
 		JSONSerializer<Primitives> serializer = makeSerializer(Primitives.class);
 		Primitives primitives = serializer.deserialize(getPrimitives());
@@ -45,8 +51,8 @@ public class JSONTestCase extends AbstractJSONTestCase {
 		//
 		assertEquals(1, obj.getInt("int1"));
 		assertEquals(2, obj.getInt("int2"));
-		assertEquals(0.5, obj.getDouble("float1"));
-		assertEquals(2.5, obj.getDouble("float2"));
+		assertEquals(0.5, obj.getDouble("float1"), 0);
+		assertEquals(2.5, obj.getDouble("float2"), 0);
 		assertEquals(true, obj.getBoolean("boolean1"));
 		assertEquals(true, obj.getBoolean("boolean2"));
 		assertEquals(true, obj.getBoolean("boolean3"));
@@ -56,6 +62,7 @@ public class JSONTestCase extends AbstractJSONTestCase {
 		assertEquals("two", obj.getJSONArray("string_array").getString(1));
 	}
 
+	@Test
 	public void testAlbums() throws Exception {
 		JSONSerializer<Album> serializer = makeSerializer(Album.class);
 		ArrayList<Album> albums = serializer.deserializeAll(getAlbums());
@@ -64,6 +71,7 @@ public class JSONTestCase extends AbstractJSONTestCase {
 		assertEquals(2009, albums.get(1).year);
 	}
 
+	@Test
 	public void testNestedKeys() throws Exception {
 		assertEquals("obj->key", join(new String[]{"obj", "key"}, JSON.SUB));
 		JSONSerializer<Nested> serializer = makeSerializer(Nested.class);
@@ -75,6 +83,7 @@ public class JSONTestCase extends AbstractJSONTestCase {
 
 	//
 
+	@Test
 	public void testCollections() throws Exception {
 		JSONSerializer<Collections> ser = makeSerializer(Collections.class);
 		Collections coll = ser.deserialize(getJSONObject(R.raw.collections_json));
@@ -89,6 +98,7 @@ public class JSONTestCase extends AbstractJSONTestCase {
 		assertTrue(obj.has("map"));
 	}
 
+	@Test
 	public void testCollectionsFail() throws Exception {
 		try {
 			JSONSerializer<Collections> ser = makeSerializer(Collections.class);

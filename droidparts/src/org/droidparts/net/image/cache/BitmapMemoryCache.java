@@ -24,6 +24,7 @@ import android.graphics.Bitmap;
 import org.droidparts.util.L;
 
 import static android.content.Context.ACTIVITY_SERVICE;
+
 import static org.droidparts.util.ui.BitmapUtils.getSize;
 
 public class BitmapMemoryCache {
