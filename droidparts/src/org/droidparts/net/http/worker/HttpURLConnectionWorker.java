@@ -16,18 +16,20 @@
 package org.droidparts.net.http.worker;
 
 import java.io.DataOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.CookieHandler;
 import java.net.HttpURLConnection;
 import java.net.Proxy;
 import java.net.URL;
+import java.util.List;
+import java.util.Map;
 
 import android.content.Context;
 
 import org.droidparts.contract.HTTP.Method;
 import org.droidparts.net.http.CookieJar;
-import org.droidparts.net.http.HTTPException;
 import org.droidparts.net.http.HTTPResponse;
 import org.droidparts.util.IOUtils;
 
@@ -71,31 +73,26 @@ public class HttpURLConnectionWorker extends HTTPWorker {
 		this.multipartChunkSize = size;
 	}
 
-	public HttpURLConnection getConnection(String urlStr, String requestMethod) throws HTTPException {
-		try {
-			URL url = new URL(urlStr);
-			HttpURLConnection conn = openConnection(url);
-			for (String key : headers.keySet()) {
-				conn.addRequestProperty(key, headers.get(key));
-			}
-			if (userAgent != null) {
-				conn.setRequestProperty(USER_AGENT, userAgent);
-			}
-			conn.setRequestProperty(ACCEPT_ENCODING, "gzip,deflate");
-			conn.setRequestMethod(requestMethod);
-			conn.setInstanceFollowRedirects(followRedirects);
-			if (Method.PUT.equals(requestMethod) || Method.POST.equals(requestMethod)) {
-				conn.setDoOutput(true);
-			}
-			return conn;
-		} catch (Exception e) {
-			throwIfNetworkOnMainThreadException(e);
-			throw new HTTPException(e);
+	public HttpURLConnection getConnection(String urlStr, String requestMethod) throws IOException {
+		URL url = new URL(urlStr);
+		HttpURLConnection conn = openConnection(url);
+		for (String key : headers.keySet()) {
+			conn.addRequestProperty(key, headers.get(key));
 		}
+		if (userAgent != null) {
+			conn.setRequestProperty(USER_AGENT, userAgent);
+		}
+		conn.setRequestProperty(ACCEPT_ENCODING, "gzip,deflate");
+		conn.setRequestMethod(requestMethod);
+		conn.setInstanceFollowRedirects(followRedirects);
+		if (Method.PUT.equals(requestMethod) || Method.POST.equals(requestMethod)) {
+			conn.setDoOutput(true);
+		}
+		return conn;
 	}
 
 	// Override to provide a different implementation.
-	protected HttpURLConnection openConnection(URL url) throws Exception {
+	protected HttpURLConnection openConnection(URL url) throws IOException {
 		if (proxy != null) {
 			return (HttpURLConnection) url.openConnection(proxy);
 		} else {
@@ -103,23 +100,20 @@ public class HttpURLConnectionWorker extends HTTPWorker {
 		}
 	}
 
-	public void postOrPut(HttpURLConnection conn, String contentType, String data) throws HTTPException {
+	public void postOrPut(HttpURLConnection conn, String contentType, String data) throws IOException {
 		conn.setRequestProperty(ACCEPT_CHARSET, UTF8);
 		conn.setRequestProperty(CONTENT_TYPE, contentType);
 		OutputStream os = null;
 		try {
 			os = conn.getOutputStream();
 			os.write(data.getBytes(UTF8));
-		} catch (Exception e) {
-			throwIfNetworkOnMainThreadException(e);
-			throw new HTTPException(e);
 		} finally {
 			silentlyClose(os);
 		}
 	}
 
 	public void postMultipart(HttpURLConnection conn, String name, String contentType, String fileName, InputStream is)
-			throws HTTPException {
+			throws IOException {
 		conn.setDoOutput(true);
 		if (multipartChunkSize > 0) {
 			conn.setChunkedStreamingMode(multipartChunkSize);
@@ -147,43 +141,24 @@ public class HttpURLConnectionWorker extends HTTPWorker {
 			request.writeBytes(TWO_HYPHENS + BOUNDARY + TWO_HYPHENS + CRLF);
 
 			request.flush();
-		} catch (Exception e) {
-			throwIfNetworkOnMainThreadException(e);
-			throw new HTTPException(e);
 		} finally {
 			silentlyClose(request);
 		}
 	}
 
-	public HTTPResponse getResponse(HttpURLConnection conn, boolean body) throws HTTPException {
-		HTTPResponse response = new HTTPResponse();
-		response.code = connectAndGetResponseCodeOrThrow(conn);
-		response.headers = conn.getHeaderFields();
-		HTTPInputStream is = HTTPInputStream.getInstance(conn, false);
+	public HTTPResponse getResponse(HttpURLConnection conn, boolean body) throws IOException {
+		conn.connect();
+		int code = conn.getResponseCode();
+		Map<String, List<String>> headers = conn.getHeaderFields();
+		HTTPInputStream is = HTTPInputStream.getInstance(conn);
+		String respBody = null;
+		HTTPInputStream respStream = null;
 		if (body) {
-			response.body = is.readAndClose();
+			respBody = is.readAndClose();
 		} else {
-			response.inputStream = is;
+			respStream = is;
 		}
-		return response;
-	}
-
-	private int connectAndGetResponseCodeOrThrow(HttpURLConnection conn) throws HTTPException {
-		try {
-			conn.connect();
-			int respCode = conn.getResponseCode();
-			if (isErrorResponseCode(respCode)) {
-				HTTPInputStream is = HTTPInputStream.getInstance(conn, (conn.getErrorStream() != null));
-				throw new HTTPException(respCode, is.readAndClose());
-			}
-			return respCode;
-		} catch (HTTPException e) {
-			throw e;
-		} catch (Exception e) {
-			throwIfNetworkOnMainThreadException(e);
-			throw new HTTPException(e);
-		}
-
+		return new HTTPResponse(code, headers, respBody, respStream);
 	}
 
 }

@@ -15,6 +15,7 @@
  */
 package org.droidparts.net.http;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.util.Date;
@@ -90,15 +91,15 @@ public class RESTClient {
 
 	//
 
-	public HTTPResponse get(String uri) throws HTTPException {
+	public HTTPResponse get(String uri) throws IOException {
 		return get(uri, -1, null, true);
 	}
 
-	public HTTPResponse getInputStream(String uri) throws HTTPException {
+	public HTTPResponse getInputStream(String uri) throws IOException {
 		return get(uri, -1, null, false);
 	}
 
-	public HTTPResponse get(String uri, long ifModifiedSince, String etag, boolean body) throws HTTPException {
+	public HTTPResponse get(String uri, long ifModifiedSince, String etag, boolean body) throws IOException {
 		L.d("HTTP GET '%s', If-Modified-Since: '%d', ETag: '%s', body: '%b'.", uri, ifModifiedSince, etag, body);
 		HTTPResponse response;
 		if (httpURLConnectionWorker != null) {
@@ -124,7 +125,7 @@ public class RESTClient {
 		return response;
 	}
 
-	public HTTPResponse post(String uri, String contentType, String data) throws HTTPException {
+	public HTTPResponse post(String uri, String contentType, String data) throws IOException {
 		L.d("HTTP POST '%s', data: '%s'.", uri, data);
 		HTTPResponse response;
 		if (httpURLConnectionWorker != null) {
@@ -141,7 +142,7 @@ public class RESTClient {
 	}
 
 	public HTTPResponse postMultipart(String uri, String name, String contentType, String fileName, InputStream is)
-			throws HTTPException {
+			throws IOException {
 		L.d("HTTP POST, name: '%s', file: '%s' .", uri, name, fileName);
 		HTTPResponse response;
 		if (httpURLConnectionWorker != null) {
@@ -156,7 +157,7 @@ public class RESTClient {
 		return response;
 	}
 
-	public HTTPResponse put(String uri, String contentType, String data) throws HTTPException {
+	public HTTPResponse put(String uri, String contentType, String data) throws IOException {
 		L.d("HTTP PUT '%s', data: '%s'.", uri, data);
 		HTTPResponse response;
 		if (httpURLConnectionWorker != null) {
@@ -172,7 +173,7 @@ public class RESTClient {
 		return response;
 	}
 
-	public HTTPResponse delete(String uri) throws HTTPException {
+	public HTTPResponse delete(String uri) throws IOException {
 		L.d("HTTP DELETE '%s'.", uri);
 		HTTPResponse response;
 		if (httpURLConnectionWorker != null) {

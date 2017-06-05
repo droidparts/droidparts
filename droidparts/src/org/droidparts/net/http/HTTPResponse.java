@@ -16,20 +16,34 @@
 package org.droidparts.net.http;
 
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.droidparts.contract.HTTP.StatusCode;
 import org.droidparts.net.http.worker.HTTPInputStream;
 import org.droidparts.util.L;
 
+
 public class HTTPResponse {
 
-	public int code;
-	public Map<String, List<String>> headers;
+	public final int code;
+	protected final Map<String, List<String>> headers = new HashMap<String, List<String>>();
 
-	public String body;
+	public final String body;
 	// or
-	public HTTPInputStream inputStream;
+	public final HTTPInputStream inputStream;
+
+	public HTTPResponse(int code, Map<String, List<String>> headers, String body, HTTPInputStream inputStream) {
+		this.code = code;
+		this.headers.putAll(headers);
+		this.body = body;
+		this.inputStream = inputStream;
+	}
+
+	public boolean isSuccessCode() {
+		return (code >= StatusCode.OK) && (code < StatusCode.MULTIPLE_CHOICES);
+	}
 
 	public long getHeaderDate(String name) {
 		long val = 0;
@@ -59,12 +73,11 @@ public class HTTPResponse {
 
 	public String getHeaderString(String name) {
 		String val = null;
-		if (headers != null) {
-			List<String> vals = headers.get(name);
-			if (vals != null && vals.size() == 1) {
-				val = vals.get(0);
-			}
+		List<String> vals = headers.get(name);
+		if (vals != null && vals.size() == 1) {
+			val = vals.get(0);
 		}
+
 		return val;
 	}
 

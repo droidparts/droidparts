@@ -43,7 +43,6 @@ import org.droidparts.inner.BitmapFactoryUtils;
 import org.droidparts.inner.WeakWrapper;
 import org.droidparts.net.http.HTTPResponse;
 import org.droidparts.net.http.RESTClient;
-import org.droidparts.net.http.worker.HTTPWorker;
 import org.droidparts.net.image.cache.BitmapDiskCache;
 import org.droidparts.net.image.cache.BitmapMemoryCache;
 import org.droidparts.util.L;
@@ -412,7 +411,6 @@ public class ImageFetcher {
 				Bitmap bm = reshapeAndCache(spec, bmData.second);
 				attachIfMostRecent(spec, submitted, bm);
 			} catch (final Exception e) {
-				HTTPWorker.throwIfNetworkOnMainThreadException(e);
 				L.w("Failed to fetch '%s'.", spec.imgUrl);
 				L.d(e);
 				final ImageView imgView = spec.getObj();

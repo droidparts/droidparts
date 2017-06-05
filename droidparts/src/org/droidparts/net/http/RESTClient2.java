@@ -18,7 +18,7 @@ package org.droidparts.net.http;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.Map;
 
@@ -46,61 +46,61 @@ public class RESTClient2 extends RESTClient {
 	}
 
 	@Override
-	public HTTPResponse2 get(String uri) throws HTTPException {
+	public HTTPResponse2 get(String uri) throws IOException {
 		return new HTTPResponse2(super.get(uri));
 	}
 
 	@Override
-	public HTTPResponse2 get(String uri, long ifModifiedSince, String etag, boolean body) throws HTTPException {
+	public HTTPResponse2 get(String uri, long ifModifiedSince, String etag, boolean body) throws IOException {
 		return new HTTPResponse2(super.get(uri, ifModifiedSince, etag, body));
 	}
 
 	@Override
-	public HTTPResponse2 post(String uri, String contentType, String data) throws HTTPException {
+	public HTTPResponse2 post(String uri, String contentType, String data) throws IOException {
 		return new HTTPResponse2(super.post(uri, contentType, data));
 	}
 
 	@Override
 	public HTTPResponse2 postMultipart(String uri, String name, String contentType, String fileName, InputStream is)
-			throws HTTPException {
+			throws IOException {
 		return new HTTPResponse2(super.postMultipart(uri, name, contentType, fileName, is));
 	}
 
 	@Override
-	public HTTPResponse2 put(String uri, String contentType, String data) throws HTTPException {
+	public HTTPResponse2 put(String uri, String contentType, String data) throws IOException {
 		return new HTTPResponse2(super.put(uri, contentType, data));
 	}
 
 	@Override
-	public HTTPResponse2 delete(String uri) throws HTTPException {
+	public HTTPResponse2 delete(String uri) throws IOException {
 		return new HTTPResponse2(super.delete(uri));
 	}
 
-	public HTTPResponse2 put(String uri, String data) throws HTTPException {
+	public HTTPResponse2 put(String uri, String data) throws IOException {
 		return put(uri, ContentType.TEXT_PLAIN, data);
 	}
 
-	public HTTPResponse2 put(String uri, JSONObject data) throws HTTPException {
+	public HTTPResponse2 put(String uri, JSONObject data) throws IOException {
 		return put(uri, ContentType.APPLICATION_JSON, data.toString());
 	}
 
-	public HTTPResponse2 put(String uri, JSONArray data) throws HTTPException {
+	public HTTPResponse2 put(String uri, JSONArray data) throws IOException {
 		return put(uri, ContentType.APPLICATION_JSON, data.toString());
 	}
 
-	public HTTPResponse2 post(String uri, String data) throws HTTPException {
+	public HTTPResponse2 post(String uri, String data) throws IOException {
 		return post(uri, ContentType.TEXT_PLAIN, data);
 	}
 
-	public HTTPResponse2 post(String uri, JSONObject data) throws HTTPException {
+	public HTTPResponse2 post(String uri, JSONObject data) throws IOException {
 		return post(uri, ContentType.APPLICATION_JSON, data.toString());
 	}
 
-	public HTTPResponse2 post(String uri, JSONArray data) throws HTTPException {
+	public HTTPResponse2 post(String uri, JSONArray data) throws IOException {
 		return post(uri, ContentType.APPLICATION_JSON, data.toString());
 	}
 
-	public HTTPResponse2 post(String uri, Map<String, String> formData) throws HTTPException {
+	public HTTPResponse2 post(String uri, Map<String, String> formData) throws IOException {
 		Uri.Builder builder = new Uri.Builder();
 		for (String key : formData.keySet()) {
 			String val = formData.get(key);
@@ -110,25 +110,21 @@ public class RESTClient2 extends RESTClient {
 		return post(uri, ContentType.APPLICATION_FORM_DATA, query);
 	}
 
-	public HTTPResponse2 postMultipart(String uri, String name, File file) throws HTTPException {
+	public HTTPResponse2 postMultipart(String uri, String name, File file) throws IOException {
 		return postMultipart(uri, name, null, file);
 	}
 
-	public HTTPResponse2 postMultipart(String uri, String name, String contentType, File file) throws HTTPException {
-		try {
-			return postMultipart(uri, name, contentType, file.getName(), new FileInputStream(file));
-		} catch (FileNotFoundException e) {
-			throw new HTTPException(e);
-		}
+	public HTTPResponse2 postMultipart(String uri, String name, String contentType, File file) throws IOException {
+		return postMultipart(uri, name, contentType, file.getName(), new FileInputStream(file));
 	}
 
 	public HTTPResponse2 postMultipart(String uri, String name, String fileName, byte[] fileBytes)
-			throws HTTPException {
+			throws IOException {
 		return postMultipart(uri, name, null, fileName, fileBytes);
 	}
 
 	public HTTPResponse2 postMultipart(String uri, String name, String contentType, String fileName, byte[] fileBytes)
-			throws HTTPException {
+			throws IOException {
 		return postMultipart(uri, name, contentType, fileName, new ByteArrayInputStream(fileBytes));
 	}
 

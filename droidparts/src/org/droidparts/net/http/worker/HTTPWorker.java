@@ -25,12 +25,6 @@ import static android.util.Base64.NO_WRAP;
 
 public abstract class HTTPWorker {
 
-	public static void throwIfNetworkOnMainThreadException(Exception e) {
-		if (e.getClass().getName().equals("android.os.NetworkOnMainThreadException")) {
-			throw (RuntimeException) e;
-		}
-	}
-
 	protected static final int SOCKET_OPERATION_TIMEOUT = 60 * 1000;
 
 	public final HashMap<String, String> headers = new HashMap<String, String>();
@@ -58,9 +52,5 @@ public abstract class HTTPWorker {
 	}
 
 	public abstract void setCookieJar(CookieJar cookieJar);
-
-	protected static final boolean isErrorResponseCode(int responseCode) {
-		return responseCode >= 400;
-	}
 
 }

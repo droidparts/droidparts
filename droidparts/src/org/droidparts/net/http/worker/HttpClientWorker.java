@@ -35,7 +35,6 @@ import org.apache.http.params.HttpParams;
 import org.apache.http.params.HttpProtocolParams;
 
 import org.droidparts.net.http.CookieJar;
-import org.droidparts.net.http.HTTPException;
 import org.droidparts.net.http.HTTPResponse;
 import org.droidparts.net.http.worker.wrapper.HttpMimeWrapper;
 
@@ -78,59 +77,41 @@ public class HttpClientWorker extends HTTPWorker {
 		return httpClient;
 	}
 
-	public static StringEntity buildStringEntity(String contentType, String data) throws HTTPException {
-		try {
-			StringEntity entity = new StringEntity(data, UTF8);
-			entity.setContentType(contentType);
-			return entity;
-		} catch (UnsupportedEncodingException e) {
-			throw new HTTPException(e);
-		}
+	public static StringEntity buildStringEntity(String contentType, String data) throws UnsupportedEncodingException {
+		StringEntity entity = new StringEntity(data, UTF8);
+		entity.setContentType(contentType);
+		return entity;
 	}
 
-	public static HttpEntity buildMultipartEntity(String name, String contentType, String fileName, InputStream is)
-			throws HTTPException {
-		try {
-			return HttpMimeWrapper.buildMultipartEntity(name, contentType, fileName, is);
-		} catch (IOException e) {
-			throw new HTTPException(e);
-		}
+	public static HttpEntity buildMultipartEntity(String name, String contentType, String fileName, InputStream is) throws IOException {
+		return HttpMimeWrapper.buildMultipartEntity(name, contentType, fileName, is);
 	}
 
-	public HTTPResponse getResponse(HttpUriRequest req, boolean body) throws HTTPException {
-		HTTPResponse response = new HTTPResponse();
+	public HTTPResponse getResponse(HttpUriRequest req, boolean body) throws IOException {
 		HttpResponse resp = getHttpResponse(req);
-		response.code = getResponseCodeOrThrow(resp);
-		response.headers = getHeaders(resp);
+		int code = getResponseCode(resp);
+		Map<String, List<String>> headers = getHeaders(resp);
 		HTTPInputStream is = HTTPInputStream.getInstance(resp);
+		String respBody = null;
+		HTTPInputStream respStream = null;
 		if (body) {
-			response.body = is.readAndClose();
+			respBody = is.readAndClose();
 		} else {
-			response.inputStream = is;
+			respStream = is;
 		}
-		return response;
+		return new HTTPResponse(code, headers, respBody, respStream);
 	}
 
-	private HttpResponse getHttpResponse(HttpUriRequest req) throws HTTPException {
+	private HttpResponse getHttpResponse(HttpUriRequest req) throws IOException {
 		for (String key : headers.keySet()) {
 			req.addHeader(key, headers.get(key));
 		}
 		req.setHeader(ACCEPT_ENCODING, "gzip,deflate");
-		try {
-			return httpClient.execute(req);
-		} catch (Exception e) {
-			throwIfNetworkOnMainThreadException(e);
-			throw new HTTPException(e);
-		}
+		return httpClient.execute(req);
 	}
 
-	private static int getResponseCodeOrThrow(HttpResponse resp) throws HTTPException {
-		int respCode = resp.getStatusLine().getStatusCode();
-		if (isErrorResponseCode(respCode)) {
-			String respBody = HTTPInputStream.getInstance(resp).readAndClose();
-			throw new HTTPException(respCode, respBody);
-		}
-		return respCode;
+	private static int getResponseCode(HttpResponse resp) {
+		return resp.getStatusLine().getStatusCode();
 	}
 
 	private static Map<String, List<String>> getHeaders(HttpResponse resp) {

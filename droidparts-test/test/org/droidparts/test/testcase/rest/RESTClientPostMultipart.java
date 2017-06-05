@@ -23,7 +23,6 @@ import java.util.regex.Pattern;
 
 import org.junit.Test;
 
-import org.droidparts.net.http.HTTPException;
 import org.droidparts.net.http.HTTPResponse;
 import org.droidparts.net.http.RESTClient2;
 import org.droidparts.net.http.UserAgent;
@@ -91,7 +90,7 @@ public class RESTClientPostMultipart extends ActivityTestCase {
 		return file;
 	}
 
-	private void assertPostMultipartResponse(HTTPResponse response) throws HTTPException {
+	private void assertPostMultipartResponse(HTTPResponse response) throws Exception {
 		assertNotNull(response);
 		String body = response.body;
 

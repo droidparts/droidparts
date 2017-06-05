@@ -17,7 +17,6 @@ package org.droidparts.test.testcase.rest;
 
 import org.junit.Test;
 
-import org.droidparts.net.http.HTTPException;
 import org.droidparts.net.http.HTTPResponse;
 import org.droidparts.net.http.RESTClient;
 import org.droidparts.net.http.UserAgent;
@@ -57,26 +56,18 @@ public class RESTClientAuthenticate extends ActivityTestCase {
 		testAuthenticated(client);
 	}
 
-	private void testUnauthenticated(RESTClient client) {
-		try {
-			client.get(AUTH_URL);
-			throw new AssertionError();
-		} catch (HTTPException e) {
-			assertEquals(401, e.getResponseCode());
-		}
+	private void testUnauthenticated(RESTClient client) throws Exception {
+		HTTPResponse resp = client.get(AUTH_URL);
+		assertEquals(401, resp.code);
 	}
 
-	private void testAuthenticatedWrongCredentials(RESTClient client) {
+	private void testAuthenticatedWrongCredentials(RESTClient client) throws Exception {
 		client.authenticateBasic("wtf", AUTH_LOGIN);
-		try {
-			client.get(AUTH_URL);
-			throw new AssertionError();
-		} catch (HTTPException e) {
-			assertEquals(401, e.getResponseCode());
-		}
+		HTTPResponse resp = client.get(AUTH_URL);
+		assertEquals(401, resp.code);
 	}
 
-	private void testAuthenticated(RESTClient client) throws HTTPException {
+	private void testAuthenticated(RESTClient client) throws Exception {
 		client.authenticateBasic(AUTH_LOGIN, AUTH_LOGIN);
 		HTTPResponse resp = client.get(AUTH_URL);
 		assertEquals(200, resp.code);
