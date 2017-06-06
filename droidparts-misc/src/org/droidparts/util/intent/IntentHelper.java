@@ -27,7 +27,7 @@ import android.content.pm.ResolveInfo;
 import org.droidparts.util.L;
 import org.droidparts.util.ui.AbstractDialogFactory;
 
-public class IntentHelper {
+public abstract class IntentHelper {
 
 	public static void startChooserOrWarn(Context ctx, Intent intent) {
 		startChooserOrWarn(ctx, intent, null);

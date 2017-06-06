@@ -23,7 +23,7 @@ import android.database.Cursor;
 import android.view.View;
 import android.view.ViewGroup;
 
-import org.droidparts.adapter.cursor.EntityCursorAdapter;
+import org.droidparts.adapter.EntityCursorAdapter;
 import org.droidparts.adapter.holder.Text2Holder;
 import org.droidparts.persist.sql.stmt.Select;
 import org.droidparts.sample.db.EntryManager;

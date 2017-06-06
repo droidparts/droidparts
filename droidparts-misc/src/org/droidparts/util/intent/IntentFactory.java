@@ -30,7 +30,7 @@ import static android.content.Intent.EXTRA_TEXT;
 
 import static org.droidparts.util.Strings.isNotEmpty;
 
-public class IntentFactory {
+public abstract class IntentFactory {
 
 	public static class PlayStore {
 

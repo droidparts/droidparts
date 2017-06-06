@@ -25,7 +25,7 @@ import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.AbsListView.OnScrollListener;
 
-import org.droidparts.adapter.cursor.EntityCursorAdapter;
+import org.droidparts.adapter.EntityCursorAdapter;
 import org.droidparts.adapter.holder.IconText2Holder;
 import org.droidparts.annotation.inject.InjectDependency;
 import org.droidparts.gram.R;

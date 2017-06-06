@@ -29,7 +29,7 @@ import static android.view.View.GONE;
 import static android.view.View.INVISIBLE;
 import static android.view.View.VISIBLE;
 
-public class ViewUtils {
+public abstract class ViewUtils {
 
 	public static View getRootView(Window w) {
 		return w.findViewById(android.R.id.content).getRootView();

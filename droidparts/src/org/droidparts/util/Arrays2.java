@@ -17,7 +17,7 @@ package org.droidparts.util;
 
 import java.lang.reflect.Array;
 
-public class Arrays2 {
+public abstract class Arrays2 {
 
 	public static Object[] toObjectArray(Object someArr) {
 		Class<?> arrCls = someArr.getClass();

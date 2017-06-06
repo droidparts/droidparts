@@ -19,7 +19,7 @@ import java.util.regex.Pattern;
 
 import android.widget.EditText;
 
-public class EditTextValidator {
+public abstract class EditTextValidator {
 
 	// Typical handling:
 	// editText.setError(errMsg);
