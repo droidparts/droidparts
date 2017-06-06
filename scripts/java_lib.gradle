@@ -5,6 +5,8 @@ apply plugin: 'signing'
 group = 'org.droidparts'
 version = new File("$rootProject.projectDir/VERSION").text.trim()
 
+sourceCompatibility = JavaVersion.VERSION_1_6
+
 task javadocJar(type: Jar) {
 	classifier = 'javadoc'
 	from javadoc
@@ -19,8 +21,8 @@ allprojects {
 	tasks.withType(Jar) {
 		manifest {
 			attributes(
+					'Implementation-Title': "$archivesBaseName",
 					'Implementation-Version': "$version",
-					'Implementation-Title': "$archivesBaseName"
 			)
 		}
 	}
@@ -30,8 +32,6 @@ allprojects {
 		}
 	}
 }
-
-sourceCompatibility = JavaVersion.VERSION_1_6
 
 dependencies {
 	compileOnly 'com.google.android:android:4.1.1.4'
