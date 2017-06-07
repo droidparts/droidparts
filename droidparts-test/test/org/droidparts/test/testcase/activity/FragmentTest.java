@@ -11,24 +11,32 @@
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
- * limitations under the License. 
+ * limitations under the License.
  */
 package org.droidparts.test.testcase.activity;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
 
+import org.junit.Before;
+import org.junit.Test;
+
 import org.droidparts.test.activity.TestFragment;
 import org.droidparts.test.activity.TestFragment.KV;
 
-public class FragmentTest extends TestActivityTest {
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+
+public class FragmentTest extends ActivityTestCase {
 
 	private Bundle args, state;
 	private String str;
 
-	@Override
-	protected void setUp() throws Exception {
-		super.setUp();
+	@Before
+	public void setUp() throws Exception {
 		args = new Bundle();
 		state = new Bundle();
 		str = "str";
@@ -36,6 +44,7 @@ public class FragmentTest extends TestActivityTest {
 
 	}
 
+	@Test
 	public void testInjectArgument() {
 		TestFragment tf = makeFragment();
 		tf.onCreate(null);
@@ -46,6 +55,7 @@ public class FragmentTest extends TestActivityTest {
 		assertEquals(str, tf.str);
 	}
 
+	@Test
 	public void testSaveInstanceNonInjected() {
 		TestFragment tf = makeFragment();
 		tf.onCreate(null);
@@ -55,6 +65,7 @@ public class FragmentTest extends TestActivityTest {
 		assertEquals("str", tf.str);
 	}
 
+	@Test
 	public void testSaveInstanceInjected() {
 		TestFragment tf = makeFragment();
 		tf.onCreateView(LayoutInflater.from(getActivity()), null, null);
@@ -66,6 +77,7 @@ public class FragmentTest extends TestActivityTest {
 		assertEquals("changed", tf.str);
 	}
 
+	@Test
 	public void testSaveInstanceInjectedNested() {
 		TestFragment tf = makeFragment();
 		tf.onCreateView(LayoutInflater.from(getActivity()), null, null);

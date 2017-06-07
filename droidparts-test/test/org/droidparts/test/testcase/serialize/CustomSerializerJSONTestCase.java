@@ -11,13 +11,14 @@
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
- * limitations under the License. 
+ * limitations under the License.
  */
 package org.droidparts.test.testcase.serialize;
 
 import java.util.ArrayList;
 
 import org.json.JSONObject;
+import org.junit.Test;
 
 import org.droidparts.annotation.serialize.JSON;
 import org.droidparts.inner.ConverterRegistry;
@@ -26,8 +27,12 @@ import org.droidparts.model.Model;
 import org.droidparts.persist.serializer.JSONSerializer;
 import org.droidparts.test.R;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
 public class CustomSerializerJSONTestCase extends AbstractJSONTestCase {
 
+	@Test
 	public void testAlbumCollection() throws Exception {
 		JSONSerializer<AlbumCollection> ser = makeSerializer(AlbumCollection.class);
 		JSONObject obj = getJSONObject(R.raw.albums_partial_json);

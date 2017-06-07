@@ -1,3 +1,7 @@
 apply from: "$rootProject.projectDir/scripts/java_lib.gradle"
 
 archivesBaseName = 'droidparts'
+
+dependencies {
+	compileOnly 'org.apache.httpcomponents:httpmime:4.1'
+}

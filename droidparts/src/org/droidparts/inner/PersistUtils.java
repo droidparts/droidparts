@@ -45,6 +45,7 @@ import org.droidparts.util.L;
 
 import static java.util.Arrays.asList;
 import static org.json.JSONObject.NULL;
+
 import static org.droidparts.inner.ClassSpecRegistry.getTableName;
 import static org.droidparts.inner.TypeHelper.isEntity;
 import static org.droidparts.util.Strings.join;

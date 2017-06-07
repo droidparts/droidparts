@@ -1,3 +1,8 @@
+3.2.0 /2017-06-07/:
+    * droidparts-misc for extras.
+    * Removed HTTPException.
+    * Updated tests to JUnit 4.
+
 3.1.0 /2017-05-25/:
     * RESTClient2 returns a HTTPResponse2 with methods to get JSONObject & Array.
     * AbstractDBOpenHelper will crash on incorrect DDL.

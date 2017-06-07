@@ -11,23 +11,32 @@
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
- * limitations under the License. 
+ * limitations under the License.
  */
 package org.droidparts.test.testcase.activity;
 
-import android.test.ActivityInstrumentationTestCase2;
+import android.support.test.rule.ActivityTestRule;
+import android.support.test.runner.AndroidJUnit4;
 import android.view.LayoutInflater;
+
+import org.junit.Rule;
+import org.junit.runner.RunWith;
 
 import org.droidparts.test.activity.TestActivity;
 
-public abstract class TestActivityTest extends ActivityInstrumentationTestCase2<TestActivity> {
+@RunWith(AndroidJUnit4.class)
+public abstract class ActivityTestCase {
 
-	public TestActivityTest() {
-		super(TestActivity.class);
-	}
+	@Rule
+	public final ActivityTestRule<TestActivity> rule = new ActivityTestRule<>(
+			TestActivity.class);
 
 	protected final LayoutInflater getLayoutInflater() {
 		return LayoutInflater.from(getActivity());
+	}
+
+	protected final TestActivity getActivity() {
+		return rule.getActivity();
 	}
 
 }

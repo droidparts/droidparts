@@ -1,3 +1,6 @@
 apply from: "$rootProject.projectDir/scripts/android_app.gradle"
 
-dependencies { compile project(':droidparts') }
+dependencies {
+	compile project(':droidparts')
+	compile project(':droidparts-misc')
+}

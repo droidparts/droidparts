@@ -26,13 +26,10 @@ import java.io.OutputStream;
 import java.nio.channels.FileChannel;
 import java.util.ArrayList;
 
-import android.content.Context;
-import android.database.sqlite.SQLiteDatabase;
-
 import static org.droidparts.contract.Constants.BUFFER_SIZE;
 import static org.droidparts.contract.Constants.UTF8;
 
-public class IOUtils {
+public abstract class IOUtils {
 
 	public static void silentlyClose(Closeable... closeables) {
 		for (Closeable cl : closeables) {
@@ -102,18 +99,6 @@ public class IOUtils {
 			dst.transferFrom(src, 0, src.size());
 		} finally {
 			silentlyClose(src, dst);
-		}
-	}
-
-	public static void dumpDBToCacheDir(Context ctx, SQLiteDatabase db) {
-		String dbFilePath = db.getPath();
-		String dbFileName = dbFilePath.substring(dbFilePath.lastIndexOf('/', dbFilePath.length()));
-		File fileTo = new File(ctx.getExternalCacheDir(), dbFileName);
-		try {
-			IOUtils.copy(new File(dbFilePath), fileTo);
-			L.i("Copied DB file to '%s'.", fileTo.getAbsolutePath());
-		} catch (IOException e) {
-			L.w(e);
 		}
 	}
 

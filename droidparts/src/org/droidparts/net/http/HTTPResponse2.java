@@ -15,20 +15,23 @@
  */
 package org.droidparts.net.http;
 
+import java.util.List;
+import java.util.Map;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import org.droidparts.net.http.worker.HTTPInputStream;
+
 public class HTTPResponse2 extends HTTPResponse {
 
-	public HTTPResponse2() {
+	public HTTPResponse2(HTTPResponse src) {
+		this(src.code, src.headers, src.body, src.inputStream);
 	}
 
-	public HTTPResponse2(HTTPResponse src) {
-		this.code = src.code;
-		this.headers = src.headers;
-		this.body = src.body;
-		this.inputStream = src.inputStream;
+	public HTTPResponse2(int code, Map<String, List<String>> headers, String body, HTTPInputStream inputStream) {
+		super(code, headers, body, inputStream);
 	}
 
 	public JSONObject bodyAsJSONObject() throws JSONException {

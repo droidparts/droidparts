@@ -34,6 +34,7 @@ import org.droidparts.inner.reader.DependencyReader;
 import org.droidparts.model.Entity;
 
 import static java.util.Arrays.asList;
+
 import static org.droidparts.inner.ReflectionUtils.getFieldVal;
 import static org.droidparts.inner.ReflectionUtils.newInstance;
 import static org.droidparts.inner.ReflectionUtils.setFieldVal;

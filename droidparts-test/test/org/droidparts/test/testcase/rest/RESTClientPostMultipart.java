@@ -11,7 +11,7 @@
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
- * limitations under the License. 
+ * limitations under the License.
  */
 package org.droidparts.test.testcase.rest;
 
@@ -21,17 +21,21 @@ import java.io.IOException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import android.test.AndroidTestCase;
+import org.junit.Test;
 
-import org.droidparts.net.http.HTTPException;
 import org.droidparts.net.http.HTTPResponse;
 import org.droidparts.net.http.RESTClient2;
 import org.droidparts.net.http.UserAgent;
 import org.droidparts.net.http.worker.HTTPWorker;
 import org.droidparts.net.http.worker.HttpClientWorker;
 import org.droidparts.net.http.worker.HttpURLConnectionWorker;
+import org.droidparts.test.testcase.activity.ActivityTestCase;
 
-public class RESTClientPostMultipart extends AndroidTestCase {
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
+public class RESTClientPostMultipart extends ActivityTestCase {
 
 	// Simple server for testing POST requests. Supports multipart/form-data
 	// file uploads.
@@ -40,12 +44,14 @@ public class RESTClientPostMultipart extends AndroidTestCase {
 	private static final String FILE_BODY = "Test POST multipart file";
 	private static final String CONTENT_TYPE = "text/plain";
 
+	@Test
 	public void testPostMultipartURLConnection() throws Exception {
-		HTTPWorker worker = new HttpURLConnectionWorker(getContext(), UserAgent.getDefault());
+		HTTPWorker worker = new HttpURLConnectionWorker(getActivity(), UserAgent.getDefault());
 		testPostMultipartFile(worker);
 		testPostMultipartBytes(worker);
 	}
 
+	@Test
 	public void testPostMultipartHttpClient() throws Exception {
 		HTTPWorker worker = new HttpClientWorker(UserAgent.getDefault());
 		testPostMultipartFile(worker);
@@ -55,7 +61,7 @@ public class RESTClientPostMultipart extends AndroidTestCase {
 	//
 
 	private void testPostMultipartFile(HTTPWorker worker) throws Exception {
-		RESTClient2 client = new RESTClient2(getContext(), worker);
+		RESTClient2 client = new RESTClient2(getActivity(), worker);
 		File file = writeTestFile(FILE_BODY);
 		// Without content type
 		HTTPResponse resp = client.postMultipart(URL, FILE_NAME, file);
@@ -66,7 +72,7 @@ public class RESTClientPostMultipart extends AndroidTestCase {
 	}
 
 	private void testPostMultipartBytes(HTTPWorker worker) throws Exception {
-		RESTClient2 client = new RESTClient2(getContext(), worker);
+		RESTClient2 client = new RESTClient2(getActivity(), worker);
 		byte[] fileBytes = FILE_BODY.getBytes();
 		// Without content type
 		HTTPResponse resp = client.postMultipart(URL, FILE_NAME, FILE_NAME, fileBytes);
@@ -77,14 +83,14 @@ public class RESTClientPostMultipart extends AndroidTestCase {
 	}
 
 	private File writeTestFile(String data) throws IOException {
-		File file = new File(getContext().getCacheDir(), "test.txt");
+		File file = new File(getActivity().getCacheDir(), "test.txt");
 		FileWriter fw = new FileWriter(file);
 		fw.write(data);
 		fw.close();
 		return file;
 	}
 
-	private void assertPostMultipartResponse(HTTPResponse response) throws HTTPException {
+	private void assertPostMultipartResponse(HTTPResponse response) throws Exception {
 		assertNotNull(response);
 		String body = response.body;
 
@@ -94,7 +100,7 @@ public class RESTClientPostMultipart extends AndroidTestCase {
 		assertTrue(matcher.find());
 
 		String fileUrl = matcher.group(1);
-		RESTClient2 client = new RESTClient2(getContext());
+		RESTClient2 client = new RESTClient2(getActivity());
 		assertEquals(client.get(fileUrl).body, FILE_BODY);
 	}
 }

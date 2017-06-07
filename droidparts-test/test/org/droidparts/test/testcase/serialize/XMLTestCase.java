@@ -11,15 +11,17 @@
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
- * limitations under the License. 
+ * limitations under the License.
  */
 package org.droidparts.test.testcase.serialize;
 
 import java.util.ArrayList;
 
-import android.test.AndroidTestCase;
+import android.support.test.runner.AndroidJUnit4;
 import android.test.AssertionFailedError;
 
+import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 
@@ -31,10 +33,16 @@ import org.droidparts.test.model.Album;
 import org.droidparts.test.model.Album2;
 import org.droidparts.test.model.AlbumFail;
 import org.droidparts.test.model.Collections;
+import org.droidparts.test.testcase.activity.ActivityTestCase;
 import org.droidparts.util.IOUtils;
 
-public class XMLTestCase extends AndroidTestCase {
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
+@RunWith(AndroidJUnit4.class)
+public class XMLTestCase extends ActivityTestCase {
+
+	@Test
 	public void testAlbums() throws Exception {
 		Document albumsDoc = getXMLDocument(R.raw.albums_xml);
 		NodeList nl = albumsDoc.getElementsByTagName("album");
@@ -45,6 +53,7 @@ public class XMLTestCase extends AndroidTestCase {
 		assertEquals(2009, albums.get(1).year);
 	}
 
+	@Test
 	public void testAlbum2() throws Exception {
 		Document albumDoc = getXMLDocument(R.raw.album2);
 		XMLSerializer<Album2> serializer = makeSerializer(Album2.class);
@@ -61,6 +70,7 @@ public class XMLTestCase extends AndroidTestCase {
 		assertTrue(a2.integersHintedWrong.isEmpty());
 	}
 
+	@Test
 	public void testFail() throws Exception {
 		Document albumDoc = getXMLDocument(R.raw.album2);
 		XMLSerializer<AlbumFail> serializer = makeSerializer(AlbumFail.class);
@@ -74,6 +84,7 @@ public class XMLTestCase extends AndroidTestCase {
 
 	//
 
+	@Test
 	public void testCollectionsFail() throws Exception {
 		try {
 			Document doc = getXMLDocument(R.raw.albums_partial_xml);
@@ -89,12 +100,12 @@ public class XMLTestCase extends AndroidTestCase {
 	//
 
 	private Document getXMLDocument(int resId) throws Exception {
-		String xml = IOUtils.readToString(getContext().getResources().openRawResource(resId));
+		String xml = IOUtils.readToString(getActivity().getResources().openRawResource(resId));
 		return XMLSerializer.parseDocument(xml);
 	}
 
 	protected final <T extends Model> XMLSerializer<T> makeSerializer(Class<T> cls) {
-		return new XMLSerializer<T>(cls, getContext());
+		return new XMLSerializer<T>(cls, getActivity());
 	}
 
 }

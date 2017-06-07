@@ -11,16 +11,21 @@
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
- * limitations under the License. 
+ * limitations under the License.
  */
 package org.droidparts.test.testcase.activity;
 
 import android.os.Bundle;
 
+import org.junit.Test;
+
 import org.droidparts.test.activity.TestActivity;
 
-public class ActivitySaveInstanceStateTest extends TestActivityTest {
+import static org.junit.Assert.assertEquals;
 
+public class ActivitySaveInstanceStateTest extends ActivityTestCase {
+
+	@Test
 	public void testActivitySaveInstanceState() {
 		final TestActivity activity = getActivity();
 		final String data = "data";

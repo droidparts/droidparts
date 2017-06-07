@@ -19,11 +19,11 @@ import java.io.IOException;
 import java.io.StringReader;
 import java.util.ArrayList;
 
-import android.content.Context;
-import android.util.Pair;
-
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+
+import android.content.Context;
+import android.util.Pair;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.NamedNodeMap;

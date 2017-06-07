@@ -11,17 +11,25 @@
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
- * limitations under the License. 
+ * limitations under the License.
  */
 package org.droidparts.test.testcase;
 
-import android.test.AndroidTestCase;
+import android.support.test.runner.AndroidJUnit4;
+
+import org.junit.After;
+import org.junit.Test;
+import org.junit.runner.RunWith;
 
 import org.droidparts.annotation.bus.ReceiveEvents;
 import org.droidparts.bus.EventBus;
 import org.droidparts.bus.EventReceiver;
 
-public class EventBusTestCase extends AndroidTestCase {
+import static org.junit.Assert.assertEquals;
+
+
+@RunWith(AndroidJUnit4.class)
+public class EventBusTestCase {
 
 	private final String NAME = "name";
 	private final String DATA = "data";
@@ -60,12 +68,13 @@ public class EventBusTestCase extends AndroidTestCase {
 
 	private final AnnotatedChild aer = new AnnotatedChild();
 
-	@Override
-	protected void tearDown() throws Exception {
+	@After
+	public void tearDown() throws Exception {
 		EventBus.unregisterReceiver(er);
 		EventBus.unregisterAnnotatedReceiver(aer);
 	}
 
+	@Test
 	public void testEvent() {
 		EventBus.registerReceiver(er);
 		EventBus.postEvent(NAME, DATA);
@@ -73,6 +82,7 @@ public class EventBusTestCase extends AndroidTestCase {
 		assertEquals(1, calledBackTimes);
 	}
 
+	@Test
 	public void testStikyEvent() {
 		EventBus.postEventSticky(NAME, DATA);
 		sleep();
@@ -81,6 +91,7 @@ public class EventBusTestCase extends AndroidTestCase {
 		assertEquals(1, calledBackTimes);
 	}
 
+	@Test
 	public void testAnnotatedReceiver() {
 		for (int i = 0; i < 5; i++) {
 			EventBus.registerAnnotatedReceiver(aer);

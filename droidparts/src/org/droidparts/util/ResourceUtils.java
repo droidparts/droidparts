@@ -22,7 +22,7 @@ import java.util.Arrays;
 import android.content.Context;
 import android.util.TypedValue;
 
-public final class ResourceUtils {
+public abstract class ResourceUtils {
 
 	public static int dpToPx(Context ctx, int val) {
 		return (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, val,

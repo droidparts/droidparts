@@ -35,6 +35,7 @@ import org.droidparts.model.Model;
 import org.droidparts.util.L;
 
 import static org.json.JSONObject.NULL;
+
 import static org.droidparts.inner.ReflectionUtils.getFieldVal;
 import static org.droidparts.inner.ReflectionUtils.newInstance;
 import static org.droidparts.inner.ReflectionUtils.setFieldVal;

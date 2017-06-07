@@ -23,6 +23,7 @@ import org.droidparts.contract.SQL;
 import org.droidparts.util.L;
 
 import static java.util.Arrays.asList;
+
 import static org.droidparts.inner.PersistUtils.buildPlaceholders;
 import static org.droidparts.inner.PersistUtils.toWhereArgs;
 import static org.droidparts.inner.ReflectionUtils.varArgsHack;

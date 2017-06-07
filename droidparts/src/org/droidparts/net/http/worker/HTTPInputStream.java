@@ -26,7 +26,6 @@ import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 
-import org.droidparts.net.http.HTTPException;
 import org.droidparts.util.L;
 
 import static org.droidparts.contract.Constants.BUFFER_SIZE;
@@ -36,26 +35,21 @@ import static org.droidparts.util.Strings.isNotEmpty;
 
 public class HTTPInputStream extends BufferedInputStream {
 
-	public static HTTPInputStream getInstance(HttpURLConnection conn, boolean useErrorStream) throws HTTPException {
-		try {
-			InputStream is = useErrorStream ? conn.getErrorStream() : conn.getInputStream();
-			is = getUnpackedInputStream(conn.getContentEncoding(), is);
-			return new HTTPInputStream(is, conn, null);
-		} catch (Exception e) {
-			throw new HTTPException(e);
+	public static HTTPInputStream getInstance(HttpURLConnection conn) throws IOException {
+		InputStream is = conn.getErrorStream();
+		if (is == null) {
+			is = conn.getInputStream();
 		}
+		is = getUnpackedInputStream(conn.getContentEncoding(), is);
+		return new HTTPInputStream(is, conn, null);
 	}
 
-	public static HTTPInputStream getInstance(HttpResponse resp) throws HTTPException {
+	public static HTTPInputStream getInstance(HttpResponse resp) throws IOException {
 		HttpEntity entity = resp.getEntity();
-		try {
-			InputStream is = entity.getContent();
-			Header ce = entity.getContentEncoding();
-			is = getUnpackedInputStream(ce != null ? ce.getValue() : null, is);
-			return new HTTPInputStream(is, null, entity);
-		} catch (Exception e) {
-			throw new HTTPException(e);
-		}
+		InputStream is = entity.getContent();
+		Header ce = entity.getContentEncoding();
+		is = getUnpackedInputStream(ce != null ? ce.getValue() : null, is);
+		return new HTTPInputStream(is, null, entity);
 	}
 
 	private static InputStream getUnpackedInputStream(String contentEncoding, InputStream is) throws IOException {
@@ -74,17 +68,15 @@ public class HTTPInputStream extends BufferedInputStream {
 	private final HttpURLConnection conn;
 	private final HttpEntity entity;
 
-	private HTTPInputStream(InputStream is, HttpURLConnection conn, HttpEntity entity) throws HTTPException {
+	private HTTPInputStream(InputStream is, HttpURLConnection conn, HttpEntity entity) {
 		super(is, BUFFER_SIZE);
 		this.conn = conn;
 		this.entity = entity;
 	}
 
-	public String readAndClose() throws HTTPException {
+	public String readAndClose() throws IOException {
 		try {
 			return readToString(this);
-		} catch (Exception e) {
-			throw new HTTPException(e);
 		} finally {
 			silentlyClose(this);
 		}

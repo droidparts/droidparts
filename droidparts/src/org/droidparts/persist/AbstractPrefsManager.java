@@ -22,6 +22,7 @@ import android.preference.PreferenceManager;
 import org.droidparts.Injector;
 
 import static android.content.Context.MODE_PRIVATE;
+
 import static org.droidparts.util.Strings.isEmpty;
 
 public abstract class AbstractPrefsManager {

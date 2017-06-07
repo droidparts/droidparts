@@ -22,11 +22,10 @@ import java.util.Map;
 import org.json.JSONObject;
 
 import org.droidparts.inner.ConverterRegistry;
+import org.droidparts.inner.TypeHelper;
 
 import static org.droidparts.inner.ReflectionUtils.newInstance;
 import static org.droidparts.inner.TypeHelper.isInterface;
-
-import org.droidparts.inner.TypeHelper;
 
 public class MapConverter extends Converter<Map<?, ?>> {
 

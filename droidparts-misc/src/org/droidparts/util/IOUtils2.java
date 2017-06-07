@@ -15,17 +15,24 @@
  */
 package org.droidparts.util;
 
+import java.io.File;
+import java.io.IOException;
+
 import android.content.Context;
-import android.content.pm.ApplicationInfo;
+import android.database.sqlite.SQLiteDatabase;
 
-import static android.content.pm.ApplicationInfo.FLAG_DEBUGGABLE;
+public abstract class IOUtils2 extends IOUtils {
 
-public abstract class AppUtils {
-
-	public static boolean isDebuggable(Context ctx) {
-		ApplicationInfo appInfo = ctx.getApplicationInfo();
-		boolean debug = (appInfo.flags & FLAG_DEBUGGABLE) != 0;
-		return debug;
+	public static void dumpDBToCacheDir(Context ctx, SQLiteDatabase db) {
+		String dbFilePath = db.getPath();
+		String dbFileName = dbFilePath.substring(dbFilePath.lastIndexOf('/', dbFilePath.length()));
+		File fileTo = new File(ctx.getExternalCacheDir(), dbFileName);
+		try {
+			IOUtils2.copy(new File(dbFilePath), fileTo);
+			L.i("Copied DB file to '%s'.", fileTo.getAbsolutePath());
+		} catch (IOException e) {
+			L.w(e);
+		}
 	}
 
 }

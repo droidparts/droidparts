@@ -1,8 +1,7 @@
 apply from: "$rootProject.projectDir/scripts/java_lib.gradle"
 
-archivesBaseName = 'droidparts-support'
+archivesBaseName = 'droidparts-misc'
 
 dependencies {
 	compile project(':droidparts')
-	compileOnly fileTree(dir: 'libs', include: '*.jar')
 }

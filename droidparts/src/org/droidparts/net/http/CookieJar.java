@@ -47,6 +47,7 @@ import static android.content.Context.MODE_PRIVATE;
 import static java.util.Collections.singletonList;
 import static java.util.Collections.singletonMap;
 import static java.util.Collections.unmodifiableList;
+
 import static org.droidparts.util.Strings.join;
 
 public class CookieJar extends CookieHandler implements CookieStore {
