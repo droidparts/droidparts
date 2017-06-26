@@ -23,9 +23,7 @@ public interface DB {
 
 	}
 
-	interface Column {
-
-		String ID = BaseColumns._ID;
+	interface Column extends BaseColumns {
 
 	}
 

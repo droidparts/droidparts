@@ -20,7 +20,7 @@ import java.util.Arrays;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Pair;
 
-import org.droidparts.contract.DB;
+import org.droidparts.contract.DB.Column;
 import org.droidparts.contract.SQL;
 import org.droidparts.model.Entity;
 
@@ -43,9 +43,9 @@ public abstract class Statement<EntityType extends Entity> implements SQL {
 
 	protected Statement<EntityType> whereId(long... oneOrMore) {
 		if (oneOrMore.length == 1) {
-			return where(DB.Column.ID, Is.EQUAL, oneOrMore[0]);
+			return where(Column._ID, Is.EQUAL, oneOrMore[0]);
 		} else {
-			return where(DB.Column.ID, Is.IN, oneOrMore);
+			return where(Column._ID, Is.IN, oneOrMore);
 		}
 	}
 

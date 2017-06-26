@@ -17,7 +17,7 @@ package org.droidparts.model;
 
 import org.droidparts.annotation.sql.Column;
 
-import static org.droidparts.contract.DB.Column.ID;
+import static org.droidparts.contract.DB.Column._ID;
 
 public abstract class Entity extends Model {
 	private static final long serialVersionUID = 1L;
@@ -27,12 +27,12 @@ public abstract class Entity extends Model {
 		// and should override hashCode() and equals().
 	}
 
-	@Column(name = ID)
-	public long id;
+	@Column(name = _ID)
+	public long _id;
 
 	@Override
 	public int hashCode() {
-		return getClass().hashCode() + (int) id;
+		return getClass().hashCode() + (int) _id;
 	}
 
 }

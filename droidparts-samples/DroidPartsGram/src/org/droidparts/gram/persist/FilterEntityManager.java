@@ -22,8 +22,7 @@ import org.droidparts.persist.sql.EntityManager;
 import org.droidparts.persist.sql.stmt.Is;
 import org.droidparts.persist.sql.stmt.Select;
 
-import static org.droidparts.contract.DB.Column.ID;
-import static org.droidparts.gram.contract.DB.Column.NAME;
+import org.droidparts.gram.contract.DB.Column;
 
 public class FilterEntityManager extends EntityManager<Filter> {
 
@@ -32,9 +31,9 @@ public class FilterEntityManager extends EntityManager<Filter> {
 	}
 
 	public void setIdOrCreateForName(Filter filter) {
-		Select<Filter> select = select().columns(ID).where(NAME, Is.EQUAL, filter.name);
+		Select<Filter> select = select().columns(Column._ID).where(Column.NAME, Is.EQUAL, filter.name);
 		if (select.count() == 1) {
-			filter.id = readFirst(select).id;
+			filter._id = readFirst(select)._id;
 		} else {
 			create(filter);
 		}

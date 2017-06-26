@@ -43,7 +43,7 @@ public class ImageEntityManager extends EntityManager<Image> {
 	}
 
 	private void setFilterId(Filter filter) {
-		if (filter.id < 1) {
+		if (filter._id < 1) {
 			filterEntityManager.setIdOrCreateForName(filter);
 		}
 	}

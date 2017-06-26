@@ -96,7 +96,7 @@ public class EntityManager<EntityType extends Entity> extends AbstractEntityMana
 					Entity foreignEntity = getFieldVal(item, spec.field);
 					if (foreignEntity != null) {
 						EntityManager<Entity> manager = subManager(spec.field.getType());
-						Object obj = manager.read(foreignEntity.id);
+						Object obj = manager.read(foreignEntity._id);
 						setFieldVal(item, spec.field, obj);
 					}
 				} else if ((isArray(fieldType) || isCollection(fieldType)) && isEntity(spec.genericArg1)) {
@@ -107,7 +107,7 @@ public class EntityManager<EntityType extends Entity> extends AbstractEntityMana
 							for (int i = 0; i < arr.length; i++) {
 								Entity ent = arr[i];
 								if (ent != null) {
-									arr[i] = manager.read(ent.id);
+									arr[i] = manager.read(ent._id);
 								}
 							}
 						}
@@ -117,7 +117,7 @@ public class EntityManager<EntityType extends Entity> extends AbstractEntityMana
 							ArrayList<Entity> entities = new ArrayList<Entity>(coll.size());
 							for (Entity ent : coll) {
 								if (ent != null) {
-									entities.add(manager.read(ent.id));
+									entities.add(manager.read(ent._id));
 								}
 							}
 							coll.clear();
@@ -162,7 +162,7 @@ public class EntityManager<EntityType extends Entity> extends AbstractEntityMana
 			Class<?> fieldType = spec.field.getType();
 			if (isEntity(fieldType)) {
 				Entity foreignEntity = getFieldVal(item, spec.field);
-				if (foreignEntity != null && foreignEntity.id == 0) {
+				if (foreignEntity != null && foreignEntity._id == 0) {
 					subManager(spec.field.getType()).create(foreignEntity);
 				}
 			} else if ((isArray(fieldType) || isCollection(fieldType)) && isEntity(spec.genericArg1)) {
@@ -171,7 +171,7 @@ public class EntityManager<EntityType extends Entity> extends AbstractEntityMana
 					Entity[] arr = getFieldVal(item, spec.field);
 					if (arr != null) {
 						for (Entity ent : arr) {
-							if (ent != null && ent.id == 0) {
+							if (ent != null && ent._id == 0) {
 								toCreate.add(ent);
 							}
 						}
@@ -180,7 +180,7 @@ public class EntityManager<EntityType extends Entity> extends AbstractEntityMana
 					Collection<Entity> coll = getFieldVal(item, spec.field);
 					if (coll != null) {
 						for (Entity ent : coll) {
-							if (ent != null && ent.id == 0) {
+							if (ent != null && ent._id == 0) {
 								toCreate.add(ent);
 							}
 						}

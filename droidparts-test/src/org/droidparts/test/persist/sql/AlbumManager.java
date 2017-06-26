@@ -41,7 +41,7 @@ public class AlbumManager extends EntityManager<Album> implements DB {
 
 	public ArrayList<Tag> getTags(long albumId) {
 		ArrayList<Tag> tags = new ArrayList<Tag>();
-		Select<Tag> select = tagManager.select().where(Column.ID, Is.IN, getTagIds(albumId));
+		Select<Tag> select = tagManager.select().where(Column._ID, Is.IN, getTagIds(albumId));
 		tags = tagManager.readAll(select);
 		return tags;
 	}
