@@ -87,7 +87,7 @@ public class EntityTestCase extends ActivityTestCase implements DB {
 		assertTrue(albumToTagManager.create(att));
 		assertFalse(albumToTagManager.create(att));
 		album.name = ALBUMS[1];
-		album.id = 0;
+		album._id = 0;
 		assertTrue(albumToTagManager.create(att));
 		assertEquals(2, albumToTagManager.select().count());
 	}
@@ -95,16 +95,16 @@ public class EntityTestCase extends ActivityTestCase implements DB {
 	@Test
 	public void testCRUD() {
 		Album album1 = createFirstAlbum();
-		assertFalse(album1.id == 0);
-		Album album2 = albumManager.read(album1.id);
+		assertFalse(album1._id == 0);
+		Album album2 = albumManager.read(album1._id);
 		assertEquals(album1.name, album2.name);
 		album2.name = ALBUMS[1];
 		albumManager.update(album2);
-		Album album3 = albumManager.read(album2.id);
+		Album album3 = albumManager.read(album2._id);
 		assertEquals(album2.name, album3.name);
-		assertEquals(album1.id, album3.id);
-		albumManager.delete(album1.id);
-		assertNull(albumManager.read(album1.id));
+		assertEquals(album1._id, album3._id);
+		albumManager.delete(album1._id);
+		assertNull(albumManager.read(album1._id));
 	}
 
 	@Test
@@ -126,7 +126,7 @@ public class EntityTestCase extends ActivityTestCase implements DB {
 		created = albumManager.create(album2);
 		assertTrue(created);
 
-		int count = albumManager.select().whereId(album1.id).count();
+		int count = albumManager.select().whereId(album1._id).count();
 		assertEquals(1, count);
 
 		Cursor cursor = albumManager.select().where(Column.COMMENT, Is.NOT_NULL).execute();
@@ -155,7 +155,7 @@ public class EntityTestCase extends ActivityTestCase implements DB {
 		}
 		album.nestedArr = album.nestedList.toArray(new Nested[album.nestedList.size()]);
 		albumManager.update(album);
-		album = albumManager.read(album.id);
+		album = albumManager.read(album._id);
 		assertEquals("str", album.nested.str);
 		assertEquals(TRACKS.length, album.nestedList.size());
 		assertEquals(TRACKS.length, album.nestedArr.length);
@@ -168,7 +168,7 @@ public class EntityTestCase extends ActivityTestCase implements DB {
 		pri.date = new Date(now);
 		pri.dates.add(pri.date);
 		assertTrue(primitivesManager.create(pri));
-		pri = primitivesManager.read(pri.id);
+		pri = primitivesManager.read(pri._id);
 		assertEquals(now, pri.date.getTime());
 		assertEquals(1, pri.dates.size());
 		assertEquals(now, pri.dates.get(0).getTime());
@@ -181,7 +181,7 @@ public class EntityTestCase extends ActivityTestCase implements DB {
 		pri.en = En.HI;
 		pri.enArr = new En[]{En.HI, En.THERE};
 		primitivesManager.create(pri);
-		pri = primitivesManager.read(pri.id);
+		pri = primitivesManager.read(pri._id);
 		assertEquals(En.HI, pri.en);
 		assertEquals(En.THERE.id, pri.enArr[1].id);
 	}
@@ -195,7 +195,7 @@ public class EntityTestCase extends ActivityTestCase implements DB {
 		pri.doubleSet.add(100.500);
 		pri.doubleSet.add(12.5);
 		assertTrue(primitivesManager.create(pri));
-		pri = primitivesManager.read(pri.id);
+		pri = primitivesManager.read(pri._id);
 		assertEquals(2, pri.strArr.length);
 		assertEquals(30, pri.intArr[2]);
 		assertTrue(pri.strList.contains("one"));
@@ -218,9 +218,9 @@ public class EntityTestCase extends ActivityTestCase implements DB {
 	public void testBetween() {
 		createDummyAlbums(20);
 		//
-		int count = albumManager.select().where(Column.ID, Is.BETWEEN, 5, 10).count();
+		int count = albumManager.select().where(Column._ID, Is.BETWEEN, 5, 10).count();
 		assertEquals(6, count);
-		count = albumManager.select().where(Column.ID, Is.NOT_BETWEEN, 5, 10).count();
+		count = albumManager.select().where(Column._ID, Is.NOT_BETWEEN, 5, 10).count();
 		assertEquals(14, count);
 	}
 
@@ -229,9 +229,9 @@ public class EntityTestCase extends ActivityTestCase implements DB {
 		createDummyAlbums(3);
 		//
 		int[] arr = new int[]{1, 2};
-		int count = albumManager.select().where(Column.ID, Is.IN, arr).count();
+		int count = albumManager.select().where(Column._ID, Is.IN, arr).count();
 		assertEquals(2, count);
-		count = albumManager.select().where(Column.ID, Is.NOT_IN, arr).count();
+		count = albumManager.select().where(Column._ID, Is.NOT_IN, arr).count();
 		assertEquals(1, count);
 	}
 
@@ -259,8 +259,8 @@ public class EntityTestCase extends ActivityTestCase implements DB {
 			track.name = name;
 			trackManager.create(track);
 		}
-		assertEquals(TRACKS.length, trackManager.select().where(Column.ALBUM_ID, Is.EQUAL, album.id).count());
-		albumManager.delete(album.id);
+		assertEquals(TRACKS.length, trackManager.select().where(Column.ALBUM_ID, Is.EQUAL, album._id).count());
+		albumManager.delete(album._id);
 		assertEquals(0, trackManager.select().count());
 	}
 
@@ -272,7 +272,7 @@ public class EntityTestCase extends ActivityTestCase implements DB {
 		track.album = album;
 		track.nullableAlbum = album;
 		trackManager.create(track);
-		track = trackManager.read(track.id);
+		track = trackManager.read(track._id);
 		assertNotNull(track.album.name);
 		assertNull(track.nullableAlbum.name);
 	}
@@ -295,14 +295,14 @@ public class EntityTestCase extends ActivityTestCase implements DB {
 		album2.name = "name2";
 		track.nullableAlbum = album2;
 		assertTrue(trackManager.update(track));
-		assertFalse(track.nullableAlbum.id == 0);
+		assertFalse(track.nullableAlbum._id == 0);
 		//
 		album.name = null;
 		assertFalse(albumManager.update(album));
 		//
 		track.nullableAlbum = null;
 		assertTrue(trackManager.update(track));
-		assertNull(trackManager.read(track.id).nullableAlbum);
+		assertNull(trackManager.read(track._id).nullableAlbum);
 	}
 
 	@Test
@@ -320,15 +320,15 @@ public class EntityTestCase extends ActivityTestCase implements DB {
 	@Test
 	public void testWhere() {
 		Album album = createFirstAlbum();
-		assertEquals(1, albumManager.select().where("_id = ?", album.id).count());
-		assertEquals(1, albumManager.select().where("_id = " + album.id).count());
+		assertEquals(1, albumManager.select().where("_id = ?", album._id).count());
+		assertEquals(1, albumManager.select().where("_id = " + album._id).count());
 	}
 
 	@Test
 	public void testWhereCount() {
 		createDummyAlbums(20);
-		assertEquals(1, albumManager.select().where(Column.ID, Is.EQUAL, 10).count());
-		assertEquals(0, albumManager.select().where(Column.ID, Is.EQUAL, 100).count());
+		assertEquals(1, albumManager.select().where(Column._ID, Is.EQUAL, 10).count());
+		assertEquals(0, albumManager.select().where(Column._ID, Is.EQUAL, 100).count());
 	}
 
 	@Test
@@ -347,14 +347,14 @@ public class EntityTestCase extends ActivityTestCase implements DB {
 		for (String name : TAGS) {
 			tags.add(new Tag(name));
 		}
-		albumManager.addTags(album.id, tags);
+		albumManager.addTags(album._id, tags);
 		//
 		assertEquals(TAGS.length, albumToTagManager.select().count());
-		tags = albumManager.getTags(album.id);
+		tags = albumManager.getTags(album._id);
 		assertEquals(TAGS.length, tags.size());
 		//
 		tagManager.deleteAll(tags);
-		tags = albumManager.getTags(album.id);
+		tags = albumManager.getTags(album._id);
 		assertEquals(0, albumToTagManager.select().count());
 		assertEquals(0, tags.size());
 	}

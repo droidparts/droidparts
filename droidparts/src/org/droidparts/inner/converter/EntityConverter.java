@@ -38,7 +38,7 @@ public class EntityConverter<E extends Entity> extends ModelConverter<E> {
 	@Override
 	public <G1, G2> void putToContentValues(Class<E> valueType, Class<G1> genericArg1, Class<G2> genericArg2,
 	                                        ContentValues cv, String key, E val) {
-		cv.put(key, val.id);
+		cv.put(key, val._id);
 	}
 
 	@Override
@@ -46,7 +46,7 @@ public class EntityConverter<E extends Entity> extends ModelConverter<E> {
 	                                 int columnIndex) {
 		long id = cursor.getLong(columnIndex);
 		E entity = newInstance(valType);
-		entity.id = id;
+		entity._id = id;
 		return entity;
 	}
 
@@ -58,7 +58,7 @@ public class EntityConverter<E extends Entity> extends ModelConverter<E> {
 			return super.parseFromString(valType, genericArg1, genericArg2, str);
 		} else {
 			E entity = newInstance(valType);
-			entity.id = Long.valueOf(str);
+			entity._id = Long.valueOf(str);
 			return entity;
 		}
 	}

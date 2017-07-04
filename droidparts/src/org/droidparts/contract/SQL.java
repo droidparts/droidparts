@@ -60,7 +60,7 @@ public interface SQL {
 		String TEXT = " TEXT";
 		String BLOB = " BLOB";
 
-		String PK = DB.Column.ID + " INTEGER PRIMARY KEY";
+		String PK = DB.Column._ID + " INTEGER PRIMARY KEY";
 		String NOT_NULL = " NOT NULL";
 		String DEFAULT = " DEFAULT ";
 		String UNIQUE = " UNIQUE";

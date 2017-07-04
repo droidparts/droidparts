@@ -19,7 +19,7 @@ import android.content.Context;
 
 public abstract class SimpleAsyncTask<Result> extends AsyncTask<Void, Integer, Result> {
 
-	public SimpleAsyncTask(Context ctx, AsyncTaskResultListener<Result> resultListener) {
+	public SimpleAsyncTask(Context ctx, ResultListener<Result> resultListener) {
 		super(ctx, resultListener);
 	}
 

@@ -24,7 +24,7 @@ import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 
-import org.droidparts.contract.DB;
+import org.droidparts.contract.DB.Column;
 import org.droidparts.contract.SQL;
 import org.droidparts.inner.PersistUtils;
 import org.droidparts.model.Entity;
@@ -40,7 +40,7 @@ public abstract class AbstractEntityManager<EntityType extends Entity> implement
 	public boolean create(EntityType item) {
 		createForeignKeys(item);
 		ContentValues cv = toContentValues(item);
-		cv.remove(DB.Column.ID);
+		cv.remove(Column._ID);
 		long id = 0;
 		try {
 			id = getDB().insertOrThrow(getTableName(), null, cv);
@@ -49,7 +49,7 @@ public abstract class AbstractEntityManager<EntityType extends Entity> implement
 			L.d(e);
 		}
 		if (id > 0) {
-			item.id = id;
+			item._id = id;
 			return true;
 		} else {
 			return false;
@@ -63,8 +63,8 @@ public abstract class AbstractEntityManager<EntityType extends Entity> implement
 	public boolean update(EntityType item) {
 		createForeignKeys(item);
 		ContentValues cv = toContentValues(item);
-		cv.remove(DB.Column.ID);
-		int rowCount = update().whereId(item.id).setValues(cv).execute();
+		cv.remove(Column._ID);
+		int rowCount = update().whereId(item._id).setValues(cv).execute();
 		return rowCount > 0;
 	}
 
@@ -75,7 +75,7 @@ public abstract class AbstractEntityManager<EntityType extends Entity> implement
 
 	public boolean createOrUpdate(EntityType item) {
 		boolean success;
-		if (item.id > 0) {
+		if (item._id > 0) {
 			success = update(item);
 		} else {
 			success = create(item);
@@ -113,7 +113,7 @@ public abstract class AbstractEntityManager<EntityType extends Entity> implement
 							success = update(item);
 							break;
 						case 3:
-							success = delete(item.id);
+							success = delete(item._id);
 							break;
 					}
 					if (success) {

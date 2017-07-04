@@ -25,13 +25,13 @@ public abstract class AsyncTask<Params, Progress, Result>
 		extends android.os.AsyncTask<Params, Progress, Pair<Exception, Result>> {
 
 	private final Context ctx;
-	private final AsyncTaskResultListener<Result> resultListener;
+	private final ResultListener<Result> resultListener;
 
 	public AsyncTask(Context ctx) {
 		this(ctx, null);
 	}
 
-	public AsyncTask(Context ctx, AsyncTaskResultListener<Result> resultListener) {
+	public AsyncTask(Context ctx, ResultListener<Result> resultListener) {
 		Injector.inject(ctx, this);
 		this.ctx = ctx.getApplicationContext();
 		this.resultListener = resultListener;
@@ -61,12 +61,12 @@ public abstract class AsyncTask<Params, Progress, Result>
 		if (result.first != null) {
 			onPostExecuteFailure(result.first);
 			if (resultListener != null) {
-				resultListener.onAsyncTaskFailure(result.first);
+				resultListener.onFailure(result.first);
 			}
 		} else {
 			onPostExecuteSuccess(result.second);
 			if (resultListener != null) {
-				resultListener.onAsyncTaskSuccess(result.second);
+				resultListener.onSuccess(result.second);
 			}
 		}
 	}

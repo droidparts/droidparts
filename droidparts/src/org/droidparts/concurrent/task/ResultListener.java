@@ -15,10 +15,10 @@
  */
 package org.droidparts.concurrent.task;
 
-public interface AsyncTaskResultListener<Result> {
+public interface ResultListener<Result> {
 
-	void onAsyncTaskSuccess(Result result);
+	void onSuccess(Result result);
 
-	void onAsyncTaskFailure(Exception e);
+	void onFailure(Exception e);
 
 }

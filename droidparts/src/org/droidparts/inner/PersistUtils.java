@@ -135,7 +135,7 @@ public final class PersistUtils implements SQL.DDL {
 			} else if (arg instanceof Date) {
 				argStr = String.valueOf(((Date) arg).getTime());
 			} else if (arg instanceof Entity) {
-				argStr = String.valueOf(((Entity) arg).id);
+				argStr = String.valueOf(((Entity) arg)._id);
 			} else {
 				argStr = arg.toString();
 			}
@@ -284,7 +284,7 @@ public final class PersistUtils implements SQL.DDL {
 		sb.append(PK);
 		StringBuilder fkSb = new StringBuilder();
 		for (FieldSpec<ColumnAnn> spec : specs) {
-			if (Column.ID.equals(spec.ann.name)) {
+			if (Column._ID.equals(spec.ann.name)) {
 				// already got it
 				continue;
 			}
@@ -315,7 +315,7 @@ public final class PersistUtils implements SQL.DDL {
 		sb.append(spec.ann.name);
 		sb.append(") REFERENCES ");
 		sb.append(foreignTableName);
-		sb.append("(").append(Column.ID).append(") ON DELETE CASCADE");
+		sb.append("(").append(Column._ID).append(") ON DELETE CASCADE");
 	}
 
 	private static ArrayList<String> readStrings(SQLiteDatabase db, String query, int colIdx) {
