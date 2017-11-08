@@ -3,5 +3,5 @@ apply from: "$rootProject.projectDir/scripts/java_lib.gradle"
 archivesBaseName = 'droidparts-misc'
 
 dependencies {
-	compile project(':droidparts')
+	implementation project(':droidparts')
 }

@@ -1,18 +1,18 @@
 apply from: "$rootProject.projectDir/scripts/android_app.gradle"
 
 ext {
-	supportLibraryVersion = '25.3.1'
+	supportLibraryVersion = '25.4.0'
 }
 
 dependencies {
-	compile project(':droidparts')
-	compile project(':droidparts-support')
+	implementation project(':droidparts')
+	implementation project(':droidparts-support')
 
-	compile "com.android.support:support-v4:$supportLibraryVersion"
-	compile "com.android.support:appcompat-v7:$supportLibraryVersion"
-	compile('org.apache.httpcomponents:httpmime:4.1') { transitive = false }
+	implementation "com.android.support:support-v4:$supportLibraryVersion"
+	implementation "com.android.support:appcompat-v7:$supportLibraryVersion"
+	implementation('org.apache.httpcomponents:httpmime:4.1') { transitive = false }
 
-	androidTestCompile "com.android.support:support-annotations:$supportLibraryVersion"
-	androidTestCompile 'com.android.support.test:runner:0.5'
-	androidTestCompile 'com.android.support.test:rules:0.5'
+	androidTestImplementation "com.android.support:support-annotations:$supportLibraryVersion"
+	androidTestImplementation 'com.android.support.test:runner:1.0.1'
+	androidTestCompile 'com.android.support.test:rules:1.0.1'
 }
