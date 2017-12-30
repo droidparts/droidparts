@@ -11,7 +11,7 @@
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
- * limitations under the License. 
+ * limitations under the License.
  */
 package org.droidparts.inner;
 
@@ -159,6 +159,10 @@ public final class ReflectionUtils {
 			clsName = clsName.substring(2, clsName.length() - 1);
 			return classForName(clsName);
 		}
+	}
+
+	public static Class<?>[] getClassGenericArgs(Class<?> cls) {
+		return getGenericArgs((ParameterizedType) cls.getGenericSuperclass());
 	}
 
 	public static Class<?>[] getFieldGenericArgs(Field field) {
