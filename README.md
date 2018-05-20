@@ -30,7 +30,7 @@ Download
 or Gradle:
 ```groovy
 dependencies {
-   compile 'org.droidparts:droidparts:${version.from.jar.above}'
+   implementation 'org.droidparts:droidparts:${version.from.jar.above}'
 }
 ```
 or use as a plain old Android library project.

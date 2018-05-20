@@ -1,7 +1,7 @@
 apply from: "$rootProject.projectDir/scripts/android_app.gradle"
 
 ext {
-	supportLibraryVersion = '25.4.0'
+	supportLibraryVersion = '27.1.1'
 }
 
 dependencies {
@@ -12,7 +12,7 @@ dependencies {
 	implementation "com.android.support:appcompat-v7:$supportLibraryVersion"
 	implementation('org.apache.httpcomponents:httpmime:4.1') { transitive = false }
 
-	androidTestImplementation "com.android.support:support-annotations:$supportLibraryVersion"
-	androidTestImplementation 'com.android.support.test:runner:1.0.1'
-	androidTestCompile 'com.android.support.test:rules:1.0.1'
+	androidTestCompile "com.android.support:support-annotations:$supportLibraryVersion"
+	androidTestCompile 'com.android.support.test:runner:1.0.2'
+	androidTestCompile 'com.android.support.test:rules:1.0.2'
 }
